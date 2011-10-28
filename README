@@ -1,0 +1,9 @@
+Started moving the Japanese translation of D Programming Language Website
+  http://www.kmonos.net/alang/d/
+to github, and translation on DDoc, not directly on HTML.
+(Still thinking about how to translate Phobos documents, though...)
+
+Currently, I have only set up the repository.
+I will port the translation to DDoc soon.
+
+Kazuhiro Inaba (www.kmonos.net)
