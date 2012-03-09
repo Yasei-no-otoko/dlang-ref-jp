@@ -54,26 +54,6 @@ attribute {    // affects all declarations in the block
 }
 ---
 
-        $(P For attributes with an optional else clause:)
-
----
-attribute
-  declaration;
-else
-  declaration;
-
-attribute {    // affects all declarations in the block
-  declaration;
-  declaration;
-  ...
-}
-else {
-  declaration;
-  declaration;
-  ...
-}
----
-
 <h2>$(LNAME2 linkage, Linkage Attribute)</h2>
 
 $(GRAMMAR
@@ -259,7 +239,7 @@ $(GNAME ProtectionAttribute):
         If accessing a protected instance member through a derived class member
         function,
         that member can only be accessed for the object instance
-        which is the $(SINGLEQUOTE this) object for the member function call.
+        which can be implicitly cast to the same type as $(SINGLEQUOTE this).
         Protected module members are illegal.
         )
 
@@ -270,6 +250,31 @@ $(GNAME ProtectionAttribute):
         member. Export
         is analogous to exporting definitions from a DLL.
         )
+
+        $(P Protection does not participate in name lookup.
+        In particular, if two symbols with the same name are in scope,
+        and that name is used unqualified then the lookup will be ambiguous,
+        even if one of the symbols is inaccessible due to protection.
+        For example:
+        )
+
+---------------
+module A;
+private class Foo {}
+---------------
+
+---------------
+module B;
+public class Foo {}
+---------------
+
+---------------
+import A;
+import B;
+
+Foo f1; // error, could be either A.Foo or B.Foo
+B.Foo f2; // ok
+---------------
 
 <h2>$(LNAME2 const, Const Attribute)</h2>
 
@@ -344,6 +349,38 @@ $(V2
 <h2>$(LNAME2 immutable, immutable Attribute)</h2>
 
 <h2>$(LNAME2 gshared, __gshared Attribute)</h2>
+
+        $(P By default, non-immutable global declarations reside in thread local
+        storage. When a global variable is marked with the $(B __gshared)
+        attribute, its value is shared across all threads.)
+
+---
+int foo;            // Each thread has its own exclusive copy of foo.
+__gshared int bar;  // bar is shared by all threads.
+---
+
+        $(P $(B __gshared) may also be applied to member variables and local
+        variables. In these cases, $(B __gshared) is equivalent to $(B static),
+        except that the variable is shared by all threads rather than being
+        thread local.)
+
+---
+class Foo {
+  __gshared int bar;
+}
+
+int foo() {
+  __gshared int bar = 0;
+  return bar++; // Not thread safe.
+}
+---
+
+        $(P Unlike the $(B shared) attribute, $(B __gshared) provides no
+        safe-guards against data races or other multi-threaded synchronization
+        issues. It is the responsibility of the programmer to ensure that
+        access to variables marked $(B __gshared) is synchronized correctly.)
+
+        $(P $(B __gshared) is disallowed in safe mode.)
 
 <h2>$(LNAME2 shared, shared Attribute)</h2>
 

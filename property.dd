@@ -70,7 +70,7 @@ $(SECTION2 $(LNAME2 init, .init) Property,
 	$(P $(B .init) produces a constant expression that is the default
 	initializer. If applied to a type, it is the default initializer
 	for that type. If applied to a variable or field, it is the
-	default initializer for that variable or field.
+	default initializer for that variable or field's type.
 	For example:
 	)
 
@@ -175,14 +175,18 @@ $(SECTION2 $(LNAME2 classinfo, .classinfo) Property,
 	$(V1 It returns a reference to type $(DPLLINK phobos/object.html, object.ClassInfo).)
 	$(V2 It returns a reference to type $(DPLLINK phobos/object.html#TypeInfo_Class, object.TypeInfo_Class).)
 	)
+
+	$(P $(CODE .classinfo) applied to an interface gives the information for
+	the interface, not the class it might be an instance of.
+	)
 )
 
-$(SECTION3 $(LNAME2 classproperties, User Defined Class and Struct Properties),
+$(SECTION3 $(LNAME2 classproperties, User Defined Properties),
 
-	$(P Properties are member functions that can be syntactically treated
-	as if they were fields. Properties can be read from or written to.
-	A property is read by calling a method with no arguments;
-	a property is written by calling a method with its argument
+	$(P Properties are functions that can be syntactically treated
+	as if they were fields or variables. Properties can be read from or written to.
+	A property is read by calling a methhod or function with no arguments;
+	a property is written by calling a method or function with its argument
 	being the value it is set to.
 	)
 
@@ -240,9 +244,37 @@ int test() {
 	methods with multiple parameters,) have their address taken, etc.
 	)
 
-	$(P $(B Note:) Properties currently cannot be the lvalue of an
+$(V1
+	$(P $(B Note:) Properties cannot be the lvalue of an
 	$(I op)=, ++, or -- operator.
 	)
+)
+$(V2
+	$(P $(B Note:) Properties can be the lvalue of an
+	$(I op)=, ++, or -- operator if they return a ref.
+	)
+)
+	$(P The built in properties $(CODE .sizeof), $(CODE .alignof), and $(CODE .mangleof)
+	may not be declared as fields or methods in structs, unions, classes or enums.
+	)
+
+	$(P If a .property is applied to a user-defined property, the .property is applied
+	to the result of the function call.
+	)
+
+$(V2
+---
+void main() {
+  @property int[] delegate() bar1 = { return [1, 2]; };
+  auto x1 = bar1.ptr; // points to array data
+
+  struct Foo { int* ptr; }
+  @property Foo delegate() bar2 = { return Foo(); };
+  auto x2 = bar2.ptr; // gets value of Foo.ptr
+} 
+---
+)
+
 )
 
 )

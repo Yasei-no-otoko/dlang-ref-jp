@@ -240,6 +240,7 @@ $(GNAME Token):
     $(B ~=)
     $(V2 $(B @))
     $(V2 $(B =>))
+    $(V2 $(B #))
 )
 
 <h3>Identifiers</h3>
@@ -367,13 +368,15 @@ $(GNAME TokenString):
 	or a hex string.
 	)
 
+	$(P In all string literal forms, an $(GLINK EndOfLine) is regarded as a single
+	\n character.)
+
 <h4>Wysiwyg Strings</h4>
 
 	$(P
 	Wysiwyg quoted strings are enclosed by r" and ".
 	All characters between
-	the r" and " are part of the string except for $(GLINK EndOfLine) which is
-	regarded as a single \n character.
+	the r" and " are part of the string.
 	There are no escape sequences inside r" ":
 	)
 
@@ -403,7 +406,6 @@ r"ab\n" // string is 4 characters,
 
 	Double quoted strings are enclosed by "". Escape sequences can be
 	embedded into them with the typical \ notation.
-	$(GLINK EndOfLine) is regarded as a single \n character.
 
 ---------------
 "hello"
@@ -422,17 +424,17 @@ $(V1
 	Adjacent escape strings are concatenated:
 	)
 
-<pre>
-\n			the linefeed character
-\t			the tab character
-\"			the double quote character
-\012			octal
-\x1A			hex
-\u1234			wchar character
-\U00101234		dchar character
-\&amp;reg;			&reg; dchar character
-\r\n			carriage return, line feed
-</pre>
+$(TABLE1
+$(TROW \n,			the linefeed character)
+$(TROW \t,			the tab character)
+$(TROW \",			the double quote character)
+$(TROW \012,			octal)
+$(TROW \x1A,			hex)
+$(TROW \u1234,			wchar character)
+$(TROW \U00101234,		dchar character)
+$(TROW \&amp;reg;,		&reg; dchar character)
+$(TROW \r\n,			carriage return, line feed)
+)
 
 	$(P Undefined escape sequences are errors.
 	Although string literals are defined to be composed of
@@ -464,7 +466,7 @@ x"00 FBCD 32FD 0A" // same as
 	juxtaposition:
 
 --------------
-"hello " ~ "world" ~ \n // forms the string
+"hello " ~ "world" ~ $(V1 \n)$(V2 "\n") // forms the string
        // 'h','e','l','l','o',' ',
        // 'w','o','r','l','d',linefeed
 --------------
@@ -476,28 +478,41 @@ x"00 FBCD 32FD 0A" // same as
 r"ab" r"c"
 r"a" "bc"
 "a" ~ "b" ~ "c"
-\x61"bc"
+$(V1 \x61"bc")
 -----------------
 
-	The optional $(I StringPostfix) character gives a specific type
+	$(P The optional $(I StringPostfix) character gives a specific type
 	to the string, rather than it being inferred from the context.
 	This is useful when the type cannot be unambiguously inferred,
 	such as when overloading based on string type. The types corresponding
 	to the postfix characters are:
-	<p>
-
-	$(TABLE2 String Literal Postfix Characters,
-	$(THEAD Postfix, Type)
-	$(TROW $(B c), $(CODE char[]))
-	$(TROW $(B w), $(CODE wchar[]))
-	$(TROW $(B d), $(CODE dchar[]))
 	)
 
+$(V1
+	$(TABLE2 String Literal Postfix Characters,
+	$(THEAD Postfix, Type, Aka)
+	$(TROW $(B c), $(D char[]), $(D string))
+	$(TROW $(B w), $(D wchar[]), $(D wstring))
+	$(TROW $(B d), $(D dchar[]), $(D dstring))
+	)
+)
+$(V2
+	$(TABLE2 String Literal Postfix Characters,
+	$(THEAD Postfix, Type, Aka)
+	$(TROW $(B c), $(D immutable(char)[]), $(D string))
+	$(TROW $(B w), $(D immutable(wchar)[]), $(D wstring))
+	$(TROW $(B d), $(D immutable(dchar)[]), $(D dstring))
+	)
+)
 ---
-"hello"c  // char[]
-"hello"w  // wchar[]
-"hello"d  // dchar[]
+"hello"c  // string
+"hello"w  // wstring
+"hello"d  // dstring
 ---
+
+	$(P The string literals are assembled as UTF-8 char arrays,
+	and the postfix is applied
+	to convert to wchar or dchar as necessary as a final step.)
 
 	$(P String literals are read only. Writes to string literals
 	cannot always be detected, but cause undefined behavior.)
@@ -567,7 +582,6 @@ q"/abc/def/"    // error
 q{foo}              // "foo"
 q{/*}*/ }           // "/*}*/ "
 q{ foo(q{hello}); } // " foo(q{hello}); "
-q{ @ }              // error, @ is not a valid D token
 q{ __TIME__ }       // " __TIME__ ", i.e. it is not replaced with the time
 q{ __EOF__ }        // error, as __EOF__ is not a token, it's end of file
 ---
@@ -613,18 +627,20 @@ $(GNAME IntegerSuffix):
 $(GNAME DecimalInteger):
     $(B 0)
     $(GLINK NonZeroDigit)
-    $(GLINK NonZeroDigit) $(I DecimalDigits)
+    $(GLINK NonZeroDigit) $(I DecimalDigitsUS)
 
 $(GNAME BinaryInteger):
-    $(B 0b) $(GLINK BinaryDigits)
-    $(B 0B) $(GLINK BinaryDigits)
+    $(GLINK BinPrefix) $(GLINK BinaryDigits)
+
+$(GNAME BinPrefix):
+    $(B 0b)
+    $(B 0B)
 
 $(V1 $(GNAME OctalInteger):
-    $(B 0) $(GLINK OctalDigits)
+    $(B 0) $(GLINK OctalDigitsUS)
 
 )$(GNAME HexadecimalInteger):
-    $(B 0x) $(GLINK HexDigits)
-    $(B 0X) $(GLINK HexDigits)
+    $(GLINK HexPrefix) $(GLINK HexDigitsNoSingleUS)
 
 $(GNAME NonZeroDigit):
     $(B 1)
@@ -641,23 +657,46 @@ $(GNAME DecimalDigits):
     $(GLINK DecimalDigit)
     $(GLINK DecimalDigit) $(I DecimalDigits)
 
+$(GNAME DecimalDigitsUS):
+    $(GLINK DecimalDigitUS)
+    $(GLINK DecimalDigitUS) $(I DecimalDigitsUS)
+
+$(GNAME DecimalDigitsNoSingleUS):
+    $(GLINK DecimalDigit)
+    $(GLINK DecimalDigit) $(GLINK DecimalDigitsUS)
+    $(GLINK DecimalDigitsUS) $(GLINK DecimalDigit)
+
+$(GNAME DecimalDigitsNoStartingUS):
+    $(GLINK DecimalDigit)
+    $(GLINK DecimalDigit) $(GLINK DecimalDigitsUS)
+
 $(GNAME DecimalDigit):
     $(B 0)
     $(GLINK NonZeroDigit)
+
+$(GNAME DecimalDigitUS):
+    $(GLINK DecimalDigit)
     $(B _)
 
-$(GNAME BinaryDigits):
-    $(GLINK BinaryDigit)
-    $(GLINK BinaryDigit) $(I BinaryDigits)
+$(GNAME BinaryDigitsUS):
+    $(GLINK BinaryDigitUS)
+    $(GLINK BinaryDigitUS) $(I BinaryDigitsUS)
 
 $(GNAME BinaryDigit):
     $(B 0)
     $(B 1)
+
+$(GNAME BinaryDigitUS):
+    $(GLINK BinaryDigit)
     $(B _)
 
 $(GNAME OctalDigits):
     $(GLINK OctalDigit)
     $(GLINK OctalDigit) $(I OctalDigits)
+
+$(GNAME OctalDigitsUS):
+    $(GLINK OctalDigitUS)
+    $(GLINK OctalDigitUS) $(I OctalDigitsUS)
 
 $(GNAME OctalDigit):
     $(B 0)
@@ -668,14 +707,29 @@ $(GNAME OctalDigit):
     $(B 5)
     $(B 6)
     $(B 7)
+
+$(GNAME OctalDigitUS):
+    $(GLINK OctalDigit)
     $(B _)
 
 $(GNAME HexDigits):
     $(GLINK HexDigit)
     $(GLINK HexDigit) $(I HexDigits)
 
+$(GNAME HexDigitsUS):
+    $(GLINK HexDigitUS)
+    $(GLINK HexDigitUS) $(I HexDigitsUS)
+
+$(GNAME HexDigitsNoSingleUS):
+    $(GLINK HexDigit)
+    $(GLINK HexDigit) $(GLINK HexDigitsUS)
+    $(GLINK HexDigitsUS) $(GLINK HexDigit)
+
 $(GNAME HexDigit):
     $(GLINK DecimalDigit)
+    $(GLINK HexLetter)
+
+$(GNAME HexLetter):
     $(B a)
     $(B b)
     $(B c)
@@ -775,35 +829,42 @@ $(GNAME Float):
 $(GNAME DecimalFloat):
     $(GLINK LeadingDecimal) $(B .)
     $(GLINK LeadingDecimal) $(B .) $(GLINK DecimalDigits)
-    $(GLINK DecimalDigits) $(B .) $(GLINK DecimalDigits) $(GLINK DecimalExponent)
+    $(GLINK DecimalDigits) $(B .) $(GLINK DecimalDigitsNoSingleUS) $(GLINK DecimalExponent)
     $(B .) $(GLINK DecimalInteger)
     $(B .) $(GLINK DecimalInteger) $(GLINK DecimalExponent)
     $(GLINK LeadingDecimal) $(GLINK DecimalExponent)
 
 $(GNAME DecimalExponent)
-    $(B e) $(GLINK DecimalDigits)
-    $(B E) $(GLINK DecimalDigits)
-    $(B e+) $(GLINK DecimalDigits)
-    $(B E+) $(GLINK DecimalDigits)
-    $(B e-) $(GLINK DecimalDigits)
-    $(B E-) $(GLINK DecimalDigits)
+    $(GLINK DecimalExponentStart) $(GLINK DecimalDigitsNoSingleUS)
+
+$(GNAME DecimalExponentStart)
+    $(B e)
+    $(B E)
+    $(B e+)
+    $(B E+)
+    $(B e-)
+    $(B E-)
 
 $(GNAME HexFloat):
-    $(GLINK HexPrefix) $(GLINK HexDigits) $(B .) $(GLINK HexDigits) $(GLINK HexExponent)
-    $(GLINK HexPrefix) $(B .) $(GLINK HexDigits) $(GLINK HexExponent)
-    $(GLINK HexPrefix) $(GLINK HexDigits) $(GLINK HexExponent)
+    $(GLINK HexPrefix) $(GLINK HexDigitsNoSingleUS) $(B .) $(GLINK HexDigitsNoSingleUS) $(GLINK HexExponent)
+    $(GLINK HexPrefix) $(B .) $(GLINK HexDigitsNoSingleUS) $(GLINK HexExponent)
+    $(GLINK HexPrefix) $(GLINK HexDigitsNoSingleUS) $(GLINK HexExponent)
 
 $(GNAME HexPrefix):
     $(B 0x)
     $(B 0X)
 
 $(GNAME HexExponent):
-    $(B p) $(GLINK DecimalDigits)
-    $(B P) $(GLINK DecimalDigits)
-    $(B p+) $(GLINK DecimalDigits)
-    $(B P+) $(GLINK DecimalDigits)
-    $(B p-) $(GLINK DecimalDigits)
-    $(B P-) $(GLINK DecimalDigits)
+    $(GLINK HexExponentStart) $(GLINK DecimalDigitsNoSingleUS)
+
+$(GNAME HexExponentStart):
+    $(B p)
+    $(B P)
+    $(B p+)
+    $(B P+)
+    $(B p-)
+    $(B P-)
+
 
 $(GNAME Suffix):
     $(GLINK FloatSuffix)
@@ -824,7 +885,7 @@ $(GNAME ImaginarySuffix):
 
 $(GNAME LeadingDecimal):
     $(GLINK DecimalInteger)
-    $(B 0) $(GLINK DecimalDigits)
+    $(B 0) $(GLINK DecimalDigitsNoSingleUS)
 )
 
 	$(P Floats can be in decimal or hexadecimal format.)
@@ -1043,12 +1104,12 @@ $(V2
 	$(TROW $(CODE __VERSION__), $(ARGS Compiler version as an integer, such as 2001))
 	)
 
-<h3>Special Token Sequences</h3>
+<h3>$(LNAME2 Special Token Sequence, Special Token Sequences)</h3>
 
 $(GRAMMAR
 $(GNAME SpecialTokenSequence):
-    $(B # line) $(GLINK Integer) $(GLINK EndOfLine)
-    $(B # line) $(GLINK Integer) $(GLINK Filespec) $(GLINK EndOfLine)
+    $(B # line) $(GLINK IntegerLiteral) $(GLINK EndOfLine)
+    $(B # line) $(GLINK IntegerLiteral) $(GLINK Filespec) $(GLINK EndOfLine)
 
 $(GNAME Filespec):
     $(B ") $(GLINK Characters) $(B ")
@@ -1062,7 +1123,7 @@ $(GNAME Filespec):
 	$(P There is currently only one special token sequence, $(D #line).
 	)
 
-	$(P This sets the source line number to $(GLINK Integer),
+	$(P This sets the source line number to $(GLINK IntegerLiteral),
 	and optionally the source file 	name to $(GLINK Filespec),
 	beginning with the next line of source text.
 	The source file and line number is used for printing error messages

@@ -57,10 +57,10 @@ function showHideAnswer(zis)
 	var numericID = zis.id.replace(/[^\d]/g,'');
 	var obj = document.getElementById('a' + numericID);
 	if(obj.style.display=='block'){
-        zis.innerHTML = "<nobr>See example.</nobr>";
+        zis.innerHTML = '<span class="nobr">See example.</span>';
 		obj.style.display='none';
 	}else{
-        zis.innerHTML = "<nobr>Hide example.</nobr>";
+        zis.innerHTML = '<span class="nobr">Hide example.</span>';
 		obj.style.display='block';
 	}
 }
@@ -74,20 +74,21 @@ function showHideAnswer(zis)
 	<div id="search-box">
 		<form method="get" action="http://google.com/search">
 			<img src="/images/search-left.gif" width="11" height="22" /><input id="q" name="q" /><input type="image" id="search-submit" name="submit" src="/images/search-button.gif" />
-			<input type="hidden" id="domains" name="domains" value="d-programming-language.org" />
+			<input type="hidden" id="domains" name="domains" value="dlang.org" />
 			<input type="hidden" id="sourceid" name="sourceid" value="google-search" />
 			<div id="search-dropdown">
 				<select id="sitesearch" name="sitesearch" size="1">
-					<option value="d-programming-language.org">Entire D Site</option>
-					<option value="d-programming-language.org/phobos">Library Reference</option>
+					<option value="dlang.org">Entire D Site</option>
+					<option value="dlang.org/phobos">Library Reference</option>
 					<option value="digitalmars.com/d/archives">Newsgroup Archives</option>
 				</select>
 			</div>
 		</form>
 	</div>
 	<div id="header">
-		<a href="/"><img id="logo" width="125" height="95" border="0" alt="D Logo" src="/images/dlogo.png"></a>
-		<a id="d-language" href="/">D Programming Language</a>
+		<a id="d-language" href="/">
+		<img id="logo" width="125" height="95" border="0" alt="D Logo" src="images/dlogo.png">
+		D Programming Language</a>
 	</div>
 </div>
 
@@ -152,9 +153,8 @@ Copyright &copy; 1999-$(YEAR) by Digital Mars &reg;, All Rights Reserved
 
 FOOTER=
 <div id="footernav">
-<a href="http://digitalmars.com/NewsGroup.html" title="User Forums">Forums</a> |
+<a href="http://forum.dlang.org/" title="User Forums">Forums</a> |
 <a href="http://www.prowiki.org/wiki4d/wiki.cgi?DocComments/$(WIKI)" title="Read/write comments and feedback">Comments</a> |
-<a href="index.html" title="D Programming Language" class="dlink">&nbsp;D&nbsp;</a> |
 <a href="http://digitalmars.com/advancedsearch.html" title="Search Digital Mars web site">Search</a> |
 <a href="download.html" title="Download D">Downloads</a> |
 <a href="/">Home</a>
@@ -186,9 +186,9 @@ NAVIGATION=
 $(NAVBLOCK_HEADER $(TOCHEADERL index.html, D Programming Language, D Home),
 	$(TOCENTRYTH overview.html, D language overview, Overview, $(CATEGORY_OVERVIEW $(SUBNAV_OVERVIEW)))
 	$(TOCENTRYTH comparison.html, D feature list, Features, $(CATEGORY_FEATURES $(SUBNAV_FEATURES)))
-	$(TOCENTRYTH download.html, Download a D compiler, Download (v$(LATEST)), $(CATEGORY_TOOLS $(SUBNAV_DOWNLOADS_TOOLS)))
+	$(TOCENTRYTH download.html, Download a D compiler, Downloads &amp; Tools, $(CATEGORY_DOWNLOAD $(SUBNAV_DOWNLOAD)))
 	$(TOCENTRYT changelog.html, History of changes to D, Changelog)
-	$(TOCENTRYT http://d.puremagic.com/issues/, D issue and bug tracking system, Bug tracker)
+	$(TOCENTRYT bugstats.php, D issue and bug tracking system, Bug tracker)
 	$(TOCENTRYTH faq.html, Frequently Asked Questions, FAQ, $(CATEGORY_FAQ $(SUBNAV_FAQ)))
 	$(TOCENTRYH appendices.html, Appendices, $(CATEGORY_APPENDICES $(SUBNAV_APPENDICES)))
 	$(TOCENTRYT acknowledgements.html, Thank-you to these people who have helped with D, Acknowledgments)
@@ -206,7 +206,7 @@ $(NAVBLOCK_HEADER $(TOCHEADER Documentation),
 	$(TOCENTRYH articles.html, Articles, $(CATEGORY_ARTICLES $(SUBNAV_ARTICLES)))
 )
 $(NAVBLOCK_HEADER $(TOCHEADER Community),
-	$(TOCENTRYT http://digitalmars.com/NewsGroup.html, User forums, Forums)
+	$(TOCENTRYT http://forum.dlang.org/, User forums, Forums)
 	$(TOCENTRYT http://github.com/D-Programming-Language, D on github, Github)
 	$(TOCENTRYT http://prowiki.org/wiki4d/wiki.cgi?FrontPage, Wiki for the D Programming Language, Wiki)
 	$(TOCENTRYT http://prowiki.org/wiki4d/wiki.cgi?ReviewQueue, Queue of current and upcoming standard library additions, Review queue)
@@ -234,13 +234,12 @@ $(NAVBLOCK
 	$(TOCENTRYT features2.html, Language changes for D, Features)
 )
 
-SUBNAV_DOWNLOADS_TOOLS=
+SUBNAV_DOWNLOAD=
 $(NAVBLOCK
-	$(TOCENTRYT dmd-linux.html, dmd - the Digital Mars D compiler, DMD D Compiler (Linux))
-	$(TOCENTRYT dmd-freebsd.html, dmd - the Digital Mars D compiler, DMD D Compiler (FreeBSD))
-	$(TOCENTRYT dmd-osx.html, dmd - the Digital Mars D compiler, DMD D Compiler (Mac OSX))
-	$(TOCENTRYT dmd-windows.html, dmd - the Digital Mars D compiler, DMD D Compiler (Windows))
-	$(TOCENTRYT changelog.html, History of changes to D, D Change Log)
+	$(TOCENTRYT dmd-linux.html, dmd - the Digital Mars D compiler, Linux notes)
+	$(TOCENTRYT dmd-windows.html, dmd - the Digital Mars D compiler, Windows notes)
+	$(TOCENTRYT dmd-osx.html, dmd - the Digital Mars D compiler, Mac OSX notes)
+	$(TOCENTRYT dmd-freebsd.html, dmd - the Digital Mars D compiler, FreeBSD notes)
 	$(TOCENTRYT http://bitbucket.org/goshawk/gdc/wiki/Home, gdc - the Gnu D compiler, GDC D Compiler)
 	$(TOCENTRYT http://dnet.codeplex.com/, D Compiler for .NET, D.NET Compiler)
 	$(TOCENTRYT http://digitalmars.com/ctg/optlink.html, Optlink - the Digital Mars Linker, Linker)
@@ -251,7 +250,6 @@ $(NAVBLOCK
 	$(TOCENTRYT htod.html, htod - mechanically convert C .h header files to D, C .h to D .d)
 	$(TOCENTRYT http://www.prowiki.org/wiki4d/wiki.cgi?EditorSupport, Editors with support for D, Editors)
 	$(TOCENTRYT http://www.prowiki.org/wiki4d/wiki.cgi?ReferenceForTools, Even more tools for D, More Tools)
-	$(TOCENTRYT http://d.puremagic.com/issues/, D issue and bug tracking system, Issues &amp; Bugs)
 )
 
 SUBNAV_FAQ=
@@ -291,6 +289,7 @@ $(NAVBLOCK
 	$(TOCENTRY template-mixin.html, Template Mixins)
 	$(TOCENTRY dbc.html, Contracts)
 	$(TOCENTRY version.html, Conditional Compilation)
+	$(TOCENTRY simd.html, Vector Extensions)
 	$(TOCENTRY traits.html, Traits)
 	$(TOCENTRY errors.html, Handling errors)
 	$(TOCENTRY unittest.html, Unit Tests)
@@ -332,6 +331,7 @@ $(NAVBLOCK
 		$(TOCENTRYT templates-revisited.html, D takes a fresh look at template design, Templates Revisited)
 		$(TOCENTRYT tuple.html, What tuples are and how to use them, Tuples)
 		$(TOCENTRYT variadic-function-templates.html, Variadic arguments to templates, Variadic Templates)
+		$(TOCENTRYT d-array-article.html, D Slices, D Slices)
 	)
 
 D_S      = $(LAYOUT $(NAVIGATION),$1,$(ARGS $+))
@@ -343,13 +343,13 @@ LAYOUT=
 <div id="navigation">
   $1
   $(GOOGLE_TRANSLATE)
-</div>
+</div><!--/navigation-->
 <div id="content" class='hyphenate'>
   $(PAGE_TOOLS)
   <h1>$(TITLE)</h1>
   $3
   $(GOOGLE_FOOTER)
-</div>
+</div><!--/content-->
 
 
 NAVBLOCK=

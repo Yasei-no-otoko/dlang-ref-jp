@@ -46,13 +46,16 @@ int myDfunction(char[] s) {
 	$(LI C functions cannot be overloaded with another C function
 	with the same name.)
 
-	$(LI There are no __cdecl, __far, __stdcall, __declspec, or other
-	such C type modifiers in D. These are handled by attributes, such
-	as $(D extern (C)).)
+	$(LI There are no __cdecl, __far, __stdcall,
+	$(LINK2 http://www.digitalmars.com/ctg/ctgLanguageImplementation.html#declspec, __declspec),
+	or other such C
+	$(LINK2 http://www.digitalmars.com/ctg/ctgLanguageImplementation.html#extended, extended type modifiers)
+	in D. These are handled by
+	$(LINK2 $(WEBURL)attribute.html#linkage, linkage attributes),
+	such as $(D extern (C)).)
 
-	$(LI There are no const or volatile type modifiers in D. To declare
-	a C function that uses those type modifiers, just drop those
-	keywords from the declaration.)
+	$(LI There is no volatile type modifier in D. To declare a C function that uses
+	volatile, just drop the keyword from the declaration.)
 
 	$(LI Strings are not 0 terminated in D. See "Data Type Compatibility"
 	for more information about this. However, string literals in D are
@@ -75,8 +78,10 @@ extern (C) {
 
 <h2>Storage Allocation</h2>
 
-	$(P C code explicitly manages memory with calls to malloc() and
-	free(). D allocates memory using the D garbage collector,
+	$(P C code explicitly manages memory with calls to
+	$(LINK2 http://www.digitalmars.com/rtl/stdlib.html#malloc, malloc()) and
+	$(LINK2 http://www.digitalmars.com/rtl/stdlib.html#free, free()).
+	D allocates memory using the D garbage collector,
 	so no explicit free's are necessary.
 	)
 
@@ -103,7 +108,12 @@ extern (C) {
 	garbage collector will scan the static data segment.)
 
 	$(LI Registering the pointer with the garbage collector with the
-	std.gc.addRoot() or std.gc.addRange() calls.)
+	$(V1 std.gc.addRoot())
+	$(V2 $(LINK2 $(WEBURL)phobos/core_memory.html#addRoot, std.gc.addRoot()))
+	or
+	$(V1 std.gc.addRange())
+	$(V2 $(LINK2 $(WEBURL)phobos/core_memory.html#addRange, std.gc.addRange()))
+	calls.)
 
 	)
 
@@ -190,16 +200,28 @@ $(V1
 )
 
 $(V2
-    $(TR
+	$(TR
 	$(TD $(B c_long (in core.stdc.config)))
-	$(TD $(B long long))
+	$(TD $(B long))
 	$(TD $(B long))
 	)
 
 	$(TR
 	$(TD $(B c_ulong (in core.stdc.config)))
-	$(TD $(B unsigned long long))
 	$(TD $(B unsigned long))
+	$(TD $(B unsigned long))
+	)
+
+	$(TR
+	$(TD $(B long))
+	$(TD $(B long long))
+	$(TD $(B long (or long long)))
+	)
+
+	$(TR
+	$(TD $(B ulong))
+	$(TD $(B unsigned long long))
+	$(TD $(B unsigned long (or unsigned long long)))
 	)
 )
 	$(TR
@@ -360,7 +382,8 @@ extern (C)
 
 <h2>Calling printf()</h2>
 
-	$(P This mostly means checking that the printf format specifier
+	$(P This mostly means checking that the
+	$(LINK2 http://www.digitalmars.com/rtl/stdio.html#printf, printf format specifier)
 	matches the corresponding D data type.
 	Although printf is designed to handle 0 terminated strings,
 	not D dynamic arrays of chars, it turns out that since D
@@ -398,10 +421,41 @@ void foo(char[] string) {
 	)
 
 	$(P D does not support bit fields. If needed, they can be emulated
-	with shift and mask operations.
+	with shift and mask operations,
+	or use the $(LINK2 phobos/std_bitmanip.html#bitfields, std.bitmanip.bitfields)
+	library type.
 	$(DPLLINK htod.html, htod) will convert bit fields to inline functions that
 	do the right shift and masks.
 	)
+
+<h2>$(LNAME2 Using C Libraries, Using Existing C Libraries)</h2>
+
+	$(P Since D can call C code directly, it can also call any C library
+	functions, giving D access to the smorgasbord of existing C libraries.
+	To do so, however, one needs to write a D interface (.di) file, which
+	is a translation of the C .h header file for the C library into D.
+	)
+
+	$(P For popular C libraries, the first place to look for the corresponding
+	D interface file is the $(LINK2 https://github.com/D-Programming-Deimos/, Deimos Project).
+	If it isn't there already, and you write one, please contribute it
+	to the Deimos Project.
+	)
+
+<h2>$(LNAME2 C Globals, Accessing C Globals)</h2>
+
+	$(P C globals can be accessed directly from D. C globals have the C naming
+	convention, and so must be in an $(D extern (C)) block.
+	Use the $(D extern) storage class to indicate that the global is allocated
+	in the C code, not the D code.
+	$(V2 C globals default to being in global, not thread local, storage.
+	To reference global storage
+	from D, use the $(D __gshared) storage class.)
+	)
+
+---
+extern (C) extern __gshared int x;
+---
 
 $(V1
 <hr>

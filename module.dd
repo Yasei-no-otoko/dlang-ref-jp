@@ -24,14 +24,14 @@ $(GNAME DeclDef):
 	$(GLINK2 unittest, UnitTest)
 	$(GLINK2 class, StaticConstructor)
 	$(GLINK2 class, StaticDestructor)
-$(V2
-	$(GLINK2 class, SharedStaticConstructor)
+$(V2  	$(GLINK2 class, SharedStaticConstructor)
 	$(GLINK2 class, SharedStaticDestructor)
 )	$(GLINK2 version, ConditionalDeclaration)
 	$(GLINK2 version, DebugSpecification)
 	$(GLINK2 version, VersionSpecification)
 	$(GLINK2 version, StaticAssert)
 	$(GLINK2 template, TemplateDeclaration)
+	$(GLINK2 template-mixin, TemplateMixinDeclaration)
 	$(GLINK2 template-mixin, TemplateMixin)
 	$(GLINK MixinDeclaration)
 	$(B ;)
@@ -361,6 +361,42 @@ void main()
                             // the current namespace to refer to the entire module
  io.foo("bar");             // error, foo is bound into current namespace,
                             // foo is not a member of io
+--------------
+
+<h3>Scoped Imports</h3>
+
+    $(P Import declarations may be used at any scope. For example:)
+
+--------------
+void main() {
+  import std.stdio;
+  writeln("bar");
+}
+--------------
+
+    $(P The imports are looked up to satisfy any unresolved symbols at that scope.
+    Imported symbols may hide symbols from outer scopes.)
+
+
+	$(P In function scopes, imported symbols only become visible after the
+	import declaration
+	lexically appears in the function body. In other words, imported symbols
+	at function scope cannot be forward referenced.
+	)
+
+--------------
+void main() {
+  void writeln(string) {}
+  void foo() {
+    writeln("bar"); // calls main.writeln
+    import std.stdio;
+    writeln("bar"); // calls std.stdio.writeln
+    void writeln(string) {}
+    writeln("bar"); // calls main.foo.writeln
+  }
+  writeln("bar"); // calls main.writeln
+  std.stdio.writeln("bar");  // error, std is undefined
+}
 --------------
 
 <h3>Module Scope Operator</h3>

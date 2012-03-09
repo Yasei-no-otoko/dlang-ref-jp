@@ -404,6 +404,29 @@ ABC x;
 )
 
 
+<h3>Opaque Structs and Unions</h3>
+
+	$(P Opaque struct and union declarations do not have a $(GLINK StructBody):)
+
+---
+struct S;
+union U;
+---
+
+	$(P The members are completely hidden to the user, and so the only operations
+	on those types are ones that do not require any knowledge of the contents
+	of those types. For example:)
+
+---
+struct S;
+S.sizeof; // error, size is not known
+S s;      // error, cannot initialize unknown contents
+S* p;     // ok, knowledge of members is not necessary
+---
+
+	$(P They can be used to implement the
+	$(LINK2 http://en.wikipedia.org/wiki/Opaque_pointer, PIMPL idiom).)
+
 
 <h3>Static Initialization of Structs</h3>
 
@@ -442,7 +465,7 @@ static S q = S( 1, 2+3 ); // q.a = 1, q.b = 5, q.c = 0, q.d = 7
 
 ----
 void test(int i) {
-  S s = { 1, i }; // q.a = 1, q.b = i, q.c = 0, q.d = 7
+  S q = { 1, i }; // q.a = 1, q.b = i, q.c = 0, q.d = 7
 }
 ----
 
@@ -539,7 +562,7 @@ $(TR $(TD .offsetof) $(TD Offset in bytes of field from beginning of struct))
 )
 
 $(V2
-$(SECTION3 <a name="ConstStruct">Const and Invariant Structs</a>,
+$(SECTION3 <a name="ConstStruct">Const and Immutable Structs</a>,
 
         $(P A struct declaration can have a storage class of
         $(CODE const), $(CODE immutable) or $(CODE shared). It has an equivalent
@@ -553,7 +576,7 @@ const struct S { int a; int b = 2; }
 void main() {
   S s = S(3); // initializes s.a to 3
   S t;        // initializes t.a to 0
-  t = s;      // ok, t.a is now 3
+  t = s;      // error, t is const
   t.a = 4;    // error, t.a is const
 }
 ----
@@ -633,6 +656,7 @@ struct S {
 }
 ---
 
+	$(P Unions may not have fields that have postblits.)
 )
 )
 
@@ -643,6 +667,8 @@ $(SECTION3 <a name="StructDestructor">Struct Destructors</a>,
         Their purpose is to free up resources owned by the struct
         object.
         )
+
+	$(P Unions may not have fields that have destructors.)
 )
 )
 
@@ -667,13 +693,13 @@ t = s;    // t is assigned from s
         )
 
 ---
-t = S.opAssign(s);
+t.opAssign(s);
 ---
 
         $(P where $(CODE opAssign) is a member function of S:)
 
 ---
-S* opAssign(S s)
+S* opAssign(ref const S s)
 {   ... bitcopy *this into tmp ...
     ... bitcopy s into *this ...
     ... call destructor on tmp ...

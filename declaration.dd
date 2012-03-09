@@ -3,11 +3,27 @@ Ddoc
 $(SPEC_S Declarations,
 
 $(GRAMMAR
-$(GNAME Declaration):
-$(V1    $(B typedef) $(I Decl)
-)    $(B alias) $(I Decl)
-    $(I Decl)
+$(V1 $(GNAME Declaration):
+    $(GLINK TypedefDeclaration)
+    $(GLINK AliasDeclaration)
+    $(GLINK Decl)
 
+$(GNAME TypedefDeclaration):
+    $(B typedef) $(GLINK Decl)
+
+$(GNAME AliasDeclaration):
+    $(B alias) $(GLINK Decl)
+)$(V2 $(GNAME Declaration):
+    $(GLINK AliasDeclaration)
+    $(GLINK AliasThisDeclaration)
+    $(GLINK Decl)
+
+$(GNAME AliasDeclaration):
+    $(B alias) $(GLINK BasicType) $(GLINK Declarator)
+
+$(GNAME AliasThisDeclaration):
+    $(B alias) $(I Identifier) $(B this)
+)
 $(GNAME Decl):
     $(GLINK StorageClasses) $(I Decl)
     $(GLINK BasicType) $(GLINK Declarators) $(B ;)
@@ -104,7 +120,8 @@ $(GNAME StorageClass):
     $(B auto)
     $(B const)
     $(B deprecated)
-    $(B extern)
+$(V2      $(B enum)
+)    $(B extern)
     $(B final)
 $(V2      $(B immutable)
     $(B inout)
@@ -119,7 +136,14 @@ $(V2      $(B immutable)
     $(B synchronized)
 
 $(GNAME Property):
-    $(B @) $(I Identifier)
+    $(B @) $(GLINK PropertyIdentifier)
+
+$(GNAME PropertyIdentifier):
+    $(B property)
+    $(B safe)
+    $(B trusted)
+    $(B system)
+    $(B disable)
 
 $(GNAME Type):
     $(GLINK BasicType)
@@ -361,9 +385,8 @@ myint m;        // initialized to 7
 <h3><a name="alias">Type Aliasing</a></h3>
 
         $(P
-        It's sometimes convenient to use an alias for a type, such as a shorthand for typing
-        out a long, complex type like a pointer to a function. In D, this is done with the
-        alias declaration:
+	$(GLINK AliasDeclaration)s create a symbol that is an alias for another type,
+	and can be used anywhere that other type may appear.
         )
 
 --------------------
@@ -597,11 +620,12 @@ $(GNAME VoidInitializer):
     $(B void)
 )
 
-        Normally, variables are initialized either with an explicit
+        $(P Normally, variables are initialized either with an explicit
         $(I Initializer) or are set to the default value for the
         type of the variable. If the $(I Initializer) is $(B void),
         however, the variable is not initialized. If its value is
         used before it is set, undefined program behavior will result.
+	)
 
 -------------------------
 void foo() {
@@ -610,8 +634,18 @@ void foo() {
 }
 -------------------------
 
-        Therefore, one should only use $(B void) initializers as a
+        $(P Therefore, one should only use $(B void) initializers as a
         last resort when optimizing critical code.
+	)
+
+<h3>Global and Static Initializers</h3>
+
+	$(P The $(GLINK Initializer) for a global or static variable must be
+	evaluatable at compile time.
+	Whether some pointers can be initialized with the addresses of other
+	functions or data is implementation defined.
+	Runtime initialization can be done with static constructors.
+	)
 
 )
 

@@ -25,31 +25,31 @@ $(SPEC_S Classes,
 
 $(GRAMMAR
 $(GNAME ClassDeclaration):
-    $(B class) $(I Identifier) $(I BaseClassList)$(OPT) $(I ClassBody)
+    $(B class) $(I Identifier) $(GLINK BaseClassList)$(OPT) $(GLINK ClassBody)
     $(GLINK2 template, ClassTemplateDeclaration)
 
 $(GNAME BaseClassList):
-    $(B :) $(I SuperClass)
-    $(B :) $(I SuperClass) $(B ,) $(I Interfaces)
-    $(B :) $(I Interfaces)
+    $(B :) $(GLINK SuperClass)
+    $(B :) $(GLINK SuperClass) $(B ,) $(GLINK Interfaces)
+    $(B :) $(GLINK Interfaces)
 
 $(GNAME SuperClass):
     $(I Identifier)
 
 $(GNAME Interfaces):
-    $(I Interface)
-    $(I Interface) $(B ,) $(I Interfaces)
+    $(GLINK Interface)
+    $(GLINK Interface) $(B ,) $(I Interfaces)
 
 $(GNAME Interface):
     $(I Identifier)
 
 $(GNAME ClassBody):
     $(B {) $(B })
-    $(B {) $(I ClassBodyDeclarations) $(B })
+    $(B {) $(GLINK ClassBodyDeclarations) $(B })
 
 $(GNAME ClassBodyDeclarations):
-    $(I ClassBodyDeclaration)
-    $(I ClassBodyDeclaration) $(I ClassBodyDeclarations)
+    $(GLINK ClassBodyDeclaration)
+    $(GLINK ClassBodyDeclaration) $(I ClassBodyDeclarations)
 
 $(GNAME ClassBodyDeclaration):
     $(GLINK2 module, DeclDef)
@@ -110,12 +110,29 @@ class Foo { }
 Foo var;
 ------
 
+<h3>Access Control</h3>
+
+	$(P Access to class members is controlled using $(GLINK2 attribute, ProtectionAttribute)s.
+	The default protection attribute is $(D public).
+	Access control does not affect visibility.
+	) 
+
 <h3>Fields</h3>
 
         $(P Class members are always accessed with the . operator.
-        There are no :: or -&gt;
-        operators as in C++.
         )
+
+	$(P Members of a base class can be accessed by prepending the name of
+	the base class followed by a dot:)
+
+---
+class A { int a; }
+class B : A { int a; }
+
+void foo(B b) {
+  b.a = 3;   // accesses field B.a
+  b.A.a = 4; // accesses field A.a
+---
 
         $(P The D compiler is free to rearrange the order of fields in a class to
         optimally pack them in an implementation-defined manner.
@@ -188,6 +205,24 @@ void test(Foo foo) {
         called $(I this) through which the class object's other members
         can be accessed.
         )
+
+$(V2
+	$(P Non-static member functions can have, in addition to the usual
+	$(GLINK2 declaration, FunctionAttribute)s, the attributes
+	$(D const), $(D immutable), $(D shared), or $(D inout).
+	These attributes apply to the hidden $(I this) parameter.
+	)
+---
+class C {
+  int a;
+  const void foo() {
+    a = 3; // error, 'this' is const
+  }
+  void foo() immutable {
+    a = 3; // error, 'this' is immutable
+  }
+---
+)
 
 <h3>$(LNAME2 synchronized-functions, Synchronized Functions)</h3>
 
@@ -316,7 +351,9 @@ this() { }
         apply:)
 
         $(OL
-        $(LI It is illegal for constructors to mutually call each other:
+        $(LI It is illegal for constructors to mutually call each other,
+	although the compiler is not required to detect it. It will result
+	in undefined behavior.
 
 ------
 this() { this(1); }
@@ -452,19 +489,25 @@ $(GNAME StaticConstructor):
     $(B static this ( )) $(GLINK2 function, FunctionBody)
 )
 
-        A static constructor is defined as a function that performs
-        initializations before the
-        $(D main()) function gets control. Static constructors are used to
-        initialize
+	$(P
+        $(V1 A static constructor is a function that performs
+        initializations before the $(D main()) function gets control.)
+
+        $(V2 A static constructor is a function that performs
+        initializations of thread local data before the $(D main()) function gets control for
+	the main thread, and upon thread startup.)
+
+	Static constructors are used to initialize
         static class members
         with values that cannot be computed at compile time.
-        <p>
+        )
 
-        Static constructors in other languages are built implicitly by using
+        $(P Static constructors in other languages are built implicitly by using
         member
         initializers that can't be computed at compile time. The trouble with
         this stems from not
         having good control over exactly when the code is executed, for example:
+	)
 
 ------
 class Foo {
@@ -505,23 +548,34 @@ class Foo {
 }
 ------
 
-        $(D static this()) is called by the startup code before
-        $(D main()) is called. If it returns normally
+	$(P
+	$(V1
+	If $(D main()) returns normally
         (does not throw an exception), the static destructor is added
         to the list of functions to be
         called on program termination.
+	)
+	$(V2
+	If $(D main()) or the thread returns normally,
+        (does not throw an exception), the static destructor is added
+        to the list of functions to be
+        called on thread termination.
+	)
         Static constructors have empty parameter lists.
-        <p>
+        )
 
+	$(P
         Static constructors within a module are executed in the lexical
         order in which they appear.
         All the static constructors for modules that are directly or
         indirectly imported
         are executed before the static constructors for the importer.
-        <p>
+        )
 
+	$(P
         The $(B static) in the static constructor declaration is not
         an attribute, it must appear immediately before the $(B this):
+	)
 
 ------
 class Foo {
@@ -553,16 +607,19 @@ class Foo {
 }
 ------
 
-        A static destructor gets called on program termination, but only if
-        the static constructor
+	$(P
+        A static destructor gets called on $(V1 program)$(V2 thread) termination,
+	but only if the static constructor
         completed successfully.
         Static destructors have empty parameter lists.
         Static destructors get called in the reverse order that the static
         constructors were called in.
-        <p>
+        )
 
+	$(P
         The $(B static) in the static destructor declaration is not
         an attribute, it must appear immediately before the $(B ~this):
+	)
 
 ------
 class Foo {
@@ -629,9 +686,17 @@ class Date {
         $(P The class invariant is a contract saying that the asserts must hold
         true.
         The invariant is checked when a class constructor completes,
-        at the start of the class destructor, before a public or exported
-        member is run, and after a public or exported function finishes.
+        at the start of the class destructor. For public or exported functions,
+	the order of execution is:
         )
+
+	$(OL
+	$(LI preconditions)
+	$(LI invariant)
+	$(LI body)
+	$(LI invariant)
+	$(LI postconditions)
+	)
 
         $(P The code in the invariant may not call any public non-static members
         of the
@@ -639,6 +704,8 @@ class Date {
         Doing so will result in a stack overflow, as the invariant will wind
         up being called in an infinitely recursive manner.
         )
+
+	$(V2 $(P Invariants are implicitly const.))
 
         $(P Since the invariant is called at the start of public or
         exported members, such members should not be called from
@@ -795,16 +862,12 @@ $(GNAME AliasThis):
     $(B alias) $(I Identifier) $(B this;)
 )
 
-        $(P An $(I AliasThis) declaration names another class or struct member
-        to which any undefined lookups will be forwarded.
+        $(P An $(I AliasThis) declaration names a member to subtype.
         The $(I Identifier) names that member.
         )
 
         $(P A class or struct can be implicitly converted to the $(I AliasThis)
         member.
-        )
-
-        $(P There is only one $(I AliasThis) allowed per class or struct.
         )
 
 ---
@@ -825,6 +888,58 @@ void test() {
   i = foo(s);  // implicit conversion to int
 }
 ---
+
+        $(P If the member is a class or struct, undefined lookups will
+        be forwarded to the $(I AliasThis) member.
+        )
+
+---
+struct Foo
+{
+  int baz = 4;
+  int get() { return 7; }
+}
+
+class Bar
+{
+  Foo foo;
+  alias foo this;
+}
+
+void test() {
+  auto bar = new Bar;
+  int i = bar.baz; // i == 4
+  i = bar.get(); // i == 7
+}
+---
+
+        $(P If the $(I Identifier) refers to a property member
+        function with no parameters, conversions and undefined
+        lookups are forwarded to the return value of the function.
+        )
+
+---
+struct S
+{
+  int x;
+  @property int get() {
+    return x * 2;
+  }
+  alias get this;
+}
+
+void test() {
+  S s;
+  s.x = 2;
+  int i = s; // i == 4
+}
+---
+
+        $(P Multiple $(I AliasThis) are allowed. For implicit conversions
+        and forwarded lookups, all $(I AliasThis) declarations are attempted;
+        if more than one $(I AliasThis) is eligible, the ambiguity is
+        disallowed by raising an error.
+        )
 )
 
 <h3>$(LNAME2 auto, Scope Classes)</h3>
@@ -954,6 +1069,7 @@ void func() {
 }
 ------
 
+$(V1
         While a non-static nested class can access the stack variables
         of its enclosing function, that access becomes invalid once
         the enclosing function exits:
@@ -1012,6 +1128,7 @@ int test() {
   return b.foo();             // Ok, using cached copy of func().m
 }
 ------
+)
 
         $(P A $(I this) can be supplied to the creation of an
         inner class instance by prefixing it to the $(I NewExpression):
@@ -1066,7 +1183,7 @@ void test() {
 }
 ----
 
-<h3>Anonymous Nested Classes</h3>
+<h3>$(LNAME2 anonymous, Anonymous Nested Classes)</h3>
 
         $(P An anonymous nested class is both defined and instantiated with
         a $(I NewAnonClassExpression):
@@ -1095,7 +1212,7 @@ new ($(I ArgumentList)) $(I Identifier) ($(I ArgumentList));
         )
 
 $(V2
-$(SECTION3 <a name="ConstClass">Const, Immutable and Shared Classes</a>
+$(SECTION3 <a name="ConstClass">Const Immutable and Shared Classes</a>,
         $(P If a $(I ClassDeclaration) has a $(CODE const), $(CODE immutable)
         or $(CODE shared) storage class, then it is as if each member of the class
         was declared with that storage class.
