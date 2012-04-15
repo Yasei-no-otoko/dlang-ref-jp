@@ -1,0 +1,28 @@
+Ddoc
+
+$(D_S 日本語訳について,
+
+$(P
+	この文書は、プログラミング言語 D の日本語リファレンスです。
+)
+
+$(P
+	$(LINK2 http://dlang.org/, dlang.org) の文書群を、
+	Walter Bright 氏の許可を得て $(LINK2 http://www.kmonos.net/, k.inaba) が日本語へ翻訳しています。
+)
+
+$(P
+	翻訳サイト用のレポジトリは
+	$(LINK2 https://github.com/kinaba/dlang-ref-jp, github/kinaba/dlang-ref-jp)
+	です。fork, pull request 等お気軽にどうぞ。
+
+	誤訳の指摘などは、ページ右上の [Imporove this page] ボタンからできます。
+	あるいはメール (kiki .a.t. kmonos .d.o.t. net) や
+	Twitter で $(LINK2 http://twitter.com/kinaba, @kinaba) に話しかけて下さい。大歓迎です。
+)
+
+)
+
+Macros:
+	TITLE=日本語訳について
+	WIKI=Intro
