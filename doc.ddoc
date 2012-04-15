@@ -245,7 +245,7 @@ $(NAVBLOCK
 
 SUBNAV_FEATURES=
 $(NAVBLOCK
-	$(TOCENTRYT features2.html, Language changes for D, 機能一覧)
+	$(TOCENTRYT features2.html, Language changes for D, D2 の機能)
 )
 
 SUBNAV_DOWNLOAD=
