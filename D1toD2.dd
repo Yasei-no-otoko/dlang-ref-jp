@@ -2,86 +2,86 @@ Ddoc
 
 $(D_S $(TITLE),
 
-	$(P There are many changes to the D programming language that affect
-	migrating source code from D1 to D2.
-	This is an outline of changes to look for and a guide to how to modify
-	the code.
-	See $(LINK2 features2.html, D 2.0 Enhancements) for a complete list
-	of changes to the language.
+	$(P D言語に対して行われた変更の中で、
+	D1 から D2 へとソースコードを移行する際に影響するものは多くあります。
+	このドキュメントは、
+	どのようにコードを修正すればよいかのガイドです。
+	言語に対する変更点の一覧は、
+	$(LINK2 features2.html, >D 2.0 の新機能) のページをご覧下さい。
 	)
 
-	$(P This document is incomplete.)
+	$(P このドキュメントはまだ不完全です。)
 
 $(UL
-    $(LI Core Language
+    $(LI 言語機能
     $(UL
-	$(ITEMR new_keywords, New Keywords)
-	$(ITEMR global_variables, Global Variables)
-	$(ITEMR static_arrays, Static Arrays are now Value Types)
-	$(ITEMR immutable_string, String Literals are Immutable)
+	$(ITEMR new_keywords, 新しい予約語)
+	$(ITEMR global_variables, グローバル変数)
+	$(ITEMR static_arrays, 静的配列は値型)
+	$(ITEMR immutable_string, 文字列リテラルはimmutable)
     )
     )
 
-    $(LI Phobos Library
+    $(LI Phobos ライブラリ
     $(UL
     )
     )
 )
 
-$(ITEM new_keywords, New Keywords)
+$(ITEM new_keywords, 新しい予約語)
 
-	$(P D2 adds the following keywords:
+	$(P D2 には以下の予約語が追加されています:
 	$(D_KEYWORD pure),
 	$(D_KEYWORD nothrow),
-	$(D_KEYWORD shared), and
-	$(D_KEYWORD immutable).
-	Any use of them in D1 code must be renamed.
-	Any variable names starting with two underscores
-	should be renamed.
+	$(D_KEYWORD shared),
+	$(D_KEYWORD immutable)。
+	D1のコードがこれらの単語を使っていた場合は、リネームが必要です。
+	また、アンダースコア ( _ ) 2つで始まる変数名も、
+	すべてリネームが必要です。
 	)
 
-$(ITEM global_variables, Global Variables)
+$(ITEM global_variables, グローバル変)
 
-	$(P Global variables are now, by default, stored in thread local
-	storage. To put them back in global storage, use the $(D_KEYWORD __gshared)
-	storage class:)
+	$(P グローバル変数は、デフォルトでは、スレッドローカル記憶域に保存されるようになりました。
+	これをグローバル領域に戻すには $(D_KEYWORD __gshared)
+	記憶域クラスを指定します:)
 
 ---
-int foo = 7; // D1 code
-$(B __gshared) int foo = 7; // D2 equivalent
+int foo = 7; // D1 のコード
+$(B __gshared) int foo = 7; // D2 で同じ事をする場合
 ---
 
-	$(P Carefully consider whether or not those variables actually should
-	go into thread local storage, rather than being implicitly shared
-	among all threads.
+	$(P グローバル変数が暗黙に全てのスレッドで共有されるべきか、
+	各スレッド別の記憶領域に格納されるべきかは、
+	注意深く判断して下さい。
 	)
 
-$(ITEM static_arrays, Static Arrays are now Value Types)
+$(ITEM static_arrays, 静的配列は値型)
 
-	$(P In D1, a static array function parameter is passed by
-	reference, meaning a pointer to the start of the static array
-	is passed as an argument.
-	This means that any changes to the array contents made by the
-	function will be visible to the function's caller.
-	In D2, a copy of the whole static
-	array is passed as an argument. Changes to the array contents by
-	the function are not visible to the function's caller, as it is
-	a separate copy.)
+	$(P D1では、関数引数に静的配列を指定した場合、参照渡しが行われました。
+	つまり、その静的配列の先頭を指すポインタが、
+	実引数として渡されました。
+	これはすなわち、関数内で配列の内容に変更を加えた場合、
+	呼び出し側にもその変更が見えるということです。
+	D2 では、静的配列のコピーが実引数として渡されます。
+	関数内での配列内容への変更は、
+	別のコピーへの変更ですから、
+	呼び出し側には見えません。)
 
-	$(P To migrate, add the keyword $(D_KEYWORD ref) to the parameter
-	declaration:)
+	$(P D1と同じ意味を保った動作にするには、予約語 $(D_KEYWORD ref)
+	を引数宣言に追加します:)
 
 ---
-void foo(int[3] array);      // D1 code
-void foo($(B ref) int[3] array);  // D2 equivalent
+void foo(int[3] array);      // D1 のコード
+void foo($(B ref) int[3] array);  // D2 で同じ事をする場合
 ---
 
-$(ITEM immutable_string, String Literals are Immutable)
+$(ITEM immutable_string, 文字列リテラルは immutable)
 
-	$(P String literals in D1 have type $(D char[]), but in D2 they
-	have type $(D immutable(char)[]), which is aliased for convenience
-	under the name $(D string).  To migrate usually involves doing a
-	global search replace: )
+	$(P D1の文字列リテラルの型は $(D char[]) でしたが、
+	D2 では $(D immutable(char)[]) で、別名として
+	$(D string) に alias されています。
+	コードの移植には、通常、ソースコード全体を検索して以下の置換を実行する必要があります:)
 
 	$(TABLE1
 	$(TR $(TH from)$(TH to))
@@ -90,15 +90,15 @@ $(ITEM immutable_string, String Literals are Immutable)
 	$(TR $(TD dchar[])$(TD dstring))
 	)
 
-	$(P This will take care of most of the issues.
-	For the rest, where mutable strings are desired, there will
-	be some work necessary.
+	$(P Thこれで問題の大部分は解決するでしょう。
+	解決しなかった部分、つまり実際に書き換え可能な文字列が必要な部分では、
+	いくらかの作業が必要です。
 	)
 
 )
 
 Macros:
-	TITLE=Migrating D1 Code to D2
+	TITLE=D1 コードの D2 への移植
 	WIKI=D1toD2
 	ITEMR=$(LI $(LINK2 #$1, $+))
 	ITEM=<hr><h3><a name="$1">$+</a></h3>
