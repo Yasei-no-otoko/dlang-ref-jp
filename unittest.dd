@@ -1,18 +1,18 @@
 Ddoc
 
-$(SPEC_S Unit Tests,
+$(SPEC_S 単体テスト,
 
 $(GRAMMAR
 $(GNAME UnitTest):
 	$(B unittest) $(GLINK2 function, FunctionBody)
 )
 
-	$(P Unit tests are a series of test cases applied to a module to determine
-	if it is working properly. Ideally, unit tests should be run every
-	time a program is compiled.
+	$(P 単体テストは、クラスが適切に動作しているかのチェックを行う、
+	一連のテストケースのことです。理想的には単体テストは、
+	プログラムがコンパイルされるたび毎回実行されるべきです。
 	)
 
-	$(P Unit tests are a special function defined like:)
+	$(P 単体テストは、以下のように定義される特別な関数です:)
 
 ------
 unittest {
@@ -20,22 +20,22 @@ unittest {
 }
 ------
 
-	$(P There can be any number of unit test functions in a module,
-	including within struct, union and class declarations.
-	They are executed in lexical order.
-	Stylistically, a unit test for a function should appear immediately
-	following it.
+	$(P モジュール内には、構造体、union、classの中を含めて、
+	何個でも unittest 関数を置くことができます。
+	これらはソースコードの先頭方向から順番に実行されます。
+	スタイルとしては、各関数のための単体テストは、
+	テスト対象の関数の直後に書かれるべきです。
 	)
 
-	$(P A compiler switch, such as $(DPLLINK dmd-windows.html#switches, $(B -unittest))
-	for $(B dmd), will
-	cause the unittest test code to be compiled and incorporated into
-	the resulting executable. The unittest code gets run after
-	static initialization is run and before the $(D main())
-	function is called.
+	$(P コンパイラのスイッチ、$(B dmd) では $(DPLLINK dmd-windows.html#switches, $(B -unittest))
+	fを指定することで、
+	生成される実行バイナリにテストコードを含めることができます。
+	単体テストのコードは、静的な初期化が済んだ後、
+	$(D main())
+	関数が実行される前に、呼び出されます。
 	)
 
-	$(P For example, given a class Sum that is used to add two values:)
+	$(P 例えば、二つの数を足すクラス Sum ならば:)
 
 ------
 class Sum {
@@ -50,17 +50,17 @@ class Sum {
 }
 ------
 
-<h3>Versioning</h3>
+<h3>バージョン指定</h3>
 
-	$(P The $(DDSUBLINK version, PredefinedVersions, version identifier)
-	$(B unittest) is predefined if the compilation
-	is done with unit tests enabled.
+	$(P 単体テストが有効な状態でコンパイルしているときは、
+	$(DDSUBLINK version, PredefinedVersions, バージョン識別子)
+	$(B unittest) が定義済みとなります。
 	)
 
 )
 
 Macros:
-	TITLE=Unit Tests
+	TITLE=単体テスト
 	WIKI=UnitTests
 	CATEGORY_SPEC=$0
 	FOO=
