@@ -64,7 +64,7 @@ TARGETS=32-64-portability.html abi.html acknowledgements.html			\
 	template.html template-comparison.html template-mixin.html			\
 	templates-revisited.html traits.html tuple.html type.html			\
 	unittest.html variadic-function-templates.html version.html			\
-	warnings.html wc.html windbg.html windows.html
+	warnings.html wc.html windbg.html windows.html japanese.html
 
 PDFINTRO=index.html overview.html wc.html warnings.html builtin.html	\
 	ctod.html cpptod.html pretod.html template-comparison.html

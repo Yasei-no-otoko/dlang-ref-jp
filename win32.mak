@@ -14,7 +14,7 @@ SRC= $(SPECSRC) cpptod.dd ctod.dd pretod.dd cppdbc.dd index.dd			\
 	const-faq.dd concepts.dd d-floating-point.dd migrate-to-shared.dd	\
 	D1toD2.dd pdf-intro-cover.dd pdf-spec-cover.dd pdf-tools-cover.dd	\
 	intro-to-datetime.dd simd.dd deprecate.dd download.dd				\
-	32-64-portability.dd
+	32-64-portability.dd japanese.dd
 
 SPECSRC=spec.dd lex.dd module.dd declaration.dd type.dd property.dd		\
 	attribute.dd pragma.dd expression.dd statement.dd arrays.dd			\
@@ -54,7 +54,7 @@ TARGETS=cpptod.html ctod.html pretod.html cppdbc.html index.html		\
 	unittest.html hash-map.html pdf-intro-cover.html					\
 	pdf-spec-cover.html pdf-tools-cover.html intro-to-datetime.html		\
 	simd.html deprecate.html download.html 32-64-portability.html \
-        d-array-article.html
+        d-array-article.html japanese.html
 
 
 PDFINTRO=index.html overview.html wc.html warnings.html builtin.html	\
@@ -210,6 +210,8 @@ interface.html : $(DDOC) interface.dd
 interfaceToC.html : $(DDOC) interfaceToC.dd
 
 index.html : $(DDOC) index.dd
+
+japanese.html : $(DDOC) japanese.dd
 
 intro-to-datetime.html : $(DDOC) intro-to-datetime.dd
 
