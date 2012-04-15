@@ -1,38 +1,38 @@
 Ddoc
 
-$(SPEC_S Application Binary Interface,
+$(SPEC_S アプリケーションバイナリインターフェイス,
 
-	$(P A D implementation that conforms to the D ABI (Application Binary
-	Interface)
-	will be able to generate libraries, DLL's, etc., that can interoperate
-	with
-	D binaries built by other implementations.
+	$(P ABI（アプリケーション・バイナリインターフェイス）
+	に従ったDの実装は、
+	他の実装によって生成されたライブラリや
+	DLL
+	などと相互利用することが可能なバイナリを出力します。
 	)
 
 $(SECTION3 C ABI,
 
-	$(P The C ABI referred to in this specification means the C Application
-	Binary Interface of the target system.
-	C and D code should be freely linkable together, in particular, D
-	code shall have access to the entire C ABI runtime library.
+	$(P この仕様で C ABI として参照するのは、対象とするシステムの
+	C言語のアプリケーション・バイナリインターフェイスです。
+	C と D のコードは制限無くリンクでき、特に、D のコードからは
+	C の ABI を持ったランタイムライブラリには完全にアクセス可能となっています。
 	)
 )
 
-$(SECTION3 Endianness,
+$(SECTION3 エンディアン,
 
-	$(P The $(LINK2 http://en.wikipedia.org/wiki/Endianness, endianness)
-	(byte order) of the layout of the data
-	will conform to the endianness of the target machine.
-	The Intel x86 CPUs are $(I little endian) meaning that
-	the value 0x0A0B0C0D is stored in memory as:
-	$(CODE 0D 0C 0B 0A).
+	$(P データレイアウトの $(LINK2 http://en.wikipedia.org/wiki/Endianness, エンディアン)
+	(バイトオーダー) は、
+	対象マシンのエンディアンに従います。
+	Intel x86 CPU では、
+	値 0x0A0B0C0D がメモリ上で
+	$(CODE 0D 0C 0B 0A) と表現される $(I リトルエンディアン) になります。
 	)
 )
 
-$(SECTION3 Basic Types,
+$(SECTION3 基本型,
 
 	$(TABLE1
-	$(TROW bool, 8 bit byte with the values 0 for false and 1 for true)
+	$(TROW bool, 8 bit byte。0 が false、1 が true を表す)
 	$(TROW byte, 8 bit signed value)
 	$(TROW ubyte, 8 bit unsigned value)
 	$(TROW short, 16 bit signed value)
@@ -43,38 +43,38 @@ $(SECTION3 Basic Types,
 	$(TROW ulong, 64 bit unsigned value)
 	$(TROW cent, 128 bit signed value)
 	$(TROW ucent, 128 bit unsigned value)
-	$(TROW float, 32 bit IEEE 754 floating point value)
-	$(TROW double, 64 bit IEEE 754 floating point value)
-	$(TROW real, implementation defined floating point value$(COMMA) for x86 it is
-	 80 bit IEEE 754 extended real)
+	$(TROW float, 32 bit IEEE 754 浮動小数点数)
+	$(TROW double, 64 bit IEEE 754 浮動小数点数)
+	$(TROW real, 実装定義の浮動小数点数。
+	 x86 では 80 bit IEEE 754 拡張実数)
 	)
 )
 
-$(SECTION3 Delegates,
+$(SECTION3 delegate,
 
-	$(P Delegates are $(I fat pointers) with two parts:)
+	$(P delegate は２つの部分から構成される $(I fat pointers) です:)
 
-	$(TABLE2 Delegate Layout,
-	$(TR $(TH offset) $(TH property) $(TH contents))
-	$(TR $(TD 0) $(TD $(CODE .ptr)) $(TD context pointer))
-	$(TR $(TD $(I ptrsize)) $(TD $(CODE .funcptr)) $(TD pointer to function))
+	$(TABLE2 delegate のレイアウト,
+	$(TR $(TH オフセット) $(TH プロパティ) $(TH 内容))
+	$(TR $(TD 0) $(TD $(CODE .ptr)) $(TD コンテキストポインタ))
+	$(TR $(TD $(I ptrsize)) $(TD $(CODE .funcptr)) $(TD 関数ポインタ))
 	)
 
-	$(P The $(I context pointer) can be a class $(I this)
-	reference, a struct $(I this) pointer, a pointer to
-	a closure (nested functions) or a pointer to an enclosing
-	function's stack frame (nested functions).
+	$(P $(I コンテキストポインタ) は、クラスの $(I this)
+	参照か構造体の $(I this) ポインタ、あるいは
+	クロージャ、
+	または周囲の関数のスタックフレーム（ネスト関数の場合）へのポインタです。
 	)
 )
 
-$(SECTION3 Structs,
+$(SECTION3 構造体,
 
-	$(P Conforms to the target's C ABI struct layout.)
+	$(P 対象環境の C ABI の構造体レイアウトに従います。)
 )
 
-$(SECTION3 Classes,
+$(SECTION3 クラス,
 
-	$(P An object consists of:)
+	$(P オブジェクトのメモリ構成は次のようになっています:)
 
 $(TABLE2 Class Object Layout,
 $(TR $(TH size) $(TH property) $(TH contents))
