@@ -12,7 +12,7 @@ DDOC=
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="$(META_KEYWORDS)" />
 <meta name="description" content="$(META_DESCRIPTION)" />
-<title>$(TITLE) - D Programming Language</title>
+<title>$(TITLE) - プログラミング言語 D (日本語訳)</title>
 <link rel="stylesheet" type="text/css" href="css/style.css" />
 <link rel="stylesheet" type="text/css" href="css/print.css" media="print" />
 <link rel="shortcut icon" href="favicon.ico" />
