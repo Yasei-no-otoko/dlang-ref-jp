@@ -1,9 +1,29 @@
-Started moving the Japanese translation of D Programming Language Website
+Written by Kazuhiro Inaba (www.kmonos.net)
+
+* What is this?
+
+Japanese translation of D Programming Language
   http://www.kmonos.net/alang/d/
-to github, and translation on DDoc, not directly on HTML.
-(Still thinking about how to translate Phobos documents, though...)
+was suspended from spring 2011.
+Now I am rebooting it and catching up the latest version (dmd v2.059).
 
-Currently, I have only set up the repository.
-I will port the translation to DDoc soon.
+Changes from the old workflow is:
+ - Translate .dd files, not .html files.
+ - Move repository to public github.
+ - D1 refernce will not be updated any more.
+ - (For now) Phobos reference is not maintained.
+   I will think about Phobos after catching up D 2.059.
 
-Kazuhiro Inaba (www.kmonos.net)
+* Milestone
+
+For each release of dmd, I'd like to sync up to the version.
+Current milestone is dmd v2.059, the following revision:
+https://github.com/D-Programming-Language/d-programming-language.org/tree/948c9b0856ba072d3b25e72c4f7191657cbf0eee
+
+* Contributions
+
+I welcome any help!
+If you were interested in translation, just do it and please send a pull request.
+  (One request: please do not change the line numbers while translation.
+   It makes merging of the updates in original English version much easier.)
+Or ask me @kinaba at Twitter.
