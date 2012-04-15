@@ -15,7 +15,7 @@ body
 
 h1, h2, h3, h4, h5, h6
 {
-	font-family: Georgia, "Times New Roman", Times, serif;
+	font-family: Georgia, "Times New Roman", Times, sans-serif;
 	font-weight: normal;
 	color: #633;
 	line-height: normal;
@@ -52,7 +52,7 @@ form
 
 blockquote
 {
-	font-family: Georgia, "Times New Roman", Times, serif;
+	font-family: Georgia, "Times New Roman", Times, sans-serif;
 	background-color: #e5e5e5;
 	display: block;
 	padding: 0.25em 1em;
@@ -62,7 +62,7 @@ blockquote
 blockquote p:before
 {
 	content: "\201C";
-	font-family: Georgia, "Times New Roman", Times, serif;
+	font-family: Georgia, "Times New Roman", Times, sans-serif;
 	color: #bacaca;
 	display: block;
 	font-size: 700%;
