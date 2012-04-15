@@ -1,13 +1,13 @@
 Ddoc
 
-$(SPEC_S COM Programming,
+$(SPEC_S COM プログラミング,
 
-	$(P COM interfaces are all derived from $(D std.c.windows.com.IUnknown).
+	$(P COM インターフェイスは全て $(D std.c.windows.com.IUnknown) を継承します。
 	)
 )
 
 Macros:
-	TITLE=COM Programming
+	TITLE=COM プログラミング
 	WIKI=COM
 	CATEGORY_HOWTOS=$0
 
