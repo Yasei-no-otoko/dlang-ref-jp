@@ -1,59 +1,59 @@
 Ddoc
 
-$(SPEC_S Memory Safety,
+$(SPEC_S メモリ安全性,
 
-	$(P $(I Memory Safety) for a program is defined as it being
-	impossible for the program to corrupt memory.
-	Therefore, the Safe D consists only of programming language
-	features that are guaranteed to never result in memory
-	corruption.
+	$(P プログラムの $(I メモリ安全性 (Memory Safety)) の定義は、
+	そのプログラムがメモリを破壊することが不可能であることです。
+	したがって、
+	Safe D のプログラミング言語としての機能は、
+	メモリ破壊を決して引き起こさないと保証されたものだけから成り立っています。
 	)
 
-	$(P Safe D is enabled on a per-module basis by compiling with
-	the $(B -safe) compiler switch.
+	$(P Safe D は、モジュール単位で、
+	コンパイラの $(B -safe) スイッチによって有効にすることができます。
 	)
 
-<h3>Proscribed Forms</h3>
+<h3>禁止される項目</h3>
 
 $(UL
-	$(LI $(DDLINK iasm, Inline Assembler, Inline assembler).
+	$(LI $(DDLINK iasm, Inline Assembler, インラインアセンブラ)
 	)
 
-	$(LI Casting away const or immutable attributes.
+	$(LI const や immutable 属性をキャストで取り除くこと
 	)
 
-	$(LI Casting away shared attributes.
+	$(LI shared 属性をキャストで取り除くこと
 	)
 
-	$(LI Casting from one pointer type to another pointer type,
-	except for:
+	$(LI ポインタ型から別のポインタ型へのキャスト。
+	ただし以下を除く:
 	$(UL
-		$(LI casting to $(CODE void*) is allowed)
-		$(LI casting from a pointer to an arithmetic type to
-		a pointer to another arithmetic type of the same or
-		smaller size is allowed)
+		$(LI $(CODE void*) へのキャストは許可)
+		$(LI 数値型へのポインタから、
+		同じまたは小さいサイズの別の数値型ポインタへのキャストは許可
+		)
 	)
 	)
 
-	$(LI Casting from a non-pointer type to a pointer type.
+	$(LI 非ポインタ型からポインタ型へのキャスト
 	)
 )
 
-	$(P A safe module can import and use the public interface of
-	a system module.
+	$(P Safe なモジュールから、システムモジュールを import
+	してその public なインターフェイスを使用することは可能です。
 	)
 
-<h3>Limitations</h3>
+<h3>制限</h3>
 
-	$(P Safe D does not imply that code is portable, uses only
-	sound programming practices, is free of byte order dependencies,
-	or other bugs. It is focussed only on eliminating memory corruption
-	possibilities.
+	$(P Safe D は、コードに可搬性があることも、
+	健全なプログラミング習慣に従っていることも、バイト順に影響されないことも、
+	その他のバグを引き起こさないことも、保証しません。
+	メモリ破壊の可能性のみに焦点を当てた仕様となっています。
 	)
 
 )
 
 Macros:
-	TITLE=Memory-Safe-D-Spec
+	TITLE=Memory Safe D 仕様
 	WIKI=SafeDSpec
 	CATEGORY_SPEC=$0
