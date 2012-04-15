@@ -2,15 +2,15 @@ Ddoc
 
 $(SPEC_S $(TITLE),
 
-	$(P Although D is designed to make it easy to port code between
-	32 and 64 bit modes, being a systems programming language,
-	dependencies can creep in. This guide points out what changes
-	between the two.
+	$(P D は 32bit と 64bit の間のコード移植性を容易に保てるように設計されていますが、
+	システムプログラミング言語であるという性質上、
+	どうしても、依存性が忍び込んでしまうことがあります。
+	ここでは、32bit と 64bit での違いについて説明します。
 	)
 
-$(SECTION2 Versions,
-	$(P Not all code can be made portable between 32 and 64 bits,
-	and must be versioned. The following works:
+$(SECTION2 version,
+	$(P 全てのコードが32bit/64bit互換で書けるとは限らず、
+	versionによる切り分けが必要です。以下のように記述できます:
 	)
 
 ---
@@ -22,54 +22,54 @@ else
     static assert("unsupported target")
 ---
 
-	$(P It is best to write versioning in that manner to give a compile
-	time error on a new target, rather than guessing in advance what, for example,
-	a 64 bit ARM target might require.
-	Experience shows that guesses about how an unfamiliar platform might work
-	always get it wrong.
-	Save those decisions for when one is actually working on a 64 bit ARM.
+	$(P 未知のターゲット環境に対しては、
+	バージョン切り分けの結果はコンパイルエラーとするべきです。
+	例えば、64bit ARM 環境がどちらで動くかなどを前もって推測して設定するようなことは避けた方が良いでしょう。
+	経験として、未知のプラットフォームの挙動を予測のみで記述するのは、
+	常に誤動作の元です。
+	そのような決定は、実際に64bit ARMで動かす機会ができるまで取っておきましょう。
 	)
 )
 
-$(SECTION2 Size Changes,
+$(SECTION2 サイズの変化,
 
-	$(P The size of pointers and references will increase from 4
-	to 8 bytes. The $(D size_t) alias moves from $(D uint) to
-	$(D ulong), and the $(D ptrdiff_t) alias moves from $(D int)
-	to $(D long).
+	$(P ポインタと参照型のサイズは4バイトから8バイトに増えます。
+	$(D size_t) は $(D uint) への alias から
+	$(D ulong) に変わり、$(D ptrdiff_t) は $(D int)
+	への alias から $(D long) に変わります。
 	)
 
-	$(P The sizes of compound types based on these will also increase.
-	This includes dynamic arrays, associative arrays, delegates,
-	and class references.
-	)
-)
-
-$(SECTION2 Structs,
-
-	$(P The size of the struct and the alignment of its fields
-	will change, in order to match the C ABI of the equivalent
-	C struct.
+	$(P 複合型のサイズも、ベースとなる型のサイズ増加に従って変化します。
+	これは、
+	動的配列、連想配列、delegate、クラス参照が当てはまります。
 	)
 )
 
-$(SECTION2 Classes,
+$(SECTION2 構造体,
 
-	$(P The size of the class and the alignment of its fields
-	will change, in order to match the alignment most suitable
-	for the 64 bit mode, and in order to accommodate the increased
-	size of pointers and references.
+	$(P 構造体のサイズとフィールドの
+	alignment は、
+	Cの構造体のABIに合わせて変化します。
+	)
+)
+
+$(SECTION2 クラス,
+
+	$(P クラスのサイズとフィールドの alignment は、
+	64bitモードでもっとも最適になるように、
+	また、
+	ポインタサイズ等の増加を反映して変化します。
 	)
 )
 
 $(SECTION2 printf,
 
-	$(P Since $(D printf) is a C function, it follows C typing rules.
-	This can have consequences for using them with D types.
+	$(P $(D printf) は C の関数であるため、C の型規則に従います。
+	これを D から使うには、いくつか考慮すべき事があります。
 	)
 
 	$(TABLE1
-	$(TR <th rowspan=2>D Type</th> <th colspan=2>printf format</th>)
+	$(TR <th rowspan=2>D の型</th> <th colspan=2>printf 書式</th>)
 	$(TR $(TH 32 bit) $(TH 64 bit))
 	$(TR $(TD $(I T)*) $(TD %p) $(TD %p))
 	$(TR $(TD long) $(TD %lld) $(TD %d))
@@ -78,25 +78,25 @@ $(SECTION2 printf,
 	$(TR $(TD size_t) $(TD %zu) $(TD %zu))
 	)
 
-	$(P For 32 bit code, it was common to use the $(D %.*s) format
-	to print strings. This relied on the 32 bit C ABI interpreting the
-	components of a dynamic array as separate length and pointer arguments.
-	64 bit parameter passing is different, and so the length and pointer
-	should be done explicitly:
+	$(P 32bitコードでは、$(D %.*s)
+	という書式でDの文字列を出力するコードがよく使われていました。これは 32bit の C ABI が、
+	動的配列を長さとポインタ引数の列として扱うことに依存しており、
+	64bit の引数渡しはこれとは異なります。
+	したがって、長さとポインタは明示的に引き渡す必要があります:
 	)
 
 ---
 string s;
 ...
-printf("s = '%.*s'\n", s);               // 32 bit only
-printf("s = '%.*s'\n", s.length, s.ptr); // 32 and 64 bit
+printf("s = '%.*s'\n", s);               // 32 bit 限定
+printf("s = '%.*s'\n", s.length, s.ptr); // 32/64 bit 共通
 ---
 )
 
-$(SECTION2 Inline Assembly,
+$(SECTION2 インラインアセンブリ,
 
-	$(P Naturally, inline assembly for 32 bit code won't work for 64 bit code.
-	The versioning statements to use are:
+	$(P 然ながら、32bit用のインラインアセンブリは64bitでは動作しません。
+	バージョン切り分けは以下のように記述します:
 	)
 
 ---
@@ -108,16 +108,16 @@ else
     static assert("unsupported target");
 ---
 
-	$(P The 64 bit inline assembler uses the syntax found in the Intel
-	and AMD instruction set references.
+	$(P 64bit のインラインアセンブラの構文は、
+	Intel と AMD の命令セット仕様書のものに従います。
 	)
 )
 
-$(SECTION2 Variadic Arguments,
+$(SECTION2 可変長引数,
 
-	$(P How variadic arguments work in 64 bits is radically different from
-	32 bits. They are not a simple array on the stack. You will need to use
-	the functions and templates in $(D std.c.stdarg) to access them.
+	$(P 64bit環境での可変長引数の動作は、32bitのそれとは大幅に異なります。
+	64bitでは単純なスタック上の配列とはなりません。
+	アクセスには、必ず $(D std.c.stdarg) の関数とテンプレートを使う必要があります。
 	)
 
 )
@@ -125,7 +125,7 @@ $(SECTION2 Variadic Arguments,
 )
 
 Macros:
-	TITLE=Porting 32 Bit Code to 64 Bits
+	TITLE=32bitコードの64bitへの移植
 	WIKI=32To64
 	CATEGORY_HOWTOS=$0
 
