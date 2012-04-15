@@ -1,12 +1,12 @@
 Ddoc
 
-$(D_S Acknowledgements,
+$(D_S 謝辞,
 
 $(P
-The following (incomplete) list of people have contributed to the D language
-project;
-with ideas, code, expertise, marketing, inspiration
-and moral support.
+妙案で、コードで、専門的な技術で、マーケティングで、
+インスピレーションで、
+あるいは精神的な支えとして、
+以下の方々をはじめ多くの方がD言語へ貢献してくれました。
 )
 
 $(P
@@ -48,6 +48,6 @@ $(P
 )
 
 Macros:
-	TITLE=Acknowledgements
+	TITLE=謝辞
 	WIKI=Acknowledgements
 
