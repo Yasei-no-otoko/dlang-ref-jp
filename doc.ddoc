@@ -57,10 +57,10 @@ function showHideAnswer(zis)
 	var numericID = zis.id.replace(/[^\d]/g,'');
 	var obj = document.getElementById('a' + numericID);
 	if(obj.style.display=='block'){
-        zis.innerHTML = '<span class="nobr">See example.</span>';
+        zis.innerHTML = '<span class="nobr">(例を表示)</span>';
 		obj.style.display='none';
 	}else{
-        zis.innerHTML = '<span class="nobr">Hide example.</span>';
+        zis.innerHTML = '<span class="nobr">(例を隠す)</span>';
 		obj.style.display='block';
 	}
 }

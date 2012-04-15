@@ -2,8 +2,8 @@ Ddoc
 
 $(D_S D Programming Language,
 
-$(SECTION3 The D programming language. Modern
-convenience. Modeling power. Native efficiency.,
+$(SECTION3 プログラミング言語 D -
+利便性・表現力・効率性)
 
 <script>
 function showHideYourCodeHere()
@@ -36,59 +36,59 @@ void main() {
 <div style="font-size:75%;text-align:right;position:relative;top:-3em;right:0.5em;bottom:0em;cursor:pointer;" onclick='showHideYourCodeHere();'><a id="your-code-link">[your code here]</a></div>
 
 $(TAG2 div, id="your-code-info" style="display:block; position:relative; width: 50%; margin-left:auto; top:-2.5em; bottom:0em; background:white; border:1px solid #ccc; font-size:80%; padding:0px 5px 0px 5px; line-height:1.4em;",
-Got a brief example illustrating D? Submit your code to the
-$(LINK2 http://forum.dlang.org/group/digitalmars.D, digitalmars.D forum)$(COMMA)
-specifying <span class="nobr">"[your code here]"</span> in the title. Upon approval$(COMMA) it will be showcased
-on a random schedule on D&#145;s homepage.
+Dの特徴を示す良い例を思いつきましたか？
+$(LINK2 http://forum.dlang.org/group/digitalmars.D, digitalmars.D forum) に
+<span class="nobr">"[your code here]"</span> をタイトルに入れて投稿して下さい。
+承認が得られれば、D のホームページにランダムに表示されます！
 )
 <script>showHideYourCodeHere();</script>
 
-D is a language with C-like syntax and static typing. It pragmatically combines
-efficiency, control, and modeling power, with safety and programmer productivity.
+D は C言語風の構文を持つ静的型付け言語です。
+効率性と高い表現力を、安全性とプログラマの生産性に実用的に結びつけます。
 
-$(SECTION3 Convenience,
+$(SECTION3 利便性,
 
 $(UL
 
-$(LI D allows writing large code fragments without redundantly specifying types,
-in the style of dynamic languages. Yet static inference deduces types and other
-code properties, giving the best of both the static and the
-dynamic worlds. $(EXAMPLE 1,
+$(LI D では、動的言語のように、冗長な型指定なしで長いコード片を記述することができます。
+それでも、静的な推論によって型やその他のコードの性質は導出されるため、
+静的な世界と動的な世界の両方の恩恵を受けることができます。
+$(EXAMPLE 1,
 ----
 void main() {
-    // Define an array of numbers, double[]. Compiler recognizes the common
-    // type of all initializers.
+    // 数値の配列 double[] を定義。
+    // コンパイラが初期化子の共通型を認識します。
     auto arr = [ 1, 2, 3.14, 5.1, 6 ];
-    // Dictionary that maps string to int, type is spelled int[string]
+    // 文字列を整数に写す辞書。型を書くと int[string] です。
     auto dictionary = [ "one" : 1, "two" : 2, "three" : 3 ];
-    // Calls the min function defined below
+    // 下で定義される min 関数の呼び出し
     auto x = min(arr[0], dictionary["two"]);
 }
-// Type deduction works for function results. This is important for generic
-// functions, such as min below, which works correctly for all comparable
-// types.
+// 型の導出は関数の返値にも働きます。これは、
+// 以下の min など全ての比較可能な型に対して動作するような、
+// 総称的な関数に対して特に重要です。
 auto min(T1, T2)(T1 lhs, T2 rhs) {
     return rhs < lhs ? rhs : lhs;
 }
 ----
 ))
 
-$(LI Automatic memory management makes for safe, simple, and robust code.
-D also supports scoped resource management (aka the
-$(WEB en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization, RAII) idiom)
-and $(LINK2 statement.html#ScopeGuardStatement, $(D scope) statements) for
-deterministic transactional code that is easy to write and read. $(EXAMPLE 2,
+$(LI 自動的なメモリ管理が安全で簡潔で頑強なコードに役立ちます。
+D は同時にスコープによるリソース管理 (別名
+$(WEB en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization, RAII) 技法)
+と $(LINK2 statement.html#ScopeGuardStatement, $(D scope) 文) もサポートし、
+決定的なトランザクション的コードを簡単に読み書きできるようにしています。$(EXAMPLE 2,
 ----
 import std.stdio;
 
 class Widget { ... }
 
 void main() {
-    // Automatically managed.
+    // 自動管理
     auto w = new Widget;
-    // Code is executed in any case upon scope exit.
+    // スコープ終了時に必ず実行されるコード
     scope(exit) { writeln("Exiting main."); }
-    // File is closed deterministically at scope's end.
+    // Fileはスコープ終了時に決定的に閉じられる
     foreach (line; File("text.txt").byLine()) {
         writeln(line);
     }
@@ -97,13 +97,13 @@ void main() {
 )
 )
 
-$(LI Built-in linear and associative arrays, slices, and ranges make daily
-programming simple and pleasant for tasks small and large. $(EXAMPLE 3,
+$(LI 組み込みの配列と連想配列、スライス、そしてレンジの機能が、
+日々のプログラミングを簡単で、小規模から大規模まで種々のタスクを楽しいものにします。$(EXAMPLE 3,
 ----
 #!/usr/bin/rdmd
 import std.range, std.stdio;
 
-// Compute average line length for stdin
+// 標準入力の平均行数を計算
 void main() {
     ulong lines = 0, sumLength = 0;
     foreach (line; stdin.byLine()) {
@@ -118,7 +118,7 @@ void main() {
 
 ))
 
-$(SECTION3 Power,
+$(SECTION3 表現力,
 
 $(UL
 
@@ -127,38 +127,38 @@ D offers classic polymorphism, value semantics, functional
 style, generics, generative programming, contract programming,
 and more&mdash;all harmoniously integrated. $(EXAMPLE 4,
 ----
-// Interfaces and classes
+// インターフェイスとクラス
 interface Printable {
    void print(uint level)
-   in { assert(level > 0); } // contract is part of the interface
+   in { assert(level > 0); } // 契約
 }
 
-// Interface implementation
+// インターフェイスの実装
 class Widget : Printable {
    void print(uint level) { ... }
 }
 
-// Single inheritance of state
+// 単一継承
 class ExtendedWidget : Widget {
    override void print(uint level)
-   in { /* weakening precondition is okay */  }
+   in { /* 事前条件の緩和 */  }
    body {
        ... level may be 0 here ...
    }
 }
 
-// Immutable data shared across threads
+// 不変データのスレッド間共有
 immutable string programName = "demo";
-// Mutable data is thread-local
+// 可変データはスレッドローカル
 int perThread = 42;
-// Explicitly shared data
+// 明示的な共有
 shared int perApp = 5;
 
-// Structs have value semantics
+// 構造体は値セマンティクス
 struct BigNum {
-    // intercept copying
+    // コピーへの割り込み
     this(this) { ... }
-    // intercept destructor
+    // デストラクタへの割り込み
     ~this() { ... }
 }
 ----
@@ -167,24 +167,24 @@ struct BigNum {
 $(LI D offers an innovative approach to concurrency featuring true
 immutable data, message passing, no sharing by default, and
 controlled mutable sharing across threads. $(WEBX
-informit.com/articles/article.aspx?p=1609144, Read more).)
+informit.com/articles/article.aspx?p=1609144, 詳しくはこちら)。)
 
 $(LI From simple scripts to large projects, D has the breadth
 to scale with any application's needs: unit testing,
 information hiding, refined modularity, fast compilation, precise
 interfaces. $(WEBX drdobbs.com/high-performance-computing/217801225,
-Read more).)
+詳しくはこちら)。)
 
 ))
 
-$(SECTION3 Efficiency,
+$(SECTION3 効率性,
 
 $(UL
 
-$(LI D compiles naturally to efficient native code.)
+$(LI D は自然に効率的なネイティブコードにコンパイルされます。)
 
-$(LI D is designed such that most "obvious" code is fast $(I and)
-safe. On occasion a function might need to escape the confines of type
+$(LI D は最も"自然な"コードが高速で $(I しかも) 安全に動作するよう設計されています。
+On occasion a function might need to escape the confines of type
 safety for ultimate speed and control. For such rare cases D offers
 native pointers, type casts, access to any C function without any
 intervening translation, and even inline assembler. $(EXAMPLE 5,
@@ -226,7 +226,7 @@ Loverflow:
 $(LI The $(D @safe), $(D @trusted), and $(D @system) modular
 attributes allow the programmer to best decide the safety/efficiency
 tradeoffs of a particular application, and have the compiler check for
-consistency. $(LINK2 safed.html, Read more.))
+consistency. $(LINK2 safed.html, 詳しくはこちら)。)
 
 )
 
@@ -523,9 +523,9 @@ Macros:
     D=<span class="d_inlinecode">$0</span>
     EXAMPLE=
 <script>
-  document.write('$(TAG2 div, id="q$1" class="question" onclick="showHideAnswer(this);", <span class="nobr">See example.</span>)');
+  document.write('$(TAG2 div, id="q$1" class="question" onclick="showHideAnswer(this);", <span class="nobr">(例を表示)</span>)');
 </script>
-<noscript><span class="nobr">See example.</span></noscript>
+<noscript><span class="nobr">例をご覧下さい: </span></noscript>
 $(TAG2 div, id="a$1" class="answer-nojs", $2)
 <script>
   document.getElementById("a$1").style.display='none';
