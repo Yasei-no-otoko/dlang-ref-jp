@@ -1,6 +1,6 @@
 Ddoc
 
-$(D_S ASCII Table,
+$(D_S ASCII表,
 
 $(COMMENT
     00  10  20  30  40  50  60  70
@@ -46,7 +46,7 @@ $(COMMENT
 )
 
 Macros:
-	TITLE=ASCII Table
+	TITLE=ASCII表
 	WIKI=AsciiTable
 	CATEGORY_APPENDICES=$0
 
