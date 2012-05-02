@@ -1,23 +1,23 @@
 Ddoc
 
-$(D_S Debugging D on Windows,
+$(D_S WindowsでのDのデバッグ,
 
-$(P The Microsoft Windows debugger $(D $(DMDDIR)\windows\bin\windbg.exe) can be used to
-symbolically debug D programs, even though it is a C++ debugger.
-Versions of $(D windbg.exe) other than the one supplied may not work with D.
-(Jascha Wetzel's $(LINK2 http://ddbg.mainia.de/releases.html, Ddbg for Windows)
-is also available.)
+$(P Microsoft Windows デバッガ $(D $(DMDDIR)\windows\bin\windbg.exe) は、C++ 用のデバッガですが、
+D のプログラムをデバッグすることも可能です。dmdコンパイラに同梱されている以外のバージョンの
+$(D windbg.exe) は、D ではうまく動かない可能性があります。
+（他に、Jascha Wetzel の $(LINK2 http://ddbg.mainia.de/releases.html, Ddbg for Windows)
+もDのデバッガとして使用可能です。）
 )
 
-$(P To prepare a program for symbolic debugging, compile
-with the $(B -gc) switch:
+$(P デバッグ情報を用意するには、コンパイル時に
+$(B -gc) スイッチを指定します:
 )
 
 $(CONSOLE
 dmd myprogram -gc
 )
 
-$(P To invoke the debugger on it:
+$(P このプログラムをデバッグするには:
 )
 
 $(CONSOLE
@@ -25,38 +25,38 @@ windbg myprogram args...
 )
 
 $(P
-where $(D args...) are the command line arguments to myprogram.exe.
+$(D args...) は myprogram.exe に渡すコマンド引数です。
 )
 
-$(P When the debugger comes up, entering the command in the command window:)
+$(P デバッガが起動したら、コマンドウインドウに以下のコマンドを入力すると:)
 
 $(CONSOLE
 g _Dmain
 )
 
-$(P will execute the program up until the entry into $(D main()).
-From thence, pressing the $(B F10) key will single step each line
-of code.)
+$(P プログラムが $(D main()) の頭まで実行されます。
+その後は、$(B F10) を１回押すたびにコードを１行ずつ
+ステップ実行していくことができます。)
 
-$(P Basic Commands:)
+$(P 基本コマンド:)
 
 $(DL
 
 $(DT F5)
-$(DD Go until breakpoint, an exception is thrown, or the end of the program.)
+$(DD ブレークポイント、例外発生、プログラム終了のどれかが起きるまで実行)
 
 $(DT F7)
-$(DD Continue until cursor.)
+$(DD カーソル位置まで実行)
 
 $(DT F8)
-$(DD Single step, stepping into function calls.)
+$(DD 関数呼び出しの中に入るステップ実行)
 
 $(DT F10)
-$(DD Single step, stepping over function calls.)
+$(DD 関数呼び出しはスキップするステップ実行)
 )
 
-$(P For more comprehensive information on $(B windbg), consult the
-file $(D $(DMDDIR)\windows\bin\windbg.hlp).
+$(P $(B windbg) に関するきちんと情報については、
+$(D $(DMDDIR)\windows\bin\windbg.hlp) を参照してください。
 )
 
 $(COMMENT
@@ -177,7 +177,7 @@ $(P and it should now compile and run without error.)
 )
 
 Macros:
-	TITLE=windbg Debugger
+	TITLE=WinDbg デバッガ
 	WIKI=Windbg
 	CATEGORY_DOWNLOAD=$0
 
