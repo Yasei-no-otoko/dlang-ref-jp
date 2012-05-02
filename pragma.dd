@@ -1,6 +1,6 @@
 Ddoc
 
-$(SPEC_S Pragmas,
+$(SPEC_S プラグマ,
 
 $(GRAMMAR
 $(GNAME Pragma):
@@ -9,104 +9,104 @@ $(GNAME Pragma):
 )
 
 
-        $(P Pragmas are a way to pass special information to the compiler
-        and to add vendor specific extensions to D.
-        Pragmas can be used by themselves terminated with a $(SINGLEQUOTE ;),
-        they can influence a statement, a block of statements, a declaration, or
-        a block of declarations.
+        $(P プラグマとは、コンパイラへ特別な情報を渡したり、
+		ベンダ特有のD言語の拡張を追加するための方法です。
+		プラグマには、$(SINGLEQUOTE ;) で終わらせてそれ自身で完結させる使い方も、
+		文、ブロック、宣言、
+		宣言ブロックなどに影響を及ぼすプラグマとしての使い方もあります。
         )
 
-        $(P Pragmas can appear as either declarations,
-        $(I Pragma) $(GLINK2 attribute, DeclarationBlock),
-        or as statements,
-        $(GLINK2 statement, PragmaStatement).
+        $(P プラグマは、宣言としても
+        $(GLINK2 attribute, DeclarationBlock)
+        のような属性ブロックや文としても、
+        $(GLINK2 statement, PragmaStatement) としても使用できます。
         )
 
 -----------------
-pragma(ident);        // just by itself
+pragma(ident);        // それ自身で完結
 
-pragma(ident) declaration; // influence one declaration
+pragma(ident) declaration; // １つの宣言に影響する
 
-pragma(ident): // influence subsequent declarations
+pragma(ident): // 後ろに続く複数の宣言に影響する
     declaration;
     declaration;
 
-pragma(ident) { // influence block of declarations
+pragma(ident) { // ブロック内の全ての宣言に影響する
     declaration;
     declaration;
 }
 
-pragma(ident) statement; // influence one statement
+pragma(ident) statement; // １つの文に影響する
 
-pragma(ident) { // influence block of statements
+pragma(ident) { // ブロック内の全ての文に影響する
     statement;
     statement;
 }
 -----------------
 
-        $(P The kind of pragma it is is determined by the $(I Identifier).
-        $(I ExpressionList) is a comma-separated list of
-        $(ASSIGNEXPRESSION)s. The $(ASSIGNEXPRESSION)s must be
-        parsable as expressions, but what they mean semantically
-        is up to the individual pragma semantics.
+        $(P プラグマの種類は、$(I Identifier) によって決定されます。
+        $(I ExpressionList) は、
+        $(ASSIGNEXPRESSION) のコンマ区切りリストです。 $(ASSIGNEXPRESSION)
+		は式として構文解析できる必要がありますが、
+		それがどのように解釈されるかは、各々のプラグマの意味によって変わります。
         )
 
-<h2><a name="Predefined-Pragmas">Predefined Pragmas</a></h2>
+<h2><a name="Predefined-Pragmas">定義済みプラグマ</a></h2>
 
-        $(P All implementations must support these, even if by just ignoring
-        them:
+        $(P 全ての実装は、単に無視するだけでも構いませんが、
+	これらのプラグマに対応しなくてはなりません：
         )
 
     $(DL
 
     $(DT $(B msg))
-    $(DD Prints a message to the standard error stream while compiling, the
-        $(ASSIGNEXPRESSION)s must be string literals:
+    $(DD コンパイル中にメッセージを表示します。
+        $(ASSIGNEXPRESSION) には１個の文字列リテラルを指定します：
 -----------------
 pragma(msg, "compiling...");
 -----------------
     )
 
     $(DT $(B lib))
-    $(DD Inserts a directive in the object file to link in the library
-        specified by the $(ASSIGNEXPRESSION).
-        The $(ASSIGNEXPRESSION)s must be a string literal:
+    $(DD オブジェクトファイル中に、
+        $(ASSIGNEXPRESSION) で指定されたライブラリとリンクする指令を挿入します。
+        $(ASSIGNEXPRESSION) には１個の文字列リテラルを指定します：
 -----------------
 pragma(lib, "foo.lib");
 -----------------
     )
 $(V2
     $(DT $(B startaddress))
-    $(DD Puts a directive into the object file saying that the
-        function specified in the first argument will be the
-        start address for the program:
+    $(DD 第一引数がプログラム開始アドレスであるという情報を、
+	オブジェクトファイルに
+	埋め込むようにします：
 -----------------
 void foo() { ... }
 pragma(startaddress, foo);
 -----------------
-        This is not normally used for application level programming,
-        but is for specialized systems work.
-        For applications code, the start address is taken care of
-        by the runtime library.
+	これは通常のアプリケーションレベルプログラミングで使うことは想定されておらず、
+	システム側の処理のための機能です。
+	普通のアプリケーションのスタートアドレスは、
+	ランタイムライブラリによって適切に扱われます。
     )
 )
 
     )
 
-<h2>Vendor Specific Pragmas</h2>
+<h2>ベンダ固有のプラグマ</h2>
 
-        $(P Vendor specific pragma $(I Identifier)s can be defined if they
-        are prefixed by the vendor's trademarked name, in a similar manner
-        to version identifiers:
+        $(P ベンダ固有の $(I Identifier) は、
+		バージョン識別子と同様に、
+		ベンダの商標名を接頭辞にして定義します：
         )
 
 -----------------
 pragma(DigitalMars_funky_extension) { ... }
 -----------------
 
-        $(P Compilers must diagnose an error for unrecognized $(I Pragma)s,
-        even if they are vendor specific ones. This implies that vendor
-        specific pragmas should be wrapped in version statements:
+        $(P コンパイラは、認識できない $(I Pragma) に対してはエラーを出さなくてはなりません。
+		例えベンダ固有のプラグマであってもです。これは要するに、
+		ベンダ固有プラグマはversion文の中に配置する必要があるということです：
         )
 
 -----------------
@@ -120,7 +120,7 @@ version (DigitalMars)
 )
 
 Macros:
-        TITLE=Pragmas
+        TITLE=プラグマ
         WIKI=Pragma
         CATEGORY_SPEC=$0
 
