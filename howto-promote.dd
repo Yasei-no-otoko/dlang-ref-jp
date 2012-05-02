@@ -1,85 +1,85 @@
 Ddoc
 
-$(D_S Promoting D Projects (or Internet Marketing 101),
+$(D_S D言語プロジェクト普及活動,
 
-	$(P So you've written a cool project in D, and it's ready for others
-	to use or to get involved with helping develop it further.
-	Just posting a zip file isn't going to work. All your blood, sweat
-	and effort will just go to waste.
-	You'll need to provide a way for people who want to know about
-	your project to be able to find it.
+	$(P なにか凄いプロジェクトをDで書き上げたとしましょう。他の人に使ってもらったり、
+	開発を手伝ってもらったりする態勢も整っています。
+	でも、ただzipファイルをどこかに置いておくだけではうまく行きません。
+	あなたの血と汗と涙の結晶は無駄になってしまいます。
+	あなたのプロジェクトを知ったら喜びそうな人に、
+	ちゃんと見つけてもらえるような手段を提供する。それが重要です。
 	)
 
-	$(P The steps are:
+	$(P やることは２つ:
 	)
 
 	$(OL
-	$(LI Create a web page for the project)
-	$(LI Let people know about it)
+	$(LI プロジェクトのウェブページを作る)
+	$(LI 人々に知ってもらう)
 	)
 
-<h3>Creating a Web Page</h3>
+<h3>ウェブページを作る</h3>
 
-	$(P A good web page should include the following:
+	$(P 良いウェブページにするには、次のような情報を含めます:
 	)
 
 	$(UL
-	$(LI The keywords and phrases that someone who would be interested
-	in your project might type into Google to find it.)
+	$(LI あなたのプロジェクトに興味を持ちそうな人が
+	Google の検索ボックスに入力するであろうキーワード)
 
-	$(LI The phrase $(B D programming language) somewhere on the page.
-	This helps build the brand on the internet.
-	If you just use $(B D), nobody will find it via search.)
+	$(LI ページのどこかに $(B D programming language)
+	というフレーズを。
+	ただ単に $(B D) とだけ書くのでは、検索で見つけられません。)
 
-	$(LI Screen shots of the program. Even better, for graphics
-	and game demos, make a short video of it with
+	$(LI プログラムのスクリーンショット。画像やゲーム関係であれば、
+	スクリーンを直接録画できる
 	$(LINK2 http://windows.microsoft.com/en-US/windows/help/windows-xp?tab=xpmm, Windows Movie Maker),
-	which can capture movies directly from the screen.)
+	などで簡単な動画を作って公開すると、もっと良いです。)
 
-	$(LI List the capabilities of the package and what it's good for.)
+	$(LI そのパッケージで何ができて、それがどういう風に使えるのか。)
 
-	$(LI Identify who this package is intended for and why they'd
-	want to use it.)
+	$(LI どんなユーザー層に向けて作っているのか、そして、
+	その層にとってそのプログラムのいいところ。)
 
-	$(LI Copyright and license information for any source code.
-	If you intend for it to be
+	$(LI ソースコードの著作権や、
+	ライセンス情報。
 	$(LINK2 http://en.wikipedia.org/wiki/Public_domain, public domain),
-	make sure to
-	explicitly mark it so.)
+	にしたいのなら、
+	必ずそのことを明記します。)
 
 	)
 
-<h3>Promoting the Project</h3>
+<h3>プロジェクトを普及させる</h3>
 
-	$(P Submit the page or article to the following:
+	$(P ページや記事を、以下のようなサイトに投稿してみましょう。
 	)
 
 	$(UL
-	$(LI $(LINK2 http://www.digitalmars.com/pnews/indexing.php?server=news.digitalmars.com&group=digitalmars.D.announce, digitalmars.D.announce) newsgroup)
+	$(LI $(LINK2 http://www.digitalmars.com/pnews/indexing.php?server=news.digitalmars.com&group=digitalmars.D.announce, digitalmars.D.announce) ニュースグループ)
 	$(LI $(LINK2 http://www.google.com/addurl/?continue=/addurl, Google web crawler))
-	$(LI $(LINK2 http://groups.google.com/group/google-code-search/post?subject=Please+add+the+following+repositories+to+Code+Search&body=Enter+your+code+repository+type+(SVN%2C+CVS%2C+Hg%2C+Git%2C+Archive)+and+URL+here%3A, Google code search) for source code zips)
-	$(LI $(LINK2 http://www.dzone.com/, dzone) developer news)
-	$(LI $(LINK2 http://www.betamarker.com/, beta marker) for releases, including betas)
-	$(LI $(LINK2 http://www.digg.com/, Digg) under the Developer category)
-	$(LI $(LINK2 http://slashdot.org/, Slashdot) news for nerds)
-	$(LI $(LINK2 http://www.gamedev.net/, gamedev.net) anything game related)
-	$(LI $(LINK2 http://www.artima.com/, Artima Developer) developer articles)
-	$(LI $(LINK2 http://www.download.com/, download.com) software downloads)
-	$(LI $(LINK2 http://www.wikipedia.org/, Wikipedia) if it genuinely adds to an article on the subject)
-	$(LI $(B comp.programming) newsgroup)
+	$(LI $(LINK2 http://groups.google.com/group/google-code-search/post?subject=Please+add+the+following+repositories+to+Code+Search&body=Enter+your+code+repository+type+(SVN%2C+CVS%2C+Hg%2C+Git%2C+Archive)+and+URL+here%3A, Google code search) にはソースのzipファイルを)
+	$(LI $(LINK2 http://www.dzone.com/, dzone) 開発者向けニュース)
+	$(LI $(LINK2 http://www.betamarker.com/, beta marker) β版を含むリリース情報)
+	$(LI $(LINK2 http://www.digg.com/, Digg) の Developer カテゴリ)
+	$(LI $(LINK2 http://slashdot.org/, Slashdot) アレゲなニュースサイト)
+	$(LI $(LINK2 http://www.gamedev.net/, gamedev.net) ゲーム関係ならなんでも)
+	$(LI $(LINK2 http://www.artima.com/, Artima Developer) 開発者向け記事)
+	$(LI $(LINK2 http://www.download.com/, download.com) ソフトウェアダウンロードサイト)
+	$(LI $(LINK2 http://www.wikipedia.org/, Wikipedia) もしある項目に追加するべき情報であるのなら)
+	$(LI $(B comp.programming) ニュースグループ)
 	)
 
-	$(P Send me a cut-and-paste html snippet to place on
-	$(LINK2 http://www.digitalmars.com/d/dlinks.html, dlinks).
+	$(P また、$(LINK2 http://www.digitalmars.com/d/dlinks.html, dlinks)
+	に載せるHTML片を私に送って下さい。
 	)
 
-	$(P If your project is a conversion of an existing project to D,
-	email the project leader of that existing project and suggest
-	that he incorporate a link to your project on his page.
+	$(P 既存のプロジェクトをDへ移植した場合は、
+	そのオリジナル版の開発者にメールして、
+	あなたのプロジェクトについて知らせるとよいでしょう。
 	)
 
-	$(P For the absolutely most effective results, submit
-	articles to:
+	$(P もっと文句なしに素晴らしい成果をあげた場合には、
+	次のような雑誌や会議に投稿する手もあります。
 	)
 
 	$(UL
@@ -91,6 +91,6 @@ $(D_S Promoting D Projects (or Internet Marketing 101),
 )
 
 Macros:
-	TITLE=Promoting D Projects (or Internet Marketing 101)
+	TITLE=D言語プロジェクト普及活動
 	WIKI=PromotingDProjects
 
