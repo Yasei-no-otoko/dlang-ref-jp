@@ -120,7 +120,7 @@ assert(int.sizeof == (int*).sizeof);
 )
 
 Macros:
-	TITLE=Portability
+	TITLE=移植性に関する指針
 	WIKI=Portability
 	CATEGORY_SPEC=$0
 

@@ -127,7 +127,7 @@ int main (string[] args)
 )
 
 Macros:
-	TITLE=Word Count
+	TITLE=例: wc
 	WIKI=WC
 	CATEGORY_OVERVIEW=$0
 
