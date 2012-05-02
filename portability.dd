@@ -1,54 +1,54 @@
 Ddoc
 
-$(SPEC_S Portability Guide,
+$(SPEC_S 移植性に関する指針,
 
-	$(P It's good software engineering practice to minimize gratuitous
-	portability problems in the code.
-	Techniques to minimize potential portability problems are:
+	$(P 移植の際に生じる問題を最小に押さえる、
+	というのはソフトウェア工学的に、良い習慣です。
+	移植時に問題の生じうる箇所を少なくするテクニックとしては：
 	)
 
 	$(UL
 
-	$(LI The integral and floating type sizes should be considered as
-	minimums.
-	Algorithms should be designed to continue to work properly if the
-	type size increases.)
+	$(LI 整数型や浮動小数型は保証される最小範囲の型である
+	と考えておきます。
+	また、
+	型のサイズが増えたとしても正しく動くようにアルゴリズムを設計しておきます。)
 
-	$(LI Floating point computations can be carried out at a higher
-	precision than the size of the floating point variable can hold.
-	Floating point algorithms should continue to work properly if
-	precision is arbitrarily increased.)
+	$(LI 浮動小数演算は、変数の保持できるサイズよりも
+	上の精度で実行されることがあります。
+	浮動小数演算の関係するアルゴリズムは、
+	例え計算精度がいくら上がっても正しく動作するように組みます。)
 
-	$(LI Avoid depending on the order of side effects in a computation
-	that may get reordered by the compiler. For example:
+	$(LI コンパイラによって並び替えが行われるかもしれない部分では、
+		副作用の起きる順番に依存したコードを書かないようにします。例えば：
 
 -------
 a + b + c
 -------
 
-	$(P can be evaluated as (a + b) + c, a + (b + c), (a + c) + b, (c + b) + a,
-	etc. Parentheses control operator precedence, parentheses do not
-	control order of evaluation.
+	$(P は (a + b) + c, a + (b + c), (a + c) + b, (c + b) + a,
+	として評価される可能性があります。括弧は演算子の結合をコントロールしますが、
+	評価の順序はコントロールしません。
 	)
 
-	$(P Function parameters can be evaluated either left to right
-	or right to left, depending on the particular calling conventions
-	used.
+	$(P 特に関数の引数は、
+	左から右に評価されたり右から左に評価されたりと、
+	呼び出し規約に応じて評価順序が変化します。
 	)
 
-	$(P If the operands of an associative operator + or * are floating
-	point values, the expression is not reordered.
+	$(P 結合的な演算子 + と * のオペランドが浮動小数点数の場合は、
+	この並び替えは行われません。
 	)
 	)
 
-	$(LI Avoid dependence on byte order; i.e. whether the CPU
-	is big-endian or little-endian.)
+	$(LI バイトオーダー (CPUがビッグエンディアンなのかリトルエンディアンなのか)
+		に依存したコードは避けましょう。)
 
-	$(LI Avoid dependence on the size of a pointer or reference being
-	the same size as a particular integral type.)
+	$(LI ポインタや参照のサイズが特定の整数型と等しい
+		と仮定したコードは避けましょう。)
 
-	$(LI If size dependencies are inevitable, put an $(D assert) in
-	the code to verify it:
+	$(LI もしどうしても変数サイズを決め打ちしたいならば、
+	$(D assert) を入れてそのことをチェックします。
 
 -------
 assert(int.sizeof == (int*).sizeof);
@@ -56,66 +56,66 @@ assert(int.sizeof == (int*).sizeof);
 	)
 	)
 
-<h2>32 to 64 Bit Portability</h2>
+<h2>32bit から 64bit への移植性</h2>
 
-	$(P 64 bit processors and operating systems are here.
-	With that in mind:
+	$(P 64bitプロセッサやOSがだんだん使われるようになってきました。
+	以下のことを念頭に置いておきましょう：
 	)
 
 	$(UL
 
-	$(LI Integral types will remain the same sizes between
-	32 and 64 bit code.)
+	$(LI 整数型は、
+		32bitでも64bit環境でも同じサイズのままです。)
 
-	$(LI Pointers and object references will increase in size
-	from 4 bytes to 8 bytes going from 32 to 64 bit code.)
+	$(LI ポインタやオブジェクトへの参照は、32から64bitコードに変わることで、
+		4byteから8byteへとサイズが増加します。)
 
-	$(LI Use $(B size_t) as an alias for an unsigned integral
-	type that can span the address space.
-	Array indices should be of type $(B size_t).)
+	$(LI アドレス空間を表現する符号なし整数型としては、
+	 $(B size_t) を使います。
+	配列の添え字の型も $(B size_t) であるべきです。)
 
-	$(LI Use $(B ptrdiff_t) as an alias for a signed integral
-	type that can span the address space.
-	A type representing the difference between two pointers
-	should be of type $(B ptrdiff_t).)
+	$(LI アドレス空間を表現する符号付き整数型としては、
+	$(B ptrdiff_t) を使います。
+	二つのポインタの間の差を表現する型は、
+	$(B ptrdiff_t) であるべきです。)
 
-	$(LI The $(B .length), $(B .size), $(B .sizeof), $(B .offsetof)
-	and $(B .alignof)
-	properties will be of type $(B size_t).)
+	$(LI $(B .length), $(B .size), $(B .sizeof), $(B .offsetof),
+	$(B .alignof)
+	プロパティの型は $(B size_t) です。)
 
 	)
 
-<h2>Endianness</h2>
+<h2>エンディアン</h2>
 
-	$(P Endianness refers to the order in which multibyte types
-	are stored. The two main orders are $(I big endian) and
-	$(I little endian).
-	The compiler predefines the version identifier
-	$(B BigEndian) or $(B LittleEndian) depending on the order
-	of the target system.
-	The x86 systems are all little endian.
+	$(P エンディアンとは、複数バイトの型がどのような順番でメモリに格納されるかの順序のことです。
+	よくある順序は $(I ビッグエンディアン) と
+	$(I リトルエンディアン) の二種類です。
+	コンパイラは、コンパイル先システムの種類に応じて、
+	バージョン識別子 $(B BigEndian) か $(B LittleEndian)
+	をあらかじめ定義します。
+	x86 システムでは常にリトルエンディアンです。
 	)
 
-	$(P The times when endianness matters are:)
+	$(P エンディアンが問題になるのは、以下のような場面です：)
 
 	$(UL
-	$(LI When reading data from an external source (like a file)
-	written in a different
-	endian format.)
-	$(LI When reading or writing individual bytes of a multibyte
-	type like $(B long)s or $(B double)s.)
+	$(LI 異なるエンディアンで書かれた
+	外部リソース (ファイルなど)
+	を扱うとき。)
+	$(LI $(B long) や $(B double) など複数バイトの型を、
+	１バイトずつ読み書きするとき。)
 	)
 
-<h2>OS Specific Code</h2>
+<h2>OS特有のコード</h2>
 
-	$(P System specific code is handled by isolating the differences into
-	separate modules. At compile time, the correct system specific
-	module is imported.
+	$(P システム特有のコードは、
+	特有の部分を別のモジュールへ分離して取り扱います。
+	そしてコンパイル時に、システムに応じて適切なモジュールをimportします。
 	)
 
-	$(P Minor differences can be handled by constant defined in a system
-	specific import, and then using that constant in an
-	$(I IfStatement) or $(I StaticIfStatement).
+	$(P 細かい違いであれば、
+	システム特有モジュールに定義した定数を使って、
+	$(I if 文) や $(I static if 文) で分けて書くこともできます。
 	)
 )
 
