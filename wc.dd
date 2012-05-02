@@ -1,13 +1,13 @@
 Ddoc
 
-$(D_S Example: wc,
+$(D_S 例: wc,
 
-	$(P This program is the D version of the classic wc (wordcount) C
-	program.
-	It serves to demonstrate how to read files, slice arrays,
-	and simple symbol table management with associative arrays.
-	It has two main code paths, one for smaller files that will fit
-	in memory, and one using buffered file I/O for files that are larger.
+	$(P このプログラムは、古典的な C の
+	wc (単語数カウント) プログラムの D 版です。
+	ファイルの読み込み方や、配列のスライシング、
+	連想配列を使った記号テーブルの管理の方法を示すものとなっています。
+	メモリにすべて収まるような小さいファイル用のコードと、
+	巨大ファイルをバッファ付きI/Oするコードの二つに分けて実装してあります。
 	)
 
 ------------
