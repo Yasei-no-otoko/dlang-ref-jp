@@ -2,7 +2,7 @@ Ddoc
 
 $(SPEC_S 目次,
 
-	$(P この文書は D Programming Language を仕様書です。
+	$(P この文書は D Programming Language の仕様書です。
 	さらに情報を求める方は
 	$(LINK2 http://dlang.org, dlang.org) をご覧下さい。
 	)

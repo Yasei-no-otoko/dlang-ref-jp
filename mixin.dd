@@ -1,17 +1,17 @@
 Ddoc
 
-$(D_S Mixins,
+$(D_S ミックスイン,
 
-	$(P Mixins (not to be confused with
-	$(LINK2 template-mixin.html, template mixins))
-	enable string constants to be compiled as regular D code
-	and inserted into the program.
-	Combining this with compile time manipulation of strings
-	enables the creation of domain-specific languages.
+	$(P ミックスイン
+	($(LINK2 template-mixin.html, テンプレート・ミックスイン) とは別物です)
+	は、文字列定数を通常の D のコードとしてコンパイルし、
+	プログラムへと挿入する機能です。
+	この機能をコンパイル時の文字列操作と組み合わせると、
+	ドメイン特化言語 (DSL) を作ることも可能になります。
 	)
 
-	$(P For example, here we can create a template that generates
-	a struct with the named members:
+	$(P 例えば以下の例は、
+	指定された名前のメンバを持つ構造体を生成するテンプレートです：
 	)
 
 ---
@@ -22,32 +22,32 @@ template GenStruct(string Name, string M1)
 
 mixin(GenStruct!("Foo", "bar"));
 ---
-	$(P which generates:)
+	$(P 以下のコードが生成されます:)
 ---
 struct Foo { int bar; }
 ---
 
 
-	$(P Superficially, since D mixins can manipulate text and compile
-	the result, it has some similar properties to the C preprocessor.
-	But there are major, fundamental differences:
+	$(P Dのミックスインはテキストを操作して結果をコンパイルに使うわけですから、
+	表面的には、C のプリプロセッサと似た面もあります。
+	しかし、重大かつ根本的な違いが存在します。
 	)
 
 $(UL
 
-	$(LI The C preprocessing step occurs $(B before) lexical analysis.
-	This makes it impossible to lex or parse C without access to
-	all of the context, including all #include'd files, paths and all
-	relevant compiler switches.
+	$(LI C のプリプロセス処理は字句解析の$(B 前)に実行される点。
+	このせいで、C のコードは全てのコンテキスト
+	（全ての#includeされるファイル、パス、関連するコンパイラのスイッチ）
+	の情報なしでは字句解析や構文解析ができません。
 
-	Mixins occur during semantic analysis, and do not affect
-	the lexing or parsing process.
-	Lexing and parsing can still occur without semantic analysis.
+	ミックスインは意味解析の段階で行われ、
+	字句解析や構文解析には影響しません。
+	字句・構文解析は依然として意味解析に依存せず実行できます。
 	)
 
 
-	$(LI The C preprocessor can be used to create what appears to
-	be different syntax:
+	$(LI C のプリプロセッサは、
+	違う文法に見えるものを作れてしまう点：
 
 $(CCODE
 #define BEGIN {
@@ -59,32 +59,32 @@ BEGIN
 END
 )
 
-	This monkey business is impossible with mixins.
-	Mixed in text must form complete declarations,
-	statements, or expressions.
+	この子供だましは、ミックスインではできません。
+	ミックスインする文字列は完全な宣言か、文、
+	あるいは式でなければなりません。
 	)
 
-	$(LI C macros will affect everything following that has
-	the same name, even if they are in nested scopes.
-	C macros cut across all scopes.
-	This problem is called being not "coding hygenic".
+	$(LI C のマクロは、たとえネストしたスコープの中で宣言されていても、
+	後続のコード中の同名のトークン全てに影響します。
+	C のマクロはスコープを超えて伝染します。
+	この問題は、"不衛生なコーディング" と呼ばれています。
 
-	Mixins follow the usual scoping rules, and is
-	hygenic.
+	ミックスインは通常のスコープ規則に従うので、
+	衛生的です。
 	)
 
-	$(LI C preprocessing expressions follow a different syntax
-	and have different semantic rules than the C language.
-	The C preprocessor is technically a different language.
+	$(LI C のプリプロセッサは、C言語自体と異なった構文を持ち、
+	異なった意味規則で動作しています。
+	C のプリプロセッサは技術的に完全に別の言語なのです。
 
-	Mixins are in the same language.
+	一方、ミックスインは同じ一つの言語です。
 	)
 
-	$(LI C const declarations and C++ templates are invisible
-	to C preprocessing.
+	$(LI C の const 宣言や C++ のテンプレートは、
+	プリプロセッサからは認識できません。
 
-	Mixins can be manipulated using templates and const
-	declarations.
+	ミックスインはテンプレートや const
+	宣言を使って操作することができます。
 	)
 )
 
