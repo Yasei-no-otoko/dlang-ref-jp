@@ -122,10 +122,10 @@ $(SECTION3 表現力,
 
 $(UL
 
-$(LI The best paradigm is to not impose one at the expense of others.
-D offers classic polymorphism, value semantics, functional
-style, generics, generative programming, contract programming,
-and more&mdash;all harmoniously integrated. $(EXAMPLE 4,
+$(LI 最高のパラダイムとは、他のパラダイムに犠牲を強いることが無いことです。
+D は古典的な多態性、値セマンティクス、関数型スタイル、
+総称性、生成的プログラミング、契約プログラミング、
+その他様々な手法を提供します&mdash;すべてがハーモニーを奏でる形で。. $(EXAMPLE 4,
 ----
 // インターフェイスとクラス
 interface Printable {
@@ -164,15 +164,15 @@ struct BigNum {
 ----
 ))
 
-$(LI D offers an innovative approach to concurrency featuring true
-immutable data, message passing, no sharing by default, and
-controlled mutable sharing across threads. $(WEBX
+$(LI Dは並行性へのイノベーティブなアプローチを提供します。
+真に変更不可能なデータ、メッセージパッシング、スレッド間での、デフォルトでのデータ非共有、
+そして制御された変更可能な共有データなどがあります。$(WEBX
 informit.com/articles/article.aspx?p=1609144, 詳しくはこちら)。)
 
-$(LI From simple scripts to large projects, D has the breadth
-to scale with any application's needs: unit testing,
-information hiding, refined modularity, fast compilation, precise
-interfaces. $(WEBX drdobbs.com/high-performance-computing/217801225,
+$(LI 簡単なスクリプトから大規模なプロジェクトまで、
+Dはどんなアプリケーションの要求にもスケールする幅広さを備えています: 単体テスト、
+情報の隠蔽、洗練されたモジュール性、高速なコンパイル、
+正確なインターフェイス、など。$(WEBX drdobbs.com/high-performance-computing/217801225,
 詳しくはこちら)。)
 
 ))
@@ -184,27 +184,27 @@ $(UL
 $(LI D は自然に効率的なネイティブコードにコンパイルされます。)
 
 $(LI D は最も"自然な"コードが高速で $(I しかも) 安全に動作するよう設計されています。
-On occasion a function might need to escape the confines of type
-safety for ultimate speed and control. For such rare cases D offers
-native pointers, type casts, access to any C function without any
-intervening translation, and even inline assembler. $(EXAMPLE 5,
+時には、型安全性の保証を回避して、最高速度と完全な制御を必要とする機能もあるでしょう。
+そのようなレアケースのために、
+D は生のポインタや型キャスト、一切の橋渡し処理なしのC関数の直接呼び出し、
+そしてインラインアセンブラをもサポートしています。$(EXAMPLE 5,
 ----
 void livingDangerously() {
-    // Access to C's malloc and free primitives
+    // C の mallo と free を使用
     auto buf = malloc(1024 * 1024);
-    scope(exit) free(buf); // free automatically upon scope exit
-    // Interprets memory as an array of floats
+    scope(exit) free(buf); // スコープ終了時の自動解放
+    // メモリを float の配列と解釈
     auto floats = cast(float[]) buf[0 .. 1024 * 1024];
-    // Even stack allocation is possible
+    // スタック割り当てすらも可能
     auto moreBuf = alloca(4096 * 100);
     ...
 }
 
-// Using inline asm for extra speed on x86
+// x86 でさらなる速度を得るためのインラインアセンブラの使用
 uint checked_multiply(uint x, uint y) {
     uint result;
     version (D_InlineAsm_X86) {
-        // Inline assembler "sees" D variables.
+        // インラインアセンブラからDの変数が"見える"
         asm {
             mov     EAX,x        ;
             mul     EAX,y        ;
@@ -223,10 +223,10 @@ Loverflow:
 ----
 ))
 
-$(LI The $(D @safe), $(D @trusted), and $(D @system) modular
-attributes allow the programmer to best decide the safety/efficiency
-tradeoffs of a particular application, and have the compiler check for
-consistency. $(LINK2 safed.html, 詳しくはこちら)。)
+$(LI $(D @safe), $(D @trusted), $(D @system) の3つのモジュール属性によって、
+プログラマは安全性と効率性のトレードオフをアプリケーション毎に最適に選択することができ、
+その一貫性をコンパイラに検査させることができます。
+$(LINK2 safed.html, 詳しくはこちら)。)
 
 )
 
