@@ -2,9 +2,9 @@ Ddoc
 
 $(D_S rdmd,
 
-<h2>Synopsis</h2>
+<h2>概要</h2>
 
-In a command prompt:
+コマンドプロンプトから:
 <pre>
 % cat myprog.d
 import std.stdio;
@@ -17,7 +17,7 @@ Hello, world without explicit compilations!
 % <blink>_</blink>
 </pre>
 
-Inside a D program:
+Dのソースコード中で:
 <pre>
 % cat myprog.d
 #!/usr/bin/rdmd
@@ -31,98 +31,98 @@ Hello, world with automated script running!
 % <blink>_</blink>
 </pre>
 
-(Under Windows replace $(B cat) with $(B type) and $(B
-#!/usr/bin/rdmd) with $(B #!rdmd), the latter assuming that $(B rdmd)
-can be found in your path.)
+(Windows では $(B cat) の代わりに $(B type) を、$(B
+#!/usr/bin/rdmd) の代わりに $(B #!rdmd) を、$(B rdmd)
+に PATH が通して、置き換えて読んで下さい。)
 
-<h2>Description</h2>
+<h2>詳細</h2>
 
-$(P $(B rdmd) is a companion to the $(B dmd) compiler that simplifies
-the typical edit-compile-link-run or edit-make-run cycle to a rapid
-edit-run cycle. Like $(B make) and other tools, $(B rdmd) uses the
-relative dates of the files involved to minimize the amount of work
-necessary. Unlike $(B make), $(B rdmd) tracks dependencies and
-freshness without requiring additional information from the user.)
+$(P $(B rdmd) は $(B dmd) コンパイラを補助するツールで、
+典型的な 編集-コンパイル-リンク-実行 や 編集-make-実行 のサイクルを、
+編集-実行 というサイクルに早めるものです。$(B make) やその類似ツールのように、$(B rdmd)
+は更新日時の情報を使って再ビルドの必要量を最小にします。
+$(B make) と違い、$(B rdmd)
+は、依存関係や新しいファイルの情報をユーザーの助けなく自動で取得できます。)
 
-$(P $(B rdmd): $(UL
+$(P $(B rdmd) は: $(UL
 
-$(LI shields its user from the notion that producing a running program
-from D programming language files may entail several concerted steps
-against different source files producing various intermediate files;)
+$(LI D 言語のソースコードが、
+複数のファイルの関わる何段かのステップと様々な中間ファイルを経て実行可能なプログラムの形になる、
+という概念をユーザーから隠蔽します。)
 
-$(LI automatically infers and builds dependent files, transitively, by
-following $(B import) directives;)
+$(LI $(B import) を繰り返したどることで、
+依存するファイルを自動的に推論します。)
 
-$(LI recognizes and passes down all of $(B dmd)'s command-line options;)
+$(LI $(B dmd) のコマンドラインオプションを全て認識し適切に引き渡します。)
 
-$(LI understands how various $(B dmd) compiler options (e.g. $(B
--release) vs. $(B -debug)) affect generation of intermediate files,
-and avoids conflations (e.g., does not unwittingly run a debug
-executable when the release executable is asked for);)
+$(LI $(B dmd) の様々なコンパイルオプション (例えば $(B
+-release) と $(B -debug)) がコード生成に及ぼす影響を把握し、
+不測の事態 (例えば release ビルドを動かしたかったときに
+debug ビルドを動かしてしまうなど) を起こしません。)
 
-$(LI recompiles files only on a needed basis, e.g. two invocations of
-$(B rdmd) in sequence without an intervening change to any relevant
-source file does not produce the executable again.)
+$(LI 必要なファイルだけを再コンパイルします。例えば、
+ソースコードを一切変更せず $(B rdmd) を続けて二回呼び出したときは、
+実行ファイルを再度作成することはありません。)
 
 ))
 
-<h2>Usage</h2>
+<h2>使い方</h2>
 
 $(P
-        $(B rdmd) [$(I dmd and rdmd options)] $(I progfile)[.d] [$(I program arguments)]
+        $(B rdmd) [$(I dmd と rdmd に渡すオプション)] $(I progfile)[.d] [$(I プログラムに渡すオプション)]
 )
 
-$(P In addition to $(B dmd)'s options, $(B rdmd) recognizes the following:
+$(P $(B dmd) のオプションに加え、$(B rdmd) は以下のオプションを認識します:
 )
 
 $(DL
 
-$(DT $(B --build-only)) $(DD just build the executable, don't run it)
+$(DT $(B --build-only)) $(DD ビルドのみ。実行はしない。)
 
-$(DT $(B --chatty)) $(DD write dmd commands to stdout before executing
-them)
+$(DT $(B --chatty)) $(DD dmdコマンドを、
+実行する前に標準出力に表示)
 
-$(DT $(B --compiler)=/path/to/compiler) $(DD use the specified
-compiler (e.g. gdmd) instead of dmd)
+$(DT $(B --compiler)=/path/to/compiler) $(DD 指定のコンパイラ
+ (例 gdmd) を dmd の代わりに使用)
 
-$(DT $(B --dry-run)) $(DD do not compile, just show what commands
-would be run (implies --chatty))
+$(DT $(B --dry-run)) $(DD 実際のコンパイルは行わず、本来実行されるはずのコマンドの列を表示だけします。
+(--chatty の効果が自動的に含まれます))
 
-$(DT $(B --eval)=code) $(DD evaluate code including it in $(D_PARAM
-void main(char[][] args) { ... }) (multiple --eval allowed, will be
-evaluated in turn))
+$(DT $(B --eval)=code) $(DD コードを $(D_PARAM
+void main(char[][] args) { ... }) で括って実行します。 (複数 --eval を指定すると、
+順に評価されます。))
 
-$(DT $(B --exclude)=package) $(DD exclude a package from the build (multiple --exclude allowed))
+$(DT $(B --exclude)=package) $(DD 指定のパッケージをビルドから除外します。 (複数 --exclude を指定できます))
 
-$(DT $(B --force)) $(DD force a rebuild even if apparently not
-necessary)
+$(DT $(B --force)) $(DD 再ビルドを（必要ないように思われるときであっても）
+強制的に実行します。)
 
-$(DT $(B --help)) $(DD show a help message and exit)
+$(DT $(B --help)) $(DD ヘルプメッセージを表示して終了します。)
 
-$(DT $(B --loop)=code) $(DD like --eval, but code will be additionally
-included in a loop $(D_PARAM foreach (line; stdin.byLine()) { ... }))
+$(DT $(B --loop)=code) $(DD --eval に近いですが、加えて、コードが
+$(D_PARAM foreach (line; stdin.byLine()) { ... }) というループの中に入ります。)
 
-$(DT $(B --main)) $(DD add an empty $(D_PARAM void main() {}) function
-(useful for running unittests))
+$(DT $(B --main)) $(DD 空の $(D_PARAM void main() {}) 関数を追加。
+(単体テストの実行に便利です。))
 
-$(DT $(B --makedepend)) $(DD print dependencies in makefile format and exit)
+$(DT $(B --makedepend)) $(DD 依存関係を Makefile の形式で表示して終了します。)
 
-$(DT $(B --man)) $(DD open web browser on manual page)
+$(DT $(B --man)) $(DD 使用方法説明のページをブラウザで開きます。)
 
-$(DT $(B --shebang)) $(DD rdmd is in a shebang line (put as first argument))
+$(DT $(B --shebang)) $(DD rdmd が shebang 行にあることを示します (先頭の引数として指定))
 )
 
-<h2>Download</h2>
+<h2>ダウンロード</h2>
 
-$(UL $(LI View syntax-colored $(LINK2
-https://github.com/D-Programming-Language/tools/blob/master/rdmd.d, source
-code))
+$(UL $(LI 色分け整形された $(LINK2
+https://github.com/D-Programming-Language/tools/blob/master/rdmd.d, ソースコード))
+
 
 $(LI $(LINK2
 https://raw.github.com/D-Programming-Language/tools/master/rdmd.d,
-Download)))
+ダウンロード)))
 
-<h2>Author</h2>
+<h2>著者</h2>
 
 $(LINK2 http://erdani.org/, Andrei Alexandrescu)
 )
