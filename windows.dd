@@ -1,18 +1,18 @@
 Ddoc
 
-$(D_S D for Win32,
+$(D_S Windowsプログラミング,
 
-	$(P This describes the D implementation for 32 bit Windows systems.
-	Naturally,
-	Windows specific D features are not portable to other platforms.
+	$(P このページは、Windows上でのDの実装に関して述べています。
+	当然ながら、
+	Windows特有のDの機能は他のプラットフォームでは使用できません。
 	)
 
-	$(P Instead of the:)
+	$(P Cの:)
 
 $(CCODE
 #include &lt;windows.h&gt;
 )
-	$(P of C, in D there is:)
+	$(P の代わりに、Dでは以下を使用します:)
 
 $(V1
 --------------------
@@ -25,51 +25,51 @@ import core.sys.windows.windows;
 --------------------
 )
 
-<h2>Calling Conventions</h2>
+<h2>呼び出し規約</h2>
 
-	$(P In C, the Windows API calling conventions are $(CODE __stdcall).
-	In D, it is simply:
+	$(P Cでは、Windows APIの呼び出し規約は $(CODE __stdcall) です。
+	Dでは単純に:
 	)
 
 --------------------
 extern (Windows)
 {
-	/* ... function declarations ... */
+	/* ... 関数宣言 ... */
 }
 --------------------
 
 
-	$(P The Windows linkage attribute sets both the calling convention
-	and the name mangling scheme to be compatible with Windows.
+	$(P リンク属性Windowsによって、呼び出し規約と名前のmanglingの両方が、
+	Windowsと互換性のあるものになります。
 	)
 
-	$(P For functions that in C would be $(CODE __declspec(dllimport)) or
-	$(CODE __declspec(dllexport)), use the $(CODE export) attribute:
+	$(P Cで $(CODE __declspec(dllimport)) や
+	$(CODE __declspec(dllexport)) と書いていたものについては、$(CODE export) 属性を使ってください:
 	)
 
 --------------------
 export void func(int foo);
 --------------------
 
-	$(P If no function body is given, it's imported. If a function body
-	is given, it's exported.
+	$(P 関数本体がなければ、importされます。
+	関数本体があれば、exportされます。
 	)
 
-<h2>Windows Executables</h2>
+<h2>Windows 実行ファイル</h2>
 
-	$(P Windows GUI applications can be written with D.
-	A sample such can be found in $(D $(DMDDIR)\samples\d\winsamp.d)
+	$(P Windows GUI アプリケーションを D で書くことができます。
+	サンプルは $(D $(DMDDIR)\samples\d\winsamp.d) などに幾つかあります。
 	)
 
-	$(P These are required:)
+	$(P 以下が注意点です:)
 
 	$(OL
 
-	$(LI Instead of a $(CODE main) function serving as the entry point,
-	a $(CODE WinMain) function is needed.
+	$(LI エントリポイントとして、$(CODE main) 関数ではなく
+	$(CODE WinMain)  関数が必要です。
 	)
 
-	$(LI $(CODE WinMain) must follow this form:
+	$(LI $(CODE WinMain) の内容は以下の通りです:
 $(V1
 --------------------
 import core.runtime;
@@ -92,11 +92,11 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         result = myWinMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
         Runtime.terminate(&exceptionHandler);
     }
-    catch (Throwable e) // catch any uncaught exceptions
+    catch (Throwable e) // キャッチされていない例外を全てキャッチ
     {
         MessageBoxA(null, e.toString().toStringz, "Error",
                     MB_OK | MB_ICONEXCLAMATION);
-        result = 0;     // failed
+        result = 0;     // 失敗
     }
 
   return result;
@@ -105,7 +105,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
               LPSTR lpCmdLine, int nCmdShow)
 {
-    // ... insert user code here ...
+    // ... ユーザーコードをここに挿入 ...
     return 0;
 }
 --------------------
@@ -132,11 +132,11 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         result = myWinMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
         Runtime.terminate(&exceptionHandler);
     }
-    catch (Throwable e) // catch any uncaught exceptions
+    catch (Throwable e) // キャッチされていない例外を全てキャッチ
     {
         MessageBoxA(null, e.toString().toStringz(), "Error",
                     MB_OK | MB_ICONEXCLAMATION);
-        result = 0;     // failed
+        result = 0;     // 失敗
     }
 
   return result;
@@ -145,49 +145,49 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
               LPSTR lpCmdLine, int nCmdShow)
 {
-    // ... insert user code here ...
+    // ... ユーザーコードをここに挿入 ...
     return 0;
 }
 --------------------
 )
 
-	The $(D myWinMain()) function is where the user code goes, the
-	rest of $(D WinMain) is boilerplate to initialize and shut down
-	the D runtime system.
+	$(D myWinMain()) 関数が、ユーザのコードを書くところです。
+	$(D WinMain) 関数の残りは全て、Dの実行時システムの初期化と終了の
+	決まり文句です。
 	)
 
-	$(LI A $(CODE .def)
-	($(LINK2 http://www.digitalmars.com/ctg/ctgDefFiles.html, Module Definition File))
-	with at least the following
-	two lines in it:
+	$(LI 最低次の２行を含んだ、
+	$(CODE .def)
+	($(LINK2 http://www.digitalmars.com/ctg/ctgDefFiles.html, モジュール定義ファイル))
+	が必要です:
 
 $(MODDEFFILE
 EXETYPE NT
 SUBSYSTEM WINDOWS
 )
 
-	Without those, Win32 will open a text console window whenever
-	the application is run.
+	これがないと、Win32は、アプリケーションの実行時に
+	常にコンソールウインドウを開こうとします。
 	)
 
-	$(LI The presence of $(D WinMain()) is recognized by the compiler
-		causing it to emit a reference to
+	$(LI $(D WinMain()) の存在はコンパイラが認識し、
 		$(LINK2 http://www.digitalmars.com/ctg/acrtused.html, __acrtused_dll)
-		and the phobos.lib runtime library.
+		と phobos.lib
+		ランタイムライブラリへの参照を自動的に追加します。
 	)
 
 	)
 
-<h2>Windows Programming Examples</h2>
+<h2>Windows プログラミングの例</h2>
 
-A collection of over 140 Windows D programming code examples is available at
-$(LINK2 https://github.com/AndrejMitrovic/DWindowsProgramming, this Github repository.)
+140 を超える Windows での D でのコード例が
+$(LINK2 https://github.com/AndrejMitrovic/DWindowsProgramming, Github レポジトリ) で公開されています。
 
 )
 
 
 
 Macros:
-	TITLE=Windows
+	TITLE=Windowsプログラミング
 	WIKI=Windows
 	CATEGORY_HOWTOS=$0
