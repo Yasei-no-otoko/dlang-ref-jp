@@ -1,6 +1,6 @@
 Ddoc
 
-$(SPEC_S Enums,
+$(SPEC_S 列挙体,
 
 $(GRAMMAR
 $(GNAME EnumDeclaration):
@@ -36,192 +36,192 @@ $(GNAME EnumMember):
 $(V2      $(GLINK2 declaration, Type) $(B =) $(ASSIGNEXPRESSION))
 )
 
-	$(P Enum declarations are used to define a group of constants.
-	They come in two forms:
+	$(P enum宣言は、関連する整数定数の集まりを定義するのに使用されます。
+	これには二つの形式があります：
 	)
 	$(OL
-	$(LI Named enums, which have an $(I EnumTag).)
-	$(LI Anonymous enums, which do not have an $(I EnumTag).)
+	$(LI $(I EnumTag) のある、名前付き列挙体)
+	$(LI $(I EnumTag) のない、無名列挙体)
 	)
 
-<h2>Named Enums</h2>
+<h2>名前付き列挙体</h2>
 
 	$(P
-	Named enums are used to declare related
-	constants and group them by giving them a unique type.
-	The $(I EnumMembers)
-	are declared in the scope of the enum $(I EnumTag).
-	The enum $(I EnumTag) declares a new type, and all
-	the $(I EnumMembers) have that type.
+	名前付き列挙体は、
+	関連する整数定数の集まりを定義し、新しい型を与えるのに使用されます。
+	各メンバ $(I EnumMembers)
+	は、型名 $(I EnumTag) のスコープで定義されます。
+	$(I EnumTag) は新しい型となり、
+	メンバはその型を持つようになります。
 	)
 
-	$(P This defines a new type $(CODE X) which has values
-	$(CODE X.A=0), $(CODE X.B=1), $(CODE X.C=2):)
+	$(P 以下の例では新しい型 $(CODE X) が定義され、各メンバの値は
+	$(CODE X.A=0), $(CODE X.B=1), $(CODE X.C=2) となります:)
 
 ------
-enum X { A, B, C }	// named enum
+enum X { A, B, C }	// 名前付き列挙体
 ------
 
 $(V1
-	$(P If the $(I EnumBaseType) is not explicitly set, it is set to
-	type $(CODE int).)
+	$(P 基底型 $(I EnumBaseType) が指定されていない場合、
+	$(CODE int) が基底型とされます。)
 )
 $(V2
-	$(P If the $(I EnumBaseType) is not explicitly set, and the first
-	$(I EnumMember) has an initializer, it is set to the type of that
-	initializer. Otherwise, it defaults to
-	type $(CODE int).)
+	$(P $(I EnumBaseType) が指定されていない場合、先頭の
+	メンバに初期化子があれば、基底型はその初期化子の型になります。
+	先頭メンバにも初期化子がない場合は、
+	デフォルトの $(CODE int) が基底型となります。)
 
-	$(P Named enum members may not have individual $(I Type)s.
+	$(P 名前付きenumの個々のメンバに $(I Type) 形式で型を指定することはできません。
 	)
 )
 
-	$(P A named enum member can be implicitly cast to its $(I EnumBaseType),
-	but $(I EnumBaseType) types
-	cannot be implicitly cast to an enum type.
+	$(P 名前付き列挙体のメンバは $(I EnumBaseType)
+	型に暗黙変換されますが、逆に $(I EnumBaseType)
+	の値が名前付き列挙体の型に暗黙変換されることはありません。
 	)
 
-	$(P The value of an $(I EnumMember) is given by its initializer.
-	If there is no initializer, it is given the value of the
-	previous $(I EnumMember) + 1. If it is the first $(I EnumMember),
-	it's value is 0.
+	$(P 各メンバの値は初期化子で指定します。
+	初期化子がない場合、
+	直前のメンバの値 + 1 となります。最初のメンバに初期化子がなかった場合は、
+	値は 0 となります。
 	)
 
-	$(P An $(I EmptyEnumBody) signifies an opaque enum - the enum members are
-	unknown.)
+	$(P $(I EmptyEnumBody) は不透明な列挙体 - メンバの不明な列挙体 - 
+	を意味します。)
 
-<h3>Enum Default Initializer</h3>
+<h3>列挙体のデフォルト初期化値</h3>
 
-	$(P The $(CODE .init) property of an enum type is the value
-	of the first member of that enum.
-	This is also the default initializer for the enum type.
+	$(P 列挙体の $(CODE .init) プロパティは、
+	先頭のメンバの値となります。
+	これは、この型の変数のデフォルト初期化値でもあります。
 	)
 
 ------
 enum X { A=3, B, C }
-X x;      // x is initialized to 3
+X x;      // x は 3 に初期化される
 ------
 
-<h3>Enum Properties</h3>
+<h3>列挙体のプロパティ</h3>
 
-	$(P Enum properties only exist for named enums.
+	$(P これらのプロパティは名前付き列挙体にのみ存在します。
 	)
 
 	$(TABLE1
-	$(CAPTION Named Enum Properties)
-	$(TR $(TD .init) $(TD First enum member value))
-	$(TR $(TD .min) $(TD Smallest value of enum))
-	$(TR $(TD .max) $(TD Largest value of enum))
-	$(TR $(TD .sizeof) $(TD Size of storage for an enumerated value))
+	$(CAPTION 名前付き列挙体のプロパティ)
+	$(TR $(TD .init) $(TD 先頭のメンバの値))
+	$(TR $(TD .min) $(TD 最小のメンバの値))
+	$(TR $(TD .max) $(TD 最大のメンバの値))
+	$(TR $(TD .sizeof) $(TD 列挙体の値を格納するメモリ領域のサイズ))
 	)
 
-	$(P For example:)
+	$(P 例えば:)
 
 ---
 enum X { A=3, B, C }
-X.min    // is X.A
-X.max    // is X.C
-X.sizeof // is same as int.sizeof
+X.min    // == X.A
+X.max    // == X.C
+X.sizeof // int.sizeof と同じ
 ---
 
 $(V2
-	$(P The $(I EnumBaseType) of named enums must support comparison
-	in order to compute the $(CODE .max) and $(CODE .min) properties.
+	$(P 基底型 $(I EnumBaseType) は、$(CODE .max) and $(CODE .min) プロパティに対応するために、
+	比較演算が可能な型でなければなりません。
 	)
 )
 
-<h2>Anonymous Enums</h2>
+<h2>無名列挙体</h2>
 
-	$(P If the enum $(I Identifier) is not present, then the enum
-	is an $(I anonymous enum), and the $(I EnumMembers) are declared
-	in the scope the $(I EnumDeclaration) appears in.
-	No new type is created; the $(I EnumMembers) have the type of the
-	$(I EnumBaseType).
+	$(P もし $(I Identifier) がなければ、その列挙体は
+	$(I 無名列挙体) で、その $(I EnumMembers) は
+	$(I EnumDeclaration) の存在するスコープで宣言されます。
+	新しい型は作られません。$(I EnumMembers) は
+	$(I EnumBaseType) の型を持ちます。
 	)
 
-	The $(I EnumBaseType) is the underlying type of the enum.
+	$(I EnumBaseType) は、列挙体の元となる型です。
 $(V1
-	$(P It must be an integral type.
-	If omitted, it defaults to $(B int).
+	$(P これは整数型でなければなりません。
+	省略時はデフォルトで $(B int) になります。
 	)
 )
 $(V2
-	$(P If omitted, the $(I EnumMembers) can have different types.
-	Those types are given by the first of:
+	$(P 省略された場合、個々のメンバが別々の型を持てるようになります。
+	各メンバの型は、以下の順に規則が適用されて決定します：
 	)
 
 	$(OL
-	$(LI The $(I Type), if present.)
-	$(LI The type of the $(I AssignExpression), if present.)
-	$(LI The type of the previous $(I EnumMember), if present.)
+	$(LI もし指定されていれば、$(I Type))
+	$(LI もし指定されていれば、$(I AssignExpression) の型)
+	$(LI もし存在すれば、直前の $(I EnumMember) の型)
 	$(LI $(CODE int))
 	)
 )
 
 ------
-enum { A, B, C }	// anonymous enum
+enum { A, B, C }	// 無名列挙体
 ------
 
-	$(P Defines the constants A=0, B=1, C=2, all of type int.)
+	$(P は、int型の定数 A=0, B=1, C=2 を定義します。)
 
-	$(P Enums must have at least one member.
+	$(P 列挙体には少なくとも一つのメンバが必要です。
 	)
 
-	$(P The value of an $(I EnumMember) is given by its initializer.
-	If there is no initializer, it is given the value of the
-	previous $(I EnumMember) + 1. If it is the first $(I EnumMember),
-	it's value is 0.
+	$(P 各メンバの値は初期化子で指定します。
+	初期化子がない場合、
+	直前のメンバの値 + 1 となります。最初のメンバに初期化子がなかった場合は、
+	値は 0 となります。
 	)
 
 ------
 enum { A, B = 5+7, C, D = 8+C, E }
 ------
 
-	$(P Sets A=0, B=12, C=13, D=21, and E=22, all of type int.)
+	$(P これは全てint型の A=0, B=12, C=13, D=21, E=22 となります。)
 
 ---
 enum : long { A = 3, B }
 ---
 
-	$(P Sets A=3, B=4 all of type long.)
+	$(P は、全てlong型の A=3, B=4 となります。)
 
 $(V2
 ---
 enum : string {
   A = "hello",
   B = "betty",
-  C     // error, cannot add 1 to "betty"
+  C     // エラー。"betty" に 1 は足せない
 }
 ---
 
 ---
 enum {
-  A = 1.2f,  // A is 1.2f of type float
-  B,         // B is 2.2f of type float
-  int C = 3, // C is 3 of type int
-  D          // D is 4 of type int
+  A = 1.2f,  // A は float 型の 1.2f
+  B,         // B は float 型の 2.2f
+  int C = 3, // C は int 型の 3
+  D          // D は int 型の 4
 }
 ---
 
-<h3>Manifest Constants</h3>
+<h3>記号定数 (Manifest Constant)</h3>
 
-	$(P If there is only one member of an anonymous enum, the { } can
-	be omitted:
+	$(P 無名列挙体にただ１つしかメンバがない場合、{ }
+	は省略できます：
 	)
 
 ---
-enum i = 4;      // i is 4 of type int
-enum long l = 3; // l is 3 of type long
+enum i = 4;      // i は int 型の 4
+enum long l = 3; // l は long 型の 3
 ---
 
-	$(P Such declarations are not lvalues, meaning their address
-	cannot be taken.)
+	$(P このように宣言した値は左辺値ではありません。
+	つまり、アドレスを取ることはできません。)
 )
 
 )
 
 Macros:
-	TITLE=Enums
+	TITLE=列挙体
 	WIKI=Enum
 	CATEGORY_SPEC=$0
 
