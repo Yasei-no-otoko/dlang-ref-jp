@@ -1,83 +1,83 @@
 Ddoc
 
-$(SPEC_S Contract Programming,
+$(SPEC_S 契約プログラミング,
 
-	Contracts are a breakthrough technique to reduce the programming effort
-	for large projects. Contracts are the concept of preconditions, postconditions,
-	errors, and invariants.
-	Contracts can be done in C++ without modification to the language,
-	but the result is
-	clumsy and inconsistent.
+	"契約" は、大きなプロジェクトのプログラミングの手間を減らす、
+	画期的な技術です。契約は、事前条件・事後条件・エラー・不変条件、
+	からなる概念です。
+	C++でも言語の変更無しに契約は実現できますが、
+	扱いにくく、
+	一貫性のないものになります。
 	<p>
 
-	Building contract support into the language makes for:
+	言語レベルで契約のサポートを組み込むことには、こんな利点があります：
 
 	$(OL
-	$(LI a consistent look and feel for the contracts)
-	$(LI tool support)
-	$(LI it's possible the compiler can generate better code using information gathered
-	from the contracts)
-	$(LI easier management and enforcement of contracts)
-	$(LI handling of contract inheritance)
+	$(LI 契約の記述の一貫性)
+	$(LI ツールのサポート)
+	$(LI 契約の記述に基づく、
+		コンパイラによるよりよいコード生成)
+	$(LI 契約の管理や強制の簡単化)
+	$(LI 契約の継承)
 	)
 
 $(COMMENT <img src="images/d4.gif" alt="Contracts make D bug resistant" border=0>)
 
-	$(P The idea of a contract is simple - it's just an expression that must evaluate to true.
-	If it does not, the contract is broken, and by definition, the program has a bug in it.
-	Contracts form part of the specification for a program, moving it from the documentation
-	to the code itself. And as every programmer knows, documentation tends to be incomplete,
-	out of date, wrong, or non-existent. Moving the contracts into the code makes them
-	verifiable against the program.)
+	$(P "契約"は、考え方は簡単で、常にtrueにならなくてはいけない式、のことです。
+	trueでなければ契約が破られていて、つまり定義から、プログラムにバグがあることがわかります。
+	契約はプログラムの仕様の一部分で、それをドキュメントではなくコード自身に書くようにした、
+	とも言えます。プログラマの皆さんはご存じのように、ドキュメントというのは不完全で、
+	古かったり間違っていたり、時にはどこにも存在しなかったりします。
+	契約をコードの中に持ってくることで、プログラムによる検証が可能になります。)
 
-<h2>Assert Contract</h2>
+<h2>表明契約</h2>
 
-	The most basic contract is the
+	一番基本的な契約は、
 	$(GLINK2 expression, AssertExpression).
-	An $(B assert) inserts a checkable expression into
-	the code, and that expression must evaluate to true:
+	です。$(B assert) は、コードにチェック可能な式を埋め込み、
+	その式がtrueでなくてはならない、という条件を課します：
 ------
 assert(expression);
 ------
-	C programmers will find it familiar. Unlike C, however, an <code>assert</code>
-	in function bodies
-	works by throwing an <code>AssertError</code>,
-	which can be caught and handled. Catching the contract violation is useful
-	when the code must deal with errant uses by other code, when it must be
-	failure proof, and as a useful tool for debugging.
+	C プログラマにはお馴染みでしょう。
+	しかし、C とは違い、関数本体での <code>assert</code>
+	<code>AssertError</code> を投げる働きをします。
+	これはcatchして対応することができます。	契約違反をcatchするのは、
+	絶対にフェイルプルーフでなくてはならないコードから他の動作の怪しいコードを
+	使う必要があるときや、デバッグ時には役に立ちます。
 
-<h2>Pre and Post Contracts</h2>
+<h2>事前・事後条件</h2>
 
-	The pre contracts specify the preconditions before a statement is executed. The most
-	typical use of this would be in validating the parameters to a function. The post
-	contracts validate the result of the statement. The most typical use of this
-	would be in validating the return value of a function and of any side effects it has.
-	The syntax is:
+	前契約では、文が実行される前に成立していなければならない事前条件を記述します。
+	もっとも典型的な使い方は、関数の入力引数の検査でしょう。後契約は、
+	文の実行結果を検査します。もっとも典型的な使い方は、
+	関数の返値と副作用の検査でしょう。
+	構文は次のようになります：
 
 ------
 in
 {
-  ...contract preconditions...
+    ...事前条件...
 }
 out (result)
 {
-  ...contract postconditions...
+    ...事後条件...
 }
 body
 {
-  ...code...
+    ...コード...
 }
 ------
-	By definition, if a pre contract fails, then the body received bad
-	parameters.
-	An AssertError is thrown. If a post contract fails,
-	then there is a bug in the body. An AssertError is thrown.
+	定義から、前契約違反であれば、
+	bodyは間違った引数を渡されていることになります。
+	そこで AssertError 例外が投げられます。後契約に対する違反があれば、body
+	にバグがあったことになります。このときは AssertError 例外が投げられます。
 <p>
-	Either the <code>in</code> or the <code>out</code> clause can be omitted.
-	If the <code>out</code> clause is for a function
-	body, the variable <code>result</code> is declared and assigned the return
-	value of the function.
-	For example, let's implement a square root function:
+	<code>in</code> と <code>out</code> 節のどちらかを省略することもできます。
+	関数本体のための <code>out</code> 節では、
+	変数 <code>result</code>
+	が宣言され、関数の返値が代入されます。
+	例えば、平方根の関数を実装してみましょう：
 ------
 long square_root(long x)
   in
@@ -93,65 +93,65 @@ long square_root(long x)
     return cast(long)std.math.sqrt(cast(real)x);
   }
 ------
-	The assert's in the in and out bodies are called <dfn>contracts</dfn>.
-	Any other D
-	statement or expression is allowed in the bodies, but it is important
-	to ensure that the
-	code has no side effects, and that the release version of the code
-	will not depend on any 	effects of the code.
-	For a release build of the code, the in and out code is not
-	inserted.
+	in, out, body の中の assert は <dfn>契約 (contract)</dfn>
+	と呼ばれます。
+	assert以外の任意のDの文や式も
+	記述することができますが、
+	そのコードに副作用が無いように注意することが重要です。
+	リリース版のコードは契約のコードに依存してはいけません。
+	リリースビルドでは、
+	in と out 用のコードは生成されません。
 <p>
-	If the function returns a void, there is no result, and so there can be no
-	result declaration in the out clause.
-	In that case, use:
+	関数の返値型がvoidの時は、返値がないので、out節で変数
+	result を宣言するのは不可能です。
+	この場合は、次の形式を使います：
 ------
 void func()
   out
   {
-    ...contracts...
+	...契約...
   }
   body
   {
     ...
   }
 ------
-	In an out statement, $(I result) is initialized and set to the
-	return value of the function.
+	out節では、$(I result)
+	は関数の返値で初期化されます。
 
-<h2>In, Out and Inheritance</h2>
+<h2>in, out と、継承</h2>
 
-	$(P If a function in a derived class overrides a function in its
-	super class, then only one of
-	the $(D in) contracts of the function and its base functions
-	must be satisfied.
-	Overriding
-	functions then becomes a process of $(I loosening) the $(D in)
-	contracts.
+	$(P I関数が基底クラスの関数をオーバーライドしたものである時は、
+	その関数自身かまたは基底クラス達の
+	$(D in) c契約のうち、
+	どれか一つが満たされればよいことになります。
+	関数のオーバーライドは、
+	$(D in) 契約を $(I より緩く)
+	していることになります。
 	)
 
-	$(P A function without an $(D in) contract means that any values
-	of the function parameters are allowed. This implies that if any
-	function in an inheritance hierarchy has no $(D in) contract,
-	then $(D in) contracts on functions overriding it have no useful
-	effect.
+	$(P $(D in) 契約を持たない関数は、
+	関数の引数として任意の値を許すという意味になります。これはつまり
+	$(D in) 契約を持たない関数が継承階層の中にあると、
+	その関数をオーバーライドした関数の $(D in)
+	契約は何も効果を持たないことになります。
 	)
 
-	$(P Conversely, all of the $(D out) contracts needs to be satisfied,
-	so overriding functions becomes a processes of $(I tightening) the
-	$(D out)
-	contracts.
+	$(P 逆に、$(D out) 契約は全て満たされる必要がありますから、
+	関数のオーバーライドは、
+	$(D out) 契約を
+	$(I より厳しく) していることになります。
 	)
 
-<h2>Class Invariants</h2>
+<h2>クラス不変条件</h2>
 
-	$(P Class invariants are used to specify characteristics of a class that
-	always
-	must be true (except while executing a member function).
-	They are described in $(DDLINK class, Classes, Classes).
+	$(P クラス不変条件は、
+	常に成り立っているクラスの性質を記述するものです。
+	（ただしメンバ関数の実行途中は除く。）
+	$(DDLINK class, Classes, クラス) の項で説明しています。
 	)
 
-<h2>References</h2>
+<h2>参考資料</h2>
 
 	$(LIST
 	$(LINK2 http://people.cs.uchicago.edu/~robby/contract-reading-list/, Contracts Reading List),
@@ -161,7 +161,7 @@ void func()
 )
 
 Macros:
-	TITLE=Contract Programming
+	TITLE=契約プログラミング
 	WIKI=DBC
 	CATEGORY_SPEC=$0
 
