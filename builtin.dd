@@ -1,74 +1,74 @@
 Ddoc
 
-$(COMMUNITY Core Language Features vs Library Implementation,
+$(COMMUNITY 言語の機能 vs ライブラリによる実装,
 
 
-	$(P D offers several capabilities built in to the core language
-	that are implemented as libraries in other languages such
-	as C++:
+	$(P D では、
+	他の言語(例えばC++)ではライブラリとして実装されているような機能も、
+	言語そのものの機能として組み込んでいるものがいくつかあります：
 	)
 
 	$(OL
-	$(LI Dynamic Arrays)
-	$(LI Strings)
-	$(LI Associative Arrays)
+	$(LI 動的配列)
+	$(LI 文字列)
+	$(LI 連想配列)
 	)
 
-	$(P Some consider this as evidence of language bloat, rather than
-	a useful feature.
-	So why not implement each of these as standardized library types?
+	$(P これを有用な特徴ではなく、
+	言語の肥大化の証拠と考える方もいらっしゃるようです。
+	何故、これらそれぞれを標準ライブラリの型として実装しなかったのでしょうか？
 	)
 
-	$(P Some general initial observations:
+	$(P まず一般的な観点から幾つか理由をあげます：
 	)
 
 	$(OL
 
-	$(LI Each of them is heavily used. This means that even small
-	improvements in usability are worth reaching for.
+	$(LI どれも非常によく使われています。従って、例え小さくても、
+	使い勝手の改善は実現するだけの価値があります。
 	)
 
-	$(LI Being a core language feature means that the compiler can
-	issue better and more to the point error messages when a type
-	is used incorrectly.
-	Library implementations tend to give notoriously obtuse messages
-	based on the internal details of those implementations.
+	$(LI 言語のコア機能とするということは、その型が不正に使用されていたときに、
+	コンパイラによって
+	より適切なエラーメッセージを出すことが可能になります。
+	ライブラリによる実装では、
+	実装の内部詳細にもとづいたなんだかよくわからないメッセージになる傾向があります。
 	)
 
-	$(LI Library features cannot invent new syntax, new operators,
-	or new tokens.
+	$(LI ライブラリによる実装では、新しい構文や新しい演算子、
+	新しいトークンを導入できません。
 	)
 
-	$(LI Library implementations tend to require a lot of compile
-	time processing of the implementation, over and over for each compile,
-	that slows down compilation.
+	$(LI ライブラリによる実装は、毎回のコンパイルのたびに、
+	実装の処理でコンパイル時間を消費する傾向にあります。
+	結果、全体のコンパイル速度が低下します。
 	)
 
-	$(LI Library implementations are supposed to provide flexibility
-	to the end user. But if they are standardized, standardized to the
-	point of the compiler being allowed to recognized them as special
-	(the C++ Standard allows this), then they become just as inflexible
-	as builtin core features.
+	$(LI ライブラリ実装はエンドユーザに柔軟性を提供するとされています。
+	しかし、それが標準化されると、
+	コンパイラ内で標準ライブラリを特別なものとして認識・処理することが許され
+	(C++標準は実際にこれを認めています)、
+	言語組み込みの機能と同じ程度の柔軟さになってしまうのです。
 	)
 
-	$(LI The ability to define new library types, while having greatly
-	advanced in the last few years, still leaves a lot to be desired
-	in smoothly integrating it into the existing language.
-	Rough edges, clumsy syntax, and odd corner cases abound.
+	$(LI 新しいライブラリ型を定義する機能は近年急速な進歩を遂げていますが、
+		それでもまだ、
+		既存の言語へのスムーズな統合が望まれる問題点を多く残しています。
+		荒削りな構造や扱いにくい文法、奇妙な例外事例等々。
 	)
 
 	)
 
-	$(P More specific comments:
+	$(P それぞれの項目毎にもっと突っ込んで考えると…：
 	)
 
-$(SECTION2 Dynamic Arrays,
+$(SECTION2 動的配列,
 
-	$(P C++ has builtin core arrays. It's just that they don't work very
-	well. Rather than fix them, several different array types were
-	created as part of the C++ Standard Template Library, each covering
-	a different deficiency in the builtin arrays. These
-	include:
+	$(P C++ は組み込みの配列があります。ですが、あまり使い勝手はよくありません。
+	これを改善するのではなく、いくつか異なる配列型が C++
+	標準テンプレートライブラリの中に作られ、
+	組み込み配列の様々な短所をそれぞれでカバーするようになりました。
+	そのような拡張配列型には、次のようなものがあります：
 	)
 
 	$(UL
@@ -82,72 +82,72 @@ $(SECTION2 Dynamic Arrays,
 	$(LI $(D indirect_array))
 	)
 
-	$(P Fixing the builtin array support means the need for each of these
-	variations just evaporates. There's one array type that covers
-	it all, only one thing to learn, and no problems getting one array
-	type to work with another array type.
+	$(P 組み込みの配列を改善することによって、これら変種の必要性は消えて無くなります。
+	これら全てをカバーする唯一の配列型があって、
+	学ぶ必要があるのは一つだけになり、
+	ある配列を別の種類の配列として使いたい時の問題もなくなります。
 	)
 
-	$(P As usual, a builtin type lets us create syntactic sugar for it.
-	This starts with having an array literal, and follows with some
-	new operators specific to arrays. A library array implementation
-	has to make due with overloading existing operators.
-	The indexing operator, $(D a[i]), it shares with C++.
-	Added are the array concatenation operator $(D ~), array append operator
-	$(D ~=), array slice operator $(D a[i..j]),
-	and the array vector operator
-	$(D a[]).
+	$(P 通常、型を組み込みとすると、シンタックスシュガーを用意できるようになります。
+	まず、配列リテラルがありますし、次に配列操作のために用意された演算子があります。
+	ライブラリによる配列実装だと、
+	既存の演算子をオーバーロードして使わなければなりません。
+	添字演算子 $(D a[i])、これはC++と共通です。
+	さらに、配列結合演算子  $(D ~)、配列追記演算子
+	$(D ~=)、配列スライス演算子 $(D a[i..j]),
+	そして配列ベクトル演算演算子
+	$(D a[]) がDでは加わりました。
 	)
 
-	$(P The ~ and ~= concatenation operators resolve a problem that comes
-	up when only existing operators can be overloaded. Usually, + is
-	pressed into service as concatenation for library array
-	implementations. But that winds up precluding having + mean
-	array vector addition. Furthermore, concatenation has nothing in
-	common with addition, and using the same operator for both is
-	confusing.
+	$(P 結合演算子 ~ と ~= によって、既存の演算子をオーバーロードしなければならないことに
+	起因する問題が解決されます。通常、ライブラリ実装による結合演算子には
+	+ が採用されます。
+	しかしこれは、配列のベクトル加算という + の意味と衝突します。
+	さらいに、結合はもともと足し算とは関係のない概念で、
+	両方に同じ演算子を使うのは
+	混乱の元です。
 	)
 )
 
 
-$(SECTION2 Strings,
+$(SECTION2 文字列,
 
-	$(REDO $(P A <a href="cppstrings.html">detailed comparison with C++'s std::string</a>.
+	$(REDO $(P <a href="cppstrings.html">C++のstd::stringとの詳細な比較</a> があります。
 	))
 
-	$(P C++ has, of course, builtin string support in the form of string
-	literals and char arrays. It's just that they suffer from all
-	the weaknesses of C++ builtin arrays.
+	$(P C++ にももちろん、charの配列と文字列リテラルという形で、
+	組み込みの文字列サポートがあります。問題は単に、
+	C++の組み込みの配列が貧弱だという点です。
 	)
 
-	$(P But after all, what is a string if not an array of characters?
-	If the builtin array problems are fixed, doesn't that resolve
-	the string problems as well? It does. It seems odd at first that
-	D doesn't have a string class, but since manipulating strings
-	is nothing more than manipulating arrays of characters, if arrays
-	work, there's nothing a class adds to it.
+	$(P でも、文字列が文字の配列でないとしたら、いったい何なのでしょうか。
+	もし組み込みの配列の問題点が解消されたら、同時に文字列の問題も解決するのでしょうか？
+	その通り、解決します。最初は D 
+	に文字列クラスがないことを奇妙に感じるかもしれませんが、でも結局、
+	文字列の操作とは文字の配列の操作に他ならないのです。
+	もし配列が十分な機能を持っているなら、それ以上のものを加える必要はありません。
 	)
 
-	$(P Furthermore, the oddities resulting from builtin string literals
-	not being of the same type as the library string class type go
-	away.
+	$(P さらに、文字列リテラルが
+	ライブラリの文字列クラス型と違う型を持つことによって生じる不自由さも
+	これで無くなります。
 	)
 )
 
 
-$(SECTION2 Associative Arrays,
+$(SECTION2 連想配列,
 
-	$(P The main benefit for this is, once again, syntactic sugar.
-	An associative array keying off of a type $(D T) and storing an
-	$(D int) value is naturally written
-	as:
+	$(P 主な利点は、これも、シンタックスシュガーにあります。
+	型 $(D T) をキーとして
+	$(D int) の値を格納する連想配列は、
+	自然にこう書けます：
 	)
 
 ---------------
 int[T] foo;
 ---------------
 
-	$(P rather than:
+	$(P 次のような複雑な書き方にはなりません：
 	)
 
 ---------------
@@ -156,26 +156,26 @@ import std.associativeArray;
 std.associativeArray.AA!(T, int) foo;
 ---------------
 
-	$(P Builtin associative arrays also offer the possibility of having
-	associative array literals, which are an often requested additional
-	feature.
+	$(P 連想配列を言語の機能としてもっておけば、
+	しばしばリクエストされる機能である
+	連想配列リテラル を将来的に実装できる可能性があります。
 	)
 )
 
 
-$(SECTION2 Please Note,
+$(SECTION2 おことわり,
 
-	$(P D currently has a built-in complex type that is being phased
-	out in favor of a library implementation. Advances in D language
-	semantics and compiler implementation have obviated the need for a
-	built-in complex type.)
+	$(P Dは現在のところ複素数型を組み込みで持っていますが、
+	今後ライブラリ実装へと切り替えられていく予定です。
+	D言語のセマンティクスとコンパイラ実装の進展によって、
+	組み込みの複素数型の必要性は薄れました。)
 
 )
 
 )
 
 Macros:
-	TITLE=D Builtin Rationale
+	TITLE=言語に機能を組込む理由
 	WIKI=builtins
 	CATEGORY_OVERVIEW=$0
 
