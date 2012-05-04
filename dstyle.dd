@@ -1,51 +1,51 @@
 Ddoc
 
-$(D_S The D Style,
+$(D_S Dスタイル,
 
 $(P
-	$(I The D Style) is a set of style conventions for writing
-	D programs. The D Style is not enforced by the compiler, it is
-	purely cosmetic and a matter of choice. Adhering to the D Style,
-	however, will make it easier for others to work with your
-	code and easier for you to work with others' code.
-	The D Style can form the starting point for a project
-	style guide customized for your project team.
+	$(I Dスタイル) 、
+	Dでプログラムを書く上でのコーディングスタイルを集めたものです。
+	Dスタイルはコンパイラによって強制されるわけではなく純粋に見かけ上の話で、
+	プログラマ一人一人の選択の問題です。しかし、Dスタイルを守ることで、
+	あなたのコードを扱う他の人にとってわかりやすいプログラムになります。
+	もちろん他の人のコードをあなたが扱う時も。あなたがプロジェクトで
+	詳細なコーディングスタイルを定める際には、Dスタイルが叩き台となるでしょう。
 )
 
 $(P
-	Submissions to Phobos and other official D source code will
-	follow these guidelines.
+	Phobosへの提供コードや公式なDのソースコードはすべて、
+	以下のガイドラインに従います。
 )
 
-<h3>White Space</h3>
+<h3>空白</h3>
 
 $(UL
-	$(LI One statement per line.)
+	$(LI １行に１文。)
 
-	$(LI Use spaces instead of hardware tabs.)
+	$(LI タブではなく空白文字を使用する。)
 
-	$(LI Each indentation level will be four columns.)
+	$(LI インデントのレベル毎に、２つ以上の空白文字。)
 
-	$(LI Operators are separated by single spaces from their operands.)
+	$(LI 演算子とオペランドの間には空白を１つ。)
 
-	$(LI Two blank lines separating function bodies.)
+	$(LI 関数定義どうしの間には空行２行。)
 
-	$(LI One blank line separating variable declarations from statements
-	in function bodies.)
+	$(LI 関数定義のなかでは、
+	変数宣言と実行文の間に１つの空行。)
 )
 
-<h3>Comments</h3>
+<h3>コメント</h3>
 
 $(UL
-	$(LI Use // comments to document a single line:
+	$(LI 一行で注釈を付け加えるときは // を:
 -------------------------------
 statement;	// comment
 statement;	// comment
 -------------------------------
 	)
 
-	$(LI Use block comments to document a multiple line block of
-	statements:
+	$(LI 複数行の注釈には /* */
+	でブロックコメントを：
 -------------------------------
 /* comment
  * comment
@@ -55,8 +55,8 @@ statement;	// comment
 -------------------------------
 	)
 
-	$(LI Use $(CODE version (none)) to $(SINGLEQUOTE comment out) a piece of trial code
-	that is syntactically valid:
+	$(LI 試しに書いた、文法的には正しいコードを $(SINGLEQUOTE コメントアウト) するには
+	$(CODE version (none)) を:
 -------------------------------
   version (none)
   {
@@ -68,7 +68,7 @@ statement;	// comment
   }
 -------------------------------
 
-	It can be turned on with $(CODE version(all)):
+	$(CODE version(all)) とすることで再度有効化できます。
 
 -------------------------------
   version (all)
@@ -83,7 +83,7 @@ statement;	// comment
 
 	)
 
-	$(LI Use nesting comments to $(SINGLEQUOTE comment out) a piece of syntactically invalid code:
+	$(LI 文法的に正しくないコードの $(SINGLEQUOTE コメントアウト) にはネストできる/+ +/コメントを使います：
 -------------------------------
 /+++++
     /* comment
@@ -96,42 +96,42 @@ statement;	// comment
 	)
 )
 
-<h3>Naming Conventions</h3>
+<h3>命名規約</h3>
 
 $(DL
-    $(DT General)
-	<dd>Names formed by joining multiple words should have each word
-	other than the first capitalized.
-	Names shall not begin with an underscore $(SINGLEQUOTE _) unless they are private member variables.
+    $(DT 一般に)
+	<dd>複数の単語を繋いでできた名前の場合は、
+		先頭の単語を除いて全て、最初の一文字を大文字にします。
+		privateメンバ変数以外では、アンダースコア $(SINGLEQUOTE _) で始まる名前は使用しません。
 
 -------------------------------
 int myFunc();
 -------------------------------
 
-    $(DT Module)
-	$(DD Module and package names are all lower case, and only contain
-	the characters [a..z][0..9][_]. This avoids problems dealing
-	with case insensitive file systems.)
+    $(DT モジュール)
+	$(DD モジュール名とパッケージ名は全て小文字で。
+	[a..z] [0..p] [_] のみを使います。
+	大文字小文字を区別しないファイルシステムでの問題を避けることが出来ます。)
 
-    $(DT C Modules)
-	$(DD Modules that are interfaces to C functions go into the "c"
-	package, for example:
+    $(DT Cのモジュール)
+	$(DD Cの関数へのインターフェイスとなるモジュールは、"c" パッケージに入れます。
+		例えば：
 -------------------------------
 import std.c.stdio;
 -------------------------------
-	Module names should be all lower case.
+	モジュール名が全て小文字なのは同じです。
 	)
 
-    $(DT Class, Struct, Union, Enum, Template names)
-	$(DD are capitalized.
+    $(DT クラス, 構造体, 共用体, 列挙型, テンプレート の名前)
+	$(DD は、キャピタライズ（先頭を大文字に）します。
 
 -------------------------------
 class Foo;
 class FooAndBar;
 -------------------------------
 	)
-    $(DD An exception is that eponymous templates that return a value instead of a type should not be  
-    capitalized, as they are conceptually more similar to functions.  
+    $(DD 例外的なケースとして、型ではなく値を返すために作られたテンプレートについては、
+    概念的に関数に近いため、キャピタライズしません。
 
 -------------------------  
 template GetSomeType(T) {}  
@@ -139,8 +139,8 @@ template isSomeType(T) {}
 -------------------------  
     )  
 
-    $(DT Function names)
-	$(DD Function names are not capitalized.
+    $(DT 関数名)
+	$(DD 関数名はキャピタライズしません。
 
 -------------------------------
 int done();
@@ -149,17 +149,17 @@ int doneProcessing();
 	)
 
 $(V1
-    $(DT Const names)
-	$(DD Are in all caps.)
+    $(DT 定数名)
+	$(DD 全て大文字で。)
 )
-    $(DT Enum member names)
-	$(DD Are in lowerCamelCase.)
+    $(DT 列挙型のメンバ名)
+	$(DD lowerCamelCase で。)
 
 )
 
-<h3>Meaningless Type Aliases</h3>
+<h3>意味のないエイリアス</h3>
 
-	$(P Things like:)
+	$(P この手のものは:)
 
 -------------------------------
 alias void VOID;
@@ -167,65 +167,65 @@ alias int INT;
 alias int* pint;
 -------------------------------
 
-	$(P should be avoided.)
+	$(P できるだけ避けましょう。)
 
-<h3>Declaration Style</h3>
+<h3>宣言の書き方</h3>
 
-	$(P Since the declarations are left-associative, left justify them:)
-
--------------------------------
-int[] x, y;	// makes it clear that x and y are the same type
-int** p, q;	// makes it clear that p and q are the same type
--------------------------------
-
-	$(P to emphasize their relationship. Do not use the C style:)
+	$(P Dの宣言は左結合的なので、左寄せして書きます：)
 
 -------------------------------
-int []x, y;	// confusing since y is also an int[]
-int **p, q;	// confusing since q is also an int**
+int[] x, y;	// xとyが同じ型であることがわかりやすい
+int** p, q;	// pとqが同じ型であることがわかりやすい
 -------------------------------
 
-<h3>Operator Overloading</h3>
+	$(P こうすると変数どうしの関係が強調できます。C風の書き方は使わないこと：)
 
-	$(P Operator overloading is a powerful tool to extend the basic
-	types supported by the language. But being powerful, it has
-	great potential for creating obfuscated code. In particular,
-	the existing D operators have conventional meanings, such
-	as $(SINGLEQUOTE +) means $(SINGLEQUOTE add) and $(SINGLEQUOTE &lt;&lt;)
-	means $(SINGLEQUOTE shift left).
-	Overloading operator $(SINGLEQUOTE +) with a meaning different from $(SINGLEQUOTE add)
-	is arbitrarily confusing and should be avoided. 
+-------------------------------
+int []x, y;	// yもint[]型なので混乱する
+int **p, q;	// qもint**型なので混乱する
+-------------------------------
+
+<h3>演算子オーバーロード</h3>
+
+	$(P 算子オーバーロードは、
+	言語でサポートされる基本型を拡張するための強力な道具です。
+	しかしその強力さゆえに、読みにくいコードを作り出してしまう危険性をも秘めています。
+	Dの定義済み演算子は慣習にのっとった使い方をしています。
+	$(SINGLEQUOTE +) が $(SINGLEQUOTE 足し算) で $(SINGLEQUOTE &lt;&lt;)
+	が $(SINGLEQUOTE 左シフト)、などなど。
+	$(SINGLEQUOTE +) 演算子を $(SINGLEQUOTE 足し算) 以外の意味でオーバーロードするのは非常に混乱をまねくので、
+	避けるべきです。
 	)
 
-<h3>Hungarian Notation</h3>
+<h3>ハンガリアン記法</h3>
 
-	$(P Using hungarian notation to denote the type of a variable
-	is a bad idea.
-	However, using notation to denote the purpose of a variable
-	(that cannot be expressed by its type) is often a good
-	practice.)
+	$(P 変数の型を示すためにハンガリアン記法を使うのは、
+	悪い考えです。
+	しかし、変数の（型だけでは示されていないような）
+	使用目的を示すために使うのは、
+	多くの場合良い習慣といえるでしょう。)
 
-<h3>Documentation</h3>
+<h3>ドキュメント</h3>
 
 $(P
-	All public declarations will be documented in
-	$(LINK2 ddoc.html, Ddoc) format.
+	すべてのpublic宣言には、
+	$(LINK2 ddoc.html, Ddoc) 形式でコメントを添えます。
 )
 
-<h3>Unit Tests</h3>
+<h3>単体テスト</h3>
 
 $(P
-	As much as practical, all functions will be exercised
-	by unit tests using unittest blocks immediately following
-	the function to be tested.
-	Every path of code should be executed at least once,
-	verified by the $(LINK2 code_coverage.html, code coverage analyzer).
+	現実的な範囲で、
+	すべての関数は関数定義の直後にunittestブロックを置いて、
+	単体テストで検査します。
+	すべてのコードパスは最低一度はテストで実行されるようにします。
+	$(LINK2 code_coverage.html, コードカバレッジ解析) で検証できます。
 )
 
 )
 
 Macros:
-	TITLE=The D Style
+	TITLE=Dスタイル
 	WIKI=DStyle
 	CATEGORY_APPENDICES=$0
 
