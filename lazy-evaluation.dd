@@ -1,16 +1,16 @@
 Ddoc
 
-$(D_S Lazy Evaluation of Function Arguments,
+$(D_S 関数引数の遅延評価,
 
 <center>
 $(I by Walter Bright, $(LINK http://www.digitalmars.com/d))
 </center>
 
 
-$(P Lazy evaluation is the technique of not evaluating an expression
-unless and until the result of the expression is required.
-The &amp;&amp;, || and ?: operators are the conventional way to
-do lazy evaluation:
+$(P 遅延評価とは、ある式を、その結果が本当に必要になる時点までは
+評価しないでおくテクニックです。
+論理演算子 &amp;&amp;, || や三項演算子 ?: は、
+従来からある遅延評価を行う手法です:
 )
 
 ---
@@ -21,16 +21,16 @@ void test(int* p)
 }
 ---
 
-$(P The second expression $(D p[0]) is not evaluated unless $(D p)
-is not $(B null).
-If the second expression was not lazily evaluated, it would
-generate a runtime fault if $(D p) was $(B null).
+$(P 二番目の式 $(D p[0]) は $(D p)
+$(B null) でないときに限り評価されます。
+もし仮に二番目の式が遅延評価されないとすると、
+$(D p) が $(B null) のときには実行時エラーとなってしまうでしょう。
 )
 
-$(P While invaluable, the lazy evaluation operators have significant
-limitations. Consider a logging function, which logs
-a message, and can be turned on and off at runtime based on a global
-value:
+$(P 遅延評価演算子は実に有益なものではありますが、同時に、無視できない制限も存在します。
+ログ取り関数を考えてみましょう。メッセージのログをとるもので、
+グローバルな設定値によって実行時に
+ON/OFFを切り替えられるものとします:
 )
 
 ---
@@ -41,7 +41,7 @@ void log(char[] message)
 }
 ---
 
-$(P Often, the message string will be constructed at runtime:
+$(P メッセージ文字列が実行時に作られることはよくあります:
 )
 
 ---
@@ -51,13 +51,13 @@ void foo(int i)
 }
 ---
 
-$(P While this works, the problem is that the building of the message
-string happens regardless of whether logging is enabled or not.
-With applications that make heavy use of logging, this can become
-a terrible drain on performance.
+$(P これは問題なく動作しますが、ログ取り機能のON/OFFにかかわらず
+メッセージ文字列の構築が行われてしまうのが問題です。
+ログ機能を頻繁に使うアプリケーションでは、
+これはパフォーマンス上の重大な問題となる可能性があります。
 )
 
-$(P One way to fix it is by using lazy evaluation:
+$(P 解決策のひとつは、遅延評価をつかうことでしょう。
 )
 
 ---
@@ -67,30 +67,30 @@ void foo(int i)
 }
 ---
 
-$(P but this violates encapsulation principles by exposing the details
-of logging to the user. In C, this problem is often worked around
-by using a macro:
+$(P しかし、これはログ取り機能の詳細をユーザーにさらすことになり、
+カプセル化の原則に反します。C言語では、この手の問題はよく
+マクロを使って対処します:
 )
 
 $(CCODE
 #define LOG(string)  (logging && log(string))
 )
 
-$(P but that just papers over the problem. Preprocessor macros have
-well known shortcomings:)
+$(P しかしこれも本質的な解決にはなっていません。プリプロセッサマクロには、
+ご存じの通りいくつもの欠点があります:)
 
 $(UL
-$(LI The $(D logging) variable is exposed in the user's namespace.)
-$(LI Macros are invisible to symbolic debuggers.)
-$(LI Macros are global only, and cannot be scoped.)
-$(LI Macros cannot be class members.)
-$(LI Macros cannot have their address taken, so cannot be passed indirectly
-     like functions can.)
+$(LI 変数 $(D logging) がユーザーの名前空間に公開される)
+$(LI マクロはデバッガに認識されない)
+$(LI マクロはグローバルにしか使えず、スコープを切れない)
+$(LI マクロはクラスのメンバにできない)
+$(LI マクロはそのアドレスを取得することができず、
+     関数のように間接的に持ち回ることができない)
 )
 
-$(P A robust solution would be
-a way to do lazy evaluation of function parameters. Such a way
-is possible in the D programming language using a delegate parameter:
+$(P 堅固な解決方法は、
+関数引数の遅延評価を用いるものです。
+D言語では、引数をdelegateにすることでこれが実現できます:
 )
 
 ---
@@ -106,19 +106,19 @@ void foo(int i)
 }
 ---
 
-$(P Now, the string building expression only gets evaluated if logging
-is true, and encapsulation is maintained. The only trouble is that
-few are going to want to wrap expressions with $(D { return $(I exp); }).
+$(P こうすると、文字列構築の式はloggingがtrueの時のみ実行されますし、
+カプセル化も保たれています。唯一の問題点は、
+式を $(D { return $(I exp); }) で囲むのがいまいち美しくないというところです。
 )
 
-$(P So D takes it one small, but crucial, step further
-(suggested by Andrei Alexandrescu).
-Any expression
-can be implicitly converted to a delegate that returns either $(D void) or
-the type of the expression.
-The delegate declaration is replaced by the $(D lazy) storage class
-(suggested by Tomasz Stachowiak).
-The functions then become:
+$(P そこで D では、(Andrei Alexandrescu の提案による)
+小さいけれど不可欠な一歩を進めました。
+任意の式は、
+$(D void) ないしはその式の型を返す delegate へと
+暗黙変換できるようになっています。
+（Tomasz Stachowiak の提案により、このdelegate宣言は
+$(D lazy) 記憶域クラスを仮引数に指定する形式に変更されました。）
+これを使うと先ほどの関数は:
 )
 
 ---
@@ -134,20 +134,20 @@ void foo(int i)
 }
 ---
 
-$(P which is our original version, except that now the string is not
-constructed unless logging is turned on.
+$(P w元々の形と全く同じになりました。しかし今度は、
+メッセージ文字列はログ取り機能がONの時のみ構築されます。
 )
 
-$(P Any time there is a repeating pattern seen in code, being able to
-abstract out that pattern and encapsulate it means we can reduce the
-complexity of the code, and hence bugs. The most common example of
-this is the function
-itself.
-Lazy evaluation enables encapsulation of a host of other patterns.
+$(P さて、似たようなパターンがコード中に繰り返されることはよくあります。
+そのようなパターンを抽象化してカプセル化すれば、
+コードの複雑性、ひいてはバグを減らすことにつながります。
+このような抽象化のもっとも一般的な例は、
+関数そのものです。
+遅延評価は、他のパターンをカプセル化するための土台としても有効です。
 )
 
-$(P For a simple example, suppose an expression is to be evaluated $(I count)
-times. The pattern is:
+$(P簡単な例として、ある式が $(I count)
+回実行される、というものを考えてみましょう。パターンは:
 )
 
 ---
@@ -155,7 +155,7 @@ for (int i = 0; i < count; i++)
    exp;
 ---
 
-$(P This pattern can be encapsulated in a function using lazy evaluation:
+$(P です。このパターンは、遅延評価を使うことで関数にカプセル化できます:
 )
 
 ---
@@ -166,7 +166,7 @@ void dotimes(int count, lazy void exp)
 }
 ---
 
-$(P It can be used like:
+$(P これは以下のように使用します:
 )
 
 ---
@@ -177,15 +177,15 @@ void foo()
 }
 ---
 
-$(P which will print:
+$(P 出力結果はこうなります:
 )
 
 $(CONSOLE
 0123456789
 )
 
-$(P More complex user defined control structures are possible.
-Here's a method to create a switch like structure:
+$(P もっと複雑なユーザー定義の制御構造を定義することも可能です:
+以下は、switchに似た構造を作る例です:
 )
 
 ---
@@ -196,8 +196,8 @@ bool scase(bool b, lazy void dg)
     return b;
 }
 
-/* Here the variadic arguments are converted to delegates in this
-   special case.
+/* 可変個引数の場合は特殊ケースとして、
+   delegateでない実引数もdelegateに暗黙変換されます。
  */
 void cond(bool delegate()[] cases ...)
 {
@@ -208,7 +208,7 @@ void cond(bool delegate()[] cases ...)
 }
 ---
 
-$(P which can be used like:
+$(P 使用法は:
 )
 
 ---
@@ -225,18 +225,18 @@ void foo()
 }
 ---
 
-$(P which will print:
+$(P 出力結果は:
 )
 
 $(CONSOLE
 it is 2
 )
 
-$(P Those familiar with the Lisp programming language will notice some
-intriguing parallels with Lisp macros.
+$(P プログラミング言語 Lisp になじみのある方は、
+Lisp のマクロとの類似に気づかれるかもしれません。
 )
 
-$(P For a last example, there is the common pattern:
+$(P 最後の例として、よくあるパターンを取り上げてみます:
 )
 
 ---
@@ -244,17 +244,17 @@ Abc p;
 p = foo();
 if (!p)
     throw new Exception("foo() failed");
-p.bar();	// now use p
+p.bar();	// ここで p を使う
 ---
 
-$(P Because throw is a statement, not an expression, expressions that
-need to do this need to be broken up into multiple statements,
-and extra variables are introduced.
-(For a thorough treatment of this issue, see Andrei Alexandrescu and
-Petru Marginean's paper
-$(LINK2 http://erdani.org/publications/cuj-06-2003.html, Enforcements)).
-With lazy evaluation, this can all be encapsulated into a single
-function:
+$(P throw は文であって式ではないため、この一連の処理を行う式を書こうとしても、
+どうしても複数の文に分けて
+余分な変数を導入する必要がでてきてしまいます。
+（この問題についての綿密な考察が、Andrei Alexandrescu と
+Petru Marginean の論文
+$(LINK2 http://erdani.org/publications/cuj-06-2003.html, Enforcements)で為されています）。
+遅延評価を使うと、これは全てひとつの関数に
+カプセル化することができます:
 )
 
 ---
@@ -266,15 +266,15 @@ Abc Enforce(Abc p, lazy char[] msg)
 }
 ---
 
-$(P and the opening example above becomes simply:
+$(P 先ほどの例は簡単に:
 )
 
 ---
 Enforce(foo(), "foo() failed").bar();
 ---
 
-$(P and 5 lines of code become one. Enforce can be improved by making it a
-template function:
+$(P と、5行から1行に減りました。Enforce は、テンプレート関数にすると
+さらに有用です:
 )
 
 ---
@@ -286,27 +286,27 @@ T Enforce(T)(T p,  lazy char[] msg)
 }
 ---
 
-<h2>Conclusion</h2>
+<h2>まとめ</h2>
 
-$(P Lazy evaluation of function arguments dramatically extends the expressive
-power of functions. It enables the encapsulation into functions of many
-common coding patterns and idioms that previously were too clumsy or
-impractical to do.
+$(P 関数引数の遅延評価は、関数の表現力を劇的に拡張します。
+さまざまな頻出コードパターンやイディオムを、
+かつては綺麗にカプセル化できなかったものでも、
+うまくまとめあげることができます。
 )
 
-<h2>Acknowledgements</h2>
+<h2>謝辞</h2>
 
-	$(P I gratefully acknowledge the inspiration and assistance
-	of Andrei Alexandrescu, Bartosz Milewski, and David Held.
-	The D community helped a lot with much constructive
-	criticism, such as the thread starting with
-	Tomasz Stachowiak in $(NG_digitalmars_D 41633).
+	$(P Andrei Alexandrescu, Bartosz Milewski, David Held
+	のひらめきと力添えに、厚く感謝いたします。
+	また、D言語コミュニティからの建設的な批判
+	（例えば Tomasz Stachowiak の投稿 $(NG_digitalmars_D 41633)	から始まるスレッドなど）
+	が、大きな助けとなっています。
 	)
 
 )
 
 Macros:
-	TITLE=LazyEvaluationOfFunctionArguments
+	TITLE=関数引数の遅延評価
 	WIKI=LazyEvaluation
 	CATEGORY_ARTICLES=$0
 
