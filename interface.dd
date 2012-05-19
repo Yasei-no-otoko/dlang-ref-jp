@@ -1,6 +1,6 @@
 Ddoc
 
-$(SPEC_S Interfaces,
+$(SPEC_S インターフェイス,
 
 $(GRAMMAR
 $(GNAME InterfaceDeclaration):
@@ -14,24 +14,24 @@ $(GNAME InterfaceBody):
 	$(B {) $(GLINK2 module, DeclDefs)$(OPT) $(B })
 )
 
-	$(P Interfaces describe a list of functions that a class that inherits
-	from the interface must implement.
-	A class that implements an interface can be converted to a reference
-	to that interface.)
+	$(P インターフェイスは、そのインターフェイスを継承する関数が
+	必ず実装する必要のある関数のリストを記述したものです。
+	インターフェイスを実装したクラスへの参照は、
+	そのインターフェイスへの参照へと変換できます。)
 
-	$(P Some operating system objects, like COM/OLE/ActiveX for Win32,
-	have specialized interfaces. D interfaces that are compatible with
-	COM/OLE/ActiveX are called $(LINK2 #COM-Interfaces, $(I COM Interfaces)).
+	$(P Win32のCOM/OLE/ActiveXのような、
+	ある種のOSのシステムオブジェクトは特別なinterfaceを提供しています。Dのインターフェイスで
+	COM/OLE/ActiveX と互換性を持つものは $(LINK2 #COM-Interfaces, $(I COM Interfaces)) と呼ばれます。
 	)
 
 $(V2
-	$(P $(LINK2 #CPP-Interfaces, $(I C++ Interfaces)) are another
-	form of interfaces, meant to be binary compatible with C++.
+	$(P $(LINK2 #CPP-Interfaces, $(I C++ Interfaces)) は、
+	C++とのバイナリ互換性のために提供される別の形のインターフェイスです。
 	)
 )
 
-	$(P Interfaces cannot derive from classes; only from other interfaces.
-	Classes cannot derive from an interface multiple times.
+	$(P インターフェイスは、クラスから派生することはできません。
+	派生元は他のインターフェイスに限られます。クラスは、同じインターフェイスを複数回継承することはできません。
 	)
 
 ------
@@ -40,12 +40,12 @@ interface D
     void foo();
 }
 
-class A : D, D	// error, duplicate interface
+class A : D, D	// エラー、インターフェイスの重複
 {
 }
 ------
 
-	An instance of an interface cannot be created.
+	インターフェイスのインスタンスは作成できません。
 
 
 ------
@@ -56,35 +56,35 @@ interface D
 
 ...
 
-D d = new D();		// error, cannot create instance of interface
+D d = new D();		// エラー、インターフェイスのインスタンスは作成不可
 ------
 
 $(V1
-	$(P Interface member functions do not have implementations.)
+	$(P インターフェイスのvirtualメンバ関数は実装を持ちません。)
 
 ------
 interface D
 {
-    void bar() { }	// error, implementation not allowed
+    void bar() { }	// エラー、実装を書くことはできない
 }
 ------
 )
 $(V2
-	$(P Virtual interface member functions do not have implementations.
-	Interfaces are expected to implement static or final functions.
+	$(P インターフェイスのvirtualメンバ関数は実装を持ちません。
+	static関数やfinal関数の実装はinterfaceに記述します。
 	)
 
 ------
 interface D
 {
-    void bar() { }	// error, implementation not allowed
+    void bar() { }	// エラー、実装を書くことはできない
     static void foo() { } // ok
     final void abc() { } // ok
 }
 ------
 
-	$(P Classes that inherit from an interface may not override final or
-	static interface member functions.)
+	$(P インターフェイスを継承したクラスで、
+	インターフェイスのfinalやstaticメンバ関数をオーバーライドはできません。)
 
 ------
 interface D {
@@ -95,14 +95,14 @@ interface D {
 
 class C : D {
     void bar() { } // ok
-    void foo() { } // error, cannot override static D.foo()
-    void abc() { } // error, cannot override final D.abc()
+    void foo() { } // エラー、static D.foo() はオーバーライドできない
+    void abc() { } // エラー、final D.abc() はオーバーライドできない
 }
 ------
 
 )
-	$(P All interface functions must be defined in a class that inherits
-	from that interface:
+	$(P インターフェイス関数は、
+	それを継承するクラスで全て定義されている必要があります：
 	)
 ------
 interface D
@@ -112,16 +112,16 @@ interface D
 
 class A : D
 {
-    void foo() { }	// ok, provides implementation
+    void foo() { }	// ok, 実装を提供している。
 }
 
 class B : D
 {
-    int foo() { }	// error, no void foo() implementation
+    int foo() { }	// エラー, void foo() の実装がない。
 }
 ------
 
-	Interfaces can be inherited and functions overridden:
+	インターフェイスは継承して、関数をオーバーライドできます：
 
 ------
 interface D
@@ -142,12 +142,12 @@ class B : A
 ...
 
 B b = new B();
-b.foo();		// returns 2
-D d = cast(D) b;	// ok since B inherits A's D implementation
-d.foo();		// returns 2;
+b.foo();		// 2 を返す
+D d = cast(D) b;	// ok, B は AによるDの実装を継承しているので。
+d.foo();		// 2 を返す
 ------
 
-	$(P Interfaces can be reimplemented in derived classes:)
+	$(P インターフェイスは、派生クラスで再実装可能です：)
 
 ------
 interface D
@@ -168,16 +168,16 @@ class B : A, D
 ...
 
 B b = new B();
-b.foo();		// returns 2
+b.foo();		// 2 を返す
 D d = cast(D) b;
-d.foo();		// returns 2
+d.foo();		// 2 を返す
 A a = cast(A) b;
 D d2 = cast(D) a;
-d2.foo();		// returns 2, even though it is A's D, not B's D
+d2.foo();		// 2 を返す。BのDではなくAのDに見えるけれど。
 ------
 
-	$(P A reimplemented interface must implement all the interface
-	functions, it does not inherit them from a super class:
+	$(P インターフェイスを再実装するには、その全ての関数を実装しなければなりません。
+	基底クラスからの継承はされません：
 	)
 
 ------
@@ -193,15 +193,15 @@ class A : D
 
 class B : A, D
 {
-}		// error, no foo() for interface D
+}		// エラー、インターフェイス D のための foo() が無い
 ------
 
 $(V2
-$(SECTION2 $(LNAME2 InterfaceContracts, Interfaces with Contracts),
+$(SECTION2 $(LNAME2 InterfaceContracts, 契約付きインターフェイス),
 
-	$(P Interface member functions can have contracts even though there
-	is no body for the function. The contracts are inherited by any
-	class member function that implements that interface member function.
+	$(P インターフェイスのメンバ関数には、body はありませんが、
+	事前条件・事後条件の契約を記述できます。これらの契約は、
+	インターフェイスを継承したクラスに全て継承されます。
 	)
 
 ---
@@ -216,47 +216,47 @@ interface I
 ---
 )
 
-$(SECTION2 $(LNAME2 ConstInterface, Const and Immutable Interfaces),
-	$(P If an interface has $(CODE const) or $(CODE immutable) storage
-	class, then all members of the interface are
-	$(CODE const) or $(CODE immutable).
-	This storage class is not inherited.
+$(SECTION2 $(LNAME2 ConstInterface, const/immutable インターフェイス),
+	$(P インターフェイスが記憶域クラス $(CODE const) か $(CODE immutable)
+	で修飾されていた場合、
+	その全てのメンバが $(CODE const) か $(CODE immutable)
+	記憶域クラスは継承されません。
 	)
 )
 )
 
-$(SECTION2 $(LNAME2 COM-Interfaces, COM Interfaces),
+$(SECTION2 $(LNAME2 COM-Interfaces, COM インターフェイス),
 
-	$(P A variant on interfaces is the COM interface. A COM interface is
-	designed to map directly onto a Windows COM object. Any COM object
-	can be represented by a COM interface, and any D object with
-	a COM interface can be used by external COM clients.
+	$(P インターフェイスの一種として、COMインターフェイスがあります。COMインターフェイスは、
+	WindowsのCOMオブジェクトとして直接適合するように設計されます。全ての COM
+	オブジェクトは COMインターフェイスによって表現でき、COMインターフェイスを持つ全ての
+	D言語のオブジェクトは、外部のCOMクライアントから使用できます。
 	)
 
-	$(P A COM interface is defined as one that derives from the interface
-	$(D std.c.windows.com.IUnknown). A COM interface differs from
-	a regular D interface in that:
+	$(P COMインターフェイスは、$(D std.c.windows.com.IUnknown)
+	から派生することで定義します。COMインターフェイスは、
+	D言語の通常のインターフェイスと以下の点で異なります：
 	)
 
 	$(UL
-	$(LI It derives from the interface $(D std.c.windows.com.IUnknown).)
-	$(LI It cannot be the argument of a $(I DeleteExpression).)
-	$(LI References cannot be upcast to the enclosing class object, nor
-	can they be downcast to a derived interface. To accomplish this,
-	an appropriate $(D QueryInterface()) would have to be implemented
-	for that interface in standard COM fashion.)
-	$(LI Classes derived from COM interfaces are COM classes.)
-	$(LI The default linkage for member functions of COM classes
-	is $(D extern(System)).)
-	$(LI The first member of the $(D vtbl[]) is not the pointer
-	to the InterfaceInfo, but the first virtual function pointer.)
+	$(LI $(D std.c.windows.com.IUnknown) から派生している。)
+	$(LI $(I DeleteExpression) の引数として使えない。)
+	$(LI 参照は、周囲のクラスのオブジェクトへのUpcastや、
+		派生インターフェイスへのDowncastをすることが許されない。
+		この目的には、COMの標準的なやり方で適切な $(D QueryInterface())
+		が実装されていなければなりません。)
+	$(LI COMインターフェイスから派生したクラスはCOMクラスです。)
+	$(LI COMクラスのメンバ関数のデフォルトのリンケージは
+	is $(D extern(System)) です)
+	$(LI $(D vtbl[]) の先頭のメンバは
+	InterfaceInfo へのポインタではなく、最初の仮想関数ポインタになります。)
 	)
 )
 
 $(V2
-$(SECTION2 $(LNAME2 CPP-Interfaces, C++ Interfaces),
+$(SECTION2 $(LNAME2 CPP-Interfaces, C++インターフェイス),
 
-	$(P C++ interfaces are interfaces declared with C++ linkage:
+	$(P C++のリンケージで宣言されたインターフェイスはC++インターフェイスになります:
 	)
 
 ---
@@ -267,7 +267,7 @@ extern (C++) interface Ifoo
 }
 ---
 
-	$(P which is meant to correspond with the following C++ declaration:)
+	$(P これは以下のC++での宣言に対応します:)
 
 $(CPPCODE
 class Ifoo
@@ -277,23 +277,23 @@ class Ifoo
 };
 )
 
-	$(P Any interface that derives from a C++ interface is also
-	a C++ interface.
-	A C++ interface differs from a D interface in that:
+	$(P C++インターフェイスから派生したインターフェイスも全て、
+	C++インターフェイスになります。
+	C++インターフェイスは、以下の点でDのインターフェイスと異なります:
 	)
 
 	$(UL
-	$(LI It cannot be the argument of a $(I DeleteExpression).)
-	$(LI References cannot be upcast to the enclosing class object, nor
-	can they be downcast to a derived interface.)
-	$(LI The C++ calling convention is the default convention
-	for its member functions, rather than the D calling convention.)
-	$(LI The first member of the $(D vtbl[]) is not the pointer
-	to the $(D Interface), but the first virtual function pointer.)
+	$(LI $(I DeleteExpression) の引数にできない)
+	$(LI 参照を外部クラスのオブジェクトへアップキャストすることや、
+	派生インターフェイスへダウンキャストすることができません。)
+	$(LI メンバ関数の呼び出し規約のデフォルトが、
+	DではなくC++の規約になります。)
+	$(LI $(D vtbl[]) の先頭メンバが
+	$(D Interface) へのポインタではなく、先頭の仮想関数ポインタとなります。)
 	)
 
-	$(P For more information, see
-	$(LINK2 http://lunesu.com/uploads/ModernCOMProgramminginD.pdf, Modern COM Programming in D)
+	$(P さらに詳しい情報については
+	$(LINK2 http://lunesu.com/uploads/ModernCOMProgramminginD.pdf, Modern COM Programming in D) をご覧下さい。
 	)
 )
 )
@@ -301,7 +301,7 @@ class Ifoo
 )
 
 Macros:
-	TITLE=Interfaces
+	TITLE=インターフェイス
 	WIKI=Interface
 	CATEGORY_SPEC=$0
 
