@@ -1,10 +1,10 @@
 Ddoc
 
-$(SPEC_S Template Mixins,
+$(SPEC_S テンプレート・ミックスイン,
 
-        A $(I TemplateMixin) takes an arbitrary set of declarations from
-        the body of a $(I TemplateDeclaration) and inserts them
-        into the current context.
+        A $(I TemplateMixin) は、
+		任意の種類の宣言をテンプレートから取り出し、
+		現在のスコープへ導入します。
 
 $(GRAMMAR
 $(GNAME TemplateMixinDeclaration):
@@ -21,21 +21,21 @@ $(GNAME MixinIdentifier):
     $(I Identifier)
 )
 
-        $(P A $(I TemplateMixin) can occur in declaration lists of modules,
-        classes, structs, unions, and as a statement.
-        The $(I TemplateIdentifier) refers to a $(I TemplateDeclaration).
-        If the $(I TemplateDeclaration) has no parameters, the mixin
-        form that has no !($(I TemplateArgumentList))
-        can be used.
+        $(P $(I TemplateMixin) は、モジュール、クラス、構造体、共用体の宣言リストの途中や、
+		あるいは一つの文としての位置に書くことができます。
+        $(I TemplateIdentifier) は $(I TemplateDeclaration) を参照します。
+        もしテンプレートが引数を取らないのであれば、
+        !($(I TemplateArgumentList))
+		を省略した形式で書いても構いません。
         )
 
-        $(P Unlike a template instantiation, a template mixin's body is evaluated
-        within the scope where the mixin appears, not where the template declaration
-        is defined. It is analogous to cutting and pasting the body of
-        the template into the location of the mixin. It is useful for injecting
-        parameterized $(SINGLEQUOTE boilerplate) code, as well as for creating
-        templated nested functions, which is not possible with
-        template instantiations.
+        $(P テンプレートのインスタンス化とは異なり、テンプレートのmixinの本体は、
+		テンプレート定義のあるスコープではなく、mixinされた先のスコープの中で評価されます。
+		これは、テンプレートの本体をカット＆ペーストして
+		mixin したい場所に貼り付けるのと似た動作と言えるでしょう。
+		この機能は、パラメタ抽象された $(SINGLEQUOTE boilerplate) コードを挿入するのにはもちろん、
+		ただのインスタンス化では不可能な、
+		テンプレートネスト関数の作成にも役立ちます。
         )
 
 ------
@@ -50,36 +50,36 @@ struct Bar {
 }
 
 void test() {
-  writefln("x = %d", x);  // prints 5
+  writefln("x = %d", x);  // 5 を表示
   {
     Bar b;
     int x = 3;
 
-    writefln("b.x = %d", b.x); // prints 5
-    writefln("x = %d", x);     // prints 3
+    writefln("b.x = %d", b.x); // 5 を表示
+    writefln("x = %d", x);     // 3 を表示
     {
       $(B mixin Foo;)
-      writefln("x = %d", x);   // prints 5
+      writefln("x = %d", x);   // 5 を表示
       x = 4;
-      writefln("x = %d", x);   // prints 4
+      writefln("x = %d", x);   // 4 を表示
     }
-    writefln("x = %d", x);     // prints 3
+    writefln("x = %d", x);     // 3 を表示
   }
-  writefln("x = %d", x);       // prints 5
+  writefln("x = %d", x);       // 5 を表示
 }
 ------
 
-        Mixins can be parameterized:
+	Mixinはパラメタ化することができます：
 
 ------
 $(V2 mixin) template Foo(T) {
   T x = 5;
 }
 
-$(B mixin Foo!(int);)           // create x of type int
+$(B mixin Foo!(int);)           // int型変数xを作成
 ------
 
-        Mixins can add virtual functions to a class:
+	クラスに仮想関数を付け加えることも可能です：
 
 ------
 $(V2 mixin) template Foo() {
@@ -103,8 +103,8 @@ void test() {
 }
 ------
 
-        Mixins are evaluated in the scope of where they appear, not the scope
-        of the template declaration:
+	Mixin は、テンプレート宣言のあるスコープではなく、
+	mixin が現れたスコープにおいて評価されます：
 
 ------
 int y = 3;
@@ -115,12 +115,12 @@ $(V2 mixin) template Foo() {
 
 void test() {
   int y = 8;
-  $(B mixin Foo;) // local y is picked up, not global y
+  $(B mixin Foo;) // ローカルの y が選ばれる。グローバルの y ではなく。
   assert(abc() == 8);
 }
 ------
 
-        Mixins can parameterize symbols using alias parameters:
+	alias引数を使うと、シンボルをパラメタに取ることができます：
 
 ------
 $(V2 mixin) template Foo(alias b) {
@@ -134,10 +134,10 @@ void test() {
 }
 ------
 
-        This example uses a mixin to implement a generic Duff's device
-        for an arbitrary statement (in this case, the arbitrary statement
-        is in bold). A nested function is generated as well as a
-        delegate literal, these can be inlined by the compiler:
+	以下の例は、任意の文に対して使える汎用の"ダフのデバイス"を実装するのに
+	Mixin を使っています。（この例の場合、任意の文にできる箇所を太字で表記しています。）
+	ネストした関数もdelegateリテラルで同様に生成することができますし、
+	これらはコンパイラによるインライン化が見込めます：
 
 ------
 $(V2 mixin) template duffs_device(alias id1, alias id2, alias s)
@@ -170,16 +170,16 @@ void test() {
   int j = 11;
 
   mixin duffs_device!(i, j, $(B delegate { foo(); }) );
-  duff_loop();  // executes foo() 10 times
+  duff_loop();  // foo() を10回実行
 }
 ------
 
-<h2>Mixin Scope</h2>
+<h2>ミックスインのスコープ</h2>
 
-        The declarations in a mixin are $(SINGLEQUOTE imported) into the surrounding
-        scope. If the name of a declaration in a mixin is the same
-        as a declaration in the surrounding scope, the surrounding declaration
-        overrides the mixin one:
+        Mixinの中の宣言は、周囲のスコープに $(SINGLEQUOTE import) されます。
+	Mixinの中の宣言と同じ名前の宣言が周囲のスコープに存在した場合、
+	周囲のスコープの宣言が、
+	Mixinのそれを上書きします：
 
 ------
 int x = 3;
@@ -193,14 +193,14 @@ $(B mixin Foo;)
 int y = 3;
 
 void test() {
-  writefln("x = %d", x);  // prints 3
-  writefln("y = %d", y);  // prints 3
+  writefln("x = %d", x);  // 3 を表示
+  writefln("y = %d", y);  // 3 を表示
 }
 ------
 
-        If two different mixins are put in the same scope, and each
-        define a declaration with the same name, there is an ambiguity
-        error when the declaration is referenced:
+	二つの異なるMixinが同じスコープへ置かれて、
+	しかもおのおのが同名の宣言を行っている場合、
+	その宣言を参照すると曖昧さのためエラーになります：
 
 ------
 $(V2 mixin) template Foo() {
@@ -217,16 +217,16 @@ $(B mixin Foo;)
 $(B mixin Bar;)
 
 void test() {
-  writefln("x = %d", x); // error, x is ambiguous
-  func();             // error, func is ambiguous
+  writefln("x = %d", x); // エラー、x は曖昧
+  func();             // エラー、func は曖昧
 }
 ------
-        $(P The call to $(B func()) is ambiguous because
-        Foo.func and Bar.func are in different scopes.
+        $(P この $(B func()) の呼び出しが曖昧とされるのは、
+		Foo.func と Bar.func が異なるスコープにあるからです。
         )
 
-        $(P If a mixin has a $(I MixinIdentifier), it can be used to
-        disambiguate:
+        $(P mixin 宣言に $(I MixinIdentifier) が指定されていれば、
+	それを使って曖昧さを解消できます:
         )
 ------
 int x = 6;
@@ -246,16 +246,16 @@ $(B mixin Foo F;)
 $(B mixin Bar B;)
 
 void test() {
-  writefln("y = %d", y);     // prints 7
-  writefln("x = %d", x);     // prints 6
-  writefln("F.x = %d", F.x); // prints 5
-  writefln("B.x = %d", B.x); // prints 4
-  F.func();                  // calls Foo.func
-  B.func();                  // calls Bar.func
+  writefln("y = %d", y);     // 7 を表示
+  writefln("x = %d", x);     // 6 を表示
+  writefln("F.x = %d", F.x); // 5 を表示
+  writefln("B.x = %d", B.x); // 4 を表示
+  F.func();                  // Foo.func を呼ぶ
+  B.func();                  // Bar.func を呼ぶ
 }
 ------
-        $(P Alias declarations can be used to overload together
-        functions declared in different mixins:)
+        $(P alias宣言を使って、
+	違うmixinで宣言された関数をオーバーロードすることは可能です:)
 
 -----
 $(V2 mixin) template Foo() {
@@ -273,14 +273,14 @@ $(B alias F.func func;)
 $(B alias B.func func;)
 
 void main() {
-  func();  // calls B.func
-  func(1); // calls F.func
+  func();  // B.func を呼び出す
+  func(1); // F.func を呼び出す
 }
 -----
 
 
-        $(P A mixin has its own scope, even if a declaration is overridden
-        by the enclosing one:)
+        $(P 宣言は周囲のもので上書きされますが、
+		mixinの内部では、それ自身の独自のスコープを持ちます。)
 
 ------
 int x = 4;
@@ -293,15 +293,15 @@ $(V2 mixin) template Foo() {
 $(B mixin Foo;)
 
 void test() {
-  writefln("x = %d", x);         // prints 4
-  writefln("bar() = %d", bar()); // prints 5
+  writefln("x = %d", x);         // 4 を表示
+  writefln("bar() = %d", bar()); // 5 を表示
 }
 ------
 
 )
 
 Macros:
-        TITLE=Mixins
+        TITLE=テンプレート・ミックスイン
         WIKI=Mixin
         CATEGORY_SPEC=$0
         TEMPLATEIDENTIFIER=$(GLINK2 template, TemplateIdentifier)
