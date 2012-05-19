@@ -1,39 +1,39 @@
 Ddoc
 
-$(D_S Template Constraints,
+$(D_S テンプレート制約,
 
-	$(P Templates are normally overloaded and matched based on the
-	template arguments being matched to the template parameters.
-	The template parameters can specify specializations, so that
-	the template argument must match particular type patterns.
-	Similarly, template value arguments can be constrained to
-	match particular types.)
+	$(P テンプレートの多重定義は、通常、
+	実テンプレート引数が仮引数にマッチするかどうかという基準で解決されます。
+	テンプレート仮引数を特殊化することで、
+	特定の型パターンにしかマッチしないように記述することが可能です。
+	同様に、
+	テンプレートの値引数が特定の型の物しかこないように制限することも可能です。)
 
-	$(P But this has its limitations. Many times there are
-	arbitrarily more
-	complex criteria for what should be accepted by the template.
-	This can be used to:
+	$(P しかし、これにはまだ制限があります。
+	テンプレートとして受け取る物を、
+	任意の複雑な条件で制約したいことは多々あります。
+	例えばこんな用途が考えられるでしょう:
 	)
 
 	$(UL
-	$(LI more finely discriminate about which
-	 template gets instantiated for given arguments)
-	$(LI provides better self-documentation about what
-	 characteristics template parameters must have)
-	$(LI can provide better diagnostics when arguments don't match,
-	 rather than an obscure error message based on the irrelevant
-	 (to the user) internal details of the template implementation)
+	$(LI 引数に応じて、
+	 より精細な条件で使うテンプレートのインスタンスを切り替える。)
+	$(LI テンプレート引数が満たさなければならない条件の、
+	よりよいドキュメンテーションとして使う。 )
+	$(LI 引数がマッチしない場合に、
+	 (ユーザーには)無関係なテンプレートの内部実装の詳細に基づいた汚いエラーメッセージではなく、
+	 わかりやすい情報を表示する。)
 	)
 
-	$(P Constraints address this by simply providing an
-	expression that must evaluate at compile time to true
-	after the arguments are matched to the parameters.
-	If it is true, then that template is a valid match for
-	the arguments, if not, then it is not and is passed over
-	during overload matching.)
+	$(P テンプレート制約は、
+	これらの要求に簡潔に答えるために指定できる、
+	引数のマッチングが行われた後にコンパイル時評価するとtrueにならなければならない式です。
+	この式がtrueになると初めてそのテンプレートが引数に対してマッチしたことになり、
+	そうでなければ、マッチせず、
+	オーバーロード解決の過程から捨てられます。)
 
-	$(P The constraint expression follows the template declaration
-	and the $(CODE if) keyword:)
+	$(P 制約式は、テンプレート宣言のあとに続けて、
+	予約語 $(CODE if) の後に記述します:)
 
 ---
 template Foo(int N)
@@ -43,11 +43,11 @@ template Foo(int N)
 }
 ---
 
-	$(P which constrains the template $(CODE Foo) to match only if its
-	argument
-	is an odd integer. Arbitrarily complex criteria can be used, as
-	long as it can be computed at compile time. For example, here's
-	a template that only accepts prime numbers:
+	$(P この例では、$(CODE Foo)
+	は引数が奇数だった時のみマッチします。
+	コンパイル時計算可能である限り、どんな複雑な条件を記述することも可能です。
+	例えば、
+	以下の例は素数だけを受け取るテンプレートです:
 	)
 
 ---
@@ -72,13 +72,13 @@ template Foo(int N)
     ...
 }
 
-Foo!(5)    // ok, 5 is prime
-Foo!(6)    // no match for Foo
+Foo!(5)    // ok, 5 は素数
+Foo!(6)    // Foo にマッチしない。
 ---
 
-	$(P Type constraints can be complex, too. For example, a template
-	Bar that will accept any floating point type using the traditional
-	type specializations:
+	$(P 型の制約にも複雑な条件を用いることができます。例えば、
+	以下のテンプレート
+	Bar は古くからあるテンプレートの特殊化で浮動小数点型のみにマッチする例ですが:
 	)
 ---
 template Bar(T:float)
@@ -94,9 +94,9 @@ template Bar(T:real)
    ...
 }
 ---
-	$(P and the template implementation body must be duplicated
-	three times. But with constraints, this can be specified
-	with one template:
+	$(P これではテンプレートの実装を複数箇所に同じ事を書かねばなりません。
+	テンプレート制約を使えば、
+	一つのテンプレートにまとめることができます:
 	)
 ---
 template Bar(T)
@@ -105,8 +105,8 @@ template Bar(T)
    ...
 }
 ---
-	$(P This can be simplified by using the $(CODE isFloatingPoint)
-	template in library module $(CODE std.traits):
+	$(P 標準ライブラリ $(CODE std.traits) の $(CODE isFloatingPoint)
+	を使うともっと簡単に書くことが可能です:
 	)
 ---
 import std.traits;
@@ -117,14 +117,14 @@ template Bar(T)
 }
 ---
 
-	$(P Characteristics of types can be tested, such as if
-	a type can be added:
+	$(P 型の性質についても調べることができます。
+	例えば、足し算ができる型がどうかのチェックはこうなります:
 	)
 
 ---
-// Returns true if instances of type T can be added
+// T のインスタンスが足し算可能なら true
 template isAddable(T)
-{   // Works by attempting to add two instances of type T
+{   // 型 T の２つのインスタンスを足し合わせてみる
     const isAddable = __traits(compiles, (T t) { return t + t; });
 }
 
@@ -136,20 +136,20 @@ int Foo(T)(T t)
 
 struct S
 {
-    void opAdd(S s) { }   // an addable struct type
+    void opAdd(S s) { }   // 加算が定義された構造体
 }
 
 void main()
 {
-    Foo(4);   // succeeds
+    Foo(4);   // 成功
     S s;
-    Foo(s);   // succeeds
-    Foo("a"); // fails to match
+    Foo(s);   // 成功
+    Foo("a"); // マッチ失敗
 }
 ---
 
-	$(P Since any expression that can be computed at compile time
-	is allowed as a constraint, constraints can be composed:
+	$(P コンパイル時計算可能などんな式も制約に使えるので、
+	複数の制約を合成することもできます:
 	)
 
 ---
@@ -160,9 +160,9 @@ int Foo(T)(T t)
 }
 ---
 
-	$(P A more complex constraint can specify a list of operations
-	that must be doable with the type, such as $(CODE isStack) which
-	specifies the constraints that a stack type must have:)
+	$(P より複雑なタイプの制約としては、
+	型に関して必要な操作を列挙するというものがあります。例えば、以下の $(CODE isStack)
+	はスタックとして使うのに必要な操作を指定しています:)
 
 ----
 template isStack(T)
@@ -184,7 +184,7 @@ template Foo(T)
 }
 ----
 
-	$(P and constraints can deal with multiple parameters:)
+	$(P 制約では複数のパラメタを扱うこともできます:)
 
 ---
 template Foo(T, int N)
@@ -194,39 +194,39 @@ template Foo(T, int N)
 }
 ---
 
-<h2>Overloading based on Constraints</h2>
+<h2>制約によるオーバーロード</h2>
 
-	$(P Given a list of overloaded templates with the same name,
-	constraints act as a yes/no filter to determine the list
-	of candidates for a match.
-	Overloading based on constraints can thus be achieved by
-	setting up constraint expressions that are mutually exclusive.
-	For example, overloading template $(CODE Foo) so that one
-	takes odd integers and the other even:
+	$(P 同じ名前でオーバーロードされたテンプレートの一覧があるときに、
+	テンプレート制約はその一覧を yes/no
+	でふるい落としてマッチの対象を絞り込む働きをします。
+	制約によってオーバーロードを制御するには、したがって、
+	互いに排他的な制約条件を記述することで行います。
+	例えば、$(CODE Foo) を奇数と偶数の場合で場合分けするには、
+	以下のようになります:
 	)
 ---
 template Foo(int N) if (N & 1)    { ... } // A
 template Foo(int N) if (!(N & 1)) { ... } // B
 ...
-Foo!(3)    // instantiates A
-Foo!(64)   // instantiates B
+Foo!(3)    // A が使われる
+Foo!(64)   // B が使われる
 ---
 
-	$(P Constraints are not involved with determining which
-	template is more specialized than another.
+	$(P 制約は、複数のインスタンスのどちらがより制約されているか、
+	という評価には使用されません。
 	)
 
 ---
 void foo(T, int N)()        if (N & 1) { ... } // A
 void foo(T : int, int N)()  if (N > 3) { ... } // B
 ...
-foo!(int, 7)();   // picks B, more specialized
-foo!(int, 1)();   // picks A, as it fails B's constraint
-foo!("a", 7)();   // picks A
-foo!("a", 4)();   // error, no match
+foo!(int, 7)();   // B がより制約されているので使われる
+foo!(int, 1)();   // A が使われる。B の制約が満たされないため。
+foo!("a", 7)();   // A が使われる。
+foo!("a", 4)();   // エラー、マッチしない。
 ---
 
-<h2>References</h2>
+<h2>参考文献</h2>
 
 	$(UL
 	$(LI $(LINK2 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n2081.pdf, Concepts (Revision 1))
@@ -237,7 +237,7 @@ foo!("a", 4)();   // error, no match
 )
 
 Macros:
-	TITLE=Template Constraints
+	TITLE=テンプレート制約
 	WIKI=Constraints
 META_KEYWORDS=D Programming Language, constraints, template, concepts, C++
 META_DESCRIPTION=Going beyond type patterns to constrain template instantiations.
