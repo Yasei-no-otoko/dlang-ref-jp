@@ -1,79 +1,79 @@
 Ddoc
 
-$(D_S Code Coverage Analysis,
+$(D_S カバレッジ解析,
 
-$(P A major part of the engineering of a professional software project
-is creating a test suite for it. Without some sort of test suite,
-it is impossible to know if the software works at all.
-The D language has
-many features to aid in the creation of test suites, such as
-$(LINK2 unittest.html, unit tests) and
-$(LINK2 dbc.html, contract programming).
-But there's the issue of how thoroughly the test suite tests
-the code.
-The $(LINK2 http://www.digitalmars.com/ctg/trace.html, profiler)
-can give valuable information on which functions were called, and
-by whom. But to look inside a function, and determine which statements
-were executed and which were not, requires a code coverage analyzer.
+$(P プロフェッショナルなソフトウェア製作の主要な部分は、
+そのテストセットを作ることです。何らかのテストセットなしでは、
+そのソフトウェアが正しく動作するのかどうか知ることは不可能です。
+D言語は、
+テストセット製作の助けになる機能を多く備えています。例えば
+$(LINK2 unittest.html, 単体テスト) や
+$(LINK2 dbc.html, 契約プログラミング) などがあります。
+しかし、作ったテストセットが確かにコード全体を検査しているのかどうか、
+という問題は依然として残っています。
+$(LINK2 http://www.digitalmars.com/ctg/trace.html, プロファイラ)
+によって、どの関数がどの関数から呼び出されたか、などの重要な情報は
+手に入ります。しかし関数の内部まで見て、どの文が実行されてどの文がされていないかを
+知るには、コードカバレッジ解析器が必要になります。
 )
 
-$(P A code coverage analyzer will help in these ways:)
+$(P コードカバレッジ解析は、以下のような面で役に立ちます：)
 
 $(OL
-$(LI Expose code that is not exercised by the test suite.
-     Add test cases that will exercise it.)
+$(LI テストによって検査されていないコードを明らかにする。
+     そのコードを検査するテストケースを追加できます。)
 
-$(LI Identify code that is unreachable. Unreachable code is often
-     the leftover result of program design changes.
-     Unreachable code should be removed,
-     as it can be very confusing to the maintenance programmer.)
+$(LI 到達不能コードを見つけ出す。到達不能コードは多くの場合、
+     プログラム設計の変更の結果取り残された部分です。
+     到達不能コードはメンテナンスプログラマの混乱の元であるため、
+     取り除かれるべきです。)
 
-$(LI It can be used to track down why a particular section of code
-     exists, as the test case that causes it to execute will
-     illuminate why.)
+$(LI コード中の特定の部分がなぜ存在するのかの理由の追跡にも使われます。
+     つまり、その部分を実行するテストケースを見れば、
+     その理由がわかります。)
 
-$(LI Since execution counts are given for each line, it is possible
-     to use the coverage analysis to reorder the basic blocks in
-     a function to minimize jmps in the most used path, thus
-     optimizing it.)
+$(LI 各行ごとに実行回数が表示されるので、
+     カバレッジ解析結果を使って関数内のブロックを並び替え、
+     最頻パスでジャンプ回数が最小となるように、
+     最適化することができます。)
 )
 
-$(P Experience with code coverage analyzers show that they dramatically
-reduce the number of bugs in shipping code.
-But it isn't a panacea, a code coverage analyzer won't help with:)
+$(P コードカバレッジ検査器を使った経験から言うと、
+これには出荷コードから劇的にバグを減らす効果があります。
+かといって、特効薬というわけでもなく、以下のような効果はありません：)
 
 $(OL
-$(LI Identifying race conditions.)
-$(LI Memory consumption problems.)
-$(LI Pointer bugs.)
-$(LI Verifying that the program got the correct result.)
+$(LI 競合状態(race condition)を見つけ出す)
+$(LI メモリ消費に関する問題)
+$(LI ポインタに関するバグ)
+$(LI プログラムが正しい結果を返したかどうかの検証)
 )
 
-$(P Code coverage analysers are available for many popular languages
-such as C++, but they are often third party products that integrate
-poorly with the compiler, and are often very expensive.
-A big problem with third party products is, in order to instrument
-the source code, they must include what is essentially a full blown
-compiler front end for the same language. Not only is this an expensive
-proposition, it often winds up out of step with the various compiler
-vendors as their implementations change and as they evolve various extensions.
+$(P コードカバレッジ解析器は、C++のような普及した言語向けには大抵作られていますが、
+多くの場合、コンパイラとうまく連携していないサードパーティ製のツールで、
+非常に高価な製品でした。
+サードパーティ製ツールの大きな問題は、ソースコードを扱うために、
+彼らは同じ言語のほぼ完全なコンパイラフロントエンド実装を用意しなければ
+ならなかったことです。これは非常に手間と費用がかかるというだけではなく、
+様々なコンパイラベンダがその実装を変更し様々な拡張を加えていく流れに
+追いつけなくなるという事態がよく起きることを意味しています。
 ($(LINK2 http://gcc.gnu.org/onlinedocs/gcc-3.0/gcc_8.html, gcov),
-the Gnu coverage analyzer, is an exception as it is both free
-and is integrated into gcc.)
+the Gnu coverage analyzer は無料であり、しかもgccに統合されているという
+二つの意味での例外です。)
 )
 
-$(P The D code coverage analyser is built in as part of the D compiler.
-Therefore, it is always in perfect synchronization with the language
-implementation. It's implemented by establishing a counter for each
-line in each module compiled with the $(B -cov) switch. Code is inserted
-at the beginning of each statement to increment the corresponding counter.
-When the program finishes, the runtime collects all
-the counters, merges it with the source files, and writes the reports out
-to listing (.lst) files.)
+$(P Dコードカバレッジ解析器は、Dコンパイラの一部として組み込まれています。
+それゆえ、常に言語実装と完全に同期した実装となっています。
+この解析器は、 $(B -cov) スイッチつきでコンパイルされたモジュールの
+各行ごとにカウンタを設置することで実装されています。 各文の先頭に、
+対応するカウンタを増やすコードが挿入されます。
+プログラムの終了時に、std.cover モジュールの静的デストラクタが全ての情報を集め、
+ソースファイルとマージして、
+レポートファイル (.lst) へと書き出します。)
 
-$(P For example, consider the Sieve program:)
+$(P エラトステネスの篩プログラムの例を考えます：)
 ----------------------
-/* Eratosthenes Sieve prime number calculation. */
+/* エラトステネスの篩による素数計算 */
 
 import std.stdio;
 
@@ -104,18 +104,18 @@ int main()
 }
 ----------------------
 
-$(P Compile and run it with:)
+$(P 以下のようにコンパイル、実行すると…)
 
 $(CONSOLE
 dmd sieve -cov
 sieve
 )
 
-$(P The output file will be created called $(D sieve.lst), the contents of
-which are:)
+$(P 出力ファイル $(D sieve.lst) が作られ、
+次のような内容になっています：)
 
 $(CONSOLE
-       |/* Eratosthenes Sieve prime number calculation. */
+       |/* エラトステネスの篩による素数計算 */
        |
        |import std.stdio;
        |
@@ -147,21 +147,21 @@ $(CONSOLE
 sieve.d is 100% covered
 )
 
-$(P The numbers to the left of the $(B |) are the execution counts for that
-line. Lines that have no executable code are left blank.
-Lines that have executable code, but were not executed, have a "0000000"
-as the execution count.
-At the end of the .lst file, the percent coverage is given.
+$(P 縦棒 $(B |) より左に書かれている数値は、その行の実行回数です。
+実行コードのない行に関しては、空白になります。
+実行コードがあるけれど実行されなかった行については、実行回数として
+"0000000" が表示されます。
+.lst ファイルの最後に、カバレッジがパーセント表示されます。
 )
 
-$(P There are 3 lines with an exection count
-of 1, these were each executed once. The declaration line for $(D i, prime),
-etc., has 5 because there are 5 declarations, and the initialization of
-each declaration counts as one statement.)
+$(P 例を見ると、実行回数1の行が三つあり、実際これらの行はちょうど一度ずつ
+実行されています。変数 $(D i, prime) などの宣言の行は実行回数5です。
+これは、五つの変数があるためで、それぞれの初期化が
+1回の実行としてカウントされています。)
 
-$(P The first $(D for) loop shows 22. This is the sum of the 3 parts
-of the for header. If the for header is broken up into 3 lines, the
-data is similarly divided:)
+$(P 最初の $(D for) ループは22となっています。これは、for文の三つの部分の
+総和です。for文のヘッダを3行に分けて書いてあれば、
+データも同様に分割されます：)
 
 $(CONSOLE
       1|    for (iter = 1;
@@ -169,12 +169,12 @@ $(CONSOLE
      10|         iter++)
 )
 
-$(P which adds up to 22.)
+$(P この合計が22です。)
 
-$(P $(D e1&amp;&amp;e2) and $(D e1||e2) expressions conditionally
-execute the rvalue $(D e2).
-Therefore, the rvalue is treated as a separate statement with its own
-counter:)
+$(P $(D e1&amp;&amp;e2) や $(D e1||e2) という式は、条件に応じて
+右手側の式 $(D e2)  を実行します。
+このため、右手側の式は独立のカウンタを持つ
+別の文として扱われます：)
 
 $(CONSOLE
         |void foo(int a, int b)
@@ -185,7 +185,7 @@ $(CONSOLE
         |}
 )
 
-$(P By putting the rvalue on a separate line, this illuminates things:)
+$(P 右の式を別の行に置くと、この挙動が明らかになります：)
 
 $(CONSOLE
         |void foo(int a, int b)
@@ -197,25 +197,25 @@ $(CONSOLE
         |}
 )
 
-$(P Similarly, for the $(D e?e1:e2) expressions, $(D e1) and
-$(D e2) are treated as separate statements.)
+$(P 同様に、$(D e?e1:e2) 式の $(D e1) と
+$(D e2) についても別々の文として扱われます。)
 
-<h3>Controlling the Coverage Analyser</h3>
+<h3>カバレッジ解析の制御</h3>
 
 $(COMMENT The behavior of the coverage analyser can be controlled through
 the $(DRUNTIMESRC rt/cover.d) module.)
 
-$(P When the $(B -cov) switch is thrown, the version identifier
-$(B D_Coverage) is defined.)
+$(P $(B -cov) スイッチが有効なときには、バージョン識別子
+$(B D_Coverage) が定義されます。)
 
-<h3>References</h3>
+<h3>参考文献</h3>
 
 $(LINK2 http://en.wikipedia.org/wiki/Code_coverage, Wikipedia)
 
 )
 
 Macros:
-	TITLE=Code Coverage Analysis
+	TITLE=カバレッジ解析
 	WIKI=Dcover
 	CATEGORY_DOWNLOAD=$0
 	RPAREN=)
