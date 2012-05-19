@@ -1,73 +1,73 @@
 Ddoc
 
-$(SPEC_S Floating Point,
+$(SPEC_S 浮動小数点数,
 
-<h3>Floating Point Intermediate Values</h3>
+<h3>浮動小数点数演算の中間結果</h3>
 
-	$(P On many computers, greater
-	precision operations do not take any longer than lesser
-	precision operations, so it makes numerical sense to use
-	the greatest precision available for internal temporaries.
-	The philosophy is not to dumb down the language to the lowest
-	common hardware denominator, but to enable the exploitation
-	of the best capabilities of target hardware.
+	$(P 多くのコンピュータでは、
+	有効精度の大きい演算をしたからといって精度の低い演算より時間がかかるということはありません。
+	したがって、内部の一時変数では可能な限り大きな精度を用いて数値計算をするのが、
+	理にかなっています。この方針は、
+	ハードウェアの最大公約数を仮定して言語を作ろうということではなく、
+	対象とするハードの性能を最大限引き出せるようにしよう、
+	ということです。
 	)
 
-	$(P For floating point operations and expression intermediate values,
-	a greater precision can be used than the type of the
-	expression.
-	Only the minimum precision is set by the types of the
-	operands, not the maximum. $(B Implementation Note:) On Intel
-	x86 machines, for example,
-	it is expected (but not required) that the intermediate
-	calculations be done to the full 80 bits of precision
-	implemented by the hardware.
+	$(P 浮動小数点演算式の途中結果では、
+	その式の型の定めるよりも
+	大きな精度で数を保持できます。
+	型によって最小の精度は規定していますが、
+	最大については限度を設けていません。 
+	$(B 実装ノート:) Intel x86 では、
+	例えば、中間結果にはハードウェアが対応している最大の 80bit
+	の精度を利用することができると期待されます
+	（必須ではありませんが）。
 	)
 
-	$(P It's possible that, due to greater use of temporaries and
-	common subexpressions, optimized code may produce a more
-	accurate answer than unoptimized code.
+	$(P 一時変数や共通部分式をうまくつかうことで、
+	最適化されたコードが、
+	その前よりもより正確な答えを返すこともありえます。
 	)
 
-	$(P Algorithms should be written to work based on the minimum
-	precision of the calculation. They should not degrade or
-	fail if the actual precision is greater. Float or double types,
-	as opposed to the real (extended) type, should only be used for:
+	$(P アルゴリズムは、保証される最小の精度でも動作するように書かれるべきです。
+	しかし同時に、
+	実際の精度がもっと高かったとしても精度が落ちたり失敗したりすることはないように書かねばなりません。
+	real型ではなく float や double を使うのは、次の場合に限られます：
 	)
 
 	$(UL
-	    $(LI reducing memory consumption for large arrays)
-	    $(LI when speed is more important than accuracy)
-	    $(LI data and function argument compatibility with C)
+	    $(LI 巨大配列のメモリ消費の軽減)
+	    $(LI 精度よりも速度が重要な場合)
+	    $(LI データや関数引数の、Cとの互換性)
 	)
 
-<h3>Floating Point Constant Folding</h3>
+<h3>浮動小数点数の定数畳み込み</h3>
 
-	$(P Regardless of the type of the operands, floating point
-	constant folding is done in $(B real) or greater precision.
-	It is always done following IEEE 754 rules and round-to-nearest
-	is used.)
+	$(P 演算対象の型が何であっても、定数畳み込みは
+	$(B real) 型かそれ以上の精度の元で実行されます。
+	定数畳み込みは、IEEE 754 の規則に従い round-to-nearest
+	モードで行われます。)
 
-	$(P Floating point constants are internally represented in
-	the implementation in at least $(B real) precision, regardless
-	of the constant's type. The extra precision is available for
-	constant folding. Committing to the precision of the result is
-	done as late as possible in the compilation process. For example:)
+	$(P 浮動小数点数の定数は、内部的には、実際の型が何であっても、
+	$(B real) かそれ以上の精度で保持されています。
+	余分な精度は、定数畳み込みの際に使用されます。
+	畳み込み処理の結果を定数値に反映させる処理は、
+	コンパイル処理のできるだけ終わりの段階に行われます。例えば:)
 
 ---
 const float f = 0.2f;
 writefln(f - 0.2);
 ---
-	$(P will print 0. A non-const static variable's value cannot be
-	propagated at compile time, so:)
+	$(P は 0 を表示します。constでないstatic変数の値はコンパイル時伝搬されませんので、
+	次の例では:)
 
 ---
 static float f = 0.2f;
 writefln(f - 0.2);
 ---
-	$(P will print 2.98023e-09. Hex floating point constants can also
-	be used when specific floating point bit patterns are needed that
-	are unaffected by rounding. To find the hex value of 0.2f:)
+	$(P 表示は 2.98023e-09 となります。16進浮動小数点数リテラルを使うことで、
+	精度や丸めに依存せずに指定のビットパターンを持った値を扱うことも可能です。
+	0.2f の16進表現を知るには次のコードを実行します。)
 
 ---
 import std.stdio;
@@ -76,40 +76,40 @@ void main() {
   writefln("%a", 0.2f);
 }
 ---
-	$(P which is 0x1.99999ap-3. Using the hex constant:)
+	$(P 0x1.99999ap-3 が表示されます。これを16進リテラルとして用いて:)
 
 ---
 const float f = 0x1.99999ap-3f;
 writefln(f - 0.2);
 ---
 
-	$(P prints 2.98023e-09.)
+	$(P と書くと、表示は 2.98023e-09 になります。)
 
-	$(P Different compiler settings, optimization settings,
-	and inlining settings can affect opportunities for constant
-	folding, therefore the results of floating point calculations may differ
-	depending on those settings.)
+	$(P コンパイラの設定や、最適化の設定、インライン化の設定に応じて、
+	定数畳み込みの行われる範囲は変わります。
+	従って、これらの設定の違いに依存して、
+	浮動小数点演算の結果が変化する可能性があります。)
 
-<h3>Rounding Control</h3>
+<h3>丸め制御</h3>
 
-	$(P IEEE 754 floating point arithmetic includes the ability to set 4
-	different rounding modes.
-	These are accessible via the functions in std.c.fenv.
+	$(P IEEE 754 の定める浮動小数点数演算には、4つの丸めモードを設定できる機能があります。
+	これらは、
+	$(DPLLINK phobos/std_c_fenv.html, std.c.fenv) に定義された関数で制御します。
 	)
 
 $(V2
-	$(P If the floating-point rounding mode is changed within a function,
-	it must be restored before the function exits. If this rule is violated
-	(for example, by the use of inline asm), the rounding mode used for
-	subsequent calculations is undefined.
+	$(P 関数の中で浮動小数点演算の丸めモードを変更した場合、
+	関数を抜ける前に元に戻さなければいけません。
+	このルールに (たとえばインラインアセンブラを使って) 違反した場合、
+	以降の計算に適用される丸めモードは未定義となります。
 	)
 )
 
-<h3>Exception Flags</h3>
+<h3>例外フラグ</h3>
 
-	$(P IEEE 754 floating point arithmetic can set several flags based on what
-	happened with a
-	computation:)
+	$(P IEEE 754
+	では、
+	計算の間に起きる例外に関するフラグの設定について定められています：)
 
 	$(TABLE
 	$(TR $(TD FE_INVALID))
@@ -120,14 +120,14 @@ $(V2
 	$(TR $(TD FE_INEXACT))
 	)
 
-	$(P These flags can be set/reset via the functions in
-	$(DPLLINK phobos/std_c_fenv.html, std.c.fenv).)
+	$(P これらは、
+	$(DPLLINK phobos/std_c_fenv.html, std.c.fenv) に定義された関数でセット/解除します。)
 
-<h3>Floating Point Comparisons</h3>
+<h3>浮動小数点数の比較</h3>
 
-	$(P In addition to the usual &lt; &lt;= &gt; &gt;= == != comparison
-	operators, D adds more that are
-	specific to floating point. These are
+	$(P 通常の &lt; &lt;= &gt; &gt;= == != 比較演算子に加えて、
+	D では浮動小数特有の演算子がさらに追加されています。
+	その一覧は
 	!&lt;&gt;=
 	&lt;&gt;
 	&lt;&gt;=
@@ -136,73 +136,73 @@ $(V2
 	!&gt;=
 	!&gt;
 	!&lt;&gt;
-	and match the semantics for the
-	NCEG extensions to C.
-	See $(DDSUBLINK expression, floating_point_comparisons, Floating point comparisons).
+	で、
+	それぞれの意味はCのNCEG拡張に準拠しています。
+	詳細は $(DDSUBLINK expression, floating_point_comparisons, 浮動小数点数の比較) をご覧下さい。
 	)
 
-<h3><a name="floating-point-transformations">Floating Point Transformations</a></h3>
+<h3><a name="floating-point-transformations">浮動小数点演算の変形</a></h3>
 
-	$(P An implementation may perform transformations on
-	floating point computations in order to reduce their strength,
-	i.e. their runtime computation time.
-	Because floating point math does not precisely follow mathematical
-	rules, some transformations are not valid, even though some
-	other programming languages still allow them.
-	)
-
-	$(P The following transformations of floating point expressions
-	are not allowed because under IEEE rules they could produce
-	different results.
+	$(P 実装によっては、
+	計算強度の削減（つまり実行時間の削減）のために、
+	浮動小数点に関する計算式を変形することがあります。
+	浮動小数演算は数学的な規則に正確に従うわけではないため、
+	いくつかのプログラミング言語で行われうる変形であっても、
+	ある種の変形は正しくないことがあります。
 	)
 
-	$(TABLE2 Disallowed Floating Point Transformations,
+	$(P 以下の変形は、
+	IEEEの規則に従うと結果が変わる可能性があるため、
+	Dでは行われません。
+	)
+
+	$(TABLE2 禁止されている浮動小数演算変形,
 	$(TR
-	$(TH transformation) $(TH comments)
+	$(TH 変形) $(TH コメント)
 	)
 	$(TR
-	$(TD $(I x) + 0 &rarr; $(I x)) $(TD not valid if $(I x) is -0)
+	$(TD $(I x) + 0 &rarr; $(I x)) $(TD $(I x) が -0 のときに間違い)
 	)
 	$(TR
-	$(TD $(I x) - 0 &rarr; $(I x)) $(TD not valid if $(I x) is &plusmn;0 and rounding is towards -&infin;)
+	$(TD $(I x) - 0 &rarr; $(I x)) $(TD $(I x) が &plusmn;0 で-&infin;に向かう丸めの時に間違い)
 	)
 	$(TR
-	$(TD -$(I x) &harr; 0 - $(I x)) $(TD not valid if $(I x) is +0)
+	$(TD -$(I x) &harr; 0 - $(I x)) $(TD $(I x) が +0 のときに間違い)
 	)
 	$(TR
-	$(TD $(I x) - $(I x) &rarr; 0) $(TD not valid if $(I x) is NaN or &plusmn;&infin;)
+	$(TD $(I x) - $(I x) &rarr; 0) $(TD $(I x) が NaN か &plusmn;&infin; のときに間違い)
 	)
 	$(TR
-	$(TD $(I x) - $(I y) &harr; -($(I y) - $(I x))) $(TD not valid because (1-1=+0) whereas -(1-1)=-0)
+	$(TD $(I x) - $(I y) &harr; -($(I y) - $(I x))) $(TD (1-1=+0) だが -(1-1)=-0 なので間違い)
 	)
 	$(TR
-	$(TD $(I x) * 0 &rarr; 0) $(TD not valid if $(I x) is NaN or &plusmn;&infin;)
+	$(TD $(I x) * 0 &rarr; 0) $(TD $(I x) が NaN か &plusmn;&infin; のときに間違い)
 	)
 $(COMMENT
 	$(TR
-	$(TD $(I x) * 1 &rarr; $(I x)) $(TD not valid if $(I x) is a signaling NaN)
+	$(TD $(I x) * 1 &rarr; $(I x)) $(TD $(I x) が Signaling NaN のときに間違い)
 	)
 )
 	$(TR
-	$(TD $(I x) / $(I c) &harr; $(I x) * (1/$(I c))) $(TD valid if (1/$(I c)) yields an e$(I x)act result)
+	$(TD $(I x) / $(I c) &harr; $(I x) * (1/$(I c))) $(TD (1/$(I c)) が正確に表現できないとき間違い)
 	)
 	$(TR
-	$(TD $(I x) != $(I x) &rarr; false) $(TD not valid if $(I x) is a NaN)
+	$(TD $(I x) != $(I x) &rarr; false) $(TD $(I x) が NaN のときに間違い)
 	)
 	$(TR
-	$(TD $(I x) == $(I x) &rarr; true) $(TD not valid if $(I x) is a NaN)
+	$(TD $(I x) == $(I x) &rarr; true) $(TD $(I x) が NaN のときに間違い)
 	)
 	$(TR
-	$(TD $(I x) !$(I op) $(I y) &harr; !($(I x) $(I op) $(I y))) $(TD not valid if $(I x) or $(I y) is a NaN)
+	$(TD $(I x) !$(I op) $(I y) &harr; !($(I x) $(I op) $(I y))) $(TD $(I x) か $(I y) が NaN のときに間違い)
 	)
 	)
 
-	$(P Of course, transformations that would alter side effects are also
-	invalid.)
+	$(P もちろん、
+	副作用が変わるような変形も行われることはありません。)
 
 )
 
 Macros:
-	TITLE=Floating Point
+	TITLE=浮動小数点数
 	WIKI=Float
 	CATEGORY_SPEC=$0
