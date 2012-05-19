@@ -1,21 +1,21 @@
 Ddoc
 
-$(SPEC_S Vector Extensions,
+$(SPEC_S ベクトル演算拡張機能,
 
-	$(P Modern CPUs often support specialized vector types and vector
-	operations, sometimes called "media instructions".
-	Vector types are a fixed array of floating or integer types, and
-	vector operations operate simultaneously on them, thus achieving
-	great speedups.)
+	$(P 近年の CPU は、"メディア命令" 
+	などと呼ばれる特別なベクトル型とベクトル演算を提供することが多くなっています。
+	ベクトル型は浮動小数点数や整数の固定長配列で、
+	ベクトル演算はそれらの要素を同時に演算するもので、
+	大幅な高速化に貢献します。)
 
-	$(P When the compiler takes advantage of these instructions with standard D code
-	to speed up loops over arithmetic data, this is called auto-vectorization.
-	Auto-vectorization, however, has had only limited success and has not
-	been able to really take advantage of the richness (and often quirkiness)
-	of the native vector instructions.
+	$(P 普通のD言語のコードで数値データをループ処理していたときに、これらの機能をコンパイラが活用することを、
+	自動ベクトル化といいます。
+	自動ベクトル化は、しかしながら、非常に限定された状況でのみ有効で、
+	ネイティブのベクトル演算の豊富な（そしてしばしば奇妙な）
+	機能を真に活用することはできていません。
 	)
 
-	$(P D has the array operation notation, such as:
+	$(P D には配列演算子式という記法があります。例えば:
 	)
 
 ---
@@ -24,126 +24,126 @@ int[] a,b;
 a[] += b[];
 ---
 
-	$(P which can be vectorized by the compiler, but again success is limited
-	for the same reason auto-vectorization is.
+	$(P このコードはコンパイラによってベクトル化されますが、
+	これも、自動ベクトル化と同様の理由によって効果は限定されています。
 	)
 
-	$(P The difficulties with trying to use vector instructions on regular arrays
-	are:)
+	$(P ベクトル命令を通常の配列に対して適用することの難しさには、
+	次のような理由があります:)
 
 	$(OL
-	$(LI The vector types have stringent alignment requirements that are not
-	and cannot be met by conventional arrays.)
-	$(LI C ABI's often have vector extensions and have special name mangling
-	for them, call/return conventions, and symbolic debug support.)
-	$(LI The only way to get at the full vector instruction set would be to use
-	inline assembler - but the compiler cannot do register allocation across
-	inline assembler blocks (or other optimizations), leading to poor code
-	performance.)
-	$(LI Interleaving conventional array code with vector operations on the same
-	data can unwittingly lead to extremely poor runtime performance.)
+	$(LI ベクトル型には非常に厳密なアラインメントの要求が課せられていて、
+	通常の配列ではこれを満たせません。)
+	$(LI C 言語の ABI のベクトル演算は、
+	特殊な名前マングリング規則とcall/return規約と記号デバッグサポートの下にあります。)
+	$(LI ベクトル命令を完全に使いこなす唯一の方法は、インラインアセンブラを使うことです。
+	しかし、コンパイラがインラインアセンブラのブロックを超えたレジスタ割り当て
+	（やその他の最適化） ができないため、
+	コードのパフォーマンスは落ちてしまいます。)
+	$(LI 通常の配列処理をベクトル演算を同じデータに対して交互に混ぜると、
+	知らないうちに非常に悪いパフォーマンスをもたらすことがあります。)
 	)
 
-	$(P These issues are cleared up by using special vector types.
+	$(P 特殊なベクトル型を提供することで、これらの問題はなくなります。
 	)
 
 <h2>$(D core.simd)</h2>
 
-	$(P Vector types and operations are introduced to D code by importing
-	$(CORE_SIMD):)
+	$(P D言語でベクトル型とベクトル演算を使うには、
+	$(CORE_SIMD) を import します:)
 
 ---
 import core.simd;
 ---
 
-	$(P These types and operations will be the ones defined for the architecture
-	the compiler is targetting. If a particular CPU family has varying
-	support for vector types, an additional runtime check may be necessary.
-	The compiler does not emit runtime checks; those must be done by the programmer.
+	$(P ここで定義される型と演算は、コンパイラの生成しているアーキテクチャの定義するものです。
+	あるCPUファミリのベクトル型のサポートにばらつきがある場合は、
+	実行時に利用可能性を検査する必要があるかもしれません。
+	コンパイラは実行時チェックを生成しません; プログラマが気をつける必要があります。
 	)
 
-	$(P The types defined will all follow the naming convention:)
+	$(P 型名は以下の命名規約にしたがっています:)
 
 $(GRAMMAR
 $(I typeNN)
 )
-	$(P where $(I type) is the vector element type and $(I NN) is the number
-	of those elements in the vector type.
-	The type names will not be keywords.
+	$(P $(I type) にはベクトルの要素の型が、$(I NN)
+	にはその要素数が入ります。
+	これらの型名は予約語ではありません。
 	)
 
-<h3>Properties</h3>
+<h3>プロパティ</h3>
 
-	$(P Vector types have the property:)
+	$(P ベクトル型の持つプロパティは次の通りです:)
 
-	$(TABLE2 Vector Type Properties,
-	$(THEAD Property, Description)
-	$(TROW .array, Returns static array representation)
+	$(TABLE2 ベクトル型のプロパティ,
+	$(THEAD プロパティ, 説明)
+	$(TROW .array, 静的配列としての表現を返す)
 	)
 
-	$(P All the properties of the static array representation also work.)
+	$(P 静的配列の持つプロパティも全て使うことができます)
 
-<h3>Conversions</h3>
+<h3>変換</h3>
 
-	$(P Vector types of the same size can be implicitly converted among
-	each other. Vector types can be cast to the static array representation.)
+	$(P 同じサイズのベクトル型同士は暗黙に変換できます。
+	ベクトル型は静的配列にキャストすることができます。)
 
-	$(P Integers and floating point values can be implicitly converted
-	to their vector equivalents:)
+	$(P 整数と浮動小数点数は対応するベクトル型に暗黙変換されます:
+	)
 
 ---
 int4 v = 7;
-v = 3 * v;   // multiply each element in v by 3
+v = 3 * v;   // v の各要素に 3 を掛ける
 ---
 
-<h3>Accessing Individual Vector Elements</h3>
+<h3>ベクトルの要素への個別アクセス</h3>
 
-	$(P They cannot be accessed directly, but can be when converted to
-	an array type:)
+	$(P 要素に直接アクセスすることはできませんが、o
+	配列への変換を通すことで可能になります:)
 
 ----
 int4 v;
-(cast(int*)&v)[3] = 2;   // set 3rd element of the 4 int vector
-cast(int[4])v[3] = 2;    // set 3rd element of the 4 int vector
-v.array[3] = 2;          // set 3rd element of the 4 int vector
-v.ptr[3] = 2;            // set 3rd element of the 4 int vector
+(cast(int*)&v)[3] = 2;   // 4個のintベクトルの第3要素
+cast(int[4])v[3] = 2;    // 4個のintベクトルの第3要素
+v.array[3] = 2;          // 4個のintベクトルの第3要素
+v.ptr[3] = 2;            // 4個のintベクトルの第3要素
 ----
 
 
-<h3>Conditional Compilation</h3>
+<h3>条件コンパイル</h3>
 
-	$(P If vector extensions are implemented, the
-	$(DDSUBLINK version, PredefinedVersions, version identifier)
-	$(D D_SIMD) is set.)
+	$(P ベクトル演算拡張が実装されていれば、
+	$(DDSUBLINK version, PredefinedVersions, バージョン識別子)
+	$(D D_SIMD) がセットされます)
 
-	$(P Whether a type exists or not can be tested at compile time with
-	an $(DDSUBLINK expression, IsExpression, $(I IsExpression)):
+	$(P 特定の型が存在するかどうかは、コンパイル時に
+	 $(DDSUBLINK expression, IsExpression, $(I IsExpression)) でチェックできます:
 	)
 
 ---
 static if (is($(I typeNN)))
-    ... yes, it is supported ...
+    ... ある ...
 else
-    ... nope, use workaround ...
+    ... ない ...
 ---
 
-	$(P Whether a particular operation on a type is supported can be tested
-	at compile time with:
+	$(P 特定の演算が利用可能かのチェックは、
+	こうなります:
 	)
 
 ---
 float4 a,b;
 static if (__traits(compiles, a+b))
-    ... yes, it is supported ...
+    ... 使える ...
 else
-    ... nope, use workaround ...
+    ... 使えない ...
 ---
 
-	$(P For runtime testing to see if certain vector instructions are
-	available, see the functions in $(LINK2 phobos/core_cpuid.html, core.cpuid).
+	$(P 特定のベクトル命令が使えるかの実行時のチェックには、
+	$(LINK2 phobos/core_cpuid.html, core.cpuid) の関数を使います。
 	)
 
-	$(P A typical workaround would be to use array vector operations instead:)
+	$(P 使えない場合の典型的な回避策は、配列ベクトル演算を代わりに使うことです:)
 
 ---
 float4 a,b;
@@ -153,36 +153,36 @@ else
     c[] = a[] / b[];
 ---
 
-<h2>X86 And X86_64 Vector Extension Implementation</h2>
+<h2>X86 と X86_64 でのベクトル演算拡張の実装状況</h2>
 
-	$(P The rest of this document describes the specific implementation of the
-	vector types for the X86 and X86_64 architectures.
+	$(P 以下は、X86 と X86_64
+	アーキテクチャでのベクトル型の対応の説明です。
 	)
 
-	$(P The vector extensions are currently implemented for the OS X 32
-	bit target, and all 64 bit targets.)
+	$(P ベクトル演算は現在のところ OS X での 32bit ターゲットと、
+	そのほかの 64 bit ターゲットでサポートされています。)
 
-	$(P $(CORE_SIMD) defines the following types: )
+	$(P $(CORE_SIMD) には以下の型が定義されています:)
 
-	$(TABLE2 Vector Types,
-	$(THEAD Type Name, Description, gcc Equivalent)
-	$(TROW void16, 16 bytes of untyped data, $(I no equivalent))
-	$(TROW byte16, 16 $(D byte)'s, $(D signed char __attribute((vector_size(16)))))
-	$(TROW ubyte16, 16 $(D ubyte)'s, $(D unsigned char __attribute((vector_size(16)))))
-	$(TROW short8, 8 $(D short)'s, $(D short __attribute((vector_size(16)))))
-	$(TROW ushort8, 8 $(D ushort)'s, $(D ushort __attribute((vector_size(16)))))
-	$(TROW int4, 4 $(D int)'s, $(D int __attribute((vector_size(16)))))
-	$(TROW uint4, 4 $(D uint)'s, $(D unsigned __attribute((vector_size(16)))))
-	$(TROW long2, 2 $(D long)'s, $(D long __attribute((vector_size(16)))))
-	$(TROW ulong2, 2 $(D ulong)'s, $(D unsigned long __attribute((vector_size(16)))))
-	$(TROW float4, 4 $(D float)'s, $(D float __attribute((vector_size(16)))))
-	$(TROW double2, 2 $(D double)'s, $(D double __attribute((vector_size(16)))))
+	$(TABLE2 ベクトル型,
+	$(THEAD 型名, 説明, gccでの対応物)
+	$(TROW void16, 16 バイトの型無しのデータ, $(I なし))
+	$(TROW byte16, 16 個の $(D byte), $(D signed char __attribute((vector_size(16)))))
+	$(TROW ubyte16, 16 個の $(D ubyte), $(D unsigned char __attribute((vector_size(16)))))
+	$(TROW short8, 8 個の $(D short), $(D short __attribute((vector_size(16)))))
+	$(TROW ushort8, 8 個の $(D ushort), $(D ushort __attribute((vector_size(16)))))
+	$(TROW int4, 4 個の $(D int), $(D int __attribute((vector_size(16)))))
+	$(TROW uint4, 4 個の $(D uint), $(D unsigned __attribute((vector_size(16)))))
+	$(TROW long2, 2 個の $(D long), $(D long __attribute((vector_size(16)))))
+	$(TROW ulong2, 2 個の $(D ulong), $(D unsigned long __attribute((vector_size(16)))))
+	$(TROW float4, 4 個の $(D float), $(D float __attribute((vector_size(16)))))
+	$(TROW double2, 2 個の $(D double), $(D double __attribute((vector_size(16)))))
 	)
 
-	$(P Note: for 32 bit gcc, it's $(D long long) instead of $(D long).)
+	$(P 注: 32 bit gcc では、$(D long) ではなく $(D long long) です。)
 
-	$(TABLE2 Supported Vector Operators,
-	$(THEAD Operator,void16,byte16,ubyte16,short8,ushort8,int4,uint4,long2,ulong2,float4,double2)
+	$(TABLE2 対応済みベクトル演算,
+	$(THEAD 演算子,void16,byte16,ubyte16,short8,ushort8,int4,uint4,long2,ulong2,float4,double2)
 	$(TROW =,$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y))
 	$(TROW + +=,$(N),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y))
 	$(TROW - -=,$(N),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y))
@@ -196,15 +196,15 @@ else
 	$(TROW $(I unary)-,$(N),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y),$(Y))
 	)
 
-	$(P Operators not listed are not supported at all.)
+	$(P リストにない演算子には対応していません。)
 
-<h3>Vector Operation Intrinsics</h3>
+<h3>ベクトル処理用組み込み演算</h3>
 
-	$(P See $(CORE_SIMD) for the supported intrinsics.)
+	$(P 対応している組み込み演算については $(CORE_SIMD) を参照してください)
 )
 
 Macros:
-	TITLE=Vector Extensions
+	TITLE=ベクトル演算拡張機能
 	WIKI=Float
 	Y=&times;
 	N=&ndash;
