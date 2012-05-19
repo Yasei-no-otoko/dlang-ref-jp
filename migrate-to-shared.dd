@@ -2,66 +2,66 @@ Ddoc
 
 $(D_S $(TITLE),
 
-	$(P Starting with $(LINK2 changelog.html#new2_030, dmd version 2.030),
-	the default storage class
-	for statics and globals will be
-	$(LINK2 glossary.html#tls, thread local storage (TLS)), rather
-	than the classic global data segment.
-	While most D code should just compile and run successfully without
-	change, there can be some issues.
+	$(P $(LINK2 changelog.html#new2_030, dmd version 2.030) から、
+	static
+	およびグローバル変数のデフォルト記憶領域は、
+	グローバルなデータセグメントではなく $(LINK2 glossary.html#tls, thread local storage (TLS))
+	となりました。
+	ほとんどの既存のコードは問題なくコンパイルが通り正しく実行されるはずですが、
+	問題が発生することもあります。
 	)
 
 $(OL
-	$(LI $(LINK2 #performance, Performance of TLS variables).)
-	$(LI $(LINK2 #vtls, Identifying TLS variables).)
-	$(LI $(LINK2 #immutable, Switch to Immutable).)
-	$(LI $(LINK2 #shared, Marking as shared).)
-	$(LI $(LINK2 #__gshared, Cowboying with __gshared).)
-	$(LI $(LINK2 #compile-errors, Compile errors).)
-	$(LI $(LINK2 #link-errors, Link errors).)
+	$(LI $(LINK2 #performance, TLS変数のパフォーマンス).)
+	$(LI $(LINK2 #vtls, TLS変数の同定).)
+	$(LI $(LINK2 #immutable, immutableへの切り替え).)
+	$(LI $(LINK2 #shared, sharedとマークする).)
+	$(LI $(LINK2 #__gshared, __gsharedで頑張る).)
+	$(LI $(LINK2 #compile-errors, コンパイルエラー).)
+	$(LI $(LINK2 #link-errors, リンクエラー).)
 )
 
-$(H3 $(LNAME2 performance, Performance of TLS variables))
+$(H3 $(LNAME2 performance, TLS変数のパフォーマンス))
 
-	$(P Yes, reading or writing TLS variables will be slower
-	than for classic global variables. It'll be about 3
-	instructions rather than one.
-	But on Linux, at least, TLS will be slightly faster
-	than accessing classic globals using PIC (position
-	independent code) compiler code generation settings.
-	So it's hard to see that this would be an unacceptable
-	problem. But let's presume it is. What can we do about it?
+	$(P はい、TLS変数の読み書きは、
+	昔ながらのグローバル変数よりも遅くなります。
+	マシン語で1命令であったところが3命令となります。
+	しかし少なくとも、Linux では PIC (位置非依存コード)
+	を生成する設定でコンパイラを使用した場合の
+	昔のグローバル変数と比べれば、TLS の方がわずかに高速化です。
+	したがって、この速度低下が受け入れ難い問題となることはほとんど無いとは思われます。
+	しかし、仮に問題となったとしましょう。その場合にはどうすればよいでしょう？
 	)
 
 	$(OL
-	$(LI Minimize use of global variables. Reducing the use
-	of globals can improve the modularization and maintainability
-	of the code anyway, so this is a worthy goal.)
-	$(LI Make them immutable. Immutable data doesn't have
-	synchronization problems, so the compiler doesn't place it
-	in TLS.)
-	$(LI Cache a reference to the global. Making a local cache
-	of it, and then accessing the cached value rather than the
-	original, can speed things up especially if the cached value
-	gets enregistered by the compiler.)
-	$(LI Cowboy it with $(B __gshared).)
+	$(LI グローバル変数の使用自体を最小にする。
+	グローバル変数の使用を減らすことは、モジュール化やメンテナンス性の改善に繋がりますから、
+	これは目指すべき価値のある目標です。)
+	$(LI immutable にする。immutable データには同期の問題がありません。
+	したがって、
+	コンパイラはimmutableデータはTLSには配置しません。)
+	$(LI グローバルへの参照をキャッシュする。
+	ローカルなキャッシュを作り、
+	元のグローバル変数ではなくキャッシュへの読み書きを行うことで、
+	特にキャッシュ変数をコンパイラがレジスタに配置できた場合高速化が見込めます。)
+	$(LI $(B __gshared) で頑張る)
 	)
 
-$(H3 $(LNAME2 vtls, Identifying TLS variables))
+$(H3 $(LNAME2 vtls, ITLS変数の同定))
 
-	$(P The first step is to find all the global variables,
-	so they can be reviewed for disposition.
+	$(P Tとにかくまずは、グローバル変数を全て探せば、
+	それがTLS変数です。
 	)
 
-	$(P Given the complexity of source code, it isn't always
-	easy to identify the global variables. Since it (used to be)
-	implicit, there's no way to grep for them. It's hard
-	to be sure you've found them all.
+	$(P ソースコードの複雑性を考えると、
+	全てのグローバル変数を洗い出すのは簡単ではないかもしれません。
+	なぜなら、グローバルであることは (かつては) implicit だったので、grep をかける方法がないからです。
+	全てを漏れなく見つけ出せたと確信するのは難しいでしょう。
 	)
 
-	$(P A new dmd compiler switch was added, $(B -vtls).
-	Compiling with it on will print a list of all the global
-	variables that are now defaulting to thread local storage.
+	$(P 新しいdmdコンパイラには、$(B -vtls) というスイッチが追加されています。
+	このスイッチをつけてコンパイルを行うと、
+	デフォルト処理によってTLSとなっているグローバル変数が全て表示されます。
 	)
 
 ---
@@ -79,72 +79,72 @@ test.d(2): x is thread local
 test.d(6): y is thread local
 )
 
-$(H3 $(LNAME2 immutable, Switch to Immutable))
+$(H3 $(LNAME2 immutable, immutableへの切り替え))
 
-	$(P Immutable data, once initialized, never changes.
-	This means that there are no synchronization issues
-	with multithreading, and so no need to put immutable data
-	into TLS. The compiler will put immutable data into
-	classic global storage, not TLS.
+	$(P immutable データは、一度初期化されたら二度と変更されません。
+	これは、マルチスレッディングに伴う同期の問題がおこらず、
+	immutableデータはTLSに置く必要がないことを意味しています。
+	コンパイラは、immutable
+	データをTLSではなく昔ながらのグローバル記憶域に配置します。
 	)
 
-	$(P A good chunk of global data falls into this category.
-	Just mark it as $(B immutable) and it's done.
+	$(P そして、比較的多くのグローバルデータはこのカテゴリに属します。
+	この場合、$(B immutable) とマークをつければ解決です。これは
 	)
 
 ---
 int[3] table = [6, 123, 0x87];
 ---
-	$(P becomes:)
+	$(P このようになります:)
 ---
 immutable int[3] table = [6, 123, 0x87];
 ---
 
-	$(P Immutability is also nice because it opens the door
-	for further compiler optimizations.
+	$(P immutable性は、
+	コンパイラによるさらなる最適化の機会を与える意味でも優れた性質です。
 	)
 
-$(H3 $(LNAME2 shared, Marking As Shared))
+$(H3 $(LNAME2 shared, sharedとマークする))
 
-	$(P Global data that is meant to be shared among multiple
-	threads should be marked with the $(B shared) keyword:
+	$(P 複数のスレッドで共有するグローバルデータは、
+	$(B shared) キーワードで修飾します:
 	)
 
 ---
 shared int flag;
 ---
 
-	$(P Not only does this cause $(CODE flag) to be put into
-	classic global storage, it is also typed as being shared:
+	$(P この修飾によって、$(CODE flag) は昔ながらのグローバル記憶域に配置されると同時に、
+	sharedであるという型情報が明示的に設定されます:
 	)
 
 ---
-int* p = &flags;           // error, flags is shared
+int* p = &flags;           // エラー、flag は shared
 shared(int)* q = &flags;   // ok
 ---
 
-	$(P The $(CODE shared) type attribute is transitive (like
-	$(CODE const) and $(CODE immutable)) are. This enables
-	static checking and sharing correctness.
+	$(P $(CODE shared) 型修飾は推移的です（
+	$(CODE const) や $(CODE immutable) と同様）。
+	これによって、共有に関する正当性が静的に検査可能になります。
 	)
 
-$(H3 $(LNAME2 __gshared, Cowboying With __gshared))
+$(H3 $(LNAME2 __gshared, __gsharedで頑張る))
 
-	$(P Sometimes, none of the above solutions will be
-	acceptable:
+	$(P 時には、
+	以上の方法が全て使えないこともあります:
 	)
 
 	$(OL
-	$(LI interfacing with C code that uses classic globals)
-	$(LI just get it working, and go back and fix it later)
-	$(LI the app is single threaded only, so no sharing issues)
-	$(LI you need every erg of performance)
-	$(LI you want to handle all the synchronization issues
-	yourself)
+	$(LI 古い形式のグローバル変数を使っているCのコードとの接続)
+	$(LI "とりあえず動かして後で直す")
+	$(LI シングルスレッド専用なので共有の問題は無い)
+	$(LI わずかなパフォーマンス改善でも全て必要)
+	$(LI 同期の問題はすべて自前で扱いたい
+	)
 	)
 
-	$(P As D is a systems language, of course there's a way to
-	do this. Use the storage class $(B __gshared):
+	$(P D はシステムズプログラミングのための言語ですから、もちろん、
+	これを実現する方法を用意しています。記憶域クラス $(B __gshared) です:
 	)
 
 ---
@@ -156,21 +156,21 @@ void main()
 }
 ---
 
-	$(P $(B __gshared) stores the variable in the classic global
-	data segment.
+	$(P $(B __gshared) を指定すると、
+	データは昔ながらのグローバルデータセグメントに配置されます。
 	)
 
-	$(P Naturally, $(B __gshared) is not allowed in safe mode.
+	$(P 当然ながら、$(B __gshared) はセーフモード（SafeD）では使用できません。
 	)
 
-	$(P Using $(B __gshared) makes such code easily searchable
-	when doing QA code reviews or when going back later to
-	fix any workarounds.
+	$(P $(B __gshared) を使うことで、
+	このような危険な部分をコードレビューの際に見つけやすくなりますし、
+	"後で直す" ための目印にもなります。
 	)
 
-$(H3 $(LNAME2 compile-errors, Compile Errors))
+$(H3 $(LNAME2 compile-errors, コンパイルエラー))
 
-	$(P The most common compiler error related to TLS will be:
+	$(P TLS関連でもっともよく現れるコンパイルエラーは、以下のものでしょう:
 	)
 
 ---
@@ -181,29 +181,29 @@ $(CONSOLE
 test.d(2): Error: non-constant expression & x
 )
 
-	$(P While this works with classic global variables, it
-	won't work with TLS variables. The reason is because
-	TLS variables don't have a location in memory known to
-	either the linker or the loader. It's a runtime computed
-	value.)
+	$(P このコードは旧来のグローバル変数では動作しましたが、
+	TLS変数では動きません。
+	これは、
+	TLS変数のアドレスはリンカやローダですら決定できないからです。
+	このアドレスは実行時に決まる値です。)
 
-	$(P The solution is to initialize such things in
-	a static constructor.)
+	$(P 修正するには、
+	上記のコードのような初期化は静的コンストラクタで行うようにします。)
 
-$(H3 $(LNAME2 link-errors, Link Errors))
+$(H3 $(LNAME2 link-errors, リンクエラー))
 
-	$(P Sometimes you may encounter strange error messages from the linker
-	about the global variables.
-	These are nearly always caused by one module putting the variable
-	in TLS, and another putting that same variable in classic global
-	storage.
-	This can happen when linking code with libraries that were built
-	with earlier versions of dmd. Check that libphobos2.a was properly
-	replaced with the latest.
-	It can also happen when interfacing with C. C globals default
-	to being classic global, although C does support TLS declarations.
-	Make sure the corresponding D declarations match the C ones in
-	terms of TLS or classic global.
+	$(P しばしば、リンカから、
+	グローバル変数に関する奇妙なエラーメッセージが発せられることがあります。
+	ほとんど全ての場合、
+	これは、あるモジュールではTLSに置かれている変数が、
+	別のモジュールでは旧来のグローバル領域に置かれていることが原因です。
+	このような不整合は、古いバージョンの dmd
+	でビルドしたライブラリとリンクしようとしたときに起きます。
+	libphobos2.a などが正しく最新版に置き換わっているか、注意してください。
+	他には、Cのコードとの接続の際にもこのエラーが発生します。TLSはCでもサポートされていますが、C
+	のグローバル変数は依然として旧来のグローバル記憶域を使用します。
+	対応するDの宣言が、
+	Cのそれと TLS/旧グローバル に関して正しく合っていることの確認が必要です。
 	)
 
 $(CCODE
@@ -226,7 +226,7 @@ extern (C)
 Macros:
 	H2=<h2>$0</h2>
 	H3=<h3>$0</h3>
-	TITLE=Migrating to Shared
+	TITLE=sharedへの移行
 	WIKI=Migrating To Shared
 	CATEGORY_ARTICLES=$0
 
