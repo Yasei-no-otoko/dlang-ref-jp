@@ -2,101 +2,101 @@ Ddoc
 
 $(D_S htod,
 
-$(P	While D is binary compatible with C code, it cannot
-	compile C code nor C header files. In order for
-	D to link with C code, the C declarations residing
-	in C header files need to be converted to a D
-	module. $(B htod) is a migration tool to aid in
-	convering C header files.
+$(P	D は C のコードとのバイナリ互換性はありますが、
+	CのコードをコンパイルしたりCのヘッダを読み込むことはできません。
+	DとCのコードをリンクするためには、ヘッダにあるCの宣言を、
+	Dのモジュールへと変換する必要があります。
+	$(B htod) は、
+	Cのヘッダからの変換をサポートする手助けとなるツールです。
 )
-$(P	$(B htod) is built from the front end of the Digital
-	Mars C and C++ compiler. It works just like a C or
-	C++ compiler except that its output is a D module
-	rather than object code.
+$(P	$(B htod) は Digital Mars
+	C/C++ コンパイラのフロントエンドを元に作成されています。
+	出力がオブジェクトコードではなくDのモジュールであることを除けば、
+	あたかもC/C++コンパイラであるかのように動作します。
 )
-$(P	The macro $(B __HTOD__) is predefined and set to $(B 1),
-	which is handy for improving C header files to give better
-	D output.
+$(P	マクロ $(B __HTOD__) があらかじめ $(B 1) に定義されています。
+	このマクロを使うことで、D へ変換しやすい
+	C のヘッダを書くのが簡単になります。
 )
 
-<h3>Download</h3>
+<h3>ダウンロード</h3>
 
 $(P	$(LINK2 http://ftp.digitalmars.com/htod.zip, htod)
 )
 
-<h3>Usage</h3>
+<h3>使い方</h3>
 
 $(GRAMMAR
 $(B htod) $(I cheader.h) [$(I dimport.d)] [$(B -cpp)] [$(B -hc)] [$(B -hi)] [$(B -hs)] [$(B -ht)] { $(I C compiler switches) }
 )
 
-$(P where:)
+$(P それぞれのオプションの意味は以下の通りです。)
 
 $(DL
 
 $(DT $(I cheader.h)
-$(DD C or C++ header input file
+$(DD C/C++ のヘッダファイル (入力)
 )
 )
 
 $(DT $(I dimport.d)
-$(DD D source code output file (defaults to $(I cheader).d)
+$(DD D のソースコードファイル (出力) (デフォルトは $(I cheader).d))
 )
 )
 
 $(DT $(B -cpp)
-$(DD Indicates a C++ header file
+$(DD ヘッダが C++ で書かれていることを示す
 )
 )
 
 $(DT $(B -hc)
-$(DD By default, $(B htod) will insert the C and C++ declarations
-in a file into the output file prefixed by $(D //C     ).
-$(B -hc) will suppress this.
-Use only if you're confident that $(B htod) is generating the
-correct output file (such as if the header file was modified with
-$(B __HTOD__)).
+$(DD デフォルトでは、$(B htod) はC/C++での宣言をそのまま
+$(D //C     ) でコメントアウトした形でファイルに付け加えます。
+$(B -hc) はこの動作を抑制します。
+$(B htod) が正しい結果を出力していることに確信が持てるときだけ
+このオプションを使ってください。 (例えば
+$(B __HTOD__)を使ったヘッダを変換しているときなど)
 )
 )
 
 $(DT $(B -hi)
-$(DD By default, $(B htod) will represent a $(D #include "file") with
-a corresponding $(B import) statement. The $(B -hi) will cause the
-declarations in the included file to be converted to D declarations as
-well. The declarations in all included files are parsed regardless.
-$(B -hi) is handy when replacing an entire hierarchy of include files
-with a single D import.
-System includes like $(D #include &lt;file&gt;) are not affected
-by $(B -hi).
-See also $(B -hs).
+$(DD デフォルトでは、$(B htod) は $(D #include "file") を
+対応する $(B import) 文に置き換えます。 $(B -hi)  を指定すると、
+#include先の宣言も含めて全てをDの宣言に変換して出力するようになります。
+#include先の内容の解析はこのオプション指定にかかわらず行われます。
+$(B -hi) は、#include階層全体を
+ひとつのDのインポートモジュールに変換したいときに役に立ちます。
+$(D #include &lt;file&gt;) のようなシステム#includeについては、
+$(B -hi)  は影響しません。
+$(B -hs) も参照のこと。
 )
 )
 
 $(DT $(B -ht)
-$(DD By default, $(B htod) will write types using typedef names as
-using those names. $(B -ht) will cause the underlying types to be
-used instead. This is very useful for "drilling down" layers of
-macros, typedefs, and #includes to find out the underlying type.
+$(DD デフォルトでは、$(B htod) はtypedefされた型名はそのまま使うようにして
+変換します。 $(B -ht) を指定すると、対応する元の型に置き換えて出力が
+行われます。これは、マクロやtypedef、#includeの層を掘り下げて
+元々の型を探り当てるときに役立ちます。
 )
 )
 
 $(DT $(B -hs)
-$(DD Works just like $(B -hi), except that system includes are
-migrated as well.
+$(DD $(B -hi) と似ていますが、こちらは更にシステム#includeについても
+同様に変換出力を行います。
 )
 )
 
-$(DT $(I C compiler switches)
-$(DD C or C++ compiler switches, such as $(B -D) and $(B -I) as documented
-for $(LINK2 http://www.digitalmars.com/ctg/sc.html, dmc).
+$(DT $(I Cコンパイラ スイッチ)
+$(DD C/C++ コンパイラに対するスイッチ指定 ($(B -D) や $(B -I) など）は
+$(LINK2 http://www.digitalmars.com/ctg/sc.html, dmc) のドキュメントを参照してください。
 )
 )
 
 )
 
-<h3>Example</h3>
+<h3>例</h3>
 
-$(P The C test.h file:)
+$(P C の test.h ファイルを:)
 
 $(CCODE
 unsigned u;
@@ -104,13 +104,13 @@ unsigned u;
 void bar(int x, long y, long long z);
 )
 
-$(P Translated with:)
+$(P 次のコマンドで変換すると:)
 
 $(CONSOLE
 htod test.h
 )
 
-$(P Produces the file test.d:)
+$(P test.d というファイルが生成されます。)
 
 ---
 /* Converted to D from test.h by htod */
@@ -124,19 +124,19 @@ alias int MYINT;
 void  bar(int x, int y, long z);
 ---
 
-$(P The C declarations are prefixed by the string $(D "//C     ").)
+$(P Cでの対応する宣言が $(D "//C     ") コメントで残されています。)
 
-<h3>Type Mappings</h3>
+<h3>型の対応関係</h3>
 
-$(P	C types are mapped as follows. These mappings are correct
-	for Digital Mars C/C++, but may not be correct for your
-	C compiler. D basic types have fixed sizes, while C basic
-	type sizes are implementation defined.
+$(P	C の型は以下の表の通り変換されます。これらの対応は Digital Mars C/C++
+	に関しては正確ですが、他のCコンパイラにとっては不適切かもしれません。
+	Dの基本型のサイズは規格で固定されていますが、
+	Cの型のサイズは処理系依存となっているのが原因です。
 )
 
 	$(TABLE1
-	<caption>Mapping C to D types</caption>
-	$(TR $(TH C type) $(TH D type))
+	<caption>C から D への型対応関係</caption>
+	$(TR $(TH C の型) $(TH D の型))
 	$(TR $(TD void) $(TD void))
 	$(TR $(TD _Bool) $(TD bool))
 	$(TR $(TD wchar_t) $(TD wchar))
@@ -162,68 +162,68 @@ $(P	C types are mapped as follows. These mappings are correct
 	$(TR $(TD _Complex long double) $(TD creal))
 	)
 
-<h3>Limitations</h3>
+<h3>制限事項</h3>
 
-$(P	There is no one to one correspondence of C declarations
-	to D declarations. A review of the D module output will
-	be necessary to ensure the right decisions are made.
-	Furthermore:
+$(P	Cの宣言とDの宣言の間には、厳密な１対１対応は存在しません。
+	必ず、出力されたDモジュールの内容を見て、
+	正しく解釈されているか確認してから使うようにしてください。
+	他にもいくつか制限があります。
 )
 
 $(OL
-	$(LI Whereever
-	practical, C headers should be written using $(B typedef)'s and
-	$(B enum)'s rather than macros.
-	$(B htod) will attempt to convert simple macro $(B #define)'s
-	to $(B alias) and $(B const) declarations.
-	Even so, macros are fully expanded before further analysis.)
+	$(LI 可能な限り、
+	C のヘッダはマクロではなく $(B typedef) と
+	$(B enum) を使って記述されているべきです。
+	$(B htod) は単純な $(B #define)
+	マクロについては、$(B alias) や $(B const) 宣言への変換を試みます。
+	とはいえ、ヘッダ内でのマクロ使用については解析前に全て展開されます。)
 
-	$(LI No attempt is made to convert C conditional compilation
-	into D $(B version) or $(B static if) declarations.)
+	$(LI C の条件コンパイルを
+	D の $(B version) や $(B static if) 宣言へと変換することは一切ありません。)
 
-	$(LI No output is generated for false conditional compilation
-	sections.)
+	$(LI 条件コンパイル条件が偽となっている部分については、
+	なにも出力されません。)
 
-	$(LI $(B htod) converts declarations only, it does not convert
-	C code.)
+	$(LI $(B htod) は宣言のみを変換します。
+	Cのコードは変換しません。)
 
-	$(LI Declarations with C++ linkage cannot be converted.
-	A C interface must be made for any C++ code.)
+	$(LI C++リンケージを持つ宣言は変換できません。
+	C++コードについては、まずCインターフェイスの作成が必要です。)
 
-	$(LI C language extensions present in the C .h file
-	may not be recognized.)
+	$(LI C のヘッダファイル中で使われた言語拡張については、
+	認識されない可能性があります。)
 
-	$(LI Pragmas are not translated.)
+	$(LI pragma は変換されません。)
 
-	$(LI The tag names are assumed to not collide with
-	names in the regular name space.)
+	$(LI タグ名は通常の名前空間と衝突しないことが
+	仮定されています。)
 
-	$(LI Any character data that is not ASCII will need
-	to be converted as necessary to UTF.)
+	$(LI ASCII外の文字データは、
+	必要ならばUTFに変換しておく必要があります。)
 
-	$(LI The C $(B char) type is assumed to map to the
-	D $(B char) type. However, these should be examined individually
-	to see if they should instead be translated to $(B byte) or
-	$(B ubyte) types. Whether the C $(B char) type is signed or
-	unsigned is implementation defined. The D $(B char) type
-	is unsigned.)
+	$(LI C の $(B char) は
+	D の $(B char) 型に対応すると仮定されています。しかしながら、
+	これについては個別にチェックして、$(B byte) や
+	$(B ubyte) 型の方が適切ではないかチェックした方がよいでしょう。C の $(B char)
+	型がsignedかunsignedかは実装依存ですが、D の $(B char)
+	型はunsignedです。)
 
-	$(LI Named C enum members are not inserted into the surrounding
-	scope as they are in C.)
+	$(LI C の名前付き列挙体のメンバーは、Cでそうであるのと同様に、
+	周囲のスコープへと挿入されます。)
 
-	$(LI D modules are each in their own name space, but C
-	header files are all in the same global name space. This means
-	that D references to names defined in other modules may
-	need to be qualified.)
+	$(LI D のモジュールはそれぞれ個別の名前空間を持ちますが、
+	Cのヘッダファイルは全て共通のグローバル名前空間に置かれます。これは、
+	他のDのモジュールで宣言された名前への参照については、
+	修飾が必要となることを意味しています。)
 )
 
-<h3>Bugs</h3>
+<h3>バグ</h3>
 
 $(OL
-	$(LI Anything other than the default struct member
-	alignment is not accounted for.)
+	$(LI デフォルトの構造体アラインメント以外は
+	考慮されていません。)
 
-	$(LI No Linux version.)
+	$(LI Linux版はありません。)
 )
 
 )
