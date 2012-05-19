@@ -220,7 +220,7 @@ static if (0 || is(int T)) T x;
 )
 
 Macros:
-	TITLE=言語設計の理由S
+	TITLE=言語設計の理由
 	WIKI=Rationale
 	CATEGORY_FAQ=$0
 
