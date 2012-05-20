@@ -1,77 +1,77 @@
 Ddoc
 
-$(SPEC_S Properties,
+$(SPEC_S プロパティ,
 
-	$(P Every type and expression has properties that can be queried:)
+	$(P 全ての型と式は、プロパティを持っています：)
 
-$(TABLE2 Property Examples,
-$(TR $(TH Expression)	$(TH Value))
-$(TR $(TD int.sizeof)	$(TD yields 4))
-$(TR $(TD float.nan)	$(TD yields the floating point nan (Not A Number) value))
-$(TR $(TD (float).nan)	$(TD yields the floating point nan value))
-$(TR $(TD (3).sizeof)	$(TD yields 4 (because 3 is an int)))
-$(TR $(TD 2.sizeof)	$(TD syntax error, since "2." is a floating point number))
-$(TR $(TD int.init)	$(TD default initializer for int's))
-$(TR $(TD int.mangleof)	$(TD yields the string "i"))
-$(TR $(TD int.stringof)	$(TD yields the string "int"))
-$(TR $(TD (1+2).stringof)	$(TD yields the string "1 + 2"))
+$(TABLE2 プロパティの例,
+$(TR $(TH 式)	$(TH 値))
+$(TR $(TD int.sizeof)	$(TD 4を返す))
+$(TR $(TD float.nan)	$(TD 浮動小数点数のNaN（Not A Number）値を返す))
+$(TR $(TD (float).nan)	$(TD 浮動小数点数のNaN値を返す))
+$(TR $(TD (3).sizeof)	$(TD 4を返す (3はintなので)))
+$(TR $(TD 2.sizeof)	$(TD 文法エラー。"2." までで浮動小数点数扱いになってしまうので))
+$(TR $(TD int.init)	$(TD int型の初期値))
+$(TR $(TD int.mangleof)	$(TD 文字列 "i"))
+$(TR $(TD int.stringof)	$(TD 文字列 "int"))
+$(TR $(TD (1+2).stringof)	$(TD 文字列 "1 + 2"))
 )
 
 $(BR)
 
-$(TABLE2 Properties for All Types,
-$(TR $(TH Property)	$(TH Description))
-$(TR $(TD $(LINK2 #init, .init))	$(TD initializer))
-$(TR $(TD $(LINK2 #sizeof, .sizeof))	$(TD size in bytes (equivalent to C's sizeof(type))))
-$(TR $(TD $(LINK2 #alignof, .alignof))	$(TD alignment size))
-$(TR $(TD .mangleof)	$(TD string representing the $(SINGLEQUOTE mangled) representation of the type))
-$(TR $(TD $(LINK2 #stringof, .stringof))	$(TD string representing the source representation of the type))
+$(TABLE2 全ての型の持つプロパティ,
+$(TR $(TH プロパティ)	$(TH 説明))
+$(TR $(TD $(LINK2 #init, .init))	$(TD 初期値))
+$(TR $(TD $(LINK2 #sizeof, .sizeof))	$(TD byte単位でのサイズ (Cのsizeof(type)と同等)))
+$(TR $(TD $(LINK2 #alignof, .alignof))	$(TD アラインメントのサイズ))
+$(TR $(TD .mangleof)	$(TD 型名の'$(SINGLEQUOTE mangled)'表現文字列))
+$(TR $(TD $(LINK2 #stringof, .stringof))	$(TD その型をソースコード上で表す文字列表現))
 )
 
 $(BR)
 
-$(TABLE2 Properties for Integral Types,
-$(TR $(TH Property)	$(TH Description))
-$(TR $(TD .init)	$(TD initializer (0)))
-$(TR $(TD .max)		$(TD maximum value))
-$(TR $(TD .min)		$(TD minimum value))
+$(TABLE2 整数型のプロパティ,
+$(TR $(TH プロパティ)	$(TH 説明))
+$(TR $(TD .init)	$(TD 初期値 (0)))
+$(TR $(TD .max)		$(TD 最大値))
+$(TR $(TD .min)		$(TD 最小値))
 )
 
 $(BR)
 
 $(TABLE2 Properties for Floating Point Types,
-$(TR $(TH Property)	$(TH Description))
-$(TR $(TD .init)	$(TD initializer (NaN)))
-$(TR $(TD .infinity)	$(TD infinity value))
-$(TR $(TD .nan)		$(TD NaN value))
-$(TR $(TD .dig)		$(TD number of decimal digits of precision))
-$(TR $(TD .epsilon)	$(TD smallest increment to the value 1))
-$(TR $(TD .mant_dig)	$(TD number of bits in mantissa))
-$(TR $(TD .max_10_exp)	$(TD maximum int value such that 10<sup>max_10_exp</sup> is representable))
-$(TR $(TD .max_exp)	$(TD maximum int value such that 2<sup>max_exp-1</sup> is representable))
-$(TR $(TD .min_10_exp)	$(TD minimum int value such that 10<sup>min_10_exp</sup> is representable as a normalized value))
-$(TR $(TD .min_exp)	$(TD minimum int value such that 2<sup>min_exp-1</sup> is representable as a normalized value))
-$(TR $(TD .max)		$(TD largest representable value that's not infinity))
-$(V1 $(TR $(TD .min)		$(TD smallest representable normalized value that's not 0)))
-$(V2 $(TR $(TD .min_normal)	$(TD smallest representable normalized value that's not 0)))
-$(TR $(TD .re)		$(TD real part))
-$(TR $(TD .im)		$(TD imaginary part))
+$(TR $(TH プロパティ)	$(TH 説明))
+$(TR $(TD .init)	$(TD 初期値 (NaN)))
+$(TR $(TD .infinity)	$(TD 無限大))
+$(TR $(TD .nan)		$(TD NaN))
+$(TR $(TD .dig)		$(TD 精度の10進桁数))
+$(TR $(TD .epsilon)	$(TD 1.0 に対する最小の増分値))
+$(TR $(TD .mant_dig)	$(TD 仮数部のビット数))
+$(TR $(TD .max_10_exp)	$(TD 10<sup>max_10_exp</sup> が表現可能な最大の整数))
+$(TR $(TD .max_exp)	$(TD 2<sup>max_exp-1</sup>  が表現可能な最大の整数))
+$(TR $(TD .min_10_exp)	$(TD 10<sup>min_10_exp</sup> が正規化数として表現可能な最小の整数))
+$(TR $(TD .min_exp)	$(TD 2<sup>min_exp-1</sup> が正規化数として表現可能な最小の整数))
+$(TR $(TD .max)		$(TD 無限大を除いた最大値))
+$(V1 $(TR $(TD .min)		$(TD 0を除いた最小の正規化数)))
+$(V2 $(TR $(TD .min_normal)	$(TD 0を除いた最小の正規化数)))
+$(TR $(TD .re)		$(TD 実部))
+$(TR $(TD .im)		$(TD 虚部))
 )
 
 $(BR)
 
-$(TABLE2 Properties for Class Types,
-$(TR $(TH Property)	$(TH Description))
-$(TR $(TD $(LINK2 #classinfo, .classinfo))	$(TD Information about the dynamic type of the class))
+$(TABLE2 クラス型のプロパティ,
+$(TR $(TH プロパティ)	$(TH 説明))
+$(TR $(TD $(LINK2 #classinfo, .classinfo))	$(TD クラスの動的な型情報))
 )
 
-$(SECTION2 $(LNAME2 init, .init) Property,
+$(SECTION2 $(LNAME2 init, .init) プロパティ,
 
-	$(P $(B .init) produces a constant expression that is the default
-	initializer. If applied to a type, it is the default initializer
-	for that type. If applied to a variable or field, it is the
-	default initializer for that variable or field's type.
-	For example:
+	$(P $(B .init)はデフォルト初期化値を表す定数式です。
+	型に適用されればその型の初期値となり、
+	変数やフィールドに適用されれば、
+	その変数/フィールドを初期化した値となります。
+	例：
 	)
 
 ----------------
@@ -81,32 +81,32 @@ typedef int t = 2;
 t c;
 t d = cast(t)3;
 
-int.init // is 0
-a.init   // is 0
-b.init   // is 0
-t.init   // is 2
-c.init   // is 2
-d.init   // is 2
+int.init // 0
+a.init   // 0
+b.init   // 0
+t.init   // 2
+c.init   // 2
+d.init   // 2
 
 struct Foo {
   int a;
   int b = 7;
 }
 
-Foo.init.a  // is 0
-Foo.init.b  // is 7
+Foo.init.a  // 0
+Foo.init.b  // 7
 ----------------
 )
 
-$(SECTION2 $(LNAME2 stringof, .stringof) Property,
+$(SECTION2 $(LNAME2 stringof, .stringof) プロパティ,
 
-	$(P $(B .stringof) produces a constant string that is the
-	source representation of its prefix.
-	If applied to a type, it is the string for that type.
-	If applied to an expression, it is the source representation
-	of that expression. Semantic analysis is not done
-	for that expression.
-	For example:
+	$(P $(B .stringof) プロパティは、
+	その対象要素のソースコード上で文字列表現を返します。
+	型に適用された場合、その型を表す文字列になります。
+	式に適用された場合、
+	その式のソースコード上での表現文字列になります。
+	式に対しては意味解析は行われません。
+	例：
 	)
 
 ----------------
@@ -132,73 +132,73 @@ void main() {
 ----------------
 )
 
-$(SECTION2 $(LNAME2 sizeof, .sizeof Property),
+$(SECTION2 $(LNAME2 sizeof, .sizeof プロパティ),
 
-	$(P $(CODE $(I e).sizeof) gives the size in bytes of the expression
-	$(I e).
+	$(P $(CODE $(I e).sizeof) は式
+	$(I e) のバイト単位でのサイズを表します。
 	)
 
-	$(P When getting the size of a member, it is not necessary for
-	there to be a $(I this) object:
+	$(P メンバのサイズが欲しいときには、
+	$(I this) オブジェクトは不要です:
 	)
 
 ---
 struct S {
   int a;
   static int foo() {
-    return a.sizeof; // returns 4
+    return a.sizeof; // 4を返す
   }
 }
 
 void test() {
-  int x = S.a.sizeof; // sets x to 4
+  int x = S.a.sizeof; // xを4とする
 }
 ---
 
-	$(P $(CODE .sizeof) applied to a class object returns the size of
-	the class reference, not the class instantiation.)
+	$(P $(CODE .sizeof) がクラスオブジェクトに適用された場合、
+	インスタンスのサイズではなく、クラス参照のサイズを返します。)
 
 )
 
-$(SECTION2 $(LNAME2 alignof, .alignof Property),
+$(SECTION2 $(LNAME2 alignof, .alignof プロパティ),
 
-	$(P $(CODE .alignof) gives the aligned size of an expression or type.
-	For example, an aligned size of 1 means that it is aligned on
-	a byte boundary, 4 means it is aligned on a 32 bit boundary.
+	$(P $(CODE .alignof) は式や型のalignmentのサイズを返します。
+	例えば、1 はバイト単位で整列されることを表し、
+	4 は32ビット単位で整列されることを表します。
 	)
 )
 
-$(SECTION2 $(LNAME2 classinfo, .classinfo) Property,
+$(SECTION2 $(LNAME2 classinfo, .classinfo) プロパティ,
 
-	$(P $(CODE .classinfo) provides information about the dynamic type
-	of a class object.
-	$(V1 It returns a reference to type $(DPLLINK phobos/object.html, object.ClassInfo).)
-	$(V2 It returns a reference to type $(DPLLINK phobos/object.html#TypeInfo_Class, object.TypeInfo_Class).)
+	$(P $(CODE .classinfo)
+	はクラスオブジェクトの動的型情報を提供します。
+	$(V1 $(DPLLINK phobos/object.html, object.ClassInfo) 型のインスタンスへの参照を返します。)
+	$(V2 $(DPLLINK phobos/object.html#TypeInfo_Class, object.TypeInfo_Class) 型のインスタンスへの参照を返します。)
 	)
 
-	$(P $(CODE .classinfo) applied to an interface gives the information for
-	the interface, not the class it might be an instance of.
+	$(P $(CODE .classinfo) をインターフェイスに適用した場合は、
+	インスタンスのクラスの情報ではなく、そのインターフェイスの情報を返します。
 	)
 )
 
-$(SECTION3 $(LNAME2 classproperties, User Defined Properties),
+$(SECTION3 $(LNAME2 classproperties, ユーザー定義のクラス/構造体プロパティ),
 
-	$(P Properties are functions that can be syntactically treated
-	as if they were fields or variables. Properties can be read from or written to.
-	A property is read by calling a methhod or function with no arguments;
-	a property is written by calling a method or function with its argument
-	being the value it is set to.
+	$(P プロパティとは、
+	構文上はあたかもフィールドであるかのように扱えるメンバ関数のことです。
+	プロパティは読み取りも書き込みも可能です。
+	引数無しのメソッド呼び出しによって読み取りが行われ、
+	セットされる値を引数にしたメソッド呼び出しによって書き込みが行われます。
 	)
 
-	$(P A simple property would be:)
+	$(P 簡単なプロパティの例をあげます：)
 
 $(V1
 ----------------
 struct Foo
 {
-  int data() { return m_data; }	// read property
+  int data() { return m_data; }	// 読み取りプロパティ
 
-  int data(int value) { return m_data = value; } // write property
+  int data(int value) { return m_data = value; } // 書き込みプロパティ
 
 private:
   int m_data;
@@ -208,69 +208,69 @@ private:
 $(V2
 ----------------
 struct Foo {
-  @property int data() { return m_data; } // read property
+  @property int data() { return m_data; } // 読み取りプロパティ
 
-  @property int data(int value) { return m_data = value; } // write property
+  @property int data(int value) { return m_data = value; } // 書き込みプロパティ
 
 private:
   int m_data;
 }
 ----------------
 
-	$(P Properties are marked with the $(CODE @property) attribute.
-	Properties may only have zero or one parameter, and may not be variadic.
-	Property functions may not be overloaded with non-property functions.
+	$(P プロパティは $(CODE @property) 属性でマークされます。
+	プロパティは必ず 0 引数か 1 引数で、可変個引数にすることもできません。
+	プロパティ関数を非プロパティ関数とオーバーロードすることはできません。
 	)
 )
-	$(P To use it:)
+	$(P これを使うには：)
 
 ----------------
 int test() {
   Foo f;
 
-  f.data = 3;        // same as f.data(3);
-  return f.data + 3; // same as return f.data() + 3;
+  f.data = 3;        // f.data(3); と同じ
+  return f.data + 3; // return f.data() + 3; と同じ
 }
 ----------------
 
-	$(P The absence of a read method means that the property is write-only.
-	The absence of a write method means that the property is read-only.
-	Multiple write methods can exist; the correct one is selected using
-	the usual function overloading rules.
+	$(P 読み取りメソッドが存在しなければ、そのプロパティは書き込み専用になります。
+	書き込みメソッドが存在しなければ、そのプロパティは読み込み専用です。
+	複数の書き込みメソッドがあっても構いません。
+	通常の関数オーバーロードの規則によって、適切なものが選択されます。
 	)
 
-	$(P In all the other respects, these methods are like any other methods.
-	They can be static, have different linkages, $(V1 be overloaded with
-	methods with multiple parameters,) have their address taken, etc.
+	$(P この他の全ての点において、これらのメソッドは他のメソッドと同様に振る舞います。
+	static にすることも、別のリンケージを指定することも、$(V1 
+	他の複数引数のメソッドとオーバーロードすることも、) アドレスをとることなども全て可能です。
 	)
 
 $(V1
-	$(P $(B Note:) Properties cannot be the lvalue of an
-	$(I op)=, ++, or -- operator.
+	$(P $(B 注意:) プロパティは現在の所、
+	$(I op)=, ++,  -- 演算子のlvalueとすることはできません。
 	)
 )
 $(V2
-	$(P $(B Note:) Properties can be the lvalue of an
-	$(I op)=, ++, or -- operator if they return a ref.
+	$(P $(B 注意:) プロパティは、ref を返すように定義されていれば
+	$(I op)=, ++, -- 演算子のlvalueとすることができます。
 	)
 )
-	$(P The built in properties $(CODE .sizeof), $(CODE .alignof), and $(CODE .mangleof)
-	may not be declared as fields or methods in structs, unions, classes or enums.
+	$(P 組み込みのプロパティである $(CODE .sizeof), $(CODE .alignof), $(CODE .mangleof)
+	は、構造体や共用体、クラス、列挙体のフィールドやメソッドとして宣言することはできません。
 	)
 
-	$(P If a .property is applied to a user-defined property, the .property is applied
-	to the result of the function call.
+	$(P .property がユーザー定義のプロパティに対してさらに適用された場合、その .property
+	は関数呼び出しの結果に対して適用されます。
 	)
 
 $(V2
 ---
 void main() {
   @property int[] delegate() bar1 = { return [1, 2]; };
-  auto x1 = bar1.ptr; // points to array data
+  auto x1 = bar1.ptr; // 配列データを指す
 
   struct Foo { int* ptr; }
   @property Foo delegate() bar2 = { return Foo(); };
-  auto x2 = bar2.ptr; // gets value of Foo.ptr
+  auto x2 = bar2.ptr; // Foo.ptr の値
 } 
 ---
 )
@@ -280,7 +280,7 @@ void main() {
 )
 
 Macros:
-	TITLE=Properties
+	TITLE=プロパティ
 	 WIKI=Property
 	CATEGORY_SPEC=$0
 
