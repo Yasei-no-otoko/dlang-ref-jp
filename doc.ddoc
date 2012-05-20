@@ -207,7 +207,7 @@ $(NAVBLOCK_HEADER $(TOCHEADERL index.html, D Programming Language, D Home),
 	$(TOCENTRYH appendices.html, 付録, $(CATEGORY_APPENDICES $(SUBNAV_APPENDICES)))
 	$(TOCENTRYT acknowledgements.html, Thank-you to these people who have helped with D, 謝辞)
 	$(TOCENTRYT japanese.html, About this Japanese translateion, 日本語訳について)
-	$(TOCENTRYT http://www.kmonos.net/alang/d/1.0/, D Programming Language 1.0, D1 Home)
+	$(TOCENTRYT http://www.digitalmars.com/d/1.0/, D Programming Language 1.0, D1 Home)
 )
 $(NAVBLOCK_HEADER $(TOCHEADER Documentation),
     $(LI $(AMAZONLINK 0321635361, 書籍))
