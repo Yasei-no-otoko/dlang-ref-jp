@@ -2,8 +2,8 @@ Ddoc
 
 $(SPEC_S エラー処理,
 
-$(BLOCKQUOTE ジュリアス・Cザー,
-来た, 書いた, クラッシュした
+$(BLOCKQUOTE Julius C'ster,
+I came, I coded, I crashed.
 )
 
 どんなプログラムでも、エラーを扱う必要があります。エラーとは、
