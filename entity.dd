@@ -1,23 +1,23 @@
 Ddoc
 
-$(SPEC_S Named Character Entities,
+$(SPEC_S 文字実体名,
 
 $(GRAMMAR
 $(GNAME NamedCharacterEntity):
     $(B &amp;) $(GLINK2 lex, Identifier) $(B ;)
 )
 
-	$(P These are the character entity names supported by D.
+	$(P 以下が、Dでサポートされる文字実体名の一覧です。
 	)
 
-	$(P $(B Note:) Not all will display properly in the $(B Symbol)
-	column in all browsers.
+	$(P $(B 注:) $(B 記号) の列は、
+	ブラウザによっては正しく表示されない可能性があります。
 	)
 
 
 
-	$(TABLE2 Named Character Entities,
-   $(THEAD Name, Value, Symbol)
+	$(TABLE2 文字実体名,
+   $(THEAD 名前, 値, 記号)
 
    $(TR $(TD quot)	$(TD 34)	$(TD &quot;))
    $(TR	$(TD amp)	$(TD 38)	$(TD &amp;))
@@ -53,7 +53,7 @@ $(GNAME NamedCharacterEntity):
    $(TR	$(TD rsaquo)	$(TD 8250)	$(TD &rsaquo;))
    $(TR	$(TD euro)	$(TD 8364)	$(TD &euro;))
 
-   $(TR <th colspan="3">Latin-1 (ISO-8859-1) Entities</th>)
+   $(TR <th colspan="3">Latin-1 (ISO-8859-1)</th>)
 
    $(TR	$(TD nbsp)	$(TD 160)	$(TD &nbsp;))
    $(TR	$(TD iexcl)	$(TD 161)	$(TD &iexcl;))
@@ -152,7 +152,7 @@ $(GNAME NamedCharacterEntity):
    $(TR	$(TD thorn)	$(TD 254)	$(TD &thorn;))
    $(TR	$(TD yuml)	$(TD 255)	$(TD &yuml;))
 
-   $(TR <th colspan="3"> Symbols and Greek letter entities</th>)
+   $(TR <th colspan="3"> 記号・ギリシャ文字</th>)
 
    $(TR	$(TD fnof)	$(TD 402)	$(TD &fnof;))
    $(TR	$(TD Alpha)	$(TD 913)	$(TD &Alpha;))
@@ -284,7 +284,7 @@ $(GNAME NamedCharacterEntity):
 )
 
 Macros:
-	TITLE=Named Character Entities
+	TITLE=文字実体名
 	WIKI=Entities
 
 
