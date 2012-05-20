@@ -1,26 +1,26 @@
 Ddoc
 
-$(SPEC_S Inline Assembler,
+$(SPEC_S インラインアセンブラ,
 
 	<a href="http://www.digitalmars.com/gift/index.html" title="Gift Shop" target="_top">
-	<img src="d5.gif" border=0 align=right alt="Some Assembly Required" width=284 height=186>
+	<img src="images/d5.gif" border=0 align=right alt="Some Assembly Required" width=284 height=186>
 	</a>
 
-	$(P D, being a systems programming language, provides an inline
-	assembler.
-	The inline assembler is standardized for D implementations across
-	the same CPU family, for example, the Intel Pentium inline assembler
-	for a Win32 D compiler will be syntax compatible with the inline
-	assembler for Linux running on an Intel Pentium.
+	$(P D
+	はシステムプログラミングのできる言語ですから、
+	インラインアセンブラを備えています。同一のCPUファミリ上では、
+	Dのインラインアセンブラは標準化されています。例えば、Win32版の
+	D Compiler の Intel Pentium 向けインラインアセンブラは、
+	Linux版のIntel Pentium 向けのものと同じ構文が使用できます。
 	)
 
-	$(P Implementations of D on different architectures, however, are
-	free to innovate upon the memory model, function call/return conventions,
-	argument passing conventions, etc.
+	$(P しかし、
+	異なるアーキテクチャでのDの実装の違いによって、
+	メモリモデルや関数呼び出し規約の違いが存在する可能性はあります。
 	)
 
-	$(P This document describes the x86 implementation of the inline
-	assembler.
+	$(P このドキュメントでは、
+	インラインアセンブラのx86での実装について記述します。
 	)
 
 $(GRAMMAR
@@ -44,11 +44,11 @@ $(GNAME Operands):
     $(I Operand) $(B ,) $(I Operands)
 )
 
-<h2>Labels</h2>
+<h2>ラベル</h2>
 
-	$(P Assembler instructions can be labeled just like other statements.
-	They can be the target of goto statements.
-	For example:
+	$(P 他のDの文同様、
+	アセンブラの命令にもラベル付けできます。
+	goto文の飛び先とすることも可能です。例えば：
 	)
 
 --------------
@@ -58,7 +58,7 @@ asm
   call L1          ;
  L1:               ;
   pop  EBX         ;
-  mov  pc[EBP],EBX ; // pc now points to code at L1
+  mov  pc[EBP],EBX ; // pcはL1のコードを指すようになる
 }
 --------------
 
@@ -70,46 +70,46 @@ $(GNAME IntegerExpression):
     $(I Identifier)
 )
 
-	$(P Causes the assembler to emit NOP instructions to align the next
-	assembler instruction on an $(I IntegerExpression) boundary.
-	$(I IntegerExpression) must evaluate at compile time to an integer that is
-	a power of 2.
+	$(P 必要ならばアセンブラにNOP命令を出力させ、
+	次の命令をメモリの $(I IntegerExpression) 境界へ整列します。
+	$(I IntegerExpression)
+	はコンパイル時に２の累乗へ評価される定数です。
 	)
 
-	$(P Aligning the start of a loop body can sometimes have a dramatic
-	effect on the execution speed.
+	$(P ループ先頭を整列すると、
+	しばしば劇的に実行速度が改善されます。
 	)
 
 <h2>even</h2>
 
-	$(P Causes the assembler to emit NOP instructions to align the next
-	assembler instruction on an even boundary.
+	$(P 必要ならばアセンブラにNOP命令を出力させ、
+	次の命令をメモリの偶数番地へ配置します。
 	)
 
 <h2>naked</h2>
 
-	$(P Causes the compiler to not generate the function prolog and epilog
-	sequences. This means such is the responsibility of inline
-	assembly programmer, and is normally used when the entire function
-	is to be written in assembler.
+	$(P コンパイラに、関数のprolog,epilogコードを生成しないように指示します。
+	これはつまり、そのような処理はインラインアセンブラコードの書き手が
+	自分で全て書く責任を負うことを意味します。
+	関数全体をインラインアセンブラで書くときによく使われます。
 	)
 
 <h2>db, ds, di, dl, df, dd, de</h2>
 
-	These pseudo ops are for inserting raw data directly into
-	the code.
-	$(B db) is for bytes,
-	$(B ds) is for 16 bit words,
-	$(B di) is for 32 bit words,
-	$(B dl) is for 64 bit words,
-	$(B df) is for 32 bit floats,
-	$(B dd) is for 64 bit doubles,
-	and $(B de) is for 80 bit extended reals.
-	Each can have multiple operands.
-	If an operand is a string literal, it is as if there were $(I length)
-	operands, where $(I length) is the number of characters in the string.
-	One character is used per operand.
-	For example:
+	これらの疑似命令は、
+	生のデータを直接コードに埋め込むときに使います。
+	$(B db) で byte,
+	$(B ds) で 16bit word,
+	$(B di) で 32bit word,
+	$(B dl) で 64bit word,
+	$(B df) で 32bit float,
+	$(B dd) で 64bit double,
+	$(B de) で 80bit extended real
+	を埋め込みます.
+	それぞれ複数のオペランドを指定できます。
+	オペランドが文字列リテラルだった場合、
+	文字数個のオペランドが指定されたとみなします。
+	一文字一文字が一オペランドになります。例えば：
 
 --------------
 asm
@@ -126,13 +126,13 @@ asm
 }
 --------------
 
-<h2>Opcodes</h2>
+<h2>オペコード</h2>
 
-	A list of supported opcodes is at the end.
+	対応しているオペコードの一覧はこの文書の末尾にあります。
 	<p>
 
-	The following registers are supported. Register names
-	are always in upper case.
+	以下のレジスタをサポートします。
+	レジスタ名は常に大文字を用います。
 
 $(GRAMMAR
 $(GNAME Register):
@@ -154,15 +154,15 @@ $(GNAME Register):
     $(B XMM0) $(B XMM1) $(B XMM2) $(B XMM3) $(B XMM4) $(B XMM5) $(B XMM6) $(B XMM7)
 )
 
-<h3>Special Cases</h3>
+<h3>特殊な場合</h3>
 
 $(DL
 
 	$(DT $(B lock), $(B rep), $(B repe), $(B repne),
 	 $(B repnz), $(B repz))
-	$(DD These prefix instructions do not appear in the same statement
-	as the instructions they prefix; they appear in their own statement.
-	For example:
+	$(DD これら接頭命令は、修飾する命令と同じ文には入れません。
+		これらの命令一つで一つの文になります。
+	例：
 
 --------------
 asm {
@@ -173,7 +173,7 @@ asm {
 	)
 
 	$(DT $(B pause))
-	$(DD This opcode is not supported by the assembler, instead use
+	$(DD アセンブラはこのオペコードをサポートしません。代わりに次のように：
 
 --------------
 asm {
@@ -182,22 +182,22 @@ asm {
 }
 --------------
 
-	which produces the same result.
+	書くと、同じ効果が得られます。
 	)
 
-	$(DT $(B floating point ops))
-	$(DD Use the two operand form of the instruction format;
+	$(DT $(B 浮動小数点演算命令))
+	$(DD 命令形式として、２オペランド形を使います：
 
 --------------
-fdiv ST(1);	// wrong
-fmul ST;        // wrong
-fdiv ST,ST(1);	// right
-fmul ST,ST(0);	// right
+fdiv ST(1);	// 間違い
+fmul ST;        // 間違い
+fdiv ST,ST(1);	// 正しい
+fmul ST,ST(0);	// 正しい
 --------------
 	)
 )
 
-<h2>Operands</h2>
+<h2>オペランド</h2>
 
 $(GRAMMAR
 $(GNAME Operand):
@@ -283,21 +283,21 @@ $(GNAME DotIdentifier):
     $(I Identifier) $(B .) $(I DotIdentifier)
 )
 
-	$(P The operand syntax more or less follows the Intel CPU documentation
-	conventions.
-	In particular, the convention is that for two operand instructions
-	the source is the right operand and the destination is the left
-	operand.
-	The syntax differs from that of Intel's in order to be compatible
-	with the D language tokenizer and to simplify parsing.
+	$(P オペランドの構文は、
+	おおよそのところIntelのCPUドキュメントの規約に従っています。
+	特に、２オペランド命令では、
+	ソースが右オペランドでデスディネーションが
+	左オペランドです。Intelと違うのは、
+	D言語の字句解析器との互換性を重視し、
+	パーズを簡単にした部分です。
 	)
 
-	$(P The $(B seg) means load the segment number that the symbol is
-	in. This is not relevant for flat model code.
-	Instead, do a move from the relevant segment register.
+	$(P $(B seg) は、シンボルが存在するセグメントの番号を意味します。
+	これはフラットモデルのコードには無関係です。
+	代わりに、対応するセグメントレジスタから move します。
 	)
 
-<h3>Operand Types</h3>
+<h3>オペランド型</h3>
 
 $(GRAMMAR
 $(GNAME AsmTypePrefix):
@@ -314,26 +314,26 @@ $(GNAME AsmTypePrefix):
     $(B real ptr)
 )
 
-	$(P In cases where the operand size is ambiguous, as in:)
+	$(P オペランドのサイズが曖昧な場合、例えば：)
 
 --------------
 add	[EAX],3		;
 --------------
 
-	$(P it can be disambiguated by using an $(I AsmTypePrefix):)
+	$(P iには、$(I AsmTypePrefix) を書いて曖昧性を解消します：)
 
 --------------
 add  byte ptr [EAX],3 ;
 add  int ptr [EAX],7  ;
 --------------
 
-	$(P $(B far ptr) is not relevant for flat model code.
+	$(P $(B far ptr) はフラットモデルのコードには無関係です。
 	)
 
-<h3>Struct/Union/Class Member Offsets</h3>
+<h3>構造体/共用体/クラス メンバのオフセット</h3>
 
-	$(P To access members of an aggregate, given a pointer to the aggregate
-	is in a register, use the qualified name of the member:
+	$(P 集成体へのポインタがレジスタにあってそのメンバへアクセスしたいときは、
+	メンバの修飾名を使います：
 	)
 
 --------------
@@ -346,52 +346,52 @@ int bar(Foo *f) {
 }
 --------------
 
-<h3>Stack Variables</h3>
+<h3>スタック変数</h3>
 
-	$(P Stack variables (variables local to a function and allocated
-	on the stack) are accessed via the name of the variable indexed
-	by EBP:
+	$(P スタック変数 (関数ローカルの変数で、スタックに割り当てられる)
+	は、
+	EBP で添え字付けされた変数名でアクセスできます：
 	)
 
 ---
 int foo(int x) {
   asm {
-    mov EAX,x[EBP] ; // loads value of parameter x into EAX
-    mov EAX,x      ; // does the same thing
+    mov EAX,x[EBP] ; // 引数xの値をEAXにロード
+    mov EAX,x      ; // 同上
   }
 }
 ---
 
-	$(P If the [EBP] is omitted, it is assumed for local variables.
-	If $(B naked) is used, this no longer holds.
+	$(P [EBP] が省略された場合、ローカル変数への参照と仮定されます。
+	$(B naked) が使われていた場合はその限りではありません。
 	)
 
-<h3>Special Symbols</h3>
+<h3>特殊シンボル</h3>
 
 	$(DL
 
 	$(DT $(B &#36;))
-	$(DD Represents the program counter of the start of the next
-	instruction. So,
+	$(DD 直後の命令の先頭のプログラムカウンタを表します。
+		従って
 
 --------------
 jmp  $  ;
 --------------
 
-	branches to the instruction following the jmp instruction.
-	The $(B &#36;) can only appear as the target of a jmp or call
-	instruction.
+	はjmpの直後の命令へと分岐します。
+	$(B &#36;) は jmp か call 命令のターゲットとしてのみ
+	使用することができます。
 	)
 
 	$(DT $(B __LOCAL_SIZE))
-	$(DD This gets replaced by the number of local bytes in the local
-	stack frame. It is most handy when the $(B naked) is invoked
-	and a custom stack frame is programmed.
+	$(DD このシンボルは、
+		ローカルのスタックフレームのバイト数で置き換えられます。$(B naked)
+		を使ってスタックフレームを自分で操作するときに便利です。
 	)
 
 	)
 
-<h2>Opcodes Supported</h2>
+<h2>対応しているオペコード</h2>
 
 	$(TABLE1
 	$(TROW aaa, aad, aam, aas, adc)
@@ -1046,7 +1046,7 @@ jmp  $  ;
 	</tr>
 	)
 
-<h3>Pentium 4 (Prescott) Opcodes Supported</h3>
+<h3>対応している Pentium 4 (Prescott) オペコード</h3>
 
 	$(TABLE1
 	<tr>
@@ -1071,7 +1071,7 @@ jmp  $  ;
 	</tr>
 	)
 
-<h3>AMD Opcodes Supported</h3>
+<h3>対応しているAMDのオペコード</h3>
 
 	$(TABLE1
 	<tr>
@@ -1190,7 +1190,7 @@ getsec
 )
 
 Macros:
-	TITLE=Inline Assembler
+	TITLE=インラインアセンブラ
 	WIKI=IAsm
 	CATEGORY_SPEC=$0
 
