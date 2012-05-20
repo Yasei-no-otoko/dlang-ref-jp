@@ -1,34 +1,34 @@
 Ddoc
 
-$(SPEC_S Interfacing to C,
+$(SPEC_S Cとのインターフェイス,
 
-	$(P D is designed to fit comfortably with a C compiler for the target
-	system. D makes up for not having its own VM by relying on the
-	target environment's C runtime library. It would be senseless to
-	attempt to port to D or write D wrappers for the vast array of C APIs
-	available. How much easier it is to just call them directly.
+	$(P D は、システムのCコンパイラと相性良く動作するように設計されています。
+	独自のVMを持ったりはせず、既存のCのランタイムライブラリを使うのです。
+	せっかく沢山のC APIが既に存在するというのに、それを D に移植したり
+	D 用のラッパを書いたり…という作業はばかげています。
+	直接Cの関数を呼び出せるというのは、なんと楽なことでしょうか。
 	)
 
-	$(P This is done by matching the C compiler's data types, layouts,
-	and function call/return sequences.
+	$(P データ型やそのメモリ配置、関数の呼び出し規約をCコンパイラと合わせることで、
+	Cとの互換性が実現されています。
 	)
 
-<h2>Calling C Functions</h2>
+<h2>C の関数を呼び出す</h2>
 
-	$(P C functions can be called directly from D. There is no need for
-	wrapper functions, argument swizzling, and the C functions do not
-	need to be put into a separate DLL.
+	$(P Cの関数はDから直接呼び出せます。
+	ラッパ関数や引数のすりあわせとか、
+	Cの関数を別のDLLに分けたりする必要は全くありません。
 	)
 
-	$(P The C function must be declared and given a calling convention,
-	most likely the "C" calling convention, for example:
+	$(P Cの関数は呼び出し規約の指定付きで宣言します。大抵は "C"
+	呼び出し規約で問題ないでしょう。例えば：
 	)
 
 ------
 extern (C) int strcmp(char* string1, char* string2);
 ------
 
-	$(P and then it can be called within D code in the obvious way:)
+	$(P すると、Dのコードからは当たり前のように呼び出すことができます：)
 
 ------
 import std.string;
@@ -37,38 +37,38 @@ int myDfunction(char[] s) {
 }
 ------
 
-	$(P There are several things going on here:)
+	$(P 何が起きているのかをもっと具体的に説明しますと：)
 
 	$(UL
-	$(LI D understands how C function names are "mangled" and the
-	correct C function call/return sequence.)
+	$(LI Dコンパイラは、C の関数名がどのようにmangleされているのか、
+		またCの関数の正しい呼び出し/復帰手続きについて、把握しています。)
 
-	$(LI C functions cannot be overloaded with another C function
-	with the same name.)
+	$(LI Cの関数を別の同名の
+		C関数でオーバーロードすることはできません。)
 
-	$(LI There are no __cdecl, __far, __stdcall,
+	$(LI __cdecl や __far, __stdcall,
 	$(LINK2 http://www.digitalmars.com/ctg/ctgLanguageImplementation.html#declspec, __declspec),
-	or other such C
-	$(LINK2 http://www.digitalmars.com/ctg/ctgLanguageImplementation.html#extended, extended type modifiers)
-	in D. These are handled by
-	$(LINK2 $(WEBURL)attribute.html#linkage, linkage attributes),
-	such as $(D extern (C)).)
+	などのCの
+	$(LINK2 http://www.digitalmars.com/ctg/ctgLanguageImplementation.html#extended, 拡張型修飾子)
+	は　D にはありませんが、これは
+	$(D extern (C)) のように $(LINK2 $(WEBURL)attribute.html#linkage, リンケージ属性)
+	として処理されています。)
 
-	$(LI There is no volatile type modifier in D. To declare a C function that uses
-	volatile, just drop the keyword from the declaration.)
+	$(LI Dにはvolatile修飾子もありません。
+	volatileを使ったCの関数を宣言するには、単に宣言からこの予約語を取り除いてください。)
 
-	$(LI Strings are not 0 terminated in D. See "Data Type Compatibility"
-	for more information about this. However, string literals in D are
-	0 terminated.)
+	$(LI Dの文字列は0終端になっていません。
+		詳しくは "データ型の互換性" をご覧下さい。
+		ただし、文字列リテラルは0終端になっています。)
 
 	)
 
-	$(P C code can correspondingly call D functions, if the D functions
-	use an attribute that is compatible with the C compiler, most likely
-	the extern (C):)
+	$(P extern (C) 属性などで
+	Cコンパイラと互換性があるようにコンパイルされた
+	D の関数なら、逆にCのコードからDの関数を呼び出すことも可能です：)
 
 ------
-// myfunc() can be called from any C function
+// myfunc() はCのどの関数からも呼び出せる
 extern (C) {
   void myfunc(int a, int b) {
     ...
@@ -76,61 +76,61 @@ extern (C) {
 }
 ------
 
-<h2>Storage Allocation</h2>
+<h2>メモリ割り当て</h2>
 
-	$(P C code explicitly manages memory with calls to
-	$(LINK2 http://www.digitalmars.com/rtl/stdlib.html#malloc, malloc()) and
-	$(LINK2 http://www.digitalmars.com/rtl/stdlib.html#free, free()).
-	D allocates memory using the D garbage collector,
-	so no explicit free's are necessary.
+	$(P C では
+	$(LINK2 http://www.digitalmars.com/rtl/stdlib.html#malloc, malloc()) や
+	$(LINK2 http://www.digitalmars.com/rtl/stdlib.html#free, free()) によって明示的にメモリを管理します。
+	一方 D ではガベージコレクタでメモリを割り当てるので、
+	明示的な free は不要です。
 	)
 
-	$(P D can still explicitly allocate memory using std.c.stdlib.malloc()
-	and std.c.stdlib.free(), these are useful for connecting to C
-	functions that expect malloc'd buffers, etc.
+	$(P mallocで確保されたバッファを要求するようなCの関数と連携するために、
+	D では c.stdlib.malloc() や c.stdlib.free() の呼び出しによって
+	明示的にメモリ管理を行うこともできます。
 	)
 
-	$(P If pointers to D garbage collector allocated memory are passed to
-	C functions, it's critical to ensure that that memory will not
-	be collected by the garbage collector before the C function is
-	done with it. This is accomplished by:
+	$(P Dのガベージコレクタで確保したメモリへのポインタを渡すには、
+	Cの関数がそのメモリを使い終わる前にガベージコレクタが領域を回収してしまう、
+	といった事故が起きないことを確かめなくてはなりません。
+	これは幾つかの方法で実現できます：
 	)
 
 	$(UL
 
-	$(LI Making a copy of the data using std.c.stdlib.malloc() and passing
-	the copy instead.)
+	$(LI c.stdlib.malloc() で確保した領域にデータをコピーし、
+		そちらを代わりに渡す。)
 
-	$(LI Leaving a pointer to it on the stack (as a parameter or
-	automatic variable), as the garbage collector will scan the stack.)
+	$(LI その領域へのポインタをスタック上（引数か、自動変数）に残しておく。
+		ガベージコレクタはスタック上のオブジェクトは生きていると判定します。)
 
-	$(LI Leaving a pointer to it in the static data segment, as the
-	garbage collector will scan the static data segment.)
+	$(LI その領域へのポインタを静的データ領域に残しておく。
+		ガベージコレクタは静的データ領域のオブジェクトは生きていると判定します。)
 
-	$(LI Registering the pointer with the garbage collector with the
+	$(LI そのポインタを、
 	$(V1 std.gc.addRoot())
 	$(V2 $(LINK2 $(WEBURL)phobos/core_memory.html#addRoot, std.gc.addRoot()))
-	or
+	か
 	$(V1 std.gc.addRange())
 	$(V2 $(LINK2 $(WEBURL)phobos/core_memory.html#addRange, std.gc.addRange()))
-	calls.)
+	によってガベージコレクタへ登録する。)
 
 	)
 
-	$(P An interior pointer to the allocated memory block is sufficient
-	to let the GC
-	know the object is in use; i.e. it is not necessary to maintain
-	a pointer to the beginning of the allocated memory.
+	$(P オブジェクトがまだ使われていることを
+	GC に知らせるには、
+	割り当てられたメモリ領域の内部へのポインタがあれば十分です。
+	領域の先頭へのポインタを保持しておく必要はありません。
 	)
 
-	$(P The garbage collector does not scan the stacks of threads not
-	created by the D Thread interface. Nor does it scan the data
-	segments of other DLL's, etc.
+	$(P Dによって作られた以外のスレッドのスタックや、
+	他のDLLに属するデータセグメントについては、
+	ガベージコレクタによって探索されません。
 	)
 
-<h2>Data Type Compatibility</h2>
+<h2>データ型の互換性</h2>
 
-	$(TABLE2 D And C Type Equivalence,
+	$(TABLE2 D と C の対応する型,
 
 	$(TR <th rowspan=2>D</th><th colspan=2>C</th>)
 	$(TR $(TH 32 bit) $(TH 64 bit))
@@ -152,17 +152,17 @@ extern (C) {
 
 	$(TR
 	$(TD $(B char))
-	$(TD2 $(B char) (chars are unsigned in D))
+	$(TD2 $(B char) (Dではcharはunsignedです))
 	)
 
 	$(TR
 	$(TD $(B wchar))
-	$(TD2 $(B wchar_t) (when sizeof(wchar_t) is 2))
+	$(TD2 $(B wchar_t) (sizeof(wchar_t) が 2 のとき))
 	)
 
 	$(TR
 	$(TD $(B dchar))
-	$(TD2 $(B wchar_t) (when sizeof(wchar_t) is 4))
+	$(TD2 $(B wchar_t) (sizeof(wchar_t) が 4 のとき))
 	)
 
 	$(TR
@@ -201,13 +201,13 @@ $(V1
 
 $(V2
 	$(TR
-	$(TD $(B c_long (in core.stdc.config)))
+	$(TD $(B c_long (core.stdc.config で定義)))
 	$(TD $(B long))
 	$(TD $(B long))
 	)
 
 	$(TR
-	$(TD $(B c_ulong (in core.stdc.config)))
+	$(TD $(B c_ulong (core.stdc.config で定義)))
 	$(TD $(B unsigned long))
 	$(TD $(B unsigned long))
 	)
@@ -215,13 +215,13 @@ $(V2
 	$(TR
 	$(TD $(B long))
 	$(TD $(B long long))
-	$(TD $(B long (or long long)))
+	$(TD $(B long (または long long)))
 	)
 
 	$(TR
 	$(TD $(B ulong))
 	$(TD $(B unsigned long long))
-	$(TD $(B unsigned long (or unsigned long long)))
+	$(TD $(B unsigned long (または unsigned long long)))
 	)
 )
 	$(TR
@@ -286,7 +286,7 @@ $(V1
 
 	$(TR
 	$(TD $(B class))
-	$(TD2 no equivalent)
+	$(TD2 なし)
 	)
 
 	$(TR
@@ -306,12 +306,12 @@ $(V1
 
 	$(TR
 	$(TD $(I type)$(B []))
-	$(TD2 no equivalent)
+	$(TD2 なし)
 	)
 
 	$(TR
 	$(TD $(I type)$(B [)$(I type)$(B ]))
-	$(TD2 no equivalent)
+	$(TD2 なし)
 	)
 
 	$(TR
@@ -321,7 +321,7 @@ $(V1
 
 	$(TR
 	$(TD $(I type) $(B delegate)$(B $(LPAREN))$(I parameters)$(B $(RPAREN)))
-	$(TD2 no equivalent)
+	$(TD2 なし)
 	)
 
 	$(TR
@@ -336,23 +336,23 @@ $(V1
 
 	)
 
-	$(P These equivalents hold for most C compilers. The C standard
-	does not pin down the sizes of the types, so some care is needed.
+	$(P の対応関係はほとんどの C コンパイラで成り立ちます。ただし
+	Cの標準では型のサイズは一意に定められていないので、注意が必要です。
 	)
 
 $(V2
-<h2>Passing D Array Arguments to C Functions</h2>
+<h2>Dの配列をCの関数に渡す</h2>
 
-	$(P In C, arrays are passed to functions as pointers even if the function
-	prototype says its an array. In D, static arrays are passed by value,
-	not by reference. Thus, the function prototype must be adjusted to match
-	what C expects.)
+	$(P Cでは、例え関数プロトタイプでは配列であるかのように宣言されていたとしても、
+	配列はポインタとして渡されます。Dでは、静的配列は参照渡しではなく、値渡しされます。
+	従って、
+	関数プロトタイプはCの期待するものになっているように調整する必要があります。)
 
-	$(TABLE2 D And C Function Prototype Equivalence,
+	$(TABLE2 D と C の同等な関数プロトタイプ,
 
 	$(TR
-	$(TH D type)
-	$(TH C type)
+	$(TH D の型)
+	$(TH C の型)
 	)
 
 	$(TR
@@ -367,28 +367,28 @@ $(V2
 
 	)
 
-	$(P For example:)
+	$(P 例えば:)
 
 $(CCODE
-void foo(int a[3]) { ... } // C code
+void foo(int a[3]) { ... } // C のコード
 )
 ---
 extern (C)
 {
-  void foo(ref int[3] a); // D prototype
+  void foo(ref int[3] a); // D でのプロトタイプ宣言
 }
 ---
 )
 
-<h2>Calling printf()</h2>
+<h2>printf() の呼び出し</h2>
 
-	$(P This mostly means checking that the
-	$(LINK2 http://www.digitalmars.com/rtl/stdio.html#printf, printf format specifier)
-	matches the corresponding D data type.
-	Although printf is designed to handle 0 terminated strings,
-	not D dynamic arrays of chars, it turns out that since D
-	dynamic arrays are a length followed by a pointer to the data,
-	the $(D %.*s) format works:
+	$(P これは主に、
+	$(LINK2 http://www.digitalmars.com/rtl/stdio.html#printf, printf のフォーマット指定)
+	がDのデータ型と合うかどうか、
+	が問題になります。printf はNUL終端の文字列を扱うようになっていますが、
+	Dでのcharの動的配列はそうなっていません。
+	しかし配列データの前に
+	4バイトで配列のサイズが置かれていますので、$(D %.*s) を使うと動作します：
 	)
 
 ------
@@ -397,60 +397,60 @@ void foo(char[] string) {
 }
 ------
 
-	$(P The $(CODE printf) format string literal
-	in the example doesn't end with $(CODE '\0').
-	This is because string literals,
-	when they are not part of an initializer to a larger data structure,
-	have a $(CODE '\0') character helpfully stored after the end of them.
+	$(P 例の $(CODE printf) のフォーマット文字列リテラルは $(CODE '\0')
+	で終わっていません。これは、
+	より大きな構造体の初期化子の一部でない限り、
+	文字列リテラルの後ろには
+	$(CODE '\0') が格納されるようになっているためです。
 	)
 
-	$(P An improved D function for formatted output is
-	$(CODE std.stdio.writef()).
+	$(P 書式化出力を得るためのDでのベターな関数として、
+	$(CODE std.stdio.writef()) があります。
 	)
 
-<h2>Structs and Unions</h2>
+<h2>構造体と共用体</h2>
 
-	$(P D structs and unions are analogous to C's.
+	$(P Dの構造体と共用体は、Cのそれとほぼ同じです。
 	)
 
-	$(P C code often adjusts the alignment and packing of struct members
-	with a command line switch or with various implementation specific
-	#pragma's. D supports explicit alignment attributes that correspond
-	to the C compiler's rules. Check what alignment the C code is using,
-	and explicitly set it for the D struct declaration.
+	$(P >Cのコードでは、実装特有の#pragmaやコンパイラのコマンドスイッチによって、
+	構造体の整列を制御します。これに対応するものとして、D には
+	明示的なアラインメント属性が用意されています。
+	C側でのアラインメントを調べて、
+	D側の構造体宣言に明示的にその値を設定して下さい。
 	)
 
-	$(P D does not support bit fields. If needed, they can be emulated
-	with shift and mask operations,
-	or use the $(LINK2 phobos/std_bitmanip.html#bitfields, std.bitmanip.bitfields)
-	library type.
-	$(DPLLINK htod.html, htod) will convert bit fields to inline functions that
-	do the right shift and masks.
+	$(P Dはビットフィールドをサポートしません。必要ならば、
+	シフトとビットマスク演算によってエミュレートできます。
+	$(LINK2 phobos/std_bitmanip.html#bitfields, std.bitmanip.bitfields)
+	というライブラリ型もあります。
+	$(DPLLINK htod.html, htod) を使うと、
+	ビットフィールドはシフトとマスクを使ったインライン関数に変換されます。
 	)
 
-<h2>$(LNAME2 Using C Libraries, Using Existing C Libraries)</h2>
+<h2>$(LNAME2 Using C Libraries, 既存の C ライブラリを使う)</h2>
 
-	$(P Since D can call C code directly, it can also call any C library
-	functions, giving D access to the smorgasbord of existing C libraries.
-	To do so, however, one needs to write a D interface (.di) file, which
-	is a translation of the C .h header file for the C library into D.
+	$(P D からは C のコードを直接呼び出せるので、どんな C のライブラリ関数でも、
+	D とリンクすれば呼び出すことができます。
+	これをするには、しかし、D インターフェイス (.di) ファイルを、
+	そのライブラリの C の .h ヘッダファイルから変換して作る必要があります。
 	)
 
-	$(P For popular C libraries, the first place to look for the corresponding
-	D interface file is the $(LINK2 https://github.com/D-Programming-Deimos/, Deimos Project).
-	If it isn't there already, and you write one, please contribute it
-	to the Deimos Project.
+	$(P 著名な C のライブラリに関しては、まずは対応する D のインターフェイスファイルがないか、
+	$(LINK2 https://github.com/D-Programming-Deimos/, Deimos プロジェクト) をチェックしましょう。
+	それがまだ存在せず、あなたが書き上げたならば、ぜひ、
+	Deimos プロジェクトに貢献してください。.
 	)
 
-<h2>$(LNAME2 C Globals, Accessing C Globals)</h2>
+<h2>$(LNAME2 C Globals, C のグローバル変数へのアクセス)</h2>
 
-	$(P C globals can be accessed directly from D. C globals have the C naming
-	convention, and so must be in an $(D extern (C)) block.
-	Use the $(D extern) storage class to indicate that the global is allocated
-	in the C code, not the D code.
-	$(V2 C globals default to being in global, not thread local, storage.
-	To reference global storage
-	from D, use the $(D __gshared) storage class.)
+	$(P C のグローバル変数は D から直接アクセスできます。C のグローバル変数は
+	C の命名規約に従うので、D からは $(D extern (C)) ブロックで宣言される必要があります。
+	$(D extern) 記憶域クラスを指定することで、そのグローバル変数が D のコードではなく
+	C のコードの側で割り当てられていることを処理系に伝えます。
+	$(V2 C のグローバル変数は、デフォルトではスレッドローカルではなく、グローバルな記憶域に配置されます。
+	グローバル記憶域を D から参照するには、
+	$(D __gshared) 記憶域クラスを使います。)
 	)
 
 ---
@@ -459,15 +459,15 @@ extern (C) extern __gshared int x;
 
 $(V1
 <hr>
-<h1>Interfacing to C++</h1>
+<h1>C++とのインターフェイス</h1>
 
-	$(P D does not provide an interface to C++, other than
-	through $(DPLLINK COM.html, COM programming). Since D, however,
-	interfaces directly to C, it can interface directly to
-	C++ code if it is declared as having C linkage.
+	$(P D は C++ とのインターフェイスを
+	$(DPLLINK COM.html, COM によるもの) 以外特に提供しません。
+	しかしながら、D は C と直接やりとりできるため、
+	C のリンケージを持つよう宣言された C++ コードとはやりとりが可能です。
 	)
 
-	$(P D class objects are incompatible with C++ class objects.
+	$(P D のクラスオブジェクトはC++のクラスオブジェクトとは互換性がありません。
 	)
 )
 
@@ -475,6 +475,6 @@ $(V1
 
 Macros:
 	TD2=<td colspan=2>$0</td>
-	TITLE=Interfacing to C
+	TITLE=Cとのインターフェイス
 	WIKI=InterfaceToC
 
