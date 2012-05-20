@@ -1,43 +1,43 @@
 Ddoc
 
-$(D_S Exception Safe Programming,
+$(D_S 例外安全なプログラミング,
 
-Exception safe programming is programming so that if any piece of
-code that might throw an exception does throw an exception, then
-the state of the program is not corrupted and resources are not leaked.
-Getting this right using traditional methods often results in complex,
-unappealing and brittle code. As a result, exception safety often
-is either buggy or simply ignored for
-the sake of expediency.
+例外安全なプログラミングとは、
+例外を投げる可能性があるコードが実際に例外を投げた場合に、
+プログラムの状態が壊れずリソースもリークしないように作るプログラミングのことを言います。
+これを正しく実現するには、既存の方法では、複雑で読みにくく脆いコード
+を書かねばなりませんでした。結果として、例外安全性に関して
+バグが残っていることが非常に多かったり、そもそも手間を省くために
+例外安全が完全に無視されたりしてきました。
 
 
-<h3>Example</h3>
+<h3>例</h3>
 
-For example, if there's a Mutex m that must be acquired and held
-for a few statements, then released:
+例として、数行の文を実行するあいだMutexをロックして、
+終わったら解放するというケースを考えてみましょう:
 
 ---
 void abc()
 {
     Mutex m = new Mutex;
-    lock(m);	// lock the mutex
-    foo();	// do processing
-    unlock(m);	// unlock the mutex
+    lock(m);	// mutexをロック
+    foo();	// 処理を行う
+    unlock(m);	// mutexをアンロック
 }
 ---
 
-$(P If foo() throws an exception, then abc() exits via exception unwinding,
-unlock(m) is never called and the Mutex is not released. This is a fatal
-problem with this code.
+$(P >foo() が例外を投げると、abc() は例外による巻き戻しで終了します。
+この場合 unlock(m) は呼び出されず、Mutexは解放されません。
+これはこのコードの致命的な欠陥です。
 )
 
-$(P The RAII (Resource Acquisition Is Initialization) idiom
-and the try-finally statement form the backbone of
-the traditional approaches to writing exception safe programming.
+$(P RAII (Resource Acquisition Is Initialization) イディオムと、
+try-finally文。この二つが、例外安全なプログラミングを実現するための
+これまでの基本的な方法でした。
 )
 
-$(P RAII is scoped destruction, and the example can be fixed by providing
-a Lock class with a destructor that gets called upon the exit of the scope:
+$(P RAII とはスコープに関連づけられた破棄処理のことで、先ほどの例は、
+スコープの終了時に呼び出されるデストラクタをもったLockクラスを使うことで修正できます:
 )
 
 ---
@@ -61,44 +61,43 @@ void abc()
 {
     Mutex m = new Mutex;
     scope L = new Lock(m);
-    foo();	// do processing
+    foo();	// 処理を行う
 }
 ---
 
-If abc() is exited normally or via an exception thrown from foo(), L gets
-its destructor called and the mutex is unlocked.
-The try-finally solution to the same problem looks like:
+abc() が正常終了しても foo() からの例外で終了しても、L のデストラクタは呼び出され、
+Mutex は解放されます。
+また、同じ問題を try-finally で解決すると次のようになります:
 
 ---
 void abc()
 {
     Mutex m = new Mutex;
-    lock(m);	// lock the mutex
+    lock(m);	// mutexをロック
     try
     {
-	foo();	// do processing
+	foo();	// 処理を行う
     }
     finally
     {
-	unlock(m);	// unlock the mutex
+	unlock(m);	// mutexをアンロック
     }
 }
 ---
 
-$(P Both solutions work, but both have drawbacks.
-The RAII solution often requires
-the creation of an extra dummy class, which is both a lot of lines of code to
-write and a lot of clutter obscuring the control flow logic.
-This is worthwhile to manage resources that must be cleaned up and that appear
-more than once in a program, but it is clutter when it only needs to be
-done once.
-The try-finally
-solution separates the unwinding code from the setup, and it can often be
-a visually large separation. Closely related code should be grouped together.
-)
+$(P どちらの方法も問題を解決はします。しかし、どちらにも欠点があります。
+RAII による方法では
+余分なダミークラスを作る必要が生じ、コード量も増えますし、
+実行フローの流れも見通しが悪くなります。
+これは、必ず解放されなければならないリソースを、プログラム中で何度も使う場合には
+問題になりません。しかし、
+一度だけ必要な解法処理を記述するには面倒です。
+try-finally による解決は、
+リソースの初期化コードと巻き戻し処理のコードが分離して記述され、
+実際ソースコード上で視覚的に大きく離れてしまします。しかし、密接に関連した処理は一カ所にまとまっているべきです。)
 
-$(P The $(LINK2 statement.html#ScopeGuardStatement, scope exit) statement is an easier
-approach:
+$(P そこで $(LINK2 statement.html#ScopeGuardStatement, scope exit) 文が、
+もっと簡単なアプローチを可能にします:
 )
 
 ---
@@ -106,25 +105,25 @@ void abc()
 {
     Mutex m = new Mutex;
 
-    lock(m);	// lock the mutex
-    scope(exit) unlock(m);	// unlock on leaving the scope
+    lock(m);	// mutexをロック
+    scope(exit) unlock(m);	// スコープ終了時にアンロック
 
-    foo();	// do processing
+    foo();	// 処理を行う
 }
 ---
 
-The $(D_KEYWORD scope)(exit) statement is executed at the closing curly
-brace upon
-normal execution, or when the scope is left due to an exception having
-been thrown.
-It places the unwinding code where it aesthetically belongs, next to the
-creation of the state that needs unwinding. It's far less code to write
-than either the RAII or try-finally solutions, and doesn't require the
-creation of dummy classes.
+$(D_KEYWORD scope)(exit) 文は、
+正常な実行で中括弧を抜ける時か、
+あるいは例外が投げられてスコープを抜けるときに
+実行されます。
+この方法では、巻き戻しコードが戻す状態の生成部分の
+すぐ隣に配置されるという綺麗なソースになります。また、
+RAII と比べても try-finally と比べてもコード量も少なく、
+ダミークラスを定義する必要もありません。
 
-<h3>Example</h3>
+<h3>例</h3>
 
-The next example is in a class of problems known as transaction processing:
+次の例は、トランザクション処理と呼ばれる種類の問題です:
 
 ---
 Transaction abc()
@@ -139,14 +138,14 @@ Transaction abc()
 }
 ---
 
-$(P Both dofoo() and dobar() must succeed, or the transaction has failed.
-If the transaction failed, the data must be restored to the state
-where neither dofoo() nor dobar() have happened. To support that,
-dofoo() has an unwind operation, dofoo_undo(Foo f) which will roll back
-the creation of a Foo.
+$(P dofoo() と dobar() の両方が成功するか、そうでなければトランザクション失敗とします。
+トランザクションが失敗する場合は、
+dofoo() も dobar() も実行される前の状態にデータが戻っていないといけません。
+これを実現するために、dofoo() の操作を巻き戻す dofoo_undo(Foo f) があって、
+Fooの生成を取り消せるようになっています。
 )
 
-$(P With the RAII approach:
+$(P さて、RAIIの方法では:
 )
 
 ---
@@ -176,7 +175,7 @@ Transaction abc()
 }
 ---
 
-With the try-finally approach:
+try-finally の方法では:
 
 ---
 Transaction abc()
@@ -198,15 +197,15 @@ Transaction abc()
 }
 ---
 
-$(P These work too, but have the same problems.
-The RAII approach involves the creation of dummy classes, and the obtuseness
-of moving some of the logic out of the abc() function.
-The try-finally approach is wordy even with this simple example; try
-writing it if there are more than two components of the transaction that
-must succeed. It scales poorly.
+$(P どちらも動作はしますが、やはり同じ問題を抱えています。
+RAIIではダミークラスを作る必要があり、abc() 関数のロジックを一部外に
+取り出したことで読みにくくなっています。
+try-finally の方法はこのシンプルな例ではまだなんとかなっているようにも見えますが、
+３個以上の処理を含むトランザクションを書こうとすると、
+拡張性に乏しいことがわかります。
 )
 
-$(P The $(D_KEYWORD scope)(failure) statement solution looks like:
+$(P $(D_KEYWORD scope)(failure) 文による解決法では次のようになります:
 )
 
 ---
@@ -224,9 +223,9 @@ Transaction abc()
 }
 ---
 
-The dofoo_undo(f) only is executed if the scope is exited via an
-exception. The unwinding code is minimal and kept aesthetically where
-it belongs. It scales up in a natural way to more complex transactions:
+dofoo_undo(f) はスコープが例外によって終了するときにのみ実行されます。
+巻き戻しコードは最小限で、あるべき場所に綺麗に配置されています。
+もっと複雑なトランザクションの場合でも、拡張のしかたは明らかです:
 
 
 ---
@@ -248,18 +247,18 @@ Transaction abc()
 }
 ---
 
-<h3>Example</h3>
+<h3>例</h3>
 
-The next example involves temporarily changing the state of some object.
-Suppose there's a class data member $(D verbose), which controls the
-emission of messages logging the activity of the class.
-Inside one of the methods, $(D verbose) needs to be turned off because
-there's a loop that would otherwise cause a blizzard of messages to be output:
+次は、あるオブジェクトの例を一時的に変更するという例です。
+クラスのデータメンバ $(D verbose) があって、
+クラスの動作のログ取り動作を制御しているものとしましょう。
+メソッドの一つが、物凄く大量のメッセージをはき出すループを含んでいて大変なことに
+なるので $(D verbose) をオフにする必要があったとします:
 
 ---
 class Foo
 {
-    bool verbose;	// true means print messages, false means silence
+    bool verbose;	// trueならメッセージを表示。falseなら表示しない
     ...
     bar()
     {
@@ -271,14 +270,14 @@ class Foo
 }
 ---
 
-There's a problem if $(D Foo.bar()) exits via an exception - the verbose
-flag state is not restored.
-That's easily fixed with $(D_KEYWORD scope)(exit):
+$(D Foo.bar()) が例外で終了すると問題が起きます。
+verbose の状態が復元されません。
+この問題は、$(D_KEYWORD scope)(exit) を使うと簡単に解決します:
 
 ---
 class Foo
 {
-    bool verbose;	// true means print messages, false means silence
+    bool verbose;	// trueならメッセージを表示。falseなら表示しない
     ...
     bar()
     {
@@ -286,64 +285,64 @@ class Foo
 	verbose = false;
 	scope(exit) verbose = verbose_save;
 
-	...lots of code...
+	... ながーいコード ...
     }
 }
 ---
 
-$(P It also neatly solves the problem if $(D ...lots of code...) goes on at
-some length, and in the future a maintenance programmer inserts a
-return statement in it, not realizing that verbose must be reset upon
-exit. The reset code is where it belongs conceptually, rather than where
-it gets executed
-(an analogous case is the continuation expression in a $(I ForStatement)).
-It works whether the scope is exited by a return, break, goto, continue,
-or exception.
+$(P これは、将来的に $(D ...ながーいコード...) の中に、保守プログラマが
+verboseを戻す必要に気づかずreturn文を挿入してしまった、
+という場合でも問題なく動くコードになっています。
+復元コードが、
+実行される箇所ではなくそれが概念的に属する場所に配置されているからです。
+これは $(I ForStatement) の条件更新式の利点に似ています。
+上のコードは、スコープから return, break, goto, continue, 例外の
+どれで抜ける場合も正しく動作します。
 )
 
-$(P The RAII solution would be to try and capture the false state of verbose
-as a resource, an abstraction that doesn't make much sense.
-The try-finally solution requires arbitrarily large separation between
-the conceptually linked set and reset code, besides requiring
-the addition of an irrelevant scope.
+$(P RAII で解決しようとすると、verbose の状態をリソースとして捕捉することになり、
+意味のある抽象化になりません。
+try-finally による方法は、
+概念的に関連している値のセットと復元コードが、
+間に関係のないコードが挟まることでいくらでも離されてしまう危険性を含んでいます。
 )
 
-<h3>Example</h3>
+<h3>例</h3>
 
-Here's another example of a multi-step transaction,
-this time for an email program.
-Sending an email consists of two operations:
+複数ステップのトランザクションの別の例を挙げましょう。
+今度は、emailプログラムを例にとります。
+emailの送信は、二つの操作からなっています:
 
 $(OL
-$(LI Perform the SMTP send operation.)
-$(LI Copy the email to the $(DOUBLEQUOTE Sent) folder, which in POP is on the local
-disk, and in IMAP is also remote.)
+$(LI SMTP の送信操作の実行)
+$(LI 送信済みメールの $(DOUBLEQUOTE Sent) フォルダへのコピー。POPならばローカルディスクへ、
+IMAPならリモートに保存することになります)
 )
 
-$(P Messages should not appear in $(DOUBLEQUOTE Sent) that haven't been actually sent,
-and sent messages must actually appear in $(DOUBLEQUOTE Sent).
+$(P 実際の送信が完了していないメールが $(DOUBLEQUOTE Sent) の中にあってはいけませんし、
+送信済みのメールは確実に $(DOUBLEQUOTE Sent) に収まっている必要があります。
 )
 
-$(P Operation (1) is not undoable because it's a well-known distributed
-computing issue. Operation (2) is undoable with some degree of
-reliability. So we break the job down into three steps:
+$(P 操作1は、ご存じの通りコンピュータ間の分散処理であるため、取り消すことはできません。
+操作2は、ある程度の確実性をもって取り消すことができます。
+そこで、作業を３つのステップに分解して考えます:
 )
 
 $(OL
-$(LI Copy the message to $(DOUBLEQUOTE Sent) with a changed title $(DOUBLEQUOTE [Sending]
-&lt;Subject&gt;). This operation ensures there's space in the client's IMAP
-account (or on the local disk), the rights are proper, the connection
-exists and works, etc.)
+$(LI メールを、タイトルを $(DOUBLEQUOTE [Sending] &lt;Subject&gt;) に変更しつつ
+ $(DOUBLEQUOTE Sent) に保存。 この操作は、クライアントのIMAPアカウント（あるいはローカルディスク）
+に空き容量があり、権限が適切に設定されていて、ネットワーク接続が正しく保たれている
+ことなどなど、が必要になります。)
 
-$(LI Send the message via SMTP.)
+$(LI SMTP経由でメッセージを送信)
 
-$(LI If sending fails, delete the message from $(DOUBLEQUOTE Sent). If the message
-succeeds,
-change its title from $(DOUBLEQUOTE [Sending] &lt;Subject&gt;) to $(DOUBLEQUOTE &lt;Subject&gt;).
-Both of these operation have a high probability to succeed. If the
-folder is local, the probability of success is very high. If the folder
-is remote, probability is still vastly higher than that of step (1)
-because it doesn't involve an arbitrarily large data transfer.)
+$(LI 送信が失敗した場合、メッセージを $(DOUBLEQUOTE Sent) から削除します。
+送信が成功した場合は、
+タイトルを $(DOUBLEQUOTE [Sending] &lt;Subject&gt;) から $(DOUBLEQUOTE &lt;Subject&gt;) に変更します。
+どちらの操作も、ほぼ確実に成功すると考えられます。フォルダがローカルの場合は
+特に確実です。フォルダがリモートの場合も、
+操作(1)と比べると、
+巨大なデータ転送を伴わない分、成功確率はずっと高いと言えるでしょう。)
 
 )
 
@@ -360,38 +359,38 @@ class Mailer
 	}
 	scope(success) SetTitle(msg.ID(), "Sent", msg.Title);
 	scope(failure) Remove(msg.ID(), "Sent");
-	SmtpSend(msg);	// do the least reliable part last
+	SmtpSend(msg);	// 最後にもっとも信頼性の低い処理
     }
 }
 ---
 
-This is a compelling solution to a complex problem.
-Rewriting it with RAII would require two extra silly classes,
-MessageTitleSaver and MessageRemover.
-Rewriting the example with try-finally would require nested try-finally
-statements or use of an extra variable to track state evolution.
+このコードは以上の複雑な問題に対するなかなか悪くない解決策になっています。
+RAIIで書き直そうと思うと、二つの余分でまぬけなクラス、
+MessageTitleSaver と MessageRemover が必要になります。
+try-finally で書き直そうと思うと、try-finally文のネストや、
+状態の進展を記録する余分な変数が必要になります。
 
-<h3>Example</h3>
+<h3>例</h3>
 
-Consider giving feedback to the user about a lengthy
-operation (mouse changes to an hourglass, window title is
-red/italicized, ...).
-With $(D_KEYWORD scope)(exit) that can be easily done without
-needing to make an artificial resource out of whatever UI state element
-used for the cues:
+時間のかかる処理の実行中であることをユーザーにフィードバックする
+(マウスカーソルを砂時計に変える、Windowタイトルを
+赤くしたり斜体にしたりする、...) という例を考えます。
+$(D_KEYWORD scope)(exit) を使えば、
+使用されるUI状態を管理する人工的なリソースオブジェクトを必要とせず、
+簡単に実現できます:
 
 --------------
 void LongFunction()
 {
     State save = UIElement.GetState();
     scope(exit) UIElement.SetState(save);
-    ...lots of code...
+    ...ながーいコード...
 }
 --------------
 
-Even more so, $(D_KEYWORD scope)(success) and $(D_KEYWORD scope)(failure)
-can be used to give an indication if the operation succeeded or if
-an error occurred:
+さらに、$(D_KEYWORD scope)(success) と $(D_KEYWORD scope)(failure)
+を使えば操作が成功したのか失敗したのかのフィードバックを返すのも
+簡単です:
 
 ---
 void LongFunction()
@@ -399,37 +398,37 @@ void LongFunction()
     State save = UIElement.GetState();
     scope(success) UIElement.SetState(save);
     scope(failure) UIElement.SetState(Failed(save));
-    ...lots of code...
+    ...ながーいコード...
 }
 ---
 
-<h2>When to use RAII, try-catch-finally, and Scope</h2>
+<h2>RAII, try-catch-finally, scope をそれぞれ使うべき場合</h2>
 
-RAII is for managing resources, which is different from managing state
-or transactions. try-catch is still needed, as scope doesn't catch
-exceptions. It's try-finally that becomes redundant.
+RAII は、状態やトランザクション管理ではなく、リソース管理に威力を発揮する機能です。
+scope文だけでは例外のcatchはできませんから、try-catch も必要です。
+try-finally は、scope文によって冗長な構文となったと言えます。
 
-<h2>Acknowledgements</h2>
+<h2>謝辞</h2>
 
-$(P Andrei Alexandrescu argued about the usefulness of these constructs on the
-Usenet and also defined
-their semantics in terms of try/catch/finally in a series of posts
-to comp.lang.c++.moderated under the title
+$(P Andrei Alexandrescu はここで紹介した要素の有用性について
+Usenet で議論し、
+またDec 6, 2005から始まる
+comp.lang.c++.moderated への一連の投稿
 $(LINK2 http://groups.google.com/group/comp.lang.c++.moderated/browse_frm/thread/60117e9c1cd1c510/b8cbe52786b0f506, A safer/better C++?)
-starting Dec 6, 2005.
-D implements the idea
-with a slightly modified syntax following its creator's experiments with the
-feature and useful
-$(LINK2 http://www.digitalmars.com/d/archives/digitalmars/D/34277.html, suggestions)
-from the D programmer community,
-especially Dawid Ciezarkiewicz and Chris Miller.
+にて、その意味論を try/catch/finally を用いて定義しました。
+D ではこのアイデアを、
+考案者の実験に沿って構文を多少変更し、
+また D プログラマコミュニティから…特にDawid Ciezarkiewicz と Chris Miller からの重要な
+$(LINK2 http://www.digitalmars.com/d/archives/digitalmars/D/34277.html, 提案)
+を元に、
+実装しました。
 )
 
-$(P I am indebted to Scott Meyers for teaching
-me about exception safe programming.
+$(P また、
+Scott Meyers には例外安全なプログラミングについてご教授いただきました。感謝します。
 )
 
-<h2>References:</h2>
+<h2>参考文献:</h2>
 
 $(OL
 
@@ -450,7 +449,7 @@ $(LINK2 http://www.amazon.com/exec/obidos/ASIN/0321334876/classicempire,
 )
 
 Macros:
-	TITLE=Exception Safety
+	TITLE=例外安全
 	WIKI=ExceptionSafe
 	CATEGORY_ARTICLES=$0
 
