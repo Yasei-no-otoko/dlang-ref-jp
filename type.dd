@@ -1,151 +1,151 @@
 Ddoc
 
-$(SPEC_S Types,
+$(SPEC_S 型,
 
-$(SECTION2 Basic Data Types,
+$(SECTION2 基本データ型,
 
-    $(TABLE2 Basic Data Types,
-    $(THEAD Keyword, Description, Default Initializer ($(D .init)))
+    $(TABLE2 基本データ型,
+    $(THEAD 予約語, 説明, デフォルト初期値 ($(D .init)))
     $(TROW
         $(D void),
-        no type,
+        型なし,
         $(D -)
     )
     $(TROW
         $(D bool),
-        boolean value,
+        ブール値,
         $(D false)
     )
     $(TROW
         $(D byte),
-        signed 8 bits,
+        符号付き 8bit,
         $(D 0)
     )
     $(TROW
         $(D ubyte),
-        unsigned 8 bits,
+        符号なし 8bit,
         $(D 0)
     )
     $(TROW
         $(D short),
-        signed 16 bits,
+        符号付き 16bit,
         $(D 0)
     )
     $(TROW
         $(D ushort),
-        unsigned 16 bits,
+        符号なし 16bit,
         $(D 0)
     )
     $(TROW
         $(D int),
-        signed 32 bits,
+        符号付き 32bit,
         $(D 0)
     )
     $(TROW
         $(D uint),
-        unsigned 32 bits,
+        符号なし 32bit,
         $(D 0)
     )
     $(TROW
         $(D long),
-        signed 64 bits,
+        符号付き 64bit,
         $(D 0L)
     )
     $(TROW
         $(D ulong),
-        unsigned 64 bits,
+        符号なし 64bit,
         $(D 0L)
     )
     $(TROW
         $(D cent),
-        signed 128 bits (reserved for future use),
+        符号付き 128bit (将来のために予約),
         $(D 0)
     )
     $(TROW
         $(D ucent),
-        unsigned 128 bits (reserved for future use),
+        符号なし 128bit (将来のために予約),
         $(D 0)
     )
     $(TROW
         $(D float),
-        32 bit floating point,
+        32bit 浮動小数点数,
         $(D float.nan)
     )
     $(TROW
         $(D double),
-        64 bit floating point,
+        64bit 浮動小数点数,
         $(D double.nan)
     )
     $(TROW
         $(D real),
-        largest hardware implemented floating
-        point size ($(B Implementation Note:) 80 bits for x86 CPUs)
-        or double size$(COMMA) whichever is larger,
+        ハードウェアのサポートする最大の浮動小数点数
+        ($(B 実装メモ:) x86のCPUでは80bit)
+        または double のサイズの大きい方,
         $(D real.nan)
     )
     $(TROW
         $(D ifloat),
-        imaginary float,
+        float の虚数型,
         $(D float.nan * 1.0i)
     )
     $(TROW
         $(D idouble),
-        imaginary double,
+        double の虚数型,
         $(D double.nan * 1.0i)
     )
     $(TROW
         $(D ireal),
-        imaginary real,
+        real の虚数型,
         $(D real.nan * 1.0i)
     )
     $(TROW
         $(D cfloat),
-        a complex number of two float values,
+        2つのfloatで表現された複素数,
         $(D float.nan + float.nan * 1.0i)
     )
     $(TROW
         $(D cdouble),
-        complex double,
+        double の複素数,
         $(D double.nan + double.nan * 1.0i)
     )
     $(TROW
         $(D creal),
-        complex real,
+        real の複素数,
         $(D real.nan + real.nan * 1.0i)
     )
     $(TROW
         $(D char),
-        unsigned 8 bit UTF-8,
+        符号なし 8 bit UTF-8 文字,
         $(D 0xFF)
     )
     $(TROW
         $(D wchar),
-        unsigned 16 bit UTF-16,
+        符号なし 16bit UTF-16 文字,
         $(D 0xFFFF)
     )
     $(TROW
         $(D dchar),
-        unsigned 32 bit UTF-32,
+        符号なし 32bit UTF-32 文字,
         $(D 0x0000FFFF)
     )
     )
 )
 
 
-$(SECTION2 Derived Data Types,
+$(SECTION2 派生データ型,
 
     $(UL
-    $(LI pointer)
-    $(LI array)
-    $(LI associative array)
-    $(LI function)
-    $(LI delegate)
+    $(LI ポインタ)
+    $(LI 配列)
+    $(LI 連想配列)
+    $(LI 関数)
+    $(LI デリゲート)
     )
 
-    $(P $(DDSUBLINK arrays, strings, $(I Strings)) are a special case of arrays.)
+    $(P $(DDSUBLINK arrays, strings, $(I 文字列)) は配列の一種です。)
 )
 
-$(SECTION2 User Defined Types,
+$(SECTION2 ユーザー定義型,
 
     $(UL
     $(LI alias)
@@ -158,43 +158,43 @@ $(SECTION2 User Defined Types,
 )
 
 
-$(SECTION2 Base Types,
+$(SECTION2 ベース型,
 
-    $(P The $(I base type) of an enum is the type it is based on:)
+    $(P enum の $(I base type) とは、そのenumの基となる型のことです:)
 
 ---
-enum E : T { ... }  // T is the $(I base type) of E
+enum E : T { ... }  // T は E の $(I base type)
 ---
 
 $(V1
-    $(P The $(I base type) of a typedef is the type it is formed from:)
+    $(P typedef の $(I base type) とは、そのtypedefの基となる型のことです:)
 
 ---
-typedef T U;  // T is the $(I base type) of U
+typedef T U;  // T は U の $(I base type)
 ---
 )
 )
 
 
-$(SECTION2 Pointer Conversions,
+$(SECTION2 ポインタ変換,
 
-    $(P Casting pointers to non-pointers and vice versa is allowed in D,
-    however, do not do this for any pointers that point to data
-    allocated by the garbage collector.
+    $(P ポインタを非ポインタにキャストしたり、その逆をすることはDでは許可されています。
+	しかしながら、ガベージコレクタによって割り当てられたデータを指すポインタに対しては、
+	この操作を行ってはいけません。
     )
 )
 
-$(SECTION2 Implicit Conversions,
+$(SECTION2 暗黙の変換,
 
-    $(P Implicit conversions are used to automatically convert
-    types as required.
+    $(P 要に応じて自動的に型を変換するために、
+	暗黙の変換が行われます。
     )
 
-    $(P A $(V1 typedef or) enum can be implicitly converted to its base
-    type, but going the other way requires an explicit
-    conversion.
-    $(V1 A literal can be implicitly converted to a typedef.)
-    For example:
+    $(P $(V1 typedef や) enum型は
+	暗黙のうちにベース型へ変換できますが、
+	逆向きは明示的な指定が必要です。
+    $(V1 リテラルはtypedefに暗黙変換されます。)
+    例えば
     )
 
 -------------------
@@ -202,29 +202,29 @@ int i;
 $(V1 typedef int myint;
 myint m;
 i = m;             // OK
-m = i;             // error
+m = i;             // エラー
 m = cast(myint)i;  // OK
 m = 3;             // OK)
 enum Foo { E }
 Foo f;
 i = f;           // OK
-f = i;           // error
+f = i;           // エラー
 f = cast(Foo)i;  // OK
-f = 0;           // error
+f = 0;           // エラー
 f = Foo.E;       // OK
 -------------------
 )
 
 
-$(SECTION2 Integer Promotions,
+$(SECTION2 整数の昇格,
 
-    $(P Integer Promotions are conversions of the following types:
+    $(P 整数の昇格とは、以下の型の間の変換です：
     )
 
-    $(TABLE2 Integer Promotions,
+    $(TABLE2 整数の昇格,
     $(TR
-    $(TH from)
-    $(TH to)
+    $(TH 変換前)
+    $(TH 変換後)
     )
     $(TR
     $(TD bool)
@@ -260,167 +260,167 @@ $(SECTION2 Integer Promotions,
     )
     )
 
-    $(P If a $(V1 typedef or) enum has as a base type one of the types
-    in the left column, it is converted to the type in the right
-    column.
+    $(P $(V1 typedef や)
+	enum 型でベース型が左の列のものは、
+	右の列の型へと変換されます。
     )
 )
 
 
-$(SECTION2 Usual Arithmetic Conversions,
+$(SECTION2 算術演算時の変換,
 
-    $(P The usual arithmetic conversions convert operands of binary
-    operators to a common type. The operands must already be
-    of arithmetic types.
-    The following rules are applied
-    in order, looking at the base type:
+    $(P 算術二項演算子のオペランドは、
+	演算の前に共通の型へと変換されます。
+	オペランドは、
+	変換前に既に算術演算可能な型である必要があります。
+	ベース型を見ながら、次の順序で変換ルールが適用されます：
     )
 
     $(OL
-    $(LI If either operand is real, the other operand is
-    converted to real.)
+    $(LI オペランドの一方がreal型なら、
+		もう一方もrealへ変換される)
 
-    $(LI Else if either operand is double, the other operand is
-    converted to double.)
+    $(LI オペランドの一方がdoubleなら、
+		もう一方もdoubleへ変換される)
 
-    $(LI Else if either operand is float, the other operand is
-    converted to float.)
+    $(LI オペランドの一方がfloatなら、
+		もう一方もfloatへ変換される)
 
-    $(LI Else the integer promotions are done on each operand,
-    followed by:
-
-    $(OL
-        $(LI If both are the same type, no more conversions are done.)
-
-        $(LI If both are signed or both are unsigned, the
-        smaller type is converted to the larger.)
-
-        $(LI If the signed type is larger than the unsigned
-        type, the unsigned type is converted to the signed type.)
-
-        $(LI The signed type is converted to the unsigned type.)
-    )
-    )
-    )
-
-    $(P If one or both of the operand types is an enum $(V1 or typedef) after
-    undergoing the above conversions, the result type is:)
+    $(LI それ以外なら、次の変換のあと、
+		オペランド双方に整数の昇格をほどこします：
 
     $(OL
-    $(LI If the operands are the same type, the result will be the
-    that type.)
-    $(LI If one operand is an enum $(V1 or typedef) and the other is the base type
-    of that $(V1 typedef or) enum, the result is the base type.)
-    $(LI If the two operands are different $(V1 typedefs or) enums,
-    the result is the closest base type common to both. A base type being closer
-    means there is a shorter sequence of conversions to base type to get there from the
-    original type.)
+        $(LI どちらも同じ型なら、これ以上の変換はおこなわない)
+
+        $(LI ２つのオペランドのsigned/unsingedが一致していれば、
+			サイズの小さい型を大きい型へ変換する)
+
+        $(LI signed型の方がサイズが大きければ、小さいunsingedの方を
+			signed型へ変換。)
+
+        $(LI signed型をunsingned型へ変換)
+    )
+    )
     )
 
-    $(P Integer values cannot be implicitly converted to another
-    type that cannot represent the integer bit pattern after integral
-    promotion. For example:)
+    $(P 片方ないしは両方のオペランドが $(V1 typedef か) enum型であったならば、
+	結果の型は次のルールで決まります:)
+
+    $(OL
+    $(LI オペランド双方が同じ型の場合、
+	結果はその型になる)
+    $(LI 片方がenum $(V1 か typedef) でもう片方がそのベース型の場合、
+	結果の型はベース型になる)
+    $(LI 二つのオペランドが異なるenum $(V1 か typedef) で共通の型をベースにしている場合、
+	結果は、二つの型に最も近い共通のベース型になります。
+	ベース型が近いとは、
+	型からベース型への変換の列が短いことを言います。)
+    )
+
+    $(P 整数値は、
+	整数昇格後のビットパターンを保持できないような型へ変換することはできません。
+	例えば：)
 
 ---
-ubyte  u1 = cast(byte)-1;  // error, -1 cannot be represented in a ubyte
-ushort u2 = cast(short)-1; // error, -1 cannot be represented in a ushort
-uint   u3 = cast(int)-1;   // ok, -1 can be represented in a uint
-ulong  u4 = cast(long)-1; // ok, -1 can be represented in a ulong
+ubyte  u1 = cast(byte)-1;  // エラー。-1 はubyteで表現できない
+ushort u2 = cast(short)-1; // エラー。-1 はushortで表現できない
+uint   u3 = cast(int)-1;   // ok, -1 は uint で表現できる
+ulong  u4 = cast(long)-1; // ok, -1 は ulong で表現できる
 ---
 
-    $(P Floating point types cannot be implicitly converted to
-    integral types.
+    $(P 浮動小数点数型を
+	暗黙に整数型へ変換することはできません。
     )
 
-    $(P Complex floating point types cannot be implicitly converted
-    to non-complex floating point types.
+    $(P 複素浮動小数点型を
+	暗黙に複素数でない浮動小数点型へ変換することはできません。
     )
 
-    $(P Imaginary floating point types cannot be implicitly converted to
-    float, double, or real types. Float, double, or real types
-    cannot be implicitly converted to imaginary floating
-    point types.
+    $(P 虚数型は暗黙にfloat, double, real型へ変換されません。
+	また、
+	float, double, real
+	型が暗黙に虚数型へ変換されることもありません。
     )
 )
 
 
 $(SECTION2 bool,
 
-    $(P The bool type is a 1 byte size type that can only hold the
-    value $(D_KEYWORD true) or $(D_KEYWORD false).
-    The only operators that can accept operands of type bool are:
-    &amp; | ^ &amp;= |= ^= ! &amp;&amp; || ?:.
-    A bool value can be implicitly converted to any integral type,
-    with $(D_KEYWORD false) becoming 0 and $(D_KEYWORD true) becoming 1.
-    The numeric literals 0 and 1 can be implicitly
-    converted to the bool values $(D_KEYWORD false) and $(D_KEYWORD true),
-    respectively.
-    Casting an expression to bool means testing for 0 or !=0 for
-    arithmetic types, and $(D_KEYWORD null) or !=$(D_KEYWORD null)
-    for pointers or references.
+    $(P bool型は1バイトの型で、
+    $(D_KEYWORD true) か $(D_KEYWORD false) のどちらかの値のみを持つことができます。
+	bool型に適用できる演算子は、
+	&amp; | ^ &amp;= |= ^= ! &amp;&amp; || ?: のみです。
+    with $(D_KEYWORD false) は 0、$(D_KEYWORD true) は 1 として
+	任意の整数型へ暗黙に変換できます。
+	数値リテラル 0 と 1 は、
+    それぞれ bool値 $(D_KEYWORD false) と $(D_KEYWORD true)
+	に暗黙変換可能です。
+	式をboolへとキャストするのは、数値型に対しては0のの比較 !=0 と同じ意味で、
+    ポインタや参照型に対しては、$(D_KEYWORD null) との比較 !=$(D_KEYWORD null)
+    と同じ意味です。
     )
 )
 
 
-$(SECTION2 <a name="delegates">Delegates</a>,
+$(SECTION2 <a name="delegates">デリゲート</a>,
 
-    $(P There are no pointers-to-members in D, but a more useful
-    concept called $(I delegates) are supported.
-    Delegates are an aggregate of two pieces of data: an
-    object reference and a pointer to a non-static member function,
-    or a pointer to a closure and a pointer to a nested function.
-    The object reference
-    forms the $(I this) pointer when the function is called.
+    $(P Dには"メンバへのポインタ"はありませんが、もっと有用な
+    $(I delegates) という概念をサポートしています。
+    デリゲートは
+	オブジェクトへの参照と、非静的関数ポインタまたはクロージャやネスト関数へのポインタ、
+	という２つの要素からなります。
+    そのオブジェクトへの参照が、関数呼び出しの際の
+    $(I this) ポインタとして使用されます。
     )
 
-    $(P Delegates are declared similarly to function pointers,
-    except that the keyword $(B delegate) takes the place
-    of (*), and the identifier occurs afterwards:
-    )
-
--------------------
-int function(int) fp; // fp is pointer to a function
-int delegate(int) dg; // dg is a delegate to a function
--------------------
-
-    $(P The C style syntax for declaring pointers to functions is
-$(V1 also supported:)
-$(V2 deprecated:)
+    $(P デリゲートは関数へのポインタと似た形で宣言します。
+	ただし、(*) の変わりに予約語 $(B delegate) を書き、
+	識別子は後ろに置きます。
     )
 
 -------------------
-int (*fp)(int);  // fp is pointer to a function
+int function(int) fp; // fp は関数へのポインタ
+int delegate(int) dg; // dg は関数へのデリゲート
 -------------------
 
-    $(P A delegate is initialized analogously to function pointers:
+    $(P 関数ポインタを宣言する C 風の構文は
+$(V1 サポートされています:)
+$(V2 非推奨となっています:)
+    )
+
+-------------------
+int (*fp)(int);  // fp は関数へのポインタ
+-------------------
+
+    $(P デリゲートは関数ポインタの初期化と類似の方法で初期化します：
     )
 
 -------------------
 int func(int);
-fp = &func;   // fp points to func
+fp = &func;   // fpはfuncを指す
 
 class OB {
     int member(int);
 }
 OB o;
-dg = &o.member; // dg is a delegate to object $(I o) and
-                // member function $(I member)
+dg = &o.member; // dg は オブジェクト $(I o) と
+                // メンバ関数 $(I member) へのデリゲート
 -------------------
 
-    $(P Delegates cannot be initialized with static member functions
-    or non-member functions.
+    $(P デリゲートを、
+	staticメンバ関数や非メンバ関数で初期化することはできません。
     )
 
-    $(P Delegates are called analogously to function pointers:
+    $(P デリゲートの呼び出しは、関数ポインタの呼び出しから類推できる通りです：
     )
 
 -------------------
-fp(3);   // call func(3)
-dg(3);   // call o.member(3)
+fp(3);   // func(3) を呼ぶ
+dg(3);   // o.member(3) を呼ぶ
 -------------------
 
-    $(P The equivalent of member function pointers can be constructed
-    using anonymous lambda functions:)
+    $(P 「メンバ関数ポインタ」に相当するものは、
+    無名のラムダ関数を使うことで構築できます:)
 
 ---
 class C {
@@ -428,26 +428,26 @@ class C {
   int foo(int i) { return i + a; }
 }
 
-// mfp is the member function pointer
+// mfp はメンバ関数ポインタ
 auto mfp = function(C self, int i) { return self.foo(i); };
-auto c = new C();  // create an instance of C
-mfp(c, 1);  // and call c.foo(1)
+auto c = new C();  // C のインスタンスを作成
+mfp(c, 1);  // c.foo(1) を呼び出す
 ---
 )
 
-$(SECTION2 $(D size_t) And $(D ptrdiff_t),
+$(SECTION2 $(D size_t) と $(D ptrdiff_t),
 
-    $(P $(D size_t) is an alias to one of the unsigned integral basic types,
-    and represents a type that is large enough to represent an offset into
-    all addressible memory.)
+    $(P $(D size_t)
+	は符号なしの基本整数型のいずれかの別名で、
+    アドレスを取ることが可能なメモリのオフセットを表現するのに十分なサイズの型を表します。)
 
-    $(P $(D ptrdiff_t) is an alias to the signed basic type the same size as $(D size_t).)
+    $(P $(D ptrdiff_t) は $(D size_t) と同じサイズの符号ありの基本整数型の別名です。)
 )
 
 )
 
 Macros:
-    TITLE=Types
+    TITLE=型
     WIKI=Type
     CATEGORY_SPEC=$0
 
