@@ -1,113 +1,113 @@
 Ddoc
 
-$(COMMUNITY D's Contract Programming vs C++'s,
+$(COMMUNITY Dの契約プログラミング vs C++,
 
-	Many people have written me saying that D's Contract Programming
-	(DbC) does not add anything that C++ does not already support.
-	They go on to illustrate their point with a technique for doing DbC in
-	C++.
+	多くの人が、D の契約プログラミング(DbC) は既に C++
+	でできる以上のことを何もつけ加えていない、と私に書き送ってくれました。
+	そして彼らは、
+	C++ で DbC を行う技術を示してそれを説明しようとします。
 	<p>
 
-	It makes sense to review what DbC is, how it is done in D,
-	and stack that up with what each of the various C++ DbC techniques
-	can do.
+	DbC についてもう一度考え直して、D でどのように実現されているか、
+	そしてそれぞれC++の様々なDbCテクニックと比較していく、
+	というのは意味のあることでしょう。
 	<p>
 
-	Digital Mars C++ adds
-	<a href="http://digitalmars.com/ctg/contract.html">extensions to C++</a>
-	to support DbC, but they are not covered here because they are not
-	part of standard C++ and are not supported by any other C++ compiler.
+	Digital Mars C++ は
+	<a href="http://digitalmars.com/ctg/contract.html">C++ への拡張</a>
+	としてDbCをサポートしていますが、ここではこれについては触れません。
+	C++の標準ではなく、他のC++コンパイラでは全くサポートされていないからです。
 
-<h2>Contract Programming in D</h2>
+<h2>D での 契約プログラミング</h2>
 
-	This is more fully documented in the D
-	<a href="dbc.html">Contract Programming</a> document.
-	To sum up, DbC in D has the following characteristics:
+	これは D の
+	<a href="dbc.html">契約プログラミング</a> 	という文書により詳しく説明されています。
+	まとめると、D での DbC は次のような特徴を持ちます：
 
 	$(OL
 
-	$(LI The $(I assert) is the basic contract.
+	$(LI $(I assert) が基本的な"契約"になります。
 	)
 
-	$(LI When an assert contract fails, it throws an exception.
-	Such exceptions can be caught and handled, or allowed to
-	terminate the program.
+	$(LI assert契約が失敗したときには、例外が送出されます。
+		このような例外は捕捉して処理することも、
+		そのままプログラムを終了させることもできます。
 	)
 
-	$(LI Classes can have $(I class invariants) which are
-	checked upon entry and exit of each public class member function,
-	the exit of each constructor, and the entry of the destructor.
+	$(LI クラスは $(I クラス不変条件) を持つことができて、
+		public メンバ関数の開始時と終了時、
+		コンストラクタの終了時とデストラクタの開始時に毎回チェックされます。
 	)
 
-	$(LI Assert contracts on object references check the class
-	invariant for that object.
+	$(LI オブジェクトへの参照に対する assert契約は、
+		そのオブジェクトのクラス不変条件を検査します。
 	)
 
-	$(LI Class invariants are inherited, that means that a derived
-	class invariant will implicitly call the base class invariant.
+	$(LI クラス不変条件は継承されます。つまり、
+		派生クラスの不変条件は暗黙の内に基底クラスの不変条件を呼び出します。
 	)
 
-	$(LI Functions can have $(I preconditions) and $(I postconditions).
+	$(LI 関数は $(I 事前条件) と $(I 事後条件) を持てます。
 	)
 
-	$(LI For member functions in a class inheritance hierarchy, the
-	precondition of a derived class function are OR'd together
-	with the preconditions of all the functions it overrides.
-	The postconditions are AND'd together.
+	$(LI クラスの階層構造の中では、
+		派生クラスのメンバ関数の事前条件は、
+		オーバーライドする全ての関数の事前条件とORされます。
+		事後条件はANDされます。
 	)
 
-	$(LI By throwing a compiler switch, DbC code can be enabled
-	or can be withdrawn from the compiled code.
+	$(LI コンパイラのスイッチを切り替えることで、DbCのコードを有効にしたり
+		コンパイル後のコードから取り除いたりすることができます。
 	)
 
-	$(LI Code works semantically the same with or without DbC
-	checking enabled.
+	$(LI DbCチェックが有効であってもそうでなくても、
+		コードは意味的に同等に振る舞います。
 	)
 
 	)
 
-<h2>Contract Programming in C++</h2>
+<h2>C++ での 契約による設計</h2>
 
-<h3>The $(D assert) Macro</h3>
+<h3>$(D assert) マクロ</h3>
 
-	C++ does have the basic $(D assert) macro, which tests its argument
-	and if it fails, aborts the program. $(D assert) can be turned
-	on and off with the $(D NDEBUG) macro.
+	C++ は実際、基本である $(D assert) マクロを備えていて、
+	引数を検査し、失敗すればプログラムを停止することができます。$(D assert)
+	は $(D NDEBUG) マクロでON/OFFを切り替えられます。
 	<p>
 
-	$(D assert) does not know anything about class invariants,
-	and does not throw an exception when it fails. It just aborts
-	the program after writing a message. $(D assert) relies on
-	a macro text preprocessor to work.
+	$(D assert) はクラス不変条件には関知せず、
+	失敗したときに例外を投げることもしません。
+	メッセージを出力した後単にプログラムを終了させるだけです。$(D assert)
+	はマクロによるテキスト処理に依存しています。
 	<p>
 
-	$(D assert) is where explicit support for DbC in Standard C++
-	begins and ends.
+	標準C++での明示的なDbCサポートは、$(D assert)
+	以上でも以下でもありません。
 
-<h3>Class Invariants</h3>
+<h3>クラス不変条件</h3>
 
-	Consider a class invariant in D:
+	D のクラス不変条件の一例を考えてみます：
 
 ----------
 class A
 {
-    $(B invariant)() { ...contracts... }
+    $(B invariant)() { ...契約... }
 
-    this() { ... }	// constructor
-    ~this() { ... }	// destructor
+    this() { ... }	// コンストラクタ
+    ~this() { ... }	// デストラクタ
 
-    void foo() { ... }	// public member function
+    void foo() { ... }	// publicメンバ関数
 }
 
 class B : A
 {
-    $(B invariant)() { ...contracts... }
+    $(B invariant)() { ...契約... }
     ...
 }
 ----------
 
-	To accomplish the equivalent in C++ (thanks to Bob Bell for providing
-	this):
+	同じことをC++で書くには、
+	こうなります (Bob Bell の協力に感謝)：
 
 $(CCODE
 template<typename T>
@@ -123,7 +123,7 @@ inline void check_invariant(T& iX)
 class A {
     public:
 #ifdef DBG
-       virtual void invariant() { ...contracts... }
+       virtual void invariant() { ...契約... }
 #endif
        void foo();
 };
@@ -145,7 +145,7 @@ class B : public A {
     public:
 #ifdef DBG
 	virtual void invariant()
-	{   ...contracts...
+	{   ...契約...
 	   A::invariant();
 	}
 #endif
@@ -162,10 +162,10 @@ void B::barG()
 }
 )
 
-	There's an additional complication with $(D A::foo()). Upon every
-	normal exit from the function, the $(D invariant()) should be
-	called.
-	This means that code that looks like:
+	$(D A::foo()). には更に複雑になる要因があります。
+	関数からのどの通常の終了パスについても、
+	$(D invariant()) が呼び出されなくてはなりません。
+	これは、次のようなコード
 
 $(CCODE
 int A::foo()
@@ -177,7 +177,7 @@ int A::foo()
 }
 )
 
-	would need to be written as:
+	だとこうなることを意味します：
 
 $(CCODE
 int A::foo()
@@ -196,8 +196,8 @@ int A::foo()
 }
 )
 
-	Or recode the function so it has a single exit point.
-	One possibility to mitigate this is to use RAII techniques:
+	あるいは、関数の終了場所が一カ所になるよう、返値を変数に記録して実現します。
+	RAII テクニックとして実現することもできるでしょう。
 
 $(CCODE
 int A::foo()
@@ -216,82 +216,82 @@ int A::foo()
 }
 )
 
-	The #if DBC is still there because some compilers may not
-	optimize the whole thing away if check_invariants compiles to nothing.
+	check_invariant が何もしない関数であっても、
+	全てを最適化で除去することができないコンパイラもあるので#if DBCはまだ残っています。
 
-<h2>Preconditions and Postconditions</h2>
+<h2>事前条件・事後条件</h2>
 
-	Consider the following in D:
+	次のDのコードをご覧下さい：
 
 ----------
 void foo()
-    in { ...preconditions... }
-    out { ...postconditions... }
+    in { ...事前条件... }
+    out { ...事後条件... }
     body
     {
-	...implementation...
+	...実装...
     }
 ----------
 
-	This is nicely handled in C++ with the nested Sentry struct:
+	これは Sentry 構造体を使って、C++ でうまく扱うことができます。
 
 $(CCODE
 void foo()
 {
     struct Sentry
-    {   Sentry() { ...preconditions... }
-	~Sentry() { ...postconditions... }
+    {   Sentry() { ...事前条件... }
+	~Sentry() { ...事後条件... }
     } sentry;
-    ...implementation...
+    ...実装...
 }
 )
 
-	If the preconditions and postconditions consist of nothing
-	more than $(D assert) macros, the whole doesn't need to
-	be wrapped in a $(D #ifdef) pair, since a good C++ compiler will
-	optimize the whole thing away if the $(D assert)s are turned off.
+	事前条件や事後条件が単なる
+	$(D assert) マクロからなっていれば、
+	全体を $(D #ifdef) で囲う必要もありません。
+	良いC++コンパイラなら、$(D assert) がOFFになっていれば全てのコードを最適化して除去してくれるでしょう。
 	<p>
 
-	But suppose $(D foo()) sorts an array, and the postcondition needs
-	to walk the array and verify that it really is sorted. Now
-	the shebang needs to be wrapped in $(D #ifdef):
+	しかし、$(D foo()) の中で配列がsortされていて、
+	事後条件で配列を走査して確実にソートされていることを検査する必要がある、
+	という状況を考えていましょう。こうなると、この仕掛けは $(D #ifdef) で囲い込まなければなりません：
 
 $(CCODE
 void foo()
 {
 #ifdef DBC
     struct Sentry
-    {   Sentry() { ...preconditions... }
-	~Sentry() { ...postconditions... }
+    {   Sentry() { ...事前条件... }
+	~Sentry() { ...事後条件... }
     } sentry;
 #endif
-    ...implementation...
+    ...実装...
 }
 )
 
-	(One can make use of the C++ rule that templates are only
-	instantiated when used can be used to avoid the $(D #ifdef), by
-	putting the conditions into a template function referenced
-	by the $(D assert).)
+	"実際に使われるときのみインスタンス化される"というC++のtemplateの規則を使って、
+	条件検査関数を template にして $(D assert)
+	から参照することで、
+	$(D #ifdef) を避けることも可能です。
 	<p>
 
-	Let's add a return value to $(D foo()) that needs to be checked in
-	the postconditions. In D:
+	さて、$(D foo())
+	に返値が加わって事後条件でチェックする場合を考えましょう。Dでは：
 
 ----------
 int foo()
-    in { ...preconditions... }
-    out (result) { ...postconditions... }
+    in { ...事前条件... }
+    out (result) { ...事後条件... }
     body
     {
-	...implementation...
+	...実装...
 	if (...)
 	    return bar();
 	return 3;
     }
 ----------
 
-	In C++:
+	C++では：
 
 $(CCODE
 int foo()
@@ -299,11 +299,11 @@ int foo()
 #ifdef DBC
     struct Sentry
     {   int result;
-	Sentry() { ...preconditions... }
-	~Sentry() { ...postconditions... }
+	Sentry() { ...事前条件... }
+	~Sentry() { ...事後条件... }
     } sentry;
 #endif
-    ...implementation...
+    ...実装...
     if (...)
     {   int i = bar();
 #ifdef DBC
@@ -318,22 +318,22 @@ int foo()
 }
 )
 
-	Now add a couple parameters to $(D foo()). In D:
+	$(D foo()) に引数が少々加わりました。D では：
 
 ----------
 int foo(int a, int b)
-    in { ...preconditions... }
-    out (result) { ...postconditions... }
+    in { ...事前条件... }
+    out (result) { ...事後条件... }
     body
     {
-	...implementation...
+	...実装...
 	if (...)
 	    return bar();
 	return 3;
     }
 ----------
 
-	In C++:
+	C++では：
 
 $(CCODE
 int foo(int a, int b)
@@ -345,12 +345,12 @@ int foo(int a, int b)
 	Sentry(int a, int b)
 	{   this->a = a;
 	    this->b = b;
-	    ...preconditions...
+	    ...事前条件...
 	}
-	~Sentry() { ...postconditions... }
+	~Sentry() { ...事後条件... }
     } sentry(a,b);
 #endif
-    ...implementation...
+    ...実装...
 	if (...)
 	{   int i = bar();
 #ifdef DBC
@@ -365,51 +365,51 @@ int foo(int a, int b)
 }
 )
 
-<h2>Preconditions and Postconditions for Member Functions</h2>
+<h2>メンバ関数の事前条件・事後条件</h2>
 
-	Consider the use of preconditions and postconditions for a
-	polymorphic function in D:
+	Dの多態関数で
+	事前条件や事後条件を使う場合を考えてみます：
 
 ----------
 class A
 {
     void foo()
-	in { ...Apreconditions... }
-	out { ...Apostconditions... }
+	in { ...事前条件A... }
+	out { ...事後条件A... }
 	body
 	{
-	    ...implementation...
+	    ...実装...
 	}
 }
 
 class B : A
 {
     void foo()
-	in { ...Bpreconditions... }
-	out { ...Bpostconditions... }
+	in { ...事前条件B... }
+	out { ...事後条件B... }
 	body
 	{
-	    ...implementation...
+	    ...実装...
 	}
 }
 ----------
 
-	The semantics for a call to $(D B.foo()) are:
+	$(D B.foo())の呼び出しの際には、
 
 	$(UL
-	$(LI Either Apreconditions or Bpreconditions must be satisfied.)
-	$(LI Both Apostconditions and Bpostconditions must be satisfied.)
+	$(LI 事前条件A か 事前条件B のどちらかが満たされなくてはならない)
+	$(LI 事後条件A と 事後条件B の両方が満たされなくてはならない)
 	)
 
-	Let's get this to work in C++:
+	です。これを C++ で実装してみましょう：
 
 $(CCODE
 class A
 {
 protected:
     #if DBC
-    int foo_preconditions() { ...Apreconditions... }
-    void foo_postconditions() { ...Apostconditions... }
+    int foo_preconditions() { ...事前条件A... }
+    void foo_postconditions() { ...事後条件A... }
     #else
     int foo_preconditions() { return 1; }
     void foo_postconditions() { }
@@ -417,7 +417,7 @@ protected:
 
     void foo_internal()
     {
-	...implementation...
+	...実装...
     }
 
 public:
@@ -433,8 +433,8 @@ class B : A
 {
 protected:
     #if DBC
-    int foo_preconditions() { ...Bpreconditions... }
-    void foo_postconditions() { ...Bpostconditions... }
+    int foo_preconditions() { ...事前条件B... }
+    void foo_postconditions() { ...事後条件B... }
     #else
     int foo_preconditions() { return 1; }
     void foo_postconditions() { }
@@ -442,7 +442,7 @@ protected:
 
     void foo_internal()
     {
-	...implementation...
+	...実装...
     }
 
 public:
@@ -456,47 +456,48 @@ public:
 };
 )
 
-	Something interesting has happened here. The preconditions can
-	no longer be done using $(D assert), since the results need
-	to be OR'd together. I'll leave as a reader exercise adding
-	in a class invariant, function return values for $(D foo()),
-	and parameters
-	for $(D foo()).
+	少し面白い現象が発生しています。
+	結果のORを取る必要があるので、
+	事前条件のなかではもはや $(D assert)を使うことができません。
+	クラス不変条件を付け加えたり、
+	$(D foo()),
+	関数に返値や引数を加えるのは、
+	読者への宿題としておきましょう。
 
-<h2>Conclusion</h2>
+<h2>結論</h2>
 
-	These C++ techniques can work up to a point. But, aside from
-	$(D assert), they are not standardized and so will vary from
-	project to project. Furthermore, they require much tedious
-	adhesion to a particular convention, and add significant clutter
-	to the code. Perhaps that's why it's rarely seen in practice.
+	これらのC++のテクニックはかなりの程度までは動作します。しかし、
+	$(D assert)	を除いては標準化されていないため、プロジェクト毎に異なった方法が採られています。
+	それだけでなく、これらのテクニックでは特殊な規約に従ってややこしいコードを
+	書く必要がありますし、コードは相当ごちゃごちゃとなります。
+	多分これが、実際にDbCが使われているのをめったに見かけない原因でしょう。
 	<p>
 
-	By adding support for DbC into the language, D offers an easy
-	way to use DbC and get it right. Being in the language standardizes
-	the way it will be used from project to project.
+	DbCサポートを言語として組み込むことで、D は DbC
+	を正しく動かすための簡単な手段を提供しています。また言語標準とすることで、
+	どのプロジェクトでも使われるようになるでしょう。
 
-<h2>References</h2>
+<h2>参考文献</h2>
 
-	Chapter C.11 introduces the theory and rationale of
-	Contract Programming in
-	<a href="http://www.amazon.com/exec/obidos/ASIN/0136291554/classicempire">
-	Object-Oriented Software Construction
+	Bertrand Meyer の
+	<a href="http://www.amazon.co.jp/dp/4798111112">
+	オブジェクト指向入門 第2版 原則・コンセプト
 	</a><br>
-	Bertrand Meyer, Prentice Hall
+	の C.11章
+	で"契約プログラミング"の理論と根拠が導入されています。
 	<p>
 
-	Chapters 24.3.7.1 to 24.3.7.3 discuss Contract Programming in C++ in
+	Bjarne Stroustrup の
 	<a href="http://www.amazon.com/exec/obidos/ASIN/0201700735/classicempire">
 	The C++ Programming Language Special Edition
 	</a><br>
-	Bjarne Stroustrup, Addison-Wesley
+	の 24.3.7.1～24.3.7.3節に、C++における契約プログラミングについての議論があります。
 	<p>
 
 )
 
 Macros:
-	TITLE=D's Contract Programming vs C++'s
+	TITLE=Dの契約プログラミング vs C++
 	WIKI=CppDbc
 
 
