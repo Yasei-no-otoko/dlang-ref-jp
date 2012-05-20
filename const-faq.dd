@@ -2,144 +2,144 @@ Ddoc
 
 $(D_S const(FAQ),
 
-	$(P D's $(D const)/$(D immutable) system is unique, and so there
-	are a lot of questions about it.  )
+	$(P D の $(D const)/$(D immutable) システムは独特なものなので、
+	多くの質問があると思われます。)
 
 	$(UL
 
-	$(ITEMR const, Why does D have const?)
-	$(ITEMR principles, What principles drove the D const design?)
-	$(ITEMR transitive-const, What is $(I transitive const)?)
-	$(ITEMR head-const, What is $(I head const)?)
-	$(ITEMR tail-const, What is $(I tail const)?)
-	$(ITEMR logical-const, What is $(I logical const)?)
-	$(ITEMR readonly, Why not use $(I readonly) to mean read only view?)
-	$(ITEMR java-const, Why did Java reject const?)
-	$(ITEMR cpp-const, How does const differ in C++?)
-	$(ITEMR invariant-strings, Why are strings immutable?)
-	$(ITEMR const-parameters, Why aren't function parameters const by default?)
-	$(ITEMR static-members, Are static class members covered by transitive const?)
-	$(ITEMR invariant, What is $(I immutable) good for?)
+	$(ITEMR const, 何故 D には const があるのか？)
+	$(ITEMR principles, D の const の設計を決める原理は何か？)
+	$(ITEMR transitive-const, $(I 推移的 const) とは何か？)
+	$(ITEMR head-const, $(I 頭部 const) とは何か？)
+	$(ITEMR tail-const, $(I 尾部 const) とは何か？)
+	$(ITEMR logical-const, $(I 論理的 const) とは何か？)
+	$(ITEMR readonly, 読み取り専用ビューの意味で $(I readonly) を使わないのは何故か？)
+	$(ITEMR java-const, 何故 Java は const を排除したのか？)
+	$(ITEMR cpp-const, C++ の const とどう違うのか？)
+	$(ITEMR invariant-strings, なぜ文字列がimmutableなのか？)
+	$(ITEMR const-parameters, 関数の引数がデフォルトで const でないのは何故か？)
+	$(ITEMR static-members, クラスの静的メンバは推移的 const でカバーされるのか？)
+	$(ITEMR invariant, $(I immutable) は何が嬉しいのか？)
 	)
 
-$(ITEM const, Why does D have const?)
+$(ITEM const, 何故 D には const があるのか？)
 
-	$(P People often express frustration with const and immutable
-	in D 2.0 and wonder if it is worth it.
+	$(P D 2.0 の const と immutable に対するフラストレーションが表明されることは多く、
+	どんな価値があるのかという疑問もよく耳にします。
 	)
 
 	$(OL
 
-	$(LI It makes function interfaces more self-documenting. Without
-	transitive const, for all pointer/reference parameters one must rely on
-	the documentation (which is always missing, out of date, or wrong). Note
-	that without transitivity, C++ const is nearly useless for such
-	self-documentation, which is why C++ programmers tend to rely on
-	convention instead.
+	$(LI 関数のインターフェイスがより自己説明的 (self-documenting) になります。
+	推移的 const なしでは、ポインタ/参照に関する const 性は、
+	ドキュメントに頼るしかなくなってしまいます
+	 (そしてドキュメントというのはいつも抜けがあったり古かったり間違っていたりするものです)
+	推移性のない C++ の const は、この目的ではほとんど意味のない物体であり、
+	それが C++ のプログラマが慣習によってこの問題を解決しがちな理由です。
 	)
 
-	$(LI It makes for interfaces that can be relied upon, which becomes
-	increasingly important the more people that are involved with the code.
-	In other words, it scales very well. People who are involved with
-	projects with large teams of programmers say that lack of const
-	makes their lives difficult because they cannot rely on the compiler to
-	enforce convention. The larger the team, the worse it gets. Managing
-	APIs is critical to a large project - it's why BASIC doesn't scale (for
-	an extreme example).
+	$(LI インターフェイスを信頼できるものにします。
+	これは多くの人が同じコードに関わるようになればなるほど重要さが増してきます。
+	言葉を換えると、スケーラビリティが高いのです。
+	巨大なチームからなるプロジェクトに関わる人々は、
+	const なしではコンパイラに規約を強制させる術がないため、
+	物事がずっと大変になってしまうと言っています。チームが大きくなればなるほど自体は悪化します。
+	API の管理は巨大なプロジェクトではクリティカルな問題です - これが (極端な例でいえば) BASIC
+	がスケールしない理由です。
 	)
 
-	$(LI Const transitivity makes for some interesting optimization
-	opportunities. The value of this has not been explored or exploited.
+	$(LI const の推移性は、いくつか興味深い最適化の機会を提供します。
+	この事実の価値はまだまだこれから考察や活用の余地があります。
 	)
 
-	$(LI Here's the biggie. Points 1..3 are insignificant in comparison. The
-	future of programming will be multicore, multithreaded. Languages that
-	make it easy to program them will supplant languages that don't.
-	Transitive const is key to bringing D into this paradigm. The surge in
-	use of Haskell and Erlang is evidence of this coming trend (the killer
-	feature of those languages is they make it easy to do multiprogramming).
-	C++ cannot be retrofitted to supporting multiprogramming in a manner
-	that makes it accessible. D isn't there yet, but it will be, and
-	transitive const will be absolutely fundamental to making it work.
+	$(LI そしてこれが最大のポイントです。ポイント 1 ～ 3 はこれに比較すると些細なものです。
+	これからのプログラミングは、マルチコア、マルチスレッドになります。
+	そのようなプログラミングを容易にする言語こそが求められるものとなるでしょう。
+	推移的 const は D をこのパラダイムへと移行させる鍵となります。
+	Haskell や Erlang の流行が、このようなトレンドが来ることの証拠とも言えます
+	(これらの言語の killer feature は、マルチプログラミングの容易さです)。
+	C++ は、簡単な方法でマルチプログラミングをサポートするように適応するのは難しいでしょう。
+	D もまだその段階ではありませんが、その方向へ向かっています。そして、
+	推移的 const がそのための絶対的な基礎となる技術です。
 	)
 	)
 
-	$(P Of course, for writing single-threaded one man programs of
-	fairly modest size, const is not particularly useful.
-	And in D const can be effectively ignored by just not using it, or
-	by using D 1.0. The only place const is imposed is with the immutable
-	string type.
+	$(P もちろん、シングルスレッドのそんなに大きくないプログラムを一人で書く場合であれば、
+	const はそこまで有用ではないでしょう。
+	D の const は単にそれを使わないことで、あるいは D 1.0 を使うことで、
+	無視することができます。const が強制される唯一の箇所は、
+	書き換え不可の文字列型 string のみです。
 	)
 
-$(ITEM principles, What principles drove the D const design?)
+$(ITEM principles, D の const の設計を決める原理は何か？)
 
 	$(OL
-	$(LI It will be mathematically sound. That means there
-	are no legal escapes from it.)
-	$(LI Any type can be wrapped in a struct and the resulting
-	struct can still exhibit the same const behavior - in other
-	words, no magic behavior for certain types.)
-	$(LI Const behavior will be transitive.)
-	$(LI Const behavior for type T will be equivalent for all types T.)
+	$(LI 数学的に健全であること。つまり、
+	合法的に const を逃げる術がないこと。)
+	$(LI すべての型を構造体でラップでき、ラップした構造体が
+	依然として同じ const に関する挙動を示すこと -
+	言い方を変えると、特定の型に対するマジカルな規則などがないこと。)
+	$(LI const の挙動が推移的であること。)
+	$(LI const の挙動がすべての型 T に関して同じであること。)
 	)
 
-$(ITEM transitive-const, What is $(I transitive const)?)
+$(ITEM transitive-const, $(I 推移的 const) とは何か？)
 
-	$(P Transitive const means that once const is applied to a type,
-	it applies recursively to every sub-component of that type. Hence:
+	$(P 推移的 const とは、型に const が適用されたら、
+	再帰的のその型の全ての部分にまで const が適用されることをいいます。したがって、次の例のようになります。
 	)
 
 ---
 const(int*)** p;
-p += 1;   // ok, p is mutable
-*p += 1;  // ok, *p is mutable
-**p += 1; // error, **p is const
-***p += 1; // error, ***p is const
+p += 1;   // ok, p は mutable
+*p += 1;  // ok, *p は mutable
+**p += 1; // エラー, **p は const
+***p += 1; // エラー, ***p は const
 ---
 
-	$(P With transitivity, there is no way to have a
-	$(I const pointer to mutable int).
+	$(P 推移性があると、
+	$(I mutable int への const ポインタ) を定義することは不可能になります。
 	)
 
-	$(P C++ const is not transitive.)
+	$(P C++ の const は推移的ではありません。)
 
-$(ITEM head-const, What is $(I head const)?)
+$(ITEM head-const, $(I 頭部 const) とは何か？)
 
-	$(P Head const is where the const applies only to the component
-	of the type adjacent to the const. For example:
+	$(P 頭部 const は、const がそれに隣接した型にだけ適用されるタイプの
+	const です。例として
 	)
 
 ---
 headconst(int**) p;
 ---
-	$(P would be read as p being a: $(I const pointer to mutable pointer
-	to mutable int.) D does not have head const (the $(CODE headconst) is
-	there just for illustrative purposes), but C++ const is
-	a head const system.
+	$(P は、p は $(I mutable int への mutable なポインタへの const なポインタ)
+	という意味になります。D には頭部constはありません (上の $(CODE headconst)
+	は単なる例示です) が、C++ の const
+	は頭部 const システムです。
 	)
 
-$(ITEM tail-const, What is $(I tail const)?)
+$(ITEM tail-const, $(I 尾部 const) とは何か？)
 
-	$(P Tail const is the complement of head const - everything reachable
-	from the const type is also const except for the top level. For
-	example:
+	$(P 尾部 const は頭部 const をちょうど反転したものです -
+	const 型から到達できるものは、トップレベルだけを除いて全て const になります。
+	例として:
 	)
 
 ---
 tailconst(int**) p;
 ---
-	$(P would be read as p being a: $(I mutable pointer to const pointer
-	to const int.) Head const combined with tail const yields transitive
-	const.
-	D doesn't have $(CODE tailconst) (the keyword is there just for
-	illustrative purposes) as a distinct type constructor.
+	$(P は、p は $(I const int への const ポインタへの mutable ポインタ)
+	という意味になります。頭部 const と尾部 const を両方合わせると、
+	推移的 const になります。
+	D には $(CODE tailconst)
+	という特別な型コンストラクタはありません (上の例は単なる例示です)。
 	)
 
-$(ITEM logical-const, What is $(I logical const)?)
+$(ITEM logical-const, $(I 論理的 const) とは何か？)
 
-	$(P $(I Logical const) refers to data that appears to be constant
-	to an observer, but is not actually const. An example would be
-	an object that does lazy evaluation:)
+	$(P $(I 論理的 const) とは、外側からは状態が変わらないように見えるが、
+	実際は物理的には const でないデータのことを言います。
+	例として、遅延評価をするオブジェクトがあります:)
 
 ---
 struct Foo {
@@ -159,131 +159,131 @@ const Foo f = Foo("hello");
 bar(f.length);
 ---
 
-	$(P The example evaluates $(CODE f.len) only if it is needed.
-	$(CODE Foo) is logically const, because to the observer of the object
-	its return values never change after construction.
-	The $(CODE mutable) qualifier says that even if an instance
-	of $(CODE Foo) is const, those fields can still change.
-	While C++ supports the notion of logical const, D does not,
-	and D does not have a $(CODE mutable) qualifier.
+	$(P この例では、$(CODE f.len) の計算は必要なときだけ行われます。
+	$(CODE Foo) は、外側からの観察者にとっては
+	オブジェクトから得られる値は構築後変化しないので、論理的const です。
+	$(CODE mutable) という修飾子は、
+	たとえ $(CODE Foo) のインスタンスが const であっても、そのフィールドが依然として変更可能なことを示します。
+	C++ では論理的 const の概念がサポートされていますが、D では違います。
+	また、D には $(CODE mutable) 修飾子もありません。
 	)
 
-	$(P The problem with logical const is that const is no longer
-	transitive. Not being transitive means there is the potential
-	for threading race conditions, and there is no way to determine
-	if an opaque const type has mutable members or not.
+	$(P 論理的 const の問題点は、const が推移的でなくなることです。
+	推移的でないということは、スレッドによるレース条件が潜在し、
+	opaque な const 型が mutable
+	なメンバを持つかそうでないか判別する術がなくなるということです。
 	)
 
-	$(P Reference:
+	$(P 参考文献:
 	$(LINK2 http://www.linuxtopia.org/online_books/programming_books/thinking_in_c++/Chapter08_025.html, mutable: bitwise vs. logical const)
 	)
 
-$(ITEM readonly, Why not use $(I readonly) to mean read only view?)
+$(ITEM readonly, 読み取り専用ビューの意味で $(I readonly) を使わないのは何故か？)
 
-	$(P $(I Readonly) has a well established meaning in software to
-	mean ROM, or Read Only Memory that can never be changed.
-	For computers with hardware protection for memory pages, readonly
-	also means that the memory contents cannot be altered.
-	Using readonly in D to mean a read only view of memory that could
-	be altered by another alias or thread runs counter to this.
+	$(P $(I readonly)はソフトウェアではすでに
+	ROM / Read Only Memory / 書き換え不可メモリという意味が確立されています。
+	ハードウェアによるメモリ保護機能のあるコンピュータでは、
+	readonly にはメモリの内容が置き換わらないという意味もあります。
+	D で readonly をメモリの読み取り専用ビューの意味で使うことは、
+	別の参照やthread経由でデータが変更されうることを考えると、慣習と反しています。
 	)
 
-$(ITEM java-const, Why did Java reject const?)
+$(ITEM java-const, 何故 Java は const を排除したのか？)
 
 	$(P $(LINK http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4211070)
 	)
 
-$(ITEM cpp-const, How does const differ in C++?)
+$(ITEM cpp-const, C++ の const とどう違うのか？)
 
-	$(P C++ has a const system that is closer to D's than any other
-	language, but it still has huge differences:)
+	$(P C++ には他の全ての言語の中でもっとも D に近い const システムがありますが、
+	やはり大きな違いがあります:)
 
 	$(OL
-	$(LI const is not transitive)
-	$(LI no immutables)
-	$(LI const objects can have mutable members)
-	$(LI const can be legally cast away and the data modified)
-	$(LI $(CODE const T) and $(CODE T) are not always distinct types)
+	$(LI const が推移的でない)
+	$(LI immutable がない)
+	$(LI const オブジェクトに mutable メンバを持たせられる)
+	$(LI const を合法的にキャスト外ししてデータを変更可能)
+	$(LI $(CODE const T) と $(CODE T) が必ずしも別の型になるとは限らない)
 	)
 
-$(ITEM invariant-strings, Why are strings immutable?)
+$(ITEM invariant-strings, なぜ文字列がimmutableなのか？)
 
 	$(P $(LINK2 http://drdobbs.com/blogs/architecture-and-design/228700475, Immutable Strings)
 	)
 
-$(ITEM const-parameters, Why aren't function parameters const by default?)
+$(ITEM const-parameters, 関数の引数がデフォルトで const でないのは何故か？)
 
-	$(P Since most (nearly all?) function parameters will not be modified,
-	it would seem to make sense to make them all const by default,
-	and one would have to specifically mark as mutable those that would
-	be changed. The problems with this are:
+	$(P ほとんど (ほぼ全て？) の関数の引数は変更されませんから、
+	デフォルトを const にして、
+	変更したいときにだけ特別な記述をする方が理にかなっているようにも思えます。
+	この方法の欠点は:
 	)
 
 	$(OL
 
-	$(LI It would be a huge break from past D practice, and practice
-	in C, C++, Java, C#, etc.)
-	$(LI It would require a new keyword, say $(CODE mutable).)
-	$(LI And worst, it would make declarations inconsistent:
+	$(LI 過去の D の習慣、そして
+	C, C++, Java, C#, などでの習慣を大きく乱すことになります。)
+	$(LI 新しい予約語、$(CODE mutable) のようなものが必要になってしまいます。)
+	$(LI 一番まずいのが、宣言に一貫性がなくなることです:
 ---
 void foo(int* p) {
    int* q;
    ...
 }
 ---
-	$(CODE p) points to const, and $(CODE q) points to mutable.
-	This kind of inconsistency leads to all sorts of mistakes.
-	It also makes it very hard to write generic code that deals with
-	types.
+	$(CODE p) は const を指しますが、$(CODE q) は mutable を指すことになります。
+	この手の一貫性のなさはあらゆる種類のミスを呼びます。
+	また、
+	型を扱うジェネリックなコードを書くのが非常に難しくなってしまいます。
 	)
 	)
 
-	$(P Using $(CODE in) can mitigate the ugliness of having to annotate
-	with $(CODE const):)
+	$(P $(CODE in) を使用することで、
+	$(CODE const) で修飾する醜さをやわらげることは可能です:)
 ---
 void str_replace(in char[] haystack, in char[] needle);
 ---
 
-$(ITEM static-members, Are static class members covered by transitive const?)
+$(ITEM static-members, クラスの静的メンバは推移的 const でカバーされるのか？)
 
-	$(P A static class member is part of the global state of a program,
-	not part of the state of an object. Thus, a class having a mutable
-	static member does not violate the transitive constness of an object
-	of that class.
+	$(P クラスの静的メンバはプログラムのグローバル状態の一部であり、
+	オブジェクトの状態の一部ではありません。従って、
+	mutable な静的メンバを持つクラスが
+	そのクラスのオブジェクトの推移的 const 性を違反するということはありません。
 	)
 
-$(ITEM invariant, What is $(I immutable) good for?)
+$(ITEM invariant, $(I immutable) は何が嬉しいのか？)
 
-	$(P Immutable data, once initialized, is never changed.
-	This has many uses:
+	$(P immutable なデータは、一度初期化されたら二度と変化しません。
+	この性質には様々な利用法があります:
 	)
 
 	$(UL
-	$(LI Access to immutable data need not be synchronized
-	when multiple threads read it.)
-	$(LI Data races, tearing, sequential consistency, and
-	cache consistency are all non-issues when working with
-	immutable data.)
-	$(LI Pure functions can only accept immutable parameters.)
-	$(LI When doing a $(I deep copy) of a data structure,
-	the immutable portions need not be copied.)
-	$(LI Invariance allows a large chunk of data to be treated
-	as a value type even if it is passed around by reference
-	(strings are the most common case of this).)
-	$(LI Immutable type provides more self-documenting information
-	to the programmer.)
-	$(LI Immutable data can be placed in hardware protected read-only
-	memory, or even in ROMs.)
-	$(LI If immutable data does change, it is a sure sign of a memory
-	corruption bug, and it is possible to automatically check for
-	such data integrity.)
-	$(LI Immutable types provide for many program optimization
-	opportunities.)
+	$(LI immutable データへのアクセスは、
+	複数のスレッドによって読み取りが行われる場合でも同期は不要です)
+	$(LI Data race、tearing、順序一貫性 (sequential consistency)、
+	キャッシュ一貫性 (cache consistency) などは全て、
+	immutable なデータを扱うときには問題になりません。)
+	$(LI Pure 関数が引数にとることができるのは immutable データのみです。)
+	$(LI データ構造の $(I deep copy) を行うとき、
+	immutable な部分はコピーの必要がありません。)
+	$(LI immutable 性によって、
+	実際は参照で渡されるデータを値であるかのように扱うことが可能になります。
+	（文字列が、このケースに当てはまるよく使われる例です）)
+	$(LI immutable 型は、プログラマに、より self-documenting
+	な情報を提供します。)
+	$(LI immutable データは、ハードウェア的に保護された読み取り専用メモリや、
+	ROMに配置することすら可能です。)
+	$(LI immutable データの中身が変わるとしたら、
+	それは確実にメモリ破壊のバグなので、
+	そのようなデータ一貫性を自動的にチェックすることが可能です。)
+	$(LI immutable 型によって、
+	さまざまな最適化の可能性がもたらされます。)
 	)
 
-	$(P $(I const) acts as a bridge between the mutable and immutable
-	worlds, so a single function can be used to accept both types
-	of arguments.)
+	$(P $(I const) は mutable な世界と immutable な世界の橋渡しとなります。
+	const で引数を受け取ることで、一つの関数で mutable なデータと immutable
+	なデータの双方を扱うことができます。)
 )
 
 Macros:
