@@ -1,22 +1,22 @@
 Ddoc
 
-$(D_S Tuples,
+$(D_S タプル,
 
-	$(P A tuple is a sequence of elements. Those elements can
-	be types, expressions, or aliases.
-	The number and elements of a tuple are fixed at compile time;
-	they cannot be changed at run time.
+	$(P タプルとは、要素の列です。要素としては、
+	型や、式、alias を持つことができます。
+	各タプルの要素数はコンパイル時に固定され、
+	実行時に変更することはできません。
 	)
 
-	$(P Tuples have characteristics of both
-	structs and arrays. Like structs, the tuple
-	elements can be of different types. Like arrays,
-	the elements can be accessed via indexing.
+	$(P タプルは、構造体と配列の、両方の特徴を備えています。
+	構造体のように、
+	タプルの各要素は異なった型を持つことができます。
+	一方で、配列のように要素に添え字でアクセスすることができます。
 	)
 
-	$(P So how does one construct a tuple? There isn't a specific
-	tuple literal syntax. But since variadic template parameters
-	create tuples, we can define a template to create one:
+	$(P さて、では、タプルを使うにはどうすればよいのでしょうか？
+	特にタプルリテラルなどはありません。可変個引数テンプレートがタプルを作るので、
+	これを利用してタプル生成テンプレートを定義することが可能です：
 	)
 
 ---
@@ -26,94 +26,94 @@ template Tuple(E...)
 }
 ---
 
-	$(P and it's used like:)
+	$(P これは次のように使うことができます:)
 
 ---
-Tuple!(int, long, float)	// create a tuple of 3 types
-Tuple!(3, 7, 'c')		// create a tuple of 3 expressions
-Tuple!(int, 8)			// create a tuple of a type and an expression
+Tuple!(int, long, float)	// 3つの型のタプル
+Tuple!(3, 7, 'c')		// 3つの式のタプル
+Tuple!(int, 8)			// 型と式の混合タプル
 ---
 
-	$(P In order to symbolically refer to a tuple, use an alias:)
+	$(P タプルをシンボルで参照するには、aliasを使います:)
 
 ---
-alias Tuple!(float, float, 3) TP; // TP is now a tuple of two floats and 3
+alias Tuple!(float, float, 3) TP; // TP はfloat二つと3のタプル
 ---
 
-	$(P Tuples can be used as arguments to templates, and if so
-	they are $(SINGLEQUOTE flattened) out into a list of arguments.
-	This makes it straightforward to append a new element to
-	an existing tuple or concatenate tuples:)
+	$(P タプルはテンプレートの引数とすることができて、その場合、
+	引数のリストへと展開 ($(SINGLEQUOTE flattened)) されます。
+	この動作を使うと、既存のタプルに要素を追加したり、
+	別のタプルを結合するのは簡単です:)
 
 ---
-alias Tuple!(TP, 8) TR;  // TR is now float,float,3,8
-alias Tuple!(TP, TP) TS; // TS is float,float,3,float,float,3
+alias Tuple!(TP, 8) TR;  // TR は float,float,3,8
+alias Tuple!(TP, TP) TS; // TS は float,float,3,float,float,3
 ---
 
-	$(P Tuples share many characteristics with arrays.
-	For starters, the number of elements in a tuple can
-	be retrieved with the $(B .length) property:)
+	$(P Tupプルには配列と共通の特徴が多くあります。
+	まず、タプルの要素数は、
+	$(B .length) プロパティで取得できます:)
 
 ---
-TP.length	// evaluates to 3
+TP.length	// 3になる
 ---
 
-	$(P Tuples can be indexed:)
+	$(P タプルは添え字アクセスできます:)
 
 ---
-TP[1] f = TP[2];	// f is declared as a float and initialized to 3
+TP[1] f = TP[2];	// f はfloat型と宣言され、3に初期化される
 ---
 
-	$(P and even sliced:)
+	$(P さらにスライスも取れます:)
 
 ---
-alias TP[0..length-1] TQ; // TQ is now the same as Tuple!(float, float)
+alias TP[0..length-1] TQ; // TQ は Tuple!(float, float) と同じ
 ---
 
-	$(P Yes, $(B length) is defined within the [ ]s.
-	There is one restriction: the indices for indexing and slicing
-	must be evaluatable at compile time.)
+	$(P そう、[ ] の中では $(B length) が定義されているのも同じです。
+	ただし、制限がひとつあります。
+	添え字やスライスの値はコンパイル時に評価される定数でなければなりません。)
 
 ---
 void foo(int i)
 {
-    TQ[i] x;		// error, i is not constant
+    TQ[i] x;		// エラー。i は定数でない
 }
 ---
 
-	$(P These make it simple to produce the $(SINGLEQUOTE head) and $(SINGLEQUOTE tail)
-	of a tuple. The head is just TP[0], the tail
-	is TP[1 .. length].
-	Given the head and tail, mix with a little conditional
-	compilation, and we can implement some classic recursive
-	algorithms with templates.
-	For example, this template returns a tuple consisting
-	of the trailing type arguments $(I TL) with the first occurrence
-	of the first type argument $(I T) removed:
+	$(P これを使うと、タプルの先頭 $(SINGLEQUOTE head) と $(SINGLEQUOTE tail)
+	を取り出すのも簡単です。先頭は単純に TP[0] で、残りは
+	TP[1 .. length] です。
+	head と tail ができたので、
+	あとは条件コンパイルを少し組み合わせると、
+	テンプレートによる古典的な再帰アルゴリズムの実装ができるようになります。
+	例として、次のテンプレートは、
+	型引数 $(I T) の最初の出現を型リスト $(I TL)
+	から取り除いた残りを返します:
 	)
 ---
 template Erase(T, TL...)
 {
     static if (TL.length == 0)
-	// 0 length tuple, return self
+	// 長さ 0 の場合。自分自身を返す
         alias TL Erase;
     else static if (is(T == TL[0]))
-	// match with first in tuple, return tail
+	// タプルの先頭要素にマッチ。残りを返す
         alias TL[1 .. length] Erase;
     else
-	// no match, return head concatenated with recursive tail operation
+	// 先頭はマッチせず。headと、再帰操作を適用した残りを結合
         alias Tuple!(TL[0], Erase!(T, TL[1 .. length])) Erase;
 }
 ---
 
-<h3>Type Tuples</h3>
+<h3>型タプル</h3>
 
-	$(P If a tuple's elements are solely types,
-	it is called a $(I TypeTuple)
-	(sometimes called a type list).
-	Since function parameter lists are a list of types,
-	a type tuple can be retrieved from them.
-	One way is using an $(ISEXPRESSION):
+	$(P タプルの要素が全て型であるとき、
+	型タプル（$(I TypeTuple)）と呼ばれます。
+	（型リストと呼ばれることもあります。）
+	関数の引数リストは型のリストなので、
+	そこから型タプルを取り出すことができます。
+	たとえば、$(ISEXPRESSION) を使う方法があります:
 	)
 
 ---
@@ -122,28 +122,28 @@ int foo(int x, long y);
 ...
 static if (is(foo P == function))
     alias P TP;
-// TP is now the same as Tuple!(int, long)
+// TP は Tuple!(int, long) と同じ
 ---
 
-	$(P This is generalized in the template
-	$(LINK2 phobos/std_traits.html, std.traits).ParameterTypeTuple:
+	$(P これの汎用版が
+	$(LINK2 phobos/std_traits.html, std.traits).ParameterTypeTuple テンプレートです:
 	)
 
 ---
 import std.traits;
 
 ...
-alias ParameterTypeTuple!(foo) TP;	// TP is the tuple (int, long)
+alias ParameterTypeTuple!(foo) TP;	// TP はタプル (int, long)
 ---
 
-	$(P $(I TypeTuple)s can be used to declare a function:)
+	$(P 逆に $(I TypeTuple) で関数を宣言することもできます:)
 
 ---
-float bar(TP);	// same as float bar(int, long)
+float bar(TP);	// float bar(int, long) と同じ
 ---
 
-	$(P If implicit function template instantiation is being done,
-	the type tuple representing the parameter types can be deduced:
+	$(P 暗黙の関数テンプレートのインスタンス化が行われる場合には、
+	引数型を表す型タプルも推論されます:
 	)
 ---
 int foo(int x, long y);
@@ -158,15 +158,15 @@ void Bar(R, P...)(R function(P))
 Bar(&foo);
 ---
 
-	$(P Prints:)
+	$(P 出力はこうなります:)
 
 $(CONSOLE
 return type is int
 parameter types are (int,long)
 )
 
-	$(P Type deduction can be used to create a function that
-	takes an arbitrary number and type of arguments:)
+	$(P この推論を使うことで、
+	任意の型と任意の個数の引数を持つ関数を書くことができます:)
 
 ---
 void Abc(P...)(P p)
@@ -177,45 +177,45 @@ void Abc(P...)(P p)
 Abc(3, 7L, 6.8);
 ---
 
-	$(P Prints:)
+	$(P 出力:)
 
 $(CONSOLE
 parameter types are (int,long,double)
 )
 
-	$(P For a more comprehensive treatment of this aspect, see
-	$(LINK2 variadic-function-templates.html, Variadic Templates).
+	$(P この辺りに関してもっと詳しくは、
+	$(LINK2 variadic-function-templates.html, 可変個引数テンプレート) をどうぞ。
 	)
 
 
-<h3>Expression Tuples</h3>
+<h3>式タプル</h3>
 
-	$(P If a tuple's elements are solely expressions,
-	it is called an $(I ExpressionTuple).
-	The Tuple template can be used to create one:
+	$(P タプルの要素が全て式であるとき、
+	式タプル（$(I ExpressionTuple).）と呼ばれます。
+	先ほどのTupleテンプレートで作成することができます:
 	)
 
 ---
 alias Tuple!(3, 7L, 6.8) ET;
 
 ...
-writefln(ET);            // prints 376.8
-writefln(ET[1]);         // prints 7
-writefln(ET[1..length]); // prints 76.8
+writefln(ET);            // 表示は 376.8
+writefln(ET[1]);         // 表示は 7
+writefln(ET[1..length]); // 表示は 76.8
 ---
 
-	$(P It can be used to create an array literal:)
+	$(P 配列リテラルを作るのに応用することも可能です:)
 
 ---
 alias Tuple!(3, 7, 6) AT;
 
 ...
-int[] a = [AT];		// same as [3,7,6]
+int[] a = [AT];		// [3,7,6] と同じ
 ---
 
-	$(P The data fields of a struct or class can be
-	turned into an expression tuple using the $(B .tupleof)
-	property:)
+	$(P 構造体やクラスのデータフィールドは、
+	$(B .tupleof)
+	プロパティを使うと式タプルに変換することができます:)
 
 ---
 struct S { int x; long y; }
@@ -229,31 +229,31 @@ void foo(int a, long b)
 S s;
 s.x = 7;
 s.y = 8;
-foo(s.x, s.y);	// prints 78
-foo(s.tupleof);	// prints 78
+foo(s.x, s.y);	// 表示は 78
+foo(s.tupleof);	// 表示は 78
 s.tupleof[1] = 9;
 s.tupleof[0] = 10;
-foo(s.tupleof); // prints 109
-s.tupleof[2] = 11;  // error, no third field of S
+foo(s.tupleof); // 表示は 109
+s.tupleof[2] = 11;  // エラー。S には3つめのフィールドはない
 ---
 
-	$(P A type tuple can be created from the data fields
-	of a struct using $(B typeof):)
+	$(P $(B typeof) を使うと、
+	構造体から、データフィールドの型のタプルを作ることができます:)
 
 ---
-writefln(typeid(typeof(S.tupleof)));	// prints (int,long)
+writefln(typeid(typeof(S.tupleof)));	// 表示は (int,long)
 ---
 
-	$(P This is encapsulated in the template
-	$(LINK2 phobos/std_traits.html, std.traits).FieldTypeTuple.
+	$(P これは
+	$(LINK2 phobos/std_traits.html, std.traits).FieldTypeTuple テンプレートとしてカプセル化されています。
 	)
 
-<h3>Looping</h3>
+<h3>ループ</h3>
 
-	$(P While the head-tail style of functional programming works
-	with tuples, it's often more convenient to use a loop.
-	The $(I ForeachStatement) can loop over either $(I TypeTuple)s
-	or $(I ExpressionTuple)s.
+	$(P 関数型プログラミングのような head-tail スタイルの方法で
+	タプルを操作することはもちろん可能ですが、ループが使えるともっと便利です。
+	$(I ForeachStatement) では、$(I TypeTuple) と
+	$(I ExpressionTuple) 上をループすることができます。
 	)
 
 ---
@@ -266,7 +266,7 @@ foreach (i, E; ET)
     writefln("ET[%d] = ", i, E);
 ---
 
-	$(P Prints:)
+	$(P 表示は:)
 
 $(CONSOLE
 TL[0] = int
@@ -277,10 +277,10 @@ ET[1] = 7
 ET[2] = 6.8
 )
 
-<h3>Tuple Declarations</h3>
+<h3>タプルの宣言</h3>
 
-	$(P A variable declared with a $(I TypeTuple) becomes an
-	$(I ExpressionTuple):)
+	$(P $(I 型タプル) を型に持つように宣言された変数は
+	$(I 式タプル)  になります)
 
 ---
 alias Tuple!(int, long) TL;
@@ -290,15 +290,15 @@ void foo(TL tl)
     writefln(tl, tl[1]);
 }
 
-foo(1, 6L);	// prints 166
+foo(1, 6L);	// 表示は 166
 ---
 
-<h3>Putting It All Together</h3>
+<h3>全部組み合わせると...</h3>
 
-	$(P These capabilities can be put together to implement
-	a template that will encapsulate all the arguments to
-	a function, and return a delegate that will call the function
-	with those arguments.)
+	$(P これらの機能を組み合わせると、
+	関数の引数を全てカプセル化して、
+	その引数で元の関数を呼び出すようなdelegateを返す
+	CurryAll テンプレートが実装できます。)
 
 ---
 import std.stdio;
@@ -366,24 +366,24 @@ void main()
 }
 ---
 
-	$(P The reason for the $(I Dummy) parameter is that one
-	cannot overload two templates with the same parameter list.
-	So we make them different by giving one a dummy parameter. 
+	$(P $(I Dummy) 引数が必要なのは、
+	同じ引数リストで二つのテンプレートをオーバーロードすることはできないためです。
+	一つダミー引数を増やして、区別をつけています。
 	)
 
-<h3>Future Directions</h3>
+<h3>今後の方向</h3>
 
 	$(UL
-	$(LI Return tuples from functions.)
-	$(LI Use operators on tuples, like =, +=, etc.)
-	$(LI Have tuple properties like $(B .init) which will apply
-	the property to each of the tuple members.)
+	$(LI 関数からタプルを返せるように)
+	$(LI タプルに対する演算子 =, +=, など)
+	$(LI タプルのプロパティ $(B .init) など
+	（プロパティを各要素に適用する処理）)
 	)
 
 )
 
 Macros:
-	TITLE=Tuples
+	TITLE=タプル
 	WIKI=Tuples
 	CATEGORY_ARTICLES=$0
 META_KEYWORDS=D Programming Language, template metaprogramming,
