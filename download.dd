@@ -5,7 +5,7 @@ Ddoc
 src="/images/github-ribbon.png" alt="Fork D on GitHub"></a>
 
 
-$(D_S Downloads,
+$(D_S ダウンロード,
 
 $(TABLE2 DMD - Digital Mars D Programming Language version 2,
 
@@ -259,15 +259,15 @@ $(BR)
 	)
 	)
 
-$(SECTION2 Documentation Downloads,
+$(SECTION2 ドキュメントのダウンロード,
 
     $(UL
-	$(LI $(LINK2 http://digitalmars.com/d/2.0/dlangspec.mobi, $(DOWNLOADIMG) D Programming Language Specification 2.0) ebook)
-	$(LI $(LINK2 http://www.prowiki.org/upload/duser/spec_DMD_1.00.pdf, $(DOWNLOADIMG) DMD 1.0 pdf) English)
+	$(LI $(LINK2 http://digitalmars.com/d/2.0/dlangspec.mobi, $(DOWNLOADIMG) D Programming Language Specification 2.0) ebook形式)
+	$(LI $(LINK2 http://www.prowiki.org/upload/duser/spec_DMD_1.00.pdf, $(DOWNLOADIMG) DMD 1.0 pdf) PDF形式)
     )
 )
 
-$(SECTION2 Other Downloads,
+$(SECTION2 その他のダウンロード,
     $(UL
 	$(LI $(LINK2 http://www.digitalmars.com/download/freecompiler.html,
 	 C and C++ compiler downloads)
@@ -293,7 +293,7 @@ $(SECTION2 Other Downloads,
 )
 
 Macros:
-	TITLE=Downloads
+	TITLE=ダウンロード
 	WIKI=Downloads
 	DMDV1=1.074
 	DMDV2=2.059
