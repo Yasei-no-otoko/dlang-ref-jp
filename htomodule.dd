@@ -1,62 +1,62 @@
 Ddoc
 
-$(D_S Converting C $(D .h) Files to D Modules,
+$(D_S C の $(D .h) ファイルから D のモジュールへの変換,
 
-	While D cannot directly compile C source code, it can easily
-	interface to C code, be linked with C object files, and call
-	C functions in DLLs.
-	The interface to C code is normally found in C $(D .h) files.
-	So, the trick to connecting with C code is in converting C
-	$(D .h) files to D modules.
-	This turns out to be difficult to do mechanically since
-	inevitably some human judgement must be applied.
-	This is a guide to doing such conversions.
+	D は Cのソースコードを直接コンパイルすることはできませんが、
+	Cへのインターフェイスを書いたり、Cのオブジェクトファイルとリンクしたり、
+	DLL内のC関数を呼び出したりするのは簡単です。
+	Cのコードへのインターフェイスは通常、$(D .h) ファイルにあります。
+	ですからCのコードと接続するには、Cの $(D .h) ファイルを D
+	のモジュールへと変換する必要があります。しかしこれは、
+	人間の判断が必須な部分が少なからずあるため、
+	機械的に行うのは難しい作業です。
+	以下は、このような変換作業のガイドとなっています。
 
-<h4>Preprocessor</h4>
+<h4>プリプロセッサ</h4>
 
-	$(D .h) files can sometimes be a bewildering morass of layers of
-	macros, $(D #include) files, $(D #ifdef)'s, etc. D doesn't
-	include a text preprocessor like the C preprocessor,
-	so the first step is to remove the need for
-	it by taking the preprocessed output. For DMC (the Digital
-	Mars C/C++ compiler), the command:
+	$(D .h) ファイルは時々、
+	$(D #include) や $(D #ifdef) のようなマクロが何層にも重なった泥沼状態になっていることがあります。
+	D は C のようなテキストプリプロセッサを持たないので、
+	マクロを取り除くには、
+	まずプリプロセッサの出力を取ってくることになります。DMC (Digital
+	Mars C/C++ compiler) では、コマンド：
 
 $(CONSOLE
 <a href="http://www.digitalmars.com/ctg/sc.html">dmc</a> <a href="http://www.digitalmars.com/ctg/sc.html#dashc">-c</a> program.h <a href="http://www.digitalmars.com/ctg/sc.html#dashe">-e</a> <a href="http://www.digitalmars.com/ctg/sc.html#dashl">-l</a>
 )
 
-	will create a file $(D program.lst) which is the source file after
-	all text preprocessing.
+	によって、全てのプリプロセスを終えた後のファイルが $(D program.lst)
+	として生成されます。
 	<p>
 
-	Remove all the $(D #if), $(D #ifdef), $(D #include),
-	etc. statements.
+	$(D #if), $(D #ifdef), $(D #include),
+	などの文は全て取り除いてください。
 
-<h4>Linkage</h4>
+<h4>リンケージ</h4>
 
-	Generally, surround the entire module with:
+	一般に、Cのリンケージを付与するには：
 
 ---------------------------
 extern (C)
 {
-     /* ...file contents... */
+     /* ...ファイルの内容... */
 }
 ---------------------------
 
-	to give it C linkage.
+	モジュール全体を上のように囲んで下さい。
 
-<h4>Types</h4>
+<h4>型</h4>
 
-	A little global search and replace will take care of renaming
-	the C types to D types. The following table shows a typical mapping
-	for 32 bit C code:
+	ファイル全体に検索と置換をかけることで、
+	Cの型をDの型へ改名できるでしょう。
+	以下の表が、32bitのCのコードからの典型的な対応表になっています。
 	<p>
 
 	$(TABLE1
-	<caption>Mapping C type to D type</caption>
+	<caption>Cの型からDの型への対応</caption>
 	<tr>
-	<th>C type
-	<th>D type
+	<th>C での型
+	<th>D での型
 	<tr>
 	<td>long double
 	<td>real
@@ -100,37 +100,37 @@ extern (C)
 
 <h4>NULL</h4>
 
-	$(D NULL) and $(D ((void*)0)) should be replaced
-	with $(D null).
+	$(D NULL) や $(D ((void*)0)) は
+	$(D null) に置き換えます。
 
-<h4>Numeric Literals</h4>
+<h4>数値リテラル</h4>
 
-	Any $(SINGLEQUOTE L) or $(SINGLEQUOTE l) numeric literal suffixes should be removed,
-	as a C $(D long) is (usually) the same size as a D $(D int).
-	Similarly, $(SINGLEQUOTE LL) suffixes should be replaced with a
-	single $(SINGLEQUOTE L).
-	Any $(SINGLEQUOTE u) suffix will work the same in D.
+	数値リテラルの接尾辞  $(SINGLEQUOTE L) や $(SINGLEQUOTE l) は取り除きます。
+	これは、C の $(D long) は （通常）D の $(D int) と同じサイズだからです。
+	同様に、接尾辞 $(SINGLEQUOTE LL)
+	は単独の $(SINGLEQUOTE L) に置き換えるべきです。
+	接尾辞 $(SINGLEQUOTE u) は全て D でも同様に働きます。
 
-<h4>String Literals</h4>
+<h4>文字列リテラル</h4>
 
-	In most cases, any $(SINGLEQUOTE L) prefix to a string can just be dropped,
-	as D will implicitly convert strings to wide characters if
-	necessary. However, one can also replace:
+	ほとんどの場合、接頭辞 $(SINGLEQUOTE L) は単純に消して構いません。
+	D では、文字列は必要なときに暗黙にワイド文字列へ変換されます。
+	しかし、
 
 $(CCODE
 L"string"
 )
 
-	with:
+	これをこう置き換えることもできます：
 
 ---------------------------
-"string"w	// for 16 bit wide characters
-"string"d	// for 32 bit wide characters
+"string"w	// ワイド文字が16bitの環境
+"string"d	// ワイド文字が32bitの環境
 ---------------------------
 
-<h4>Macros</h4>
+<h4>マクロ</h4>
 
-	Lists of macros like:
+	次のような一連のマクロは：
 
 $(CCODE
 #define FOO	1
@@ -139,7 +139,7 @@ $(CCODE
 #define DEF	40
 )
 
-	can be replaced with:
+	次で代用します：
 
 ---------------------------
 enum
@@ -150,7 +150,7 @@ enum
 }
 ---------------------------
 
-	or with:
+	あるいは：
 
 ---------------------------
 const int FOO = 1;
@@ -159,23 +159,23 @@ const int ABC = 3;
 const int DEF = 40;
 ---------------------------
 
-	Function style macros, such as:
+	あるいは：
 
 $(CCODE
 #define MAX(a,b) ((a) < (b) ? (b) : (a))
 )
 
-	can be replaced with functions:
+	のようなものは、関数で置き換えることができます：
 
 ---------------------------
 int MAX(int a, int b) { return (a < b) ? b : a; }
 ---------------------------
 
-	<!-- Thanks to Jarrett Billingsley for the following tip -->
+	<!-- 以下のtipsは Jarrett Billingsley による -->
 
-	The functions, however, won't work if they appear inside static
-	initializers that must be evaluated at compile time rather than
-	runtime. To do it at compile time, a template can be used:
+	関数を使う方法は、しかし、実行時ではなくコンパイル時に評価されなければならない、
+	静的初期化子の中では使用することができません。
+	コンパイル時については、テンプレートが使えます：
 
 $(CCODE
 #define GT_DEPTH_SHIFT  (0)
@@ -184,15 +184,15 @@ $(CCODE
 #define GT_DEPTH_MASK   (0xffU << GT_DEPTH_SHIFT)
 #define GT_TEXT         ((0x01) << GT_SCHEME_SHIFT)
 
-/* Macro that constructs a graphtype */
+/* graphtypeを構築するマクロ */
 #define GT_CONSTRUCT(depth,scheme,size) \
 	((depth) | (scheme) | ((size) << GT_SIZE_SHIFT))
 
-/* Common graphtypes */
+/* 一般的なgraphtype */
 #define GT_TEXT16  GT_CONSTRUCT(4, GT_TEXT, 16)
 )
 
-	The corresponding D version would be:
+	対応する D のコードは:
 
 ---------------------------
 const uint GT_DEPTH_SHIFT  = 0;
@@ -201,28 +201,28 @@ const uint GT_SCHEME_SHIFT = 24;
 const uint GT_DEPTH_MASK   = 0xffU << GT_DEPTH_SHIFT;
 const uint GT_TEXT         = 0x01 << GT_SCHEME_SHIFT;
 
-// Template that constructs a graphtype
+// graphtypeを構築するテンプレート
 template GT_CONSTRUCT(uint depth, uint scheme, uint size)
 {
- // notice the name of the const is the same as that of the template
+ // 定数の名前をテンプレートの名前と同じにする
  const uint GT_CONSTRUCT = (depth | scheme | (size << GT_SIZE_SHIFT));
 }
 
-// Common graphtypes
+// 一般的なgraphtype
 const uint GT_TEXT16 = GT_CONSTRUCT!(4, GT_TEXT, 16);
 ---------------------------
 
 
-<h4>Declaration Lists</h4>
+<h4>宣言リスト</h4>
 
-	D doesn't allow declaration lists to change the type.
-	Hence:
+	D では、宣言のリストの中で型を変更することを許しません。
+	したがって：
 
 $(CCODE
 int *p, q, t[3], *s;
 )
 
-	should be written as:
+	は次のように書かれなければなりません：
 
 ---------------------------
 int* p, s;
@@ -230,15 +230,15 @@ int q;
 int[3] t;
 ---------------------------
 
-<h4>Void Parameter Lists</h4>
+<h4>void引数リスト</h4>
 
-	Functions that take no parameters:
+	引数を１個もとらない関数：
 
 $(CCODE
 int foo(void);
 )
 
-	are in D:
+	は、Dでは：
 
 ---------------------------
 int foo();
@@ -246,36 +246,36 @@ int foo();
 
 $(V1
 
-<h4>Const Type Modifiers</h4>
+<h4>const 型修飾子</h4>
 
-	D has $(D const) as a storage class, not a type modifier. Hence, just
-	drop any $(D const) used as a type modifier:
+	D の $(D const) は記憶域クラスであり、型修飾子ではありません。従って、
+	型修飾子としての $(D const) は全て取り除きます。
 
 $(CCODE
 void foo(const int *p, char *const q);
 )
 
-	becomes:
+	は、こうなります：
 
 ---------------------------
 void foo(int* p, char* q);
 ---------------------------
 )
-<h4>Extern Global C Variables</h4>
+<h4>外部グローバル C 変数</h4>
 
-	Whenever a global variable is declared in D, it is also defined.
-	But if it's also defined by the C object file being linked in,
-	there will be a multiple definition error. To fix this problem,
-	use the extern storage class.
-	For example, given a C header file named
-	$(D foo.h):
+	Dでは常にグローバル変数の宣言は、同時に変数の定義でもあります。
+	しかし、リンクするCで作ったオブジェクトファイルの中にも定義があると、
+	多重定義エラーとなってしまいます。この問題を解決するには、
+	extern 記憶クラスを使うという手があります。
+	例えば、こんなCのヘッダーファイル
+	$(D foo.h) は:
 
 $(CCODE
 struct Foo { };
 struct Foo bar;
 )
 
-	It can be replaced with the D modules, $(D foo.d):
+	これは次のようなDのモジュールに置き換えられます。$(D foo.d):
 
 ---------------------------
 struct Foo { }
@@ -288,21 +288,21 @@ extern (C)
 
 <h4>Typedef</h4>
 
-	$(D alias) is the D equivalent to the C $(D typedef):
+	D では、$(D alias) が C の $(D typedef) と同じ働きをします。
 
 $(CCODE
 typedef int foo;
 )
 
-	becomes:
+	は、こうします：
 
 ---------------------------
 alias int foo;
 ---------------------------
 
-<h4>Structs</h4>
+<h4>構造体</h4>
 
-	Replace declarations like:
+	次のような宣言は：
 
 $(CCODE
 typedef struct Foo
@@ -311,7 +311,7 @@ typedef struct Foo
 } Foo, *pFoo, *lpFoo;
 )
 
-	with:
+	こう置き換えます：
 
 ---------------------------
 struct Foo
@@ -321,12 +321,12 @@ struct Foo
 alias Foo* pFoo, lpFoo;
 ---------------------------
 
-<h4>Struct Member Alignment</h4>
+<h4>構造体メンバのアラインメント</h4>
 
-	A good D implementation by default will align struct members the
-	same way as the C compiler it was designed to work with. But
-	if the $(D .h) file has some $(D #pragma)'s to control alignment, they
-	can be duplicated with the D $(D align) attribute:
+	D の普通の実装では、構造体のメンバは同じ環境の C
+	コンパイラと同様に整列するようになっています。しかし、
+	$(D .h) ファイルの中にアラインメントを制御する $(D #pragma)
+	が含まれている場合は、Dの $(D align) 属性で対応します：
 
 $(CCODE
 #pragma pack(1)
@@ -349,7 +349,7 @@ struct Foo
 }
 ---------------------------
 
-<h4>Nested Structs</h4>
+<h4>ネストした構造体</h4>
 
 $(CCODE
 struct Foo
@@ -371,7 +371,7 @@ struct Abc
 };
 )
 
-	becomes:
+	は、こうなります：
 
 ---------------------------
 struct Foo
@@ -403,7 +403,7 @@ int __pascal bar(int b);
 int __stdcall abc(int c);
 )
 
-	becomes:
+	は、こうなります：
 
 ---------------------------
 extern (C) int x;
@@ -418,7 +418,7 @@ $(CCODE
 __declspec(dllimport) int __stdcall foo(int a);
 )
 
-	becomes:
+	は、こうなります：
 
 ---------------------------
 export extern (Windows) int foo(int a);
@@ -426,8 +426,8 @@ export extern (Windows) int foo(int a);
 
 <h4>$(D __fastcall)</h4>
 
-	Unfortunately, D doesn't support the $(D __fastcall) convention.
-	Therefore, a shim will be needed, either written in C:
+	残念なことに、D は $(D __fastcall) 呼び出し規約に対応していません。
+	このため、緩衝コードが一段必要になります。Cで書いた：
 
 $(CCODE
 int __fastcall foo(int a);
@@ -438,15 +438,15 @@ int myfoo(int a)
 }
 )
 
-	and compiled with a C compiler that supports $(D __fastcall) and
-	linked in, or compile the above, disassemble it with
+	を $(D __fastcall) をサポートするCコンパイラでコンパイルしてリンクするか、
+	それを
 	<a href="http://www.digitalmars.com/ctg/obj2asm.html">obj2asm</a>
-	and insert it in a D $(D myfoo) shim with
-	<a href="iasm.html">inline assembler</a>.
+	で逆アセンブルして D の $(D myfoo) の中に
+	<a href="iasm.html">インラインアセンブラ</a> で挿入することになります。
 
 )
 
 Macros:
-	TITLE=Converting C .h Files to D Modules
+	TITLE=C の .h ファイルから D のモジュールへの変換
 	WIKI=HToModule
 	CATEGORY_HOWTOS=$0
