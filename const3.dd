@@ -1,126 +1,126 @@
 Ddoc
 
-$(D_S Const and Immutable,
+$(D_S Const と Immutable,
 
-	$(P When examining a data structure or interface, it is very
-	helpful to be able to easily tell which data can be expected to not
-	change, which data might change, and who may change that data.
-	This is done with the aid of the language typing system.
-	Data can be marked as const or immutable, with the default being
-	changeable (or $(I mutable)).
+	$(P データ構造やインターフェイスを調べるときには、
+	どのデータが不変でどのデータが可変で、変更を行う可能性があるのは誰か、
+	といった情報が簡単にわかると非常に便利です。
+	そしてこれは、言語の型システムの助けによって実現することができます。
+	データは const あるいは immutable とマーク付けすることができ、
+	デフォルトでは変更可能 ($(I mutable)) となっています。
 	)
 
-	$(P $(I immutable) applies to data that cannot change.
-	Immutable data values, once constructed, remain the same for
-	the duration of the program's
-	execution.
-	Immutable data can be placed in ROM (Read Only Memory) or in
-	memory pages marked by the hardware as read only.
-	Since immutable data does not change, it enables many opportunities
-	for program optimization, and has applications in functional
-	style programming.
+	$(P $(I immutable) は、
+	一度構築されたら決して変更されることのないデータに適用します。
+	immutable なデータ値は、
+	プログラムの実行中一貫して同じ値であり続けます。
+	immutable なデータは ROM (Read Only Memory)
+	や、ハードウェアによって読み取り専用とされたメモリページに配置することができます。
+	immutable なデータは決して変更されないので、
+	さまざまなプログラム最適化の機会をもたらします。また、
+	アプリケーションをより関数型のプログラミングスタイルで書くことを可能にします。
 	)
 
-	$(P $(I const) applies to data that cannot be changed by
-	the const reference to that data. It may, however, be changed
-	by another reference to that same data.
-	Const finds applications in passing data through interfaces
-	that promise not to modify them.
+	$(P $(I const) は、そのconst参照を通しては変更を加えることのないデータに適用します。
+	ただし、データ自体の値は、
+	同じデータを指す別の参照経由で変化するかもしれません。
+	アプリケーション内で const を使用することで、
+	渡されたデータを変更せずに読み取りだけであるというインターフェイスを表現することができます。
 	)
 
-	$(P Both immutable and const are $(I transitive), which means
-	that any data reachable through an immutable reference is also
-	immutable, and likewise for const.
+	$(P immutable と const のどちらも、$(I  推移的) です。つまり、
+	immutable な参照経由でアクセスできるデータは全てimmutableですし、
+	const の場合にも同様のことが成り立ちます。
 	)
 
-$(SECTION2 Immutable Storage Class,
+$(SECTION2 immutable 記憶域クラス,
 
 	$(P
-	The simplest immutable declarations use it as a storage class.
-	It can be used to declare manifest constants.
+	一番単純な immutable は、記憶域クラスとしての使い方です。
+	これは記号定数(manifest constant)を宣言するのに使用することができます。
 	)
 
 ---
-immutable int x = 3;  // x is set to 3
-x = 4;        // error, x is immutable
-char[x] s;    // s is an array of 3 char's
+immutable int x = 3;  // x は 3 になる
+x = 4;        // エラー。x は immutable
+char[x] s;    // s は char 3つの配列
 ---
 
-	$(P The type can be inferred from the initializer:
+	$(P immutable変数の型は初期化子から推論されます:
 	)
 ---
-immutable y = 4; // y is of type int
-y = 5;           // error, y is immutable
+immutable y = 4; // int型のy
+y = 5;           // エラー。y は immutable
 ---
 
-	$(P If the initializer is not present, the immutable can
-	be initialized from the corresponding constructor:
+	$(P 初期化子を与えていない場合、
+	immutable を対応するコンストラクタで初期化することが可能です：
 	)
 
 ---
 immutable int z;
 void test() {
-  z = 3; // error, z is immutable
+  z = 3; // エラー。z は immutable
 }
 static this() {
-  z = 3; // ok, can set immutable that doesn't
-         // have static initializer
+  z = 3; // ok
+         // 静的初期化子のないimmutableの値は設定できる
 }
 ---
 	$(P
-	The initializer for a non-local immutable declaration must be
-	evaluatable
-	at compile time:
+	非ローカルな
+	immutable
+	宣言の初期化子はコンパイル時評価可能でなければなりません：
 	)
 
 ---
 int foo(int f) { return f * 3; }
 int i = 5;
 immutable x = 3 * 4;      // ok, 12
-immutable y = i + 1;      // error, cannot evaluate at compile time
-immutable z = foo(2) + 1; // ok, foo(2) can be evaluated at compile time, 7
+immutable y = i + 1;      // エラー。コンパイル辞評価不可能
+immutable z = foo(2) + 1; // ok。 foo(2) はコンパイル時に7に評価される
 ---
 
-	$(P The initializer for a non-static local immutable declaration
-	is evaluated at run time:
+	$(P staticでないローカルなimmutable宣言の初期化子は、
+	実行時に評価されます:
 	)
 ---
 int foo(int f)
 {
-  immutable x = f + 1;  // evaluated at run time
-  x = 3;                // error, x is immutable
+  immutable x = f + 1;  // 実行時に評価
+  x = 3;                // エラー。x は immutable
 }
 ---
 
 	$(P
-	Because immutable is transitive, data referred to by an immutable is
-	also immutable:
+	immutable は推移的なので、
+	immutableから参照されているデータもまたimmutableです:
 	)
 
 ---
 immutable char[] s = "foo";
-s[0] = 'a';  // error, s refers to immutable data
-s = "bar";   // error, s is immutable
+s[0] = 'a';  // エラー。s は immutable なデータを指している
+s = "bar";   // エラー。s は immutable
 ---
 
-	$(P Immutable declarations can appear as lvalues, i.e. they can
-	have their address taken, and occupy storage.
+	$(P immutable宣言はlvalueとして使うことができます。
+	つまり、アドレスを取ることが可能です。
 	)
 )
 
-$(SECTION2 Const Storage Class,
+$(SECTION2 const 記憶域クラス,
 
 	$(P
-	A const declaration is exactly like an immutable declaration,
-	with the following differences:
+	const 宣言は、以下の違いを除いて、
+	immutable とほぼ同じです：
 	)
 
 	$(UL
-	$(LI Any data referenced by the const declaration cannot be
-	changed from the const declaration, but it might be changed
-	by other references to the same data.)
+	$(LI const宣言された変数を通してデータを書き換えることはできないが、
+	同じデータを参照する別の箇所がデータを書き換えることは
+	あるかもしれない)
 
-	$(LI The type of a const declaration is itself const.)
+	$(LI const宣言された変数の型は、const)
 	)
 
 $(COMMENT
@@ -193,11 +193,11 @@ $(TR $(TD $(ORANGE orange)) $(TD implicit conversion))
 )
 )
 
-$(SECTION2 Immutable Type,
+$(SECTION2 immutable 型,
 
 	$(P
-	Data that will never change its value can be typed as immutable.
-	The immutable keyword can be used as a $(I type constructor):
+	immutableと修飾された型の値は、決して変更されません。
+	予約語 immutable は <i>type constructor</i> として使うことができます:
 	)
 
 ---
@@ -205,79 +205,79 @@ immutable(char)[] s = "hello";
 ---
 
 	$(P
-	The immutable applies to the type within the following parentheses.
-	So, while $(CODE s) can be assigned new values,
-	the contents of $(CODE s[]) cannot be:
+	immutable は、括弧の中に書かれた型に適用されます。
+	例えばこの例の場合、変数 $(CODE s) に別の値を代入することはできますが、
+	$(CODE s[]) の中身に別の値を入れることはできません：
 	)
 
 ---
-s[0] = 'b';  // error, s[] is immutable
-s = null;    // ok, s itself is not immutable
+s[0] = 'b';  // エラー。s[] は immutable
+s = null;    // ok。sそのものはimmutableでない
 ---
 
 	$(P
-	Immutableness is transitive, meaning it applies to anything that
-	can be referenced from the immutable type:
+	immutable性は推移的です。つまり、immutable性は、
+	immutable型から参照されるすべてのものに伝搬します：
 	)
 
 ---
 immutable(char*)** p = ...;
-p = ...;        // ok, p is not immutable
-*p = ...;       // ok, *p is not immutable
-**p = ...;      // error, **p is immutable
-***p = ...;     // error, ***p is immutable
+p = ...;        // ok, p はimmutableでない
+*p = ...;       // ok, *p はimmutableでない
+**p = ...;      // エラー。 **p は immutable
+***p = ...;     // エラー。***p は immutable
 ---
 
-	$(P Immutable used as a storage class is equivalent to using
-	immutable as a type constructor for the entire type of a
-	declaration:)
+	$(P 記憶域クラスとして使われる
+	immutable
+	は、宣言の型全体をimmutableで修飾したのと同じ効果になります:)
 
 ---
-immutable int x = 3;   // x is typed as immutable(int)
-immutable(int) y = 3;  // y is immutable
+immutable int x = 3;   // x は immutable(int) 型
+immutable(int) y = 3;  // y は immutable
 ---
 )
 
 
-$(SECTION2 Creating Immutable Data,
+$(SECTION2 immutable なデータを作る,
 
 	$(P
-	The first way is to use a literal that is already immutable,
-	such as string literals. String literals are always immutable.
+	一番単純な方法は、最初からimmutableとされているリテラルを使うことです。
+	例えば、文字列リテラルは immutable です。
 	)
 
 ---
-auto s = "hello";   // s is immutable(char)[5]
-char[] p = "world"; // error, cannot implicitly convert immutable
-		    // to mutable
+auto s = "hello";   // s は immutable(char)[5]
+char[] p = "world"; // エラー。暗黙キャストで
+		    // immutableを外すことはできない
 ---
 
 	$(P
-	The second way is to cast data to immutable.
-	When doing so, it is up to the programmer to ensure that no
-	other mutable references to the same data exist.
+	二つめの方法は、データを明示的にimmutableにキャストすることです。
+	この方法をとるときは、
+	そのデータを他に書き換えるような参照がないことをプログラマが保証する必要があります。
 	)
 
 ---
 char[] s = ...;
-immutable(char)[] p = cast(immutable)s;     // undefined behavior
-immutable(char)[] p = cast(immutable)s.dup; // ok, unique reference
+immutable(char)[] p = cast(immutable)s;     // 未定義動作
+immutable(char)[] p = cast(immutable)s.dup; // ok。pがs.dupへの唯一の参照
 ---
 
 	$(P
-	The $(CODE .idup) property is a convenient way to create an immutable
-	copy of an array:
+	$(CODE .idup) ロパティを使うと、
+	配列のimmutableなコピーを簡単に作ることができます：
 	)
 
 ---
 auto p = s.idup;
-p[0] = ...;	  // error, p[] is immutable
+p[0] = ...;	  // エラー。p[] は immutable
 ---
 
-<h2>Removing Immutable With A Cast</h2>
+<h2>キャストでimmutableを取り除く</h2>
 
 	$(P
-	The immutable type can be removed with a cast:
+	immutable をキャストで除去することは可能です：
 	)
 
 ---
@@ -286,31 +286,31 @@ int* q = cast(int*)p;
 ---
 
 	$(P
-	This does not mean, however, that one can change the data:
+	しかし、だからといって、データを書き換えられるようになるわけではありません：
 	)
 
 ---
-*q = 3; // allowed by compiler, but result is undefined behavior
+*q = 3; // コンパイルは通るが、未定義動作
 ---
 
 	$(P
-	The ability to cast away immutable-correctness is necessary in
-	some cases where the static typing is incorrect and not fixable, such
-	as when referencing code in a library one cannot change.
-	Casting is, as always, a blunt and effective instrument, and
-	when using it to cast away immutable-correctness, one must assume
-	the responsibility to ensure the immutableness of the data, as
-	the compiler will no longer be able to statically do so.
+	immutable性を取り除くキャストは、正しく静的型がついていないくて、
+	しかもそれが修正できないという場面で必要となってしまうことがあります。
+	例えば、正しく型のついていないライブラリを使う場合などです。
+	キャストは使い方次第で毒にも薬にもなる道具です。
+	コンパイラが保証するimmutable性の正しさをキャストで取り除く以上、
+	データの immutable
+	性に関してプログラマが責任を持つことが前提となります。
 	)
 )
 
 
-$(SECTION2 Immutable Member Functions,
+$(SECTION2 immutable メンバ関数,
 
 	$(P
-	Immutable member functions are guaranteed that the object
-	and anything referred to by the $(CODE this) reference is immutable.
-	They are declared as:
+	immutable メンバ関数では、
+	$(CODE this) 参照経由で参照される全てのデータがimmutableであることが保証されます。
+	以下のように宣言します:
 	)
 
 ---
@@ -318,32 +318,32 @@ struct S {
   int x;
 
   void foo() immutable {
-    x = 4;      // error, x is immutable
-    this.x = 4; // error, x is immutable
+    x = 4;      // エラー。 x は immutable
+    this.x = 4; // エラー。 x は immutable
   }
 }
 ---
-    $(P Note that using $(D_KEYWORD immutable) on the left hand side of a method does not apply to the return type:
+    $(P 関数の左側に $(D_KEYWORD immutable) を書くのは、返値型への修飾にはなりません:
     )
 
 ---
 struct S {
-  immutable int[] bar()  // bar is still immutable, return type is not!
+  immutable int[] bar()  // bar は immutable ですが、返値型はそうではありません！
   {
   }
 }
 ---
-    $(P To make the return type $(D_KEYWORD immutable), you need to surround the return type with parentheses:
+    $(P 返値型を $(D_KEYWORD immutable) にするには、括弧で囲う必要があります:
     )
 
 ---
 struct S {
-  immutable(int[]) bar()  // bar is now mutable, return type is immutable.
+  immutable(int[]) bar()  // 今度は bar は mutable で、返値型が immutable.
   {
   }
 }
 ---
-    $(P To make both the return type and the method $(D_KEYWORD immutable), you can write:
+    $(P メソッドと返値の両方を $(D_KEYWORD immutable) にするには、こうします:
     )
 ---
 struct S {
@@ -355,44 +355,44 @@ struct S {
 )
 
 
-$(SECTION2 Const Type,
+$(SECTION2 const 型,
 
 	$(P
-	Const types are like immutable types, except that const
-	forms a read-only $(I view) of data. Other aliases to that
-	same data may change it at any time.
+	const 型は immutable 型に似ていますが、const は
+	データの読み込み専用の $(I view) を表します。
+	他に参照があってデータを書き換える可能性は残っています。
 	)
 )
 
 
-$(SECTION2 Const Member Functions,
+$(SECTION2 const メンバ関数,
 
 	$(P
-	Const member functions are functions that are not allowed to
-	change any part of the object through the member function's
-	this reference.
+	const メンバ関数は、
+	thisの指すオブジェクト自身のメンバを書き換えることが許されない
+	メンバ関数です。
 	)
 )
 
 
-$(SECTION2 Implicit Conversions,
+$(SECTION2 暗黙の変換,
 
 	$(P
-	Mutable and immutable types can be implicitly converted to const.
-	Mutable types cannot be implicitly converted to immutable,
-	and vice versa.
+	書き換え可能な型とimmutable型のデータは、constに暗黙変換できます。
+	書き換え可能な型をimmutableに変換したり、
+	その逆の変換が暗黙に行われることはありません。
 	)
 )
 
 
-$(SECTION2 Comparing D Immutable and Const with C++ Const,
+$(SECTION2 Dのimmutable,const と C++のconstの比較,
 
 	<table border=2 cellpadding=4 cellspacing=0 class="comp">
-	<caption>Const, Immutable Comparison</caption>
+	<caption>const, immutable の比較</caption>
 
 	<thead>
 	$(TR
-	$(TH Feature)
+	$(TH 機能)
 	$(TH D)
 	$(TH C++98)
 	)
@@ -401,45 +401,45 @@ $(SECTION2 Comparing D Immutable and Const with C++ Const,
 	<tbody>
 
 	$(TR
-	$(TD const keyword)
+	$(TD 予約語 const)
 	$(TD Yes)
 	$(TD Yes)
 	)
 
 	$(TR
-	$(TD immutable keyword)
+	$(TD 予約語 immutable)
 	$(TD Yes)
 	$(TD No)
 	)
 
 	$(TR
-	$(TD const notation)
-	$(TD Functional:
+	$(TD const の記法)
+	$(TD 関数的:
 ---
-//ptr to const ptr to const int
+// const int への const ポインタ へのポインタ
 const(int*)* p;
 ---
 	)
-	$(TD Postfix:
+	$(TD 後置:
 $(CPPCODE
-//ptr to const ptr to const int
+// const int への const ポインタ へのポインタ
 const int *const *p;
 )
 	)
 	)
 
 	$(TR
-	$(TD transitive const)
+	$(TD 推移的 const)
 	$(TD Yes:
 ---
-//const ptr to const ptr to const int
+// const intへのconstポインタへのconstポインタ
 const int** p;
-**p = 3; // error
+**p = 3; // エラー
 ---
 	 )
 	$(TD No:
 $(CPPCODE
-// const ptr to ptr to int
+// intへのポインタへのconstポインタ
 int** const p;
 **p = 3;    // ok
 )
@@ -447,17 +447,17 @@ int** const p;
 	)
 
 	$(TR
-	$(TD cast away const)
+	$(TD const除去キャスト)
 	$(TD Yes:
 ---
-// ptr to const int
+// const intへのポインタ
 const(int)* p;
 int* q = cast(int*)p; // ok
 ---
 	)
 	$(TD Yes:
 $(CPPCODE
-// ptr to const int
+// const intへのポインタ
 const int* p;
 int* q = const_cast&lt;int*&gt;p; //ok
 )
@@ -465,18 +465,18 @@ int* q = const_cast&lt;int*&gt;p; //ok
 	)
 
 	$(TR
-	$(TD modification after casting away const)
+	$(TD const除去後の書き換え)
 	$(TD No:
 ---
-// ptr to const int
+// const intへのポインタ
 const(int)* p;
 int* q = cast(int*)p;
-*q = 3;   // undefined behavior
+*q = 3;   // 未定義動作
 ---
 	)
 	$(TD Yes:
 $(CPPCODE
-// ptr to const int
+// const intへのポインタ
 const int* p;
 int* q = const_cast&lt;int*&gt;p;
 *q = 3;   // ok
@@ -485,7 +485,7 @@ int* q = const_cast&lt;int*&gt;p;
 	)
 
 	$(TR
-	$(TD overloading of top level const)
+	$(TD トップレベルのconstでのoverload)
 	$(TD Yes:
 ---
 void foo(int x);
@@ -495,13 +495,13 @@ void foo(const int x);  //ok
 	$(TD No:
 $(CPPCODE
 void foo(int x);
-void foo(const int x);  //error
+void foo(const int x);  //エラー
 )
 	)
 	)
 
 	$(TR
-	$(TD aliasing of const with mutable)
+	$(TD constとmutableの別名参照)
 	$(TD Yes:
 ---
 void foo(const int* x, int* y)
@@ -531,12 +531,12 @@ foo(&amp;i, &amp;i);
 	)
 
 	$(TR
-	$(TD aliasing of immutable with mutable)
+	$(TD immutableとmutableの別名参照)
 	$(TD No:
 ---
 void foo(immutable int* x, int* y) {
  bar(*x); // bar(3)
- *y = 4;  // undefined behavior
+ *y = 4;  // 未定義動作
  bar(*x); // bar(??)
 }
 ...
@@ -544,20 +544,20 @@ int i = 3;
 foo(cast(immutable)&i, &i);
 ---
 	)
-	$(TD No immutables)
+	$(TD immutable はナシ)
 	)
 
 	$(TR
-	$(TD type of string literal)
+	$(TD 文字列リテラルの型)
 	$(TD immutable(char)[])
 	$(TD const char*)
 	)
 
 
 	$(TR
-	$(TD implicit conversion of string literal to non-const)
-	$(TD not allowed)
-	$(TD allowed, but deprecated)
+	$(TD 文字列リテラルから非const型への暗黙変換)
+	$(TD なし)
+	$(TD あり、ただし非推奨)
 	)
 
 	</tbody>
@@ -575,7 +575,7 @@ Macros:
 	NM=$(TD $(RED no match))
 	Y=$(TD $(GREEN Yes))
 	N=$(TD $(RED No))
-	TITLE=Const and Immutable
+	TITLE=Const と Immutable
 	WIKI=ConstInvariant
 	CATEGORY_SPEC=$0
 	NO=<td class="compNo">No</td>
