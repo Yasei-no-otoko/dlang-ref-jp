@@ -1,69 +1,69 @@
 Ddoc
 
-$(SPEC_S Interfacing to C++,
+$(SPEC_S C++とのインターフェイス,
 
 	$(P
-	While D is fully capable of
-	$(DDLINK interfaceToC, Interfacing to C, interfacing to C),
-	its ability to interface to C++ is much more limited.
-	There are three ways to do it:
+	D は
+	$(DDLINK interfaceToC, Interfacing to C, Cとのインターフェイス),
+	は完璧ですが、C++ とのインターフェイスはかなり制限されています。
+	C++ とリンクするには３つの方法があります:
 	)
 
 	$(OL
 
-	$(LI Use C++'s ability to create a C interface, and then
-	use D's ability to
-	$(DDLINK interfaceToC, Interfacing to C, interface with C)
-	to access that interface.
+	$(LI C++側の、C向けインターフェイスを作る機能を用いる。
+	そして、D側からは
+	$(DDLINK interfaceToC, Interfacing to C, Cとのインターフェイス)
+	でアクセス。
 	)
 
-	$(LI Use C++'s ability to create a COM interface, and then
-	use D's ability to
-	$(DPLLINK COM.html, interface with COM)
-	to access that interface.
+	$(LI C++側の、COMインターフェイスを作る機能を用いる。
+	そして、D側からは
+	$(DPLLINK COM.html, COMインターフェイス)
+	を通じてアクセス。
 	)
 
-	$(LI Use the limited ability described here to connect
-	directly to C++ functions and classes.
+	$(LI 以下で述べるような、
+	制限付きでC++の関数およびクラスに直接アクセスするための機能を用いる。
 	)
 
 	)
 
-<h2>The General Idea</h2>
+<h2>基本的な考え方</h2>
 
-	$(P Being 100% compatible with C++ means more or less adding
-	a fully functional C++ compiler front end to D.
-	Anecdotal evidence suggests that writing such is a minimum
-	of a 10 man-year project, essentially making a D compiler
-	with such capability unimplementable.
-	Other languages looking to hook up to C++ face the same
-	problem, and the solutions have been:
+	$(P C++ との 100% の互換性を達成するということは、
+	完全なC++コンパイラのフロントエンドをDに実装するというのと大差ありません。
+	過去の経験からすると、
+	その実装は最低でも10人年規模のプロジェクトになってしまい、
+	Dコンパイラを実装するのが事実上不可能になってしまいます。
+	C++ とのリンクを実現しようとしている他の言語も同じ問題を抱えていて、
+	いくつかの対案が考えられています:
 	)
 
 	$(OL
-	$(LI Support the COM interface (but that only works for Windows).)
-	$(LI Laboriously construct a C wrapper around
-	the C++ code.)
-	$(LI Use an automated tool such as SWIG to construct a
-	C wrapper.)
-	$(LI Reimplement the C++ code in the other language.)
-	$(LI Give up.)
+	$(LI COM インターフェイスをサポートする (ただしWindows専用))
+	$(LI C++
+	のコードを頑張って手作業でCでラップする)
+	$(LI SWIG のような、
+	C ラッパを生成する自動化ツールを使う)
+	$(LI C++のコードを全部他の言語に移植する)
+	$(LI あきらめる)
 	)
 
-	$(P D takes a pragmatic approach that assumes a couple
-	modest accommodations can solve a significant chunk of
-	the problem:
+	$(P D では現実的なアプローチとして、
+	全てではないにしろかなり多くの問題を解決できるような、
+	以下にあげるささやかな機能を提供しています：
 	)
 
 	$(UL
-	$(LI matching C++ name mangling conventions)
-	$(LI matching C++ function calling conventions)
-	$(LI matching C++ virtual function table layout for single inheritance)
+	$(LI C++ と名前マングリング規則を合わせる)
+	$(LI C++ と関数呼び出し規約を合わせる)
+	$(LI C++ と、単一継承の場合に限り仮想関数テーブルの形式を合わせる)
 	)
 
-<h2>Calling C++ Global Functions From D</h2>
+<h2>C++ のグローバル関数を D から呼ぶ</h2>
 
-	$(P Given a C++ function in a C++ source file:)
+	$(P C++のソースファイルに書かれたC++の関数があったとします:)
 
 $(CPPCODE
 #include &lt;iostream&gt;
@@ -79,15 +79,15 @@ int foo(int i, int j, int k) {
 }
 )
 
-	$(P In the corresponding D code, $(CODE foo)
-	is declared as having C++ linkage and function calling conventions:
+	$(P これを呼び出したいDのコードでは、$(CODE foo)
+	を C++ のリンケージと関数呼び出し規約に従うものとして宣言します:
 	)
 
 ------
 extern (C++) int foo(int i, int j, int k);
 ------
 
-	$(P and then it can be called within the D code:)
+	$(P こうすると、Dのコードから呼び出すことが可能になります:)
 
 ------
 extern (C++) int foo(int i, int j, int k);
@@ -97,9 +97,9 @@ void main() {
 }
 ------
 
-	$(P Compiling the two files, the first with a C++ compiler,
-	the second with a D compiler, linking them together,
-	and then running it yields:)
+	$(P 最初のファイルをC++コンパイラで、2つめをDコンパイラでコンパイルして、
+	両者をリンクして実行すると、
+	以下の結果が得られます:)
 
 $(CONSOLE
 i = 1
@@ -107,35 +107,35 @@ j = 2
 k = 3
 )
 
-	$(P There are several things going on here:)
+	$(P 何が起きているのかをもっと具体的に説明しますと:)
 
 	$(UL 
-	$(LI D understands how C++ function names are "mangled" and the
-	correct C++ function call/return sequence.)
+	$(LI Dコンパイラは、C++ の関数名がどのようにmangleされているのか、
+		またC++の関数の正しい呼び出し/復帰手続きについて、把握しています。)
 
-	$(LI Because modules are not part of C++, each function with
-	C++ linkage must be globally unique within the program.)
+	$(LI C++ にはモジュールという概念がないため、
+		C++ リンケージを持つ関数はプログラム全体でグローバルなものとして扱われます。)
 
-	$(LI There are no __cdecl, __far, __stdcall, __declspec, or other
-	such nonstandard C++ extensions in D.)
+	$(LI Dでは、__cdecl, __far, __stdcall, __declspec,
+		などC++標準外の拡張呼び出し規約はサポートされません)
 
-	$(LI There are no volatile type modifiers in D.)
+	$(LI 型修飾子 volatile は D にはありません。)
 
-	$(LI Strings are not 0 terminated in D. See "Data Type Compatibility"
-	for more information about this. However, string literals in D are
-	0 terminated.)
+	$(LI Dの文字列は0終端になっていません。
+		詳しくは "データ型の互換性" をご覧下さい。
+		ただし、文字列リテラルは0終端になっています。)
 
 	)
 
-	$(P C++ functions that reside in namespaces cannot be
-	direcly called from D.
+	$(P 名前空間の中にある C++ 
+	の関数は、直接 D から呼び出すことができません。
 	)
 
 
-<h2>Calling Global D Functions From C++</h2>
+<h2>D のグローバル関数を C++ から呼ぶ</h2>
 
-	$(P To make a D function accessible from C++, give it
-	C++ linkage:)
+	$(P D の関数を C++ からアクセス可能にするには、
+	C++ リンケージで宣言します:)
 
 ---
 import std.stdio;
@@ -154,7 +154,7 @@ void main() {
 }
 ---
 
-	$(P The C++ end looks like:)
+	$(P C++ 側はこんな風になります:)
 
 $(CPPCODE
 int foo(int i, int j, int k);
@@ -164,7 +164,7 @@ void bar() {
 }
 )
 
-	$(P Compiling, linking, and running produces the output:)
+	$(P コンパイル、リンクして実行すると以下の出力が得られます:)
 
 $(CONSOLE
 i = 6
@@ -173,24 +173,24 @@ k = 8
 )
 
 
-<h2>Classes</h2>
+<h2>クラス</h2>
 
-	$(P D classes are singly rooted by Object, and have an
-	incompatible layout from C++ classes.
-	D interfaces, however, are very similar to C++ single
-	inheritance class heirarchies.
-	So, a D interface with the attribute of $(CODE extern (C++))
-	will have a virtual function pointer table (vtbl[]) that
-	exactly matches C++'s.
-	A regular D interface has a vtbl[] that differs in that
-	the first entry in the vtbl[] is a pointer to D's RTTI info,
-	whereas in C++ the first entry points to the first virtual
-	function.
+	$(P D のクラスは常に Object から派生していて、
+	また、C++ のクラスのレイアウトと互換性がありません。
+	しかし、D の interface は、
+	C++ の単一継承のクラス階層と非常によく似ています。
+	そこで、$(CODE extern (C++)) 属性付きで宣言された D の interface は、
+	仮想関数テーブル (vtbl[]) の形式を
+	完全に C++ と合わせるようにしました。
+	通常の D の interface は、vtbl[] の先頭に
+	D の RTTI 情報へのポインタが入るという少し違った形式となっています
+	（C++ の場合、
+	先頭には一つめの仮想関数へのポインタが格納されます）。
 	)
 
-<h2>Calling C++ Virtual Functions From D</h2>
+<h2>C++ の仮想関数を D から呼ぶ</h2>
 
-	$(P Given C++ source code defining a class like:)
+	$(P 以下のようにクラスを定義しているC++のソースがあったとします:)
 
 $(CPPCODE
 #include &lt;iostream&gt;
@@ -214,7 +214,7 @@ D *getD() {
 }
 )
 
-	$(P We can get at it from D code like:)
+	$(P D のコードでこれを扱うには:)
 
 ---
 extern (C++) {
@@ -231,9 +231,9 @@ void main() {
 }
 ---
 
-<h2>Calling D Virtual Functions From C++</h2>
+<h2>D の仮想関数をC++から呼ぶ</h2>
 
-	$(P Given D code like:)
+	$(P D のコード:)
 
 ---
 extern (C++) int callE(E);
@@ -258,7 +258,7 @@ void main() {
 }
 ---
 
-	$(P The C++ code to access it looks like:)
+	$(P に C++ コードからアクセスするには:)
 
 $(CPPCODE
 class E {
@@ -272,82 +272,82 @@ int callE(E *e) {
 }
 )
 
-	$(P Note:)
+	$(P 注:)
 
 	$(UL
-	$(LI non-virtual functions, and static member functions,
-	cannot be accessed.)
+	$(LI 非 virtual 関数と
+	static メンバ関数にはアクセスできません。)
 
-	$(LI class fields can only be accessed via virtual getter
-	and setter methods.)
+	$(LI クラスのフィールドには、getter/setter
+		を仮想関数で用意することでしかアクセスできません。)
 	)
 
-<h2>Function Overloading</h2>
+<h2>関数オーバーロード</h2>
 
-	$(P C++ and D follow different rules for function overloading.
-	D source code, even when calling $(CODE extern (C++)) functions,
-	will still follow D overloading rules.
+	$(P C++ と D では関数オーバーロードの規則が異なっています。
+	D のソースコードでは、たとえ $(CODE extern (C++)) な関数であっても、
+	D のオーバーロード規則に従います。
 	)
 
 
-<h2>Storage Allocation</h2>
+<h2>メモリ割り当て</h2>
 
-	$(P C++ code explicitly manages memory with calls to
-	$(CODE ::operator new()) and $(CODE ::operator delete()).
-	D allocates memory using the D garbage collector,
-	so no explicit delete's are necessary.
-	D's new and delete are not compatible with C++'s
-	$(CODE ::operator new) and $(CODE::operator delete).
-	Attempting to allocate memory with C++ $(CODE ::operator new)
-	and deallocate it with D's $(CODE delete), or vice versa, will
-	result in miserable failure.
+	$(P C++ では、
+	$(CODE ::operator new()) や $(CODE ::operator delete()) によって明示的にメモリを管理します。
+	一方 D ではガベージコレクタでメモリを割り当てるので、
+	明示的な delete は不要です。
+	D の new と delete は C++ の
+	$(CODE ::operator new) や $(CODE::operator delete) と互換性がありません。
+	C++ の $(CODE ::operator new) で割り当てたメモリを
+	D の $(CODE delete) で解放しようとしたり、あるいはその逆をやろうとすると、
+	悲惨なことになってしまうでしょう。
 	)
 
-	$(P D can still explicitly allocate memory using std.c.stdlib.malloc()
-	and std.c.stdlib.free(), these are useful for connecting to C++
-	functions that expect malloc'd buffers, etc.
+	$(P mallocで確保されたバッファを要求するようなC++の関数と連携するために、
+	D では c.stdlib.malloc() や c.stdlib.free() の呼び出しによって
+	明示的にメモリ管理を行うこともできます。
 	)
 
-	$(P If pointers to D garbage collector allocated memory are passed to
-	C++ functions, it's critical to ensure that that memory will not
-	be collected by the garbage collector before the C++ function is
-	done with it. This is accomplished by:
+	$(P Dのガベージコレクタで確保したメモリへのポインタを渡すには、
+	C++の関数がそのメモリを使い終わる前にガベージコレクタが領域を回収してしまう、
+	といった事故が起きないことを確かめなくてはなりません。
+	これは幾つかの方法で実現できます：
 	)
 
 	$(UL 
 
-	$(LI Making a copy of the data using std.c.stdlib.malloc() and passing
-	the copy instead.)
+	$(LI std.c.stdlib.malloc() で確保した領域にデータをコピーし、
+		そちらを代わりに渡す。)
 
-	$(LI Leaving a pointer to it on the stack (as a parameter or
-	automatic variable), as the garbage collector will scan the stack.)
+	$(LI その領域へのポインタをスタック上（引数か、自動変数）に残しておく。
+		ガベージコレクタはスタック上のオブジェクトは生きていると判定します。)
 
-	$(LI Leaving a pointer to it in the static data segment, as the
-	garbage collector will scan the static data segment.)
+	$(LI Lその領域へのポインタを静的データ領域に残しておく。
+		ガベージコレクタは静的データ領域のオブジェクトは生きていると判定します。)
 
-	$(LI Registering the pointer with the garbage collector with the
-	std.gc.addRoot() or std.gc.addRange() calls.)
+	$(LI そのポインタを、std.gc.addRoot() か std.gc.addRange()
+		によってガベージコレクタへ登録する。)
 
 	)
 
-	$(P An interior pointer to the allocated memory block is sufficient
-	to let the GC
-	know the object is in use; i.e. it is not necessary to maintain
-	a pointer to the beginning of the allocated memory.
+	$(P オブジェクトがまだ使われていることを
+	GC に知らせるには、
+	割り当てられたメモリ領域の内部へのポインタがあれば十分です。
+	領域の先頭へのポインタを保持しておく必要はありません。
 	)
 
-	$(P The garbage collector does not scan the stacks of threads not
-	created by the D Thread interface. Nor does it scan the data
-	segments of other DLL's, etc.
+	$(P Dによって作られた以外のスレッドのスタックや、
+	他のDLLに属するデータセグメントについては、
+	ガベージコレクタによって探索されません。
 	)
 
-<h2>Data Type Compatibility</h2>
+<h2>データ型の互換性</h2>
 
-	$(TABLE2 D And C Type Equivalence,
+	$(TABLE2 D と C の対応する型,
 
 	$(TR
-	$(TH D type)
-	$(TH C type)
+	$(TH D の型)
+	$(TH C の型)
 	)
 
 	$(TR
@@ -367,17 +367,17 @@ int callE(E *e) {
 
 	$(TR
 	$(TD $(B char))
-	$(TD $(B char) (chars are unsigned in D))
+	$(TD $(B char) (char は D では unsigned))
 	)
 
 	$(TR
 	$(TD $(B wchar))
-	$(TD $(B wchar_t) (when sizeof(wchar_t) is 2))
+	$(TD $(B wchar_t) (sizeof(wchar_t) が 2 のとき))
 	)
 
 	$(TR
 	$(TD $(B dchar))
-	$(TD $(B wchar_t) (when sizeof(wchar_t) is 4))
+	$(TD $(B wchar_t) (sizeof(wchar_t) が 4 のとき))
 	)
 
 	$(TR
@@ -427,32 +427,32 @@ int callE(E *e) {
 
 	$(TR
 	$(TD $(B ifloat))
-	$(TD no equivalent)
+	$(TD なし)
 	)
 
 	$(TR
 	$(TD $(B idouble))
-	$(TD no equivalent)
+	$(TD なし)
 	)
 
 	$(TR
 	$(TD $(B ireal))
-	$(TD no equivalent)
+	$(TD なし)
 	)
 
 	$(TR
 	$(TD $(B cfloat))
-	$(TD no equivalent)
+	$(TD なし)
 	)
 
 	$(TR
 	$(TD $(B cdouble))
-	$(TD no equivalent)
+	$(TD なし)
 	)
 
 	$(TR
 	$(TD $(B creal))
-	$(TD no equivalent)
+	$(TD なし)
 	)
 
 	$(TR
@@ -472,7 +472,7 @@ int callE(E *e) {
 
 	$(TR
 	$(TD $(B class))
-	$(TD no equivalent)
+	$(TD なし)
 	)
 
 	$(TR
@@ -481,7 +481,7 @@ int callE(E *e) {
 	)
 
 	$(TR
-	$(TD no equivalent)
+	$(TD なし)
 	$(TD $(I type) $(B &amp;))
 	)
 
@@ -497,12 +497,12 @@ int callE(E *e) {
 
 	$(TR
 	$(TD $(I type)$(B []))
-	$(TD no equivalent)
+	$(TD なし)
 	)
 
 	$(TR
 	$(TD $(I type)$(B [)$(I type)$(B ]))
-	$(TD no equivalent)
+	$(TD なし)
 	)
 
 	$(TR
@@ -512,93 +512,93 @@ int callE(E *e) {
 
 	$(TR
 	$(TD $(I type) $(B delegate)$(B $(LPAREN))$(I parameters)$(B $(RPAREN)))
-	$(TD no equivalent)
+	$(TD なし)
 	)
 
 	)
 
-	$(P These equivalents hold for most 32 bit C++ compilers.
-	The C++ standard
-	does not pin down the sizes of the types, so some care is needed.
+	$(P これらの対応関係は、ほとんどの 32 bit C++ コンパイラで成立します。
+	ただし、
+	C++標準ではそれぞれの型のサイズを明確に定めているわけではないので、注意が必要です。
 	)
 
-<h2>Structs and Unions</h2>
+<h2>構造体と共用体</h2>
 
-	$(P D structs and unions are analogous to C's.
+	$(P Dの構造体と共用体は、Cのそれとほぼ同じです。
 	)
 
-	$(P C code often adjusts the alignment and packing of struct members
-	with a command line switch or with various implementation specific
-	#pragma's. D supports explicit alignment attributes that correspond
-	to the C compiler's rules. Check what alignment the C code is using,
-	and explicitly set it for the D struct declaration.
+	$(P Cのコードでは、実装特有の#pragmaやコンパイラのコマンドスイッチによって、
+	構造体の整列を制御します。これに対応するものとして、D には
+	明示的なアラインメント属性が用意されています。
+	C側でのアラインメントを調べて、
+	D側の構造体宣言に明示的にその値を設定して下さい。
 	)
 
-	$(P D does not support bit fields. If needed, they can be emulated
-	with shift and mask operations.
-	$(DPLLINK htod.html, htod) will convert bit fields to inline functions that
-	do the right shift and masks.
+	$(P Dはビットフィールドをサポートしません。必要ならば、
+	シフトとビットマスク演算によってエミュレートできます。
+	$(DPLLINK htod.html, htod) 使うと、
+	ビットフィールドはシフトとマスクを使ったインライン関数に変換されます。
 	)
 
-<h2>Object Construction and Destruction</h2>
+<h2>オブジェクトの生成と破棄</h2>
 
-	$(P Similarly to storage allocation and deallocation, objects
-	constructed in D code should be destructed in D,
-	and objects constructed
-	in C++ should be destructed in C++ code.
+	$(P メモリ割り当てと解放と同じく、
+	D のコードで構築されたオブジェクトは、D のコードで破棄される必要があります。
+	同様に、
+	C++ で構築されたオブジェクトは C++ で破棄する必要があります。
 	)
 
-<h2>Special Member Functions</h2>
+<h2>特殊なメンバ関数</h2>
 
-	$(P D cannot call C++ special member functions, and vice versa.
-	These include constructors, destructors, conversion operators,
-	operator overloading, and allocators.
+	$(PD から C++ の特殊なメンバ関数を呼ぶことはできません。逆も不可能です。
+	"特殊なメンバ関数"とは、コンストラクタ、デストラクタ、キャスト演算子、
+	演算子オーバーロード、アロケータのことです。
 	)
 
-<h2>Runtime Type Identification</h2>
+<h2>実行時型識別 (RTTI)</h2>
 
-	$(P D runtime type identification
-	uses completely different techniques than C++.
-	The two are incompatible.)
+	$(P D の実行時型識別は、
+	C++とは完全に違う方式で実現されています。
+	この２つには互換性がありません。)
 
-<h2>C++ Class Objects by Value</h2>
+<h2>C++ クラスオブジェクトの値渡し</h2>
 
-	$(P D can access POD (Plain Old Data) C++ structs, and it can
-	access C++ class virtual functions by reference.
-	It cannot access C++ classes by value.
+	$(P D から POD (Plain Old Data) な C++ の構造体にアクセスすることは可能で、
+	また、参照経由で C++ のクラスの仮想関数にアクセスすることも可能です。
+	しかし、C++ のクラスに値としてアクセスすることはできません。
 	)
 
-<h2>C++ Templates</h2>
+<h2>C++ テンプレート</h2>
 
-	$(P D templates have little in common with C++ templates,
-	and it is very unlikely that any sort of reasonable method
-	could be found to express C++ templates in a link-compatible
-	way with D.
+	$(P C++ のテンプレートと D のテンプレートの共通点はほとんどありません。
+	また、C++
+	のテンプレートを
+	Dとのリンク互換性がある形で表現するうまい方法も見あたりません。
 	)
 
-	$(P This means that the C++ STL, and C++ Boost, likely will
-	never be accessible from D.
+	$(P このため、C++ の STL や Boost
+	が D から直接アクセスできるようになることは将来的にもおそらくないでしょう。
 	)
 
-<h2>Exception Handling</h2>
+<h2>例外処理</h2>
 
-	$(P D and C++ exception handling are completely different.
-	Throwing exceptions across the boundaries between D
-	and C++ code will likely not work.
+	$(P D と C++ の例外処理は完全に異なる物になっています。
+	このため、D と C++ の境界を越えるように例外を投げるコードは、
+	正しく動作しないと思われます。
 	)
 
-<h2>Future Developments</h2>
+<h2>将来の方向性</h2>
 
-	$(P How the upcoming C++0x standard will affect this is not
-	known.)
+	$(P 次期C++標準規格 C++0x がこの機能に影響するかどうかは、
+	さだかではありません。)
 
-	$(P Over time, more aspects of the C++ ABI may be accessible
-	directly from D.)
+	$(P 将来的には、C++ ABI のより多くの側面が
+	Dから直接アクセス可能になる予定です。)
 
 )
 
 Macros:
-	TITLE=Interfacing to C++
+	TITLE=C++とのインターフェイス
 	WIKI=InterfaceToCPP
 
 
