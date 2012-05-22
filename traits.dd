@@ -1,14 +1,14 @@
 Ddoc
 
-$(SPEC_S Traits,
+$(SPEC_S 特性,
 
-	$(P Traits are extensions to the language to enable
-	programs, at compile time, to get at information
-	internal to the compiler. This is also known as
-	compile time reflection.
-	It is done as a special, easily extended syntax (similar
-	to Pragmas) so that new capabilities can be added
-	as required.
+	$(P 特性 (trait) は、コンパイル時に、
+	プログラムからコンパイラの内部情報を取得できるようにする言語拡張です。
+	コンパイル時リフレクション
+	と呼ばれることもあります。
+	構文は(pragmaに似た)簡単に拡張可能な形式で、
+	新しい機能が必要になったら
+	すぐに追加できるようになっています。
 	)
 
 $(GRAMMAR
@@ -57,11 +57,11 @@ $(GNAME TraitsArgument):
 
 $(H2 $(GNAME isArithmetic))
 
-	$(P If the arguments are all either types that are arithmetic types,
-	or expressions that are typed as arithmetic types, then $(B true)
-	is returned.
-	Otherwise, $(B false) is returned.
-	If there are no arguments, $(B false) is returned.)
+	$(P 引数が全て、算術型であるか算術型の式である場合、
+	$(B true)
+	を返します。
+	それ以外の場合は $(B false) を返します。
+	引数が無い場合は $(B false) を返します。)
 
 ---
 import std.stdio;
@@ -75,7 +75,7 @@ void main() {
 }
 ---
 
-	$(P Prints:)
+	$(P 出力:)
 
 $(CONSOLE
 true
@@ -86,41 +86,41 @@ false
 
 $(H2 $(GNAME isFloating))
 
-	$(P Works like $(B isArithmetic), except it's for floating
-	point types (including imaginary and complex types).)
+	$(P $(B isArithmetic) と同じように、浮動小数点数型
+	(虚数型と複素数型を含む) かどうかを判定します。)
 
 $(H2 $(GNAME isIntegral))
 
-	$(P Works like $(B isArithmetic), except it's for integral
-	types (including character types).)
+	$(P $(B isArithmetic) と同じように、整数型
+	(文字型を含む) かどうかを判定します。)
 
 $(H2 $(GNAME isScalar))
 
-	$(P Works like $(B isArithmetic), except it's for scalar
-	types.)
+	$(P $(B isArithmetic) と同じように、スカラ型
+	かどうかを判定します。)
 
 $(H2 $(GNAME isUnsigned))
 
-	$(P Works like $(B isArithmetic), except it's for unsigned
-	types.)
+	$(P $(B isArithmetic) と同じように、符号無し型
+	かどうかを判定します。)
 
 $(H2 $(GNAME isStaticArray))
 
-	$(P Works like $(B isArithmetic), except it's for static array
-	types.)
+	$(P $(B isArithmetic) と同じように、静的配列型
+	かどうかを判定します。)
 
 $(H2 $(GNAME isAssociativeArray))
 
-	$(P Works like $(B isArithmetic), except it's for associative array
-	types.)
+	$(P $(B isArithmetic) と同じように、連想配列型
+	かどうかを判定します。)
 
 $(H2 $(GNAME isAbstractClass))
 
-	$(P If the arguments are all either types that are abstract classes,
-	or expressions that are typed as abstract classes, then $(B true)
-	is returned.
-	Otherwise, $(B false) is returned.
-	If there are no arguments, $(B false) is returned.)
+	$(P 引数が全て、abstractクラス型であるかabstractクラス型の式である場合、
+	$(B true)
+	を返します。
+	それ以外の場合は $(B false) を返します。
+	引数が無い場合は $(B false) を返します。)
 
 ---
 import std.stdio;
@@ -136,7 +136,7 @@ void main() {
 }
 ---
 
-	$(P Prints:)
+	$(P 出力:)
 
 $(CONSOLE
 true
@@ -147,20 +147,20 @@ false
 
 $(H2 $(GNAME isFinalClass))
 
-	$(P Works like $(B isAbstractClass), except it's for final
-	classes.)
+	$(P $(B isAbstractClass) と同じように、finalクラス
+	かどうかを判定します。)
 
 $(H2 $(GNAME isVirtualFunction))
 
-	$(P The same as $(GLINK isVirtualMethod), except
-	that final functions that don't override anything return true.
+	$(P $(GLINK isVirtualMethod) と同様ですが、
+	他の関数のオーバーライドでない final 関数に対しては true を返します。
 	)
 
 $(H2 $(GNAME isVirtualMethod))
 
-	$(P Takes one argument. If that argument is a virtual function,
-	$(B true) is returned, otherwise $(B false).
-	Final functions that don't override anything return false.
+	$(P 引数を１つ取ります。その引数が仮想関数なら
+	$(B true)、そうでなければ $(B false) を返します。
+	他の関数のオーバーライドでない final 関数に対しては false を返します。
 	)
 
 ---
@@ -182,8 +182,8 @@ void main() {
 
 $(H2 $(GNAME isAbstractFunction))
 
-	$(P Takes one argument. If that argument is an abstract function,
-	$(B true) is returned, otherwise $(B false).
+	$(P 引数を１つ取ります。その引数がabstract関数なら
+	$(B true)、そうでなければ $(B false) を返します。
 	)
 
 ---
@@ -210,8 +210,8 @@ void main() {
 
 $(H2 $(GNAME isFinalFunction))
 
-	$(P Takes one argument. If that argument is a final function,
-	$(B true) is returned, otherwise $(B false).
+	$(P 引数を１つ取ります。その引数がfinal関数なら
+	$(B true)、そうでなければ $(B false) を返します。
 	)
 
 ---
@@ -240,17 +240,17 @@ void main() {
 
 $(H2 $(GNAME isStaticFunction))
 
-	$(P Takes one argument. If that argument is a static function,
-	meaning it has no context pointer,
-	$(B true) is returned, otherwise $(B false).
+	$(P 引数を一つ取り、それが静的関数ならば、
+	つまり context pointer を持たないならば
+	$(B true)、そうでなければ $(B false) を返します。
 	)
 
 
 $(H2 $(GNAME isRef), $(GNAME isOut), $(GNAME isLazy))
 
-	$(P Takes one argument. If that argument is a declaration,
-	$(B true) is returned if it is $(D_KEYWORD ref), $(D_KEYWORD out),
-	or $(D_KEYWORD lazy), otherwise $(B false).
+	$(P 引数を１つとります。引数が宣言であった場合、
+	それぞれ $(D_KEYWORD ref), $(D_KEYWORD out),
+	$(D_KEYWORD lazy) ならば $(B true) を返し、それ以外では $(B false) になります。
 	)
 
 ---
@@ -275,11 +275,11 @@ void foolazy(lazy int x) {
 
 $(H2 $(GNAME hasMember))
 
-	$(P The first argument is a type that has members, or
-	is an expression of a type that has members.
-	The second argument is a string.
-	If the string is a valid property of the type,
-	$(B true) is returned, otherwise $(B false).
+	$(P 第一引数には、メンバがあるか調べたい型か、
+	メンバがあるか調べたい型を持つ式を指定します。
+	第二引数は文字列です。
+	その文字列が指定された型の有効なプロパティだった場合
+	$(B true)、そうでなければ $(B false) を返します。
 	)
 
 ---
@@ -301,17 +301,17 @@ void main() {
 
 $(H2 $(GNAME identifier))
 
-	$(P Takes one argument, a symbol. Returns the identifier
-	for that symbol as a string literal.
+	$(P シンボルを１つ引数としてとり、
+	そのシンボルの識別子を文字列として返します。
 	)
 
 
 $(H2 $(GNAME getMember))
 
-	$(P Takes two arguments, the second must be a string.
-	The result is an expression formed from the first
-	argument, followed by a $(SINGLEQUOTE .), followed by the second
-	argument as an identifier.
+	$(P 二つ引数を取り、
+	第二引数は文字列です。
+	"第一引数 . 第二引数を識別子化したもの"
+	という形の式を返します。
 	)
 
 ---
@@ -325,21 +325,21 @@ struct S {
 void main() {
   S s;
 
-  __traits(getMember, s, "mx") = 1;  // same as s.mx=1;
+  __traits(getMember, s, "mx") = 1;  // s.mx=1; と同じ
   writeln(__traits(getMember, s, "m" ~ "x")); // 1
 
-  __traits(getMember, S, "mx") = 1;  // error, no this for S.mx
+  __traits(getMember, S, "mx") = 1;  // エラー、S.mx のための this がない
   __traits(getMember, S, "my") = 2;  // ok
 }
 ---
 
 $(H2 $(GNAME getOverloads))
 
-	$(P The first argument is a class type or an expression of
-	class type.
-	The second argument is a string that matches the name of
-	one of the functions of that class.
-	The result is a tuple of all the overloads of that function.
+	$(P 第一引数にはクラス型か、
+	クラス型を持つ式を指定します。
+	第二引数には、
+	そのクラスの関数名にマッチする文字列を指定します。
+	結果は、その名前で定義されている関数全ての配列です。
 	)
 
 ---
@@ -367,7 +367,7 @@ void main() {
 }
 ---
 
-	$(P Prints:)
+	$(P 出力:)
 
 $(CONSOLE
 void()
@@ -379,18 +379,18 @@ int()
 
 $(H2 $(GNAME getVirtualFunctions))
 
-	$(P The same as $(GLINK getVirtualMethods), except that
-	final functions that do not override anything are included.
+	$(P $(GLINK getVirtualMethods) と同様ですが、
+	他の関数のオーバーライドでない final 関数も含まれます。
 	)
 
 $(H2 $(GNAME getVirtualMethods))
 
-	$(P The first argument is a class type or an expression of
-	class type.
-	The second argument is a string that matches the name of
-	one of the functions of that class.
-	The result is a tuple of the virtual overloads of that function.
-	It does not include final functions that do not override anything.
+	$(P 第一引数にはクラス型か、
+	クラス型を持つ式を指定します。
+	第二引数には、
+	そのクラスの関数名にマッチする文字列を指定します。
+	結果は、その名前で定義されている仮想関数全ての配列です。
+	他の関数のオーバーライドでない final 関数が含まれません。
 	)
 
 ---
@@ -418,7 +418,7 @@ void main() {
 }
 ---
 
-	$(P Prints:)
+	$(P 出力:)
 
 $(CONSOLE
 void()
@@ -430,30 +430,30 @@ int()
 
 $(H2 $(GNAME parent))
 
-	$(P Takes a single argument which must evaluate to a symbol.
-	The result is the symbol that is the parent of it.
+	$(P シンボル一つに評価される引数を一つとり、
+	その親シンボルを返します。
 	)
 
 $(H2 $(GNAME classInstanceSize))
 
-	$(P Takes a single argument, which must evaluate to either
-	a class type or an expression of class type.
-	The result
-	is of type $(CODE size_t), and the value is the number of
-	bytes in the runtime instance of the class type.
-	It is based on the static type of a class, not the
-	polymorphic type.
+	$(P クラス型かクラス型を持つ式一つを
+	引数に取ります。
+	返値は
+	$(CODE size_t) 型で、
+	値はそのクラスのインスタンスが消費するバイト数になります。
+	この値は、クラスの静的型に基づいたサイズです。
+	多態は考慮されません。
 	)
 
 $(H2 $(GNAME allMembers))
 
-	$(P Takes a single argument, which must evaluate to either
-	a type or an expression of type.
-	A tuple of string literals is returned, each of which
-	is the name of a member of that type combined with all
-	of the members of the base classes (if the type is a class).
-	No name is repeated.
-	Builtin properties are not included.
+	$(P 型か、
+	型を持つ式一つを引数にとります。
+	返値は文字列リテラルのタプルで、
+	指定された型及びその基底クラスの全てのメンバの
+	名前が格納されています。
+	名前が重複することはありません。
+	また、組み込みのプロパティは含まれません。
 	)
 
 ---
@@ -473,18 +473,18 @@ void main() {
 }
 ---
 
-	$(P The order in which the strings appear in the result
-	is not defined.)
+	$(P 結果の文字列配列がどのような順番になっているかは
+	特に定義されていません。)
 
 $(H2 $(GNAME derivedMembers))
 
-	$(P Takes a single argument, which must evaluate to either
-	a type or an expression of type.
-	A tuple of string literals is returned, each of which
-	is the name of a member of that type.
-	No name is repeated.
-	Base class member names are not included.
-	Builtin properties are not included.
+	$(P 型か、
+	型を持つ式一つを引数にとります。
+	返値は文字列リテラルのタプルで、
+	指定された型の全てのメンバの名前が格納されています。
+	名前が重複することはありません。
+	基底クラスのメンバは含まれません。
+	また、組み込みのプロパティは含まれません。
 	)
 
 ---
@@ -503,13 +503,13 @@ void main() {
 }
 ---
 
-	$(P The order in which the strings appear in the result
-	is not defined.)
+	$(P 結果の文字列配列がどのような順番になっているかは
+	特に定義されていません。)
 
 $(H2 $(GNAME isSame))
 
-	$(P Takes two arguments and returns bool $(B true) if they
-	are the same symbol, $(B false) if not.)
+	$(P 二つの引数を受け取り、同じシンボルならば $(B true)、
+	そうでなければ $(B false) を返します。)
 
 ---
 import std.stdio;
@@ -529,19 +529,19 @@ void main() {
 }
 ---
 
-	$(P If the two arguments are expressions made up of literals
-	or enums that evaluate to the same value, true is returned.)
+	$(P 二つの引数がリテラルとenumで構成された式であって、
+	同じ値に評価されれば、true が返ります。)
 
 $(H2 $(GNAME compiles))
 
-	$(P Returns a bool $(B true) if all of the arguments
-	compile (are semantically correct).
-	The arguments can be symbols, types, or expressions that
-	are syntactically correct.
-	The arguments cannot be statements or declarations.
+	$(P 全ての引数がコンパイルが通る(意味的に正しい) ならば、
+	$(B true) を返します。
+	引数としては、
+	文法的に正しいシンボル,型,式のいずれかを指定できます。
+	文や宣言を引数として指定することはできません。
 	)
 
-	$(P If there are no arguments, the result is $(B false).)
+	$(P ゼロ引数で呼び出した場合 $(B false) となります。)
 
 ---
 import std.stdio;
@@ -568,19 +568,19 @@ void main() {
 }
 ---
 
-	$(P This is useful for:)
+	$(P 使い方としては、例えばこんなものがあります:)
 
 	$(UL
-	$(LI Giving better error messages inside generic code than
-	the sometimes hard to follow compiler ones.)
-	$(LI Doing a finer grained specialization than template
-	partial specialization allows for.)
+	$(LI 複雑なテンプレート定義の内部で、
+	読みやすいエラーメッセージを提供する)
+	$(LI テンプレートの部分特殊化よりも
+	粒度の細かい特殊化を行う)
 	)
 
 )
 
 Macros:
-	TITLE=Traits
+	TITLE=特性
 	WIKI=Traits
 	CATEGORY_SPEC=$0
 	GBLINK=$(LINK2 #$0, $(B $0))
