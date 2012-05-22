@@ -1,20 +1,20 @@
 Ddoc
 
-$(COMMUNITY Template Comparison,
+$(COMMUNITY テンプレートの比較,
 
-$(P C++ pioneered templates and template metaprogramming, and continues
-to improve on it with C++0x.
-The D programming language is the first to comprehensively reengineer
-templates based on the C++ experience.
-Since C++0x is not a ratified standard yet, proposed changes to C++
-are subject to change.)
+$(PC++ がテンプレートとテンプレートメタプログラミングの先駆けとなり、
+C++0x へと改善が進んでいます。
+プログラミング言語 D は、
+C++ での経験に基づいて、テンプレートを完全に設計し直した最初の言語です。
+C++0x はこの記事の執筆時点ではまだ批准された標準規格ではないため、
+C++ への変更提案の内容は変わることがあります。)
 
 	<table border=2 cellpadding=4 cellspacing=0 class="comp">
-	<caption>Template Comparison Table</caption>
+	<caption>テンプレート比較表</caption>
 
 	<thead>
 	$(TR
-	$(TH Feature)
+	$(TH 機能)
 	$(TH D)
 	$(TH C++98)
 	$(TH C++0x)
@@ -24,14 +24,14 @@ are subject to change.)
 	<tbody>
 
 	$(TR
-	$(TD Argument list delineation)
-	$(TD Uses !( ), as in Foo!(int))
-	$(TD Uses &lt; &gt; as in Foo&lt;int&gt;)
-	$(TD No change)
+	$(TD 引数の渡し方)
+	$(TD !( ) を使う: Foo!(int))
+	$(TD &lt; &gt; を使う: Foo&lt;int&gt;)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Class Templates)
+	$(TD クラステンプレート)
 	$(TD Yes:
 ---
 class Foo(T)
@@ -49,11 +49,11 @@ template&lt;class T&gt;
 };
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Function Templates)
+	$(TD 関数テンプレート)
 	$(TD Yes:
 ---
 T foo(T)(T i)
@@ -71,28 +71,28 @@ template&lt;class T&gt;
 }
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Member Templates)
+	$(TD メンバテンプレート)
 	$(TD Yes)
 	$(TD Yes)
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Constructor Templates)
+	$(TD コンストラクタテンプレート)
 	$(TD No)
 	$(TD Yes)
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Parameterize any Declaration)
-	$(TD Yes, classes, functions, typedefs,
-	variables, enums, etc. can be parameterized,
-	such as this variable:
+	$(TD 任意の宣言のパラメタ化)
+	$(TD Yes。クラス、関数、typedef、
+	変数、enum などがパラメタ化できます。
+	例:
 ---
 template Foo(T)
 {
@@ -100,13 +100,13 @@ template Foo(T)
 }
 ---
 )
-	$(TD No, only classes and functions)
-	$(TD No change)
+	$(TD No。クラスと関数のみ)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Template Typedefs: Create an alias that binds to some but not all
-	of the template	parameters)
+	$(TD typedefテンプレート: テンプレート引数を使った宣言への
+	alias を作る)
 	$(TD Yes:
 ---
 class Foo(T, U) { }
@@ -129,7 +129,7 @@ MyFoo&lt;unsigned&gt; f;
 
 
 	$(TR
-	$(TD Sequence Constructors)
+	$(TD シーケンス・コンストラクタ)
 	$(TD No)
 	$(TD No)
 	$(TD Yes:
@@ -140,14 +140,14 @@ Foo&lt;double&gt; f = { 1.2, 3, 6.8 };
 	)
 
 	$(TR
-	$(TD Concepts)
+	$(TD Concept)
 $(V1
-	$(TD No, but much the same effect can be achieved with
-	 $(GLINK2 version, StaticIfCondition) and
-	 $(LINK2 version.html#StaticAssert, static asserts))
+	$(TD No。ただしほぼ同じ効果が
+	 $(GLINK2 version, StaticIfCondition) と
+	 $(LINK2 version.html#StaticAssert, static assert) で得られます)
 )
 $(V2
-	$(TD Yes: $(LINK2 cpp0x.html#concepts, Constraints))
+	$(TD Yes: $(LINK2 cpp0x.html#concepts, テンプレート制約))
 )
 	$(TD No)
 	$(TD Yes: $(LINK2 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1849.pdf, Concepts for C++0x N1849))
@@ -155,7 +155,7 @@ $(V2
 
 
 	$(TR
-	$(TD Recursive Templates)
+	$(TD 再帰テンプレート)
 	$(TD Yes:
 ---
 template factorial(int n)
@@ -187,12 +187,12 @@ template&lt;&gt; class factorial&lt;1&gt;
 };
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Conditional Compilation based on
-	Template Arguments)
+	$(TD テンプレート引数に基づく
+	条件コンパイル)
 	$(TD Yes:
 ---
 template factorial(int n)
@@ -222,11 +222,11 @@ template&lt;int n&gt; class factorial
 };
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Template Declarations (with no definition))
+	$(TD テンプレートの(定義なしの)宣言)
 	$(TD No)
 	$(TD Yes:
 $(CPPCODE2
@@ -234,11 +234,11 @@ template&lt;class T&gt;
   class Foo;
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Grouping templates with the same parameters together)
+	$(TD 同じ引数のテンプレートのグループ化)
 	$(TD Yes:
 ---
 template Foo(T, U)
@@ -250,7 +250,7 @@ Foo!(int,long).Bar b;
 return Foo!(char,int).foo('c',3);
 ---
 )
-	$(TD No, each must be separate:
+	$(TD No。それぞれ分離して書きます:
 $(CPPCODE2
 template&lt;class T, class U&gt;
   class Foo_Bar { ... };
@@ -260,11 +260,11 @@ Foo_Bar&lt;int,long&gt; b;
 return Foo_foo&lt;char,int&gt('c',3);
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Compile time execution of functions)
+	$(TD 関数のコンパイル時実行)
 	$(TD $(DDSUBLINK function, interpretation, Yes):
 ---
 int factorial(int i)
@@ -277,19 +277,19 @@ static f = factorial(6);
 ---
 	)
 	$(TD No)
-	$(TD Named constant expressions with parameters:
+	$(TD パラメタでの名前付き定数式:
 	   $(LINK2 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n1972.pdf, Generalized Constant Expressions N1972))
 	)
 
 	$(TR
-	$(TH Parameters)
+	$(TH 引数)
 	$(TH D)
 	$(TH C++98)
 	$(TH C++0x)
 	)
 
 	$(TR
-	$(TD Type Parameters)
+	$(TD 型引数)
 	$(TD Yes:
 ---
 class Foo(T)
@@ -309,11 +309,11 @@ template&lt;class T&gt;
 Foo&lt;int&gt; f;
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Integral Parameters)
+	$(TD 整数引数)
 	$(TD Yes:
 ---
 void foo(int i)()
@@ -331,19 +331,19 @@ template&lt;int i&gt;
 }
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Pointer Parameters)
-	$(TD Yes, a pointer to object or function)
-	$(TD Yes, a pointer to object or function)
-	$(TD No change)
+	$(TD ポインタ引数)
+	$(TD Yes。オブジェクトか関数へのポインタ)
+	$(TD Yes。オブジェクトか関数へのポインタ)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Reference Parameters)
-	$(TD No, D does not have a general reference type)
+	$(TD 参照引数)
+	$(TD No。D には参照型がありません)
 	$(TD Yes:
 $(CPPCODE2
 template&lt;double& D&gt;
@@ -353,20 +353,20 @@ template&lt;double& D&gt;
 }
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Pointer to Member Parameters)
-	$(TD No, D does not have pointers to members, it has
-	  $(LINK2 type.html#delegates, delegates),
-	  which can be used as parameters)
+	$(TD メンバポインタ引数)
+	$(TD No。D にはメンバへのポインタがありません。代わりに
+	  $(LINK2 type.html#delegates, delegate)
+	  があって、これは引数として使えます)
 	$(TD Yes)
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Template Template Parameters)
+	$(TD テンプレートテンプレート引数)
 	$(TD Yes:
 ---
 class Foo(T, alias C)
@@ -385,12 +385,12 @@ template&lt;class T,
 };
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Alias Parameters)
-	$(TD Yes, any symbol can be passed to a template as an alias:
+	$(TD alias 引数)
+	$(TD Yes。任意のシンボルをテンプレート引数にaliasとして渡すことが可能:
 ---
 void bar(int);
 void bar(double);
@@ -403,11 +403,11 @@ foo!(double, bar)(1);
 ---
 )
 	$(TD No)
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Floating Point Parameters)
+	$(TD 浮動小数点数引数)
 	$(TD Yes:
 ---
 class Foo(double D)
@@ -419,11 +419,11 @@ Foo!(1.6) F;
 ---
 )
 	$(TD No)
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD String Parameters)
+	$(TD 文字列引数)
 	$(TD Yes:
 ---
 void foo(char[] format)(int i)
@@ -435,25 +435,25 @@ foo!("i = %s")(3);
 ---
 )
 	$(TD No)
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Local Class Parameters)
+	$(TD ローカルクラス引数)
 	$(TD Yes)
 	$(TD No)
 	$(TD Issue N1945)
 	)
 
 	$(TR
-	$(TD Local Variable Parameters)
+	$(TD ローカル変数引数)
 	$(TD Yes)
 	$(TD No)
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Parameter Default Values)
+	$(TD 引数のデフォルト値)
 	$(TD Yes:
 ---
 class Foo(T = int)
@@ -471,11 +471,11 @@ template&lt;class T = int&gt;
 };
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Variadic Parameters)
+	$(TD 可変個引数)
 	$(TD Yes, $(LINK2 variadic-function-templates.html, Variadic Templates):
 ---
 void print(A...)(A a)
@@ -490,14 +490,14 @@ void print(A...)(A a)
 	)
 
 	$(TR
-	$(TH Specializations)
+	$(TH 特殊化)
 	$(TH D)
 	$(TH C++98)
 	$(TH C++0x)
 	)
 
 	$(TR
-	$(TD Explicit Specialization)
+	$(TD 明示特殊化)
 	$(TD Yes:
 ---
 class Foo(T : int)
@@ -515,11 +515,11 @@ template&lt;&gt;
 };
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Partial Specialization)
+	$(TD 部分特殊化)
 	$(TD Yes:
 ---
 class Foo(T : T*, U)
@@ -537,11 +537,11 @@ template&lt;class T, class U&gt;
 };
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Partial specialization derived from multiple parameters)
+	$(TD 複数パラメタによる部分特殊化)
 	$(TD Yes:
 ---
 class Foo(T : Bar!(T, U), U)
@@ -559,48 +559,48 @@ template&lt;class T, class U&gt;
 };
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Can specializations exist without a primary template?)
+	$(TD プライマリテンプレートなしの特殊化)
 	$(TD Yes)
 	$(TD No)
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TH Other)
+	$(TH その他)
 	$(TH D)
 	$(TH C++98)
 	$(TH C++0x)
 	)
 
 	$(TR
-	$(TD Exported Templates)
-	$(TD Yes, it falls out as a natural consequence of modules)
-	$(TD Yes, though only in compilers based on EDG's front end)
-	$(TD No change)
+	$(TD テンプレートのexport)
+	$(TD Yes, モジュールを導入した自然な帰結です)
+	$(TD Yes, ただしEDGのフロントエンドを使ったコンパイラのみ)
+	$(TD 変更なし)
 	)
 
 	$(TR
 	$(TD $(SFINAE))
 	$(TD Yes)
 	$(TD Yes)
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Parse Template Definition Bodies before Instantiation)
+	$(TD インスタンス化の前のテンプレート定義本体の構文解析)
 	$(TD Yes)
-	$(TD Not required by Standard, but some implementations do)
-	$(TD No change)
+	$(TD 標準では要求されていないが、いくつかの実装はそうなっている)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Overloading Function Templates with Functions)
-	$(TD No, but the equivalent can be done with explicitly specialized
-	templates:
+	$(TD 関数テンプレートと関数のオーバーロード)
+	$(TD No, しかし、同等の効果が
+	明示的に特殊化したテンプレートで実現できます:
 ---
 void foo(T)(T t) { }
 void foo(T:int)(int t) { }
@@ -613,26 +613,26 @@ template&lt;class T&gt;
 void foo(int t) { }
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Implicit Function Template Instantiation)
+	$(TD 関数テンプレートの暗黙のインスタンス化)
 	$(TD Yes)
 	$(TD Yes)
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Templates can be evaluated in scope
-	  of instantiation rather than definition)
-	$(TD Yes, $(LINK2 mixin.html, Mixins))
-	$(TD No, but can be faked using macros)
-	$(TD No change)
+	$(TD 定義ではなくインスタンス化のスコープでの
+	  テンプレートの評価)
+	$(TD Yes, $(LINK2 mixin.html, mixin))
+	$(TD No, マクロで真似をすることは可能)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TH Parsing Idiosyncracies)
+	$(TH 構文解析面での特徴)
 	$(TH D)
 	$(TH C++98)
 	$(TH C++0x)
@@ -641,7 +641,7 @@ void foo(int t) { }
 
 
 	$(TR
-	$(TD Context-Free Grammar)
+	$(TD 文脈自由文法)
 	$(TD Yes:
 ---
 class Foo!(int i)
@@ -660,12 +660,12 @@ template&lt;int i&gt; class Foo
 Foo&lt;3 $(B &gt;) 4&gt; f; // $(ERROR)
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 
 	$(TR
-	$(TD Distinguish template arguments from other operators)
+	$(TD テンプレート引数と他の演算子の区別)
 	$(TD Yes:
 ---
 class Foo!(T)
@@ -693,15 +693,15 @@ Foo&lt;Bar&lt;1&gt;&gt; x1; // $(ERROR)
 Foo&lt;Bar&lt;1&gt; &gt; x2;
 )
 )
-	$(TD Partially fixed by
-	$(LINK2 http://www.open-std.org/JTC1/SC22/WG21/docs/papers/2005/n1757.html, Right Angle Brackets N1757)
+	$(TD $(LINK2 http://www.open-std.org/JTC1/SC22/WG21/docs/papers/2005/n1757.html, Right Angle Brackets N1757)
+	で部分的に改善
 	)
 
 	)
 
 
 	$(TR
-	$(TD Redeclaration of Template Parameter)
+	$(TD テンプレート引数の再宣言)
 	$(TD Yes:
 ---
 class Foo(T)
@@ -727,11 +727,11 @@ template&lt;class T&gt;
 };
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	$(TR
-	$(TD Dependent Base Class Lookup)
+	$(TD 基底クラスの依存型のlookup)
 	$(TD Yes:
 ---
 class Foo(T)
@@ -760,14 +760,14 @@ template&lt;class T&gt;
 };
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 
 
 
 	$(TR
-	$(TD Forward Referencing)
+	$(TD 前方参照)
 	$(TD Yes:
 ---
 int $(B g)(void *);
@@ -799,12 +799,12 @@ template&lt;class T&gt;
 int $(B g)(int i);
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 
 	$(TR
-	$(TD Member templates parseable without hints)
+	$(TD ヒントなしでメンバテンプレートの構文解析可能)
 	$(TD Yes:
 ---
 class Foo
@@ -831,12 +831,12 @@ template&lt;class T&gt; void abc(T *f)
 }
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 
 	$(TR
-	$(TD Dependent type members parseable without hints)
+	$(TD ヒントなしで依存メンバ型が構文解析可能)
 	$(TD Yes:
 ---
 class Foo(T)
@@ -855,7 +855,7 @@ template<class T> class Foo
 };
 )
 )
-	$(TD No change)
+	$(TD 変更なし)
 	)
 
 	</tbody>
@@ -864,7 +864,7 @@ template<class T> class Foo
 )
 
 Macros:
-	TITLE=Template Comparison
+	TITLE=テンプレートの比較
 	WIKI=TemplateComparison
 	NO=<td class="compNo">No</td>
 	NO1=<td class="compNo"><a href="$1">No</a></td>
