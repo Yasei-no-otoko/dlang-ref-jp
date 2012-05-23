@@ -1,6 +1,6 @@
 Ddoc
 
-$(SPEC_S Attributes,
+$(SPEC_S 属性,
 
 $(GRAMMAR
 $(GNAME AttributeSpecifier):
@@ -34,27 +34,27 @@ $(GNAME DeclarationBlock):
     $(B {) $(GLINK2 module, DeclDefs)$(OPT) $(B })
 )
 
-        $(P Attributes are a way to modify one or more declarations.
-        The general forms are:
+        $(P 属性とは、一つ、もしくは複数の宣言を修飾するものです。
+		一般的な構文は：
         )
 
 ---
-attribute declaration; // affects the declaration
+attribute declaration; // かかっている宣言に影響
 
-attribute:     // affects all declarations until the end of
-               // the current scope
+attribute:     // 現在のスコープが終わるまでの
+               // 全ての宣言に影響
   declaration;
   declaration;
   ...
 
-attribute {    // affects all declarations in the block
+attribute {    // ブロック内の全ての宣言に影響
   declaration;
   declaration;
   ...
 }
 ---
 
-<h2>$(LNAME2 linkage, Linkage Attribute)</h2>
+<h2>$(LNAME2 linkage, リンケージ属性)</h2>
 
 $(GRAMMAR
 $(GNAME LinkageAttribute):
@@ -69,42 +69,42 @@ $(GNAME LinkageType):
     $(B System)
 )
 
-        $(P D provides an easy way to call C functions and operating
-        system API functions, as compatibility with both is essential.
-        The $(I LinkageType) is case sensitive, and is meant to be
-        extensible by the implementation ($(B they are not keywords)).
-        $(B C) and $(B D) must be supplied, the others are what
-        makes sense for the implementation.
-        $(B C++) is reserved for future use.
-        $(B System) is the same as $(B Windows) on Windows platforms,
-        and $(B C) on other platforms.
-        $(B Implementation Note:)
-        for Win32 platforms, $(B Windows) and $(B Pascal) should exist.
+        $(P C やシステムのAPI関数との互換性は重要ですから、
+		Dはそれらを簡単に呼び出す手段を提供しています。
+        $(I LinkageType) は大文字小文字を区別し、
+		実装によって拡張されることを想定しています ($(B 予約語ではありません))。
+        $(B C) と $(B D) は必須ですが、
+		その他は実装によります。
+        $(B C++) は将来のために予約されています。
+        $(B System) は Windows 環境では $(B Windows) と同じ意味で、
+		それ以外の環境では $(B C) と同じ意味になります。
+        $(B 実装ノート:)
+        Win32向けのコンパイラは $(B Windows) と $(B Pascal) をサポートすべきです。
         )
 
-        $(P C function calling conventions are
-        specified by:
+        $(P C
+		の関数呼び出し規約を指定するには：
         )
 
 ---------------
 extern (C):
-  int foo(); // call foo() with C conventions
+  int foo(); // foo() は C の呼び出し規約で呼ばれる
 ---------------
 
-        $(P D conventions are:)
+        $(P Dの呼び出し規約ならば:)
 
 ---------------
 extern (D):
 ---------------
 
-        $(P or:)
+        $(P あるいは:)
 
 ---------------
 extern:
 ---------------
 
 
-        $(P Windows API conventions are:)
+        $(P Windows API の呼び出し規約は:)
 
 ---------------
 extern (Windows):
@@ -116,7 +116,7 @@ extern (Windows):
     );
 ---------------
 
-<h2>$(LNAME2 align, Align Attribute)</h2>
+<h2>$(LNAME2 align, アラインメント属性)</h2>
 
 $(GRAMMAR
 $(GNAME AlignAttribute):
@@ -124,69 +124,69 @@ $(GNAME AlignAttribute):
     $(B align) $(B $(LPAREN)) $(GLINK2 lex, IntegerLiteral) $(B $(RPAREN))
 )
 
-        $(P Specifies the alignment of struct members. $(B align) by itself
-        sets it to the default, which matches the default member alignment
-        of the companion C compiler. $(I Integer) specifies the alignment
-        which matches the behavior of the companion C compiler when non-default
-        alignments are used.
+        $(P 構造体メンバのアラインメントを指定します。 $(B align) と単独で書くと、
+		その環境のCコンパイラでのデフォルト値へ設定されます。
+        $(I Integer)
+		を指定すると、
+		そのバイト境界へとメンバを整列します。
         )
 
-        $(P Matching the behavior of the companion C compiler can have some
-        surprising results, such as the following for Digital Mars C++:
+        $(P 協調するCコンパイラと挙動を揃えるために、align
+		属性はしばしば不思議な動作をします。例えばDigital Mars C++の場合こうなります：
         )
 
 ---------------
 struct S {
-  align(4) byte a; // placed at offset 0
-  align(4) byte b; // placed at offset 1
+  align(4) byte a; // オフセット 0 に配置
+  align(4) byte b; // オフセット  に配置
 }
 ---------------
 
-        $(P $(I AlignAttribute) is meant for C ABI compatiblity, which is not
-        the same thing as binary compatibility across diverse platforms.
-        For that, use packed structs:
+        $(P $(I AlignAttribute) は、CのABIとの互換のために用意されており、
+		プラットフォーム間のバイナリ互換性のために用意されているものではありません。
+		そちらの目的には、構造体に明示的に詰め物を入れます：
         )
 
 ---------------
 align (1) struct S {
-  byte a;     // placed at offset 0
+  byte a;     // オフセット 0 に配置
   byte[3] filler1;
-  byte b;     // placed at offset 4
+  byte b;     // オフセット 4 に配置
   byte[3] filler2;
 }
 ---------------
 
-        $(P A value of 1 means that no alignment is done;
-        members are packed together.
+        $(P 1を指定すると整列は行われず、
+		全てのメンバがきっちり詰め込まれます。
         )
 
-        $(P Do not align references or pointers that were allocated
-        using $(I NewExpression) on boundaries that are not
-        a multiple of $(D size_t). The garbage collector assumes that pointers
-        and references to gc allocated objects will be on $(D size_t)
-        byte boundaries. If they are not, undefined behavior will
-        result.
+        $(P 
+		$(I NewExpression) で割り付けたメモリへの参照やポインタは、
+        $(D size_t) の倍数以外のバイト境界に揃えるのは避けてください。
+        ガベージコレクタは、GCの割り当てたオブジェクトへの参照やポインタは $(D size_t)
+        バイト境界に存在すると仮定して動作しています。
+		そうなっていない場合、動作は未定義です。
         )
 
-        $(P $(I AlignAttribute) is ignored when applied to declarations
-        that are not struct members.
-        Whether it applies to class members or not is implementation defined.
+        $(P $(I AlignAttribute) は、構造体や構造体メンバ以外に宣言された場合には、
+		無視されます。
+		クラスのメンバに適用されるかどうかは実装依存です。
         )
 
-        $(P The $(I AlignAttribute) is reset to the default when
-        entering a struct, union, class, or function scope, and restored
-        when exiting that scope.
-        It is not inherited from a base class.
+        $(P $(I AlignAttribute) は、struct、union、class、
+		あるいは関数スコープに入るときにデフォルトに戻され、
+		スコープを抜けると元に戻ります。
+		基底クラスからアラインメントが継承されることもありません。
         )
 
-<h2>$(LNAME2 deprecated, Deprecated Attribute)</h2>
+<h2>$(LNAME2 deprecated, deprecated 属性)</h2>
 
-        $(P It is often necessary to deprecate a feature in a library,
-        yet retain it for backwards compatibility. Such
-        declarations can be marked as deprecated, which means
-        that the compiler can be set to produce an error
-        if any code refers to deprecated
-        declarations:
+        $(P ライブラリには、
+		後方互換性のために非推奨の機能を残す必要が
+		しばしば生じます。このような機能の制限には 'deprecated'
+		と印をつけておきます。すると、
+		コンパイラスイッチの設定によって、
+		非推奨の機能を使うコードをエラーにすることが可能になります：
         )
 
 ---------------
@@ -196,13 +196,13 @@ deprecated
 }
 ---------------
 
-        $(P $(B Implementation Note:) The compiler should have a switch
-        specifying if deprecated declarations should be compiled with
-        out complaint or not.
+        $(P $(B 実装ノート:)
+		コンパイラは、
+		非推奨機能のコンパイルの際に警告するかしないかを指定するスイッチを用意しておくべきです。
         )
 
 
-<h2>Protection Attribute</h2>
+<h2>アクセス保護属性</h2>
 
 $(GRAMMAR
 $(GNAME ProtectionAttribute):
@@ -213,49 +213,49 @@ $(GNAME ProtectionAttribute):
     $(B export)
 )
 
-        $(P Protection is an attribute that is one of
+        $(P アクセス保護属性は、
         $(B private), $(B package), $(B protected),
-        $(B public) or $(B export).
+        $(B public), $(B export), のいずれか一つです。
         )
 
-        $(P Private means that only members of the enclosing class can access
-        the member, or members and functions in the same module as the
-        enclosing class.
-        Private members cannot be overridden.
-        Private module members are equivalent to $(B static) declarations
-        in C programs.
+        $(P private は、同じクラスのメンバのみが参照できる、
+		あるいは同じモジュールのクラス/関数のみが参照できることを示します。
+		private メンバをオーバーライドすることはできません。
+		モジュールのメンバを private と宣言するのは、
+        Cでの $(B static)
+        宣言と同等です。
         )
 
-        $(P Package extends private so that package members can be accessed
-        from code in other modules that are in the same package.
-        This applies to the innermost package only, if a module is in
-        nested packages.
+        $(P package は、モジュールは違っても同じパッケージに属するコードからの
+		アクセスは許可するようにprivateを拡張したものです。
+		これは、モジュールがネストしたパッケージの中にある場合は、
+		最も内側のパッケージについてのみ適用されます。
         )
 
-        $(P Protected means that only members of the enclosing class or any
-        classes derived from that class,
-        or members and functions in the same module
-        as the enclosing class, can access the member.
-        If accessing a protected instance member through a derived class member
-        function,
-        that member can only be accessed for the object instance
-        which can be implicitly cast to the same type as $(SINGLEQUOTE this).
-        Protected module members are illegal.
+        $(P protected は、同じクラスかその派生クラスのメンバ、
+		または同じモジュールに属するコード
+		からのみからのみ参照できることを示します。
+		派生クラスのメンバ関数から
+		protected なインスタンスメンバへアクセスする場合、
+		そのメンバ関数の 'this'
+		オブジェクトに属するメンバについてのみ、アクセスが可能です。
+		モジュールのメンバを protected 
+		とするコードは不正です。
         )
 
-        $(P Public means that any code within the executable can access the member.
+        $(P public は、同じ実行ファイル中の全てのコードからアクセス可能なことを示します。
         )
 
-        $(P Export means that any code outside the executable can access the
-        member. Export
-        is analogous to exporting definitions from a DLL.
+        $(P export は、実行ファイルの外からもアクセスできることを示します。
+		DLLから関数定義をエクスポートする、
+		というのと似ています。
         )
 
-        $(P Protection does not participate in name lookup.
-        In particular, if two symbols with the same name are in scope,
-        and that name is used unqualified then the lookup will be ambiguous,
-        even if one of the symbols is inaccessible due to protection.
-        For example:
+        $(P 保護属性は名前の探索の際には考慮されません。
+        具体的には、同名の２つのシンボルがスコープ内にあって、
+        どちらも修飾がされずに使われていれば、
+        保護属性によるとどちらかがアクセス不可能な場合であっても、曖昧でエラーとなります。
+        例:
         )
 
 ---------------
@@ -272,14 +272,14 @@ public class Foo {}
 import A;
 import B;
 
-Foo f1; // error, could be either A.Foo or B.Foo
+Foo f1; // エラー、A.Foo または B.Foo
 B.Foo f2; // ok
 ---------------
 
-<h2>$(LNAME2 const, Const Attribute)</h2>
+<h2>$(LNAME2 const, const 属性)</h2>
 
-        $(P The $(B const) attribute declares constants that can be
-        evaluated at compile time. For example:
+        $(P $(B const) は、コンパイル時に評価できる定数につける属性です。
+		例えば：
         )
 
 ---------------
@@ -291,9 +291,9 @@ const {
 ---------------
 
 $(V1
-        $(P A const declaration without an initializer must be initialized
-        in a constructor (for class fields) or in a static constructor
-        (for static class members, or module variable declarations).
+        $(P 初期化子なしのconst宣言は
+        コンストラクタ (クラスフィールドの場合) または静的コンストラクタ
+        (staticメンバやモジュール変数の場合) で初期化する必要があります。
         )
 
 ---------------
@@ -303,12 +303,12 @@ const int y;
 static this()
 {
   x = 3;   // ok
-  // error: y not initialized
+  // エラー: y が未初期化
 }
 
 void foo()
 {
-  x = 4; // error, x is const and not in static constructor
+  x = 4; // エラー、x は const でここは静的コンストラクタの中ではない
 }
 
 class C
@@ -320,49 +320,49 @@ class C
 
   this() {
     a = 3;      // ok
-    a = 4;      // ok, multiple initialization allowed
+    a = 4;      // ok。複数回の初期化は可能
     C p = this;
-    p.a = 4;    // error, only members of this instance
-    c = 5;      // error, should initialize in static constructor
-    // error, b is not initialized
+    p.a = 4;    // エラー。this のメンバだけを初期化可能
+    c = 5;      // エラー。静的コンストラクタで初期化すべき
+    // エラー。b が未初期化。
   }
 
   this(int x) {
-    this();      // ok, forwarding constructor
+    this();      // ok。転送コンストラクタ
   }
 
   static this() {
     c = 3;       // ok
-    // error, d is not initialized
+    // エラー。d が未初期化。
   }
 }
 ---------------
 
-        $(P It is not an error to have const module variable declarations without
-        initializers if there is no constructor. This is to support the practice
-        of having modules serve only as declarations that are not linked in,
-        the implementation of it will be in another module that is linked in.
+        $(P 初期化子もコンストラクタもないconstモジュール変数の宣言は、
+		エラーにはなりません。これは、
+		宣言のためのみに使ってリンクはしないで、
+		実装はリンクされる他のモジュールに書く、という技法をサポートするためです。
         )
 )
 
 $(V2
-<h2>$(LNAME2 immutable, immutable Attribute)</h2>
+<h2>$(LNAME2 immutable, immutable 属性)</h2>
 
-<h2>$(LNAME2 gshared, __gshared Attribute)</h2>
+<h2>$(LNAME2 gshared, __gshared 属性)</h2>
 
-        $(P By default, non-immutable global declarations reside in thread local
-        storage. When a global variable is marked with the $(B __gshared)
-        attribute, its value is shared across all threads.)
+        $(P デフォルトでは、immutable はでないグローバル宣言はスレッドローカル記憶域に配置されます。
+        ただし、$(B __gshared)
+        属性が付いているときは全スレッド間で共有されるようになります。)
 
 ---
-int foo;            // Each thread has its own exclusive copy of foo.
-__gshared int bar;  // bar is shared by all threads.
+int foo;            // それぞれのスレッド毎に独自の変数領域 foo を持つ。
+__gshared int bar;  // bar は全スレッドで共有される。
 ---
 
-        $(P $(B __gshared) may also be applied to member variables and local
-        variables. In these cases, $(B __gshared) is equivalent to $(B static),
-        except that the variable is shared by all threads rather than being
-        thread local.)
+        $(P $(B __gshared) はメンバ変数やローカル変数にも適用可能です。
+        これらの場合は $(B __gshared) は $(B static) と基本的には同じ意味になり、
+        ただし、
+        スレッドローカルではなく全スレッドで共有される変数となります。)
 
 ---
 class Foo {
@@ -371,56 +371,56 @@ class Foo {
 
 int foo() {
   __gshared int bar = 0;
-  return bar++; // Not thread safe.
+  return bar++; // スレッドセーフでない
 }
 ---
 
-        $(P Unlike the $(B shared) attribute, $(B __gshared) provides no
-        safe-guards against data races or other multi-threaded synchronization
-        issues. It is the responsibility of the programmer to ensure that
-        access to variables marked $(B __gshared) is synchronized correctly.)
+        $(P $(B shared) と違い、$(B __gshared)
+        スレッド間競合や動機の問題に関する安全を何も提供しません。
+        $(B __gshared) とマークされた変数に正しく同期アクセスするのは、
+        プログラマの責任です。)
 
-        $(P $(B __gshared) is disallowed in safe mode.)
+        $(P $(B __gshared) はセーフモードでは使用できません。)
 
-<h2>$(LNAME2 shared, shared Attribute)</h2>
+<h2>$(LNAME2 shared, shared 属性)</h2>
 
-<h2>$(LNAME2 inout, inout Attribute)</h2>
+<h2>$(LNAME2 inout, inout 属性)</h2>
 
-<h2>$(LNAME2 disable, @disable Attribute)</h2>
+<h2>$(LNAME2 disable, @disable 属性)</h2>
 
-        $(P A reference to a declaration marked with the $(CODE @disable) attribute causes
-        a compile time error.
-        This can be used to explicitly disallow certain operations or overloads
-        at compile time rather than relying on generating a runtime error.
+        $(P $(CODE @disable) とマークされた宣言への参照は、
+		コンパイルエラーとなります。
+		これによって、ある種の操作やオーバーロードを、
+		実行時エラーにするのではなくコンパイルエラーにできます。
         )
 
 ---
 struct T {
-  @disable this(this) { } // disabling this makes T not copyable
+  @disable this(this) { } // この関数をdisableすることでTがコピー不可能となる
 }
 
 struct S {
-  T t;   // uncopyable member makes S also not copyable
+  T t;   // コピー不可能メンバがあるとS全体もコピー不可能
 }
 
 @disable void foo() { }
 
 void main() {
   S s;
-  S t = s; // error, S is not copyable
-  foo();   // error, foo is disabled
+  S t = s; // エラー、S はコピー不可能
+  foo();   // エラー、fooはdiableされている
 }
 ---
 )
 
-<h2>$(LNAME2 override, Override Attribute)</h2>
+<h2>$(LNAME2 override, override 属性)</h2>
 
-        $(P The $(B override) attribute applies to virtual functions.
-        It means that the function must override a function with the
-        same name and parameters in a base class. The override attribute
-        is useful for catching errors when a base class's member function
-        gets its parameters changed, and all derived classes need to have
-        their overriding functions updated.
+        $(P $(B override) は、仮想関数に適用する属性です。
+		これは、
+		そのメンバ関数は基底クラスの同名同引数の関数をオーバーライドしているのだ、
+		という宣言になります。override属性は、基底クラスの仮想関数の引数を変更して、
+		全ての派生クラスの実装を変更しなくてはならない、
+		という状況などに便利です。
         )
 
 ---------------
@@ -431,19 +431,19 @@ class Foo {
 
 class Foo2 : Foo {
   override {
-    int bar(char c); // error, no bar(char) in Foo
+    int bar(char c); // エラー。 Foo には bar(char) という関数はない
     int abc(int x);  // ok
   }
 }
 ---------------
 
-<h2>Static Attribute</h2>
+<h2>static 属性</h2>
 
-        $(P The $(B static) attribute applies to functions and data.
-        It means that the declaration does not apply to a particular
-        instance of an object, but to the type of the object. In
-        other words, it means there is no $(B this) reference.
-        $(B static) is ignored when applied to other declarations.
+        $(P $(B static) 属性は関数もしくはデータに適用されます。
+		これは、その宣言が特定のインスタンスに関するものではなく、
+		ある型に関するものである、という意味になります。
+		言い方を変えると、$(B this) を参照しない、ということです。
+        $(B static) がその他の宣言についた場合は無視されます。
         )
 
 ---------------
@@ -455,94 +455,94 @@ class Foo {
 ...
 
 Foo f = new Foo;
-Foo.bar();      // produces 6
-Foo.foobar();   // error, no instance of Foo
-f.bar();        // produces 6;
-f.foobar();     // produces 7;
+Foo.bar();      // 6を返す
+Foo.foobar();   // エラー。Fooのインスタンスが無い。
+f.bar();        // 6を返す
+f.foobar();     // 7を返す
 ---------------
 
 $(P
-        Static functions are never virtual.
+        仮想関数はstaticにはできません。
 )
 $(P
-        Static data has only one instance for the entire program,
-        not once per object.
+        staticデータは、インスタンス毎に一個ずつではなく、
+	プログラム中に唯一つ保持されます。
 )
 $(P
-        Static does not have the additional C meaning of being local
-        to a file. Use the $(B private) attribute in D to achieve that.
-        For example:
+        Dのstatic属性は、Cのような"ファイルローカル"という別の意味は持ちません。
+		この用途には、$(B private) 属性が使用されます。
+		例えば：
 )
 
 ---------------
 module foo;
-int x = 3;         // x is global
-private int y = 4; // y is local to module foo
+int x = 3;         // x はグローバル
+private int y = 4; // y はモジュールfoo内ローカル
 ---------------
 
 
-<h2>$(LNAME2 auto, Auto Attribute)</h2>
+<h2>$(LNAME2 auto, auto 属性)</h2>
 
-        $(P The $(B auto) attribute is used when there are no other attributes
-        and type inference is desired.
+        $(P $(B auto) 属性は、他の属性がなく、
+		型推論を行いたいときに使用します。
         )
 
 ---
-auto i = 6.8;   // declare i as a double
+auto i = 6.8;   // i を double 型として宣言
 ---
 
-<h2>$(LNAME2 scope, Scope Attribute)</h2>
+<h2>$(LNAME2 scope, scope 属性)</h2>
 
 $(P
-        The $(B scope) attribute is used for local variables and for class
-        declarations. For class declarations, the $(B scope) attribute creates
-        a $(I scope) class.
-        For local declarations, $(B scope) implements the RAII (Resource
-        Acquisition Is Initialization) protocol. This means that the
-        destructor for an object is automatically called when the
-        reference to it goes out of scope. The destructor is called even
-        if the scope is exited via a thrown exception, thus $(B scope)
-        is used to guarantee cleanup.
+        $(B scope) 属性は、ローカル変数とクラスの宣言に使用できます。
+		クラス宣言では、 $(B scope) 属性をつけたクラスは、
+        $(I scope クラス) となります。
+        ローカル変数宣言の $(B scope) 属性は、RAII (Resource Acquisition
+		 is Initialization) を実装するために活用できます。
+		すなわち、変数がスコープを外れると、オブジェクトのデストラクタが
+		自動的に呼び出されます。例え例外によってスコープから出るときであっても、
+		やはりデストラクタが呼ばれます。要するに、$(B scope) によって、
+		何らかの後処理を確実に実行することが保証できます。
 )
 $(P
-        If there is more than one $(B scope) variable going out of scope
-        at the same point, then the destructors are called in the reverse
-        order that the variables were constructed.
+        二つ以上の $(B scope) 変数が同じ箇所でスコープを抜ける場合、
+		デストラクタは、
+		変数が構築されたのと逆順で実行されます。
 )
 $(P
-        $(B scope) cannot be applied to globals, statics, data members, ref
-        or out parameters. Arrays of $(B scope)s are not allowed, and $(B scope)
-        function return values are not allowed. Assignment to a $(B scope),
-        other than initialization, is not allowed.
-        $(B Rationale:) These restrictions may get relaxed in the future
-        if a compelling reason to appears.
+        $(B scope) は、グローバルデータや静的データ、関数の ref/out
+		パラメータには適用できません。$(B scope) の配列、関数からの $(B scope)
+        返値も禁止されています。 $(B scope)
+        への初期化以外の代入も禁じられています。
+        $(B Rationale:) これらの制限は、
+		もっともな理由が見つかれば将来的には緩和されるかもしれません。
 )
 
-<h2>$(LNAME2 abstract, Abstract Attribute)</h2>
+<h2>$(LNAME2 abstract, abstract 属性)</h2>
 
 $(P
-        If a class is abstract, it cannot be instantiated
-        directly. It can only be instantiated as a base class of
-        another, non-abstract, class.
+        abstractなクラスは、直接インスタンス化することができません。
+		他の、abstract
+		でないクラスの基底クラスとしてのみインスタンス化できます。
 )
 $(P
-        Classes become abstract if they are defined within an
-        abstract attribute, or if any of the virtual member functions
-        within it are declared as abstract.
+        クラスは、abstract属性付きで宣言された時か、
+		abstractと宣言された仮想メンバ関数を持っているときに
+		abstractになります。
 )
 $(P
-        Non-virtual functions cannot be declared as abstract.
+        非仮想関数をabstractと宣言することはできません。
 )
 $(P
-        Functions declared as abstract can still have function
-        bodies. This is so that even though they must be overridden,
-        they can still provide $(SINGLEQUOTE base class functionality.)
+        abstract と宣言された関数であっても、関数定義本体を書くことができます。
+		これは、必ずオーバーライドされる必要があるにせよ、
+        $(SINGLEQUOTE クラスの基本共通機能) を提供できるようにするためです。
 )
 
 )
 
 Macros:
-        TITLE=Attributes
+        TITLE=属性
         WIKI=Attribute
         CATEGORY_SPEC=$0
 
