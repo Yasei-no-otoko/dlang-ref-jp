@@ -116,6 +116,7 @@ table, tr, td, th
 td
 {
 	text-align: justify;
+	text-justify: inter-ideograph;
 }
 
 hr
@@ -304,6 +305,7 @@ div#navigation
 div#content
 {
     text-align: justify;
+	text-justify: inter-ideograph;
 	min-height: 440px;
 	margin-left: 14.5em;
 	padding: 1.6em;
@@ -315,6 +317,7 @@ div#content
 	font-size: 0.875em;
 	line-height: 1.4em;
 	text-align: justify;
+	text-justify: inter-ideograph;
 }
 
 body.chm
