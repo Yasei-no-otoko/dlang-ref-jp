@@ -1,159 +1,159 @@
 ﻿Ddoc
 
-$(D_S Regular Expressions,
+$(D_S 正規表現,
     $(P
-    $(SMALL by Dmitry Olshansky, the author of std.regex )
+    $(SMALL by Dmitry Olshansky, std.regex の作者)
     )
-    $(H3 Introduction)
-    $(P String processing is a kind of daily routine that most applications do in a one way or another.
-    It should come as no wonder that many programming languages have standard libraries equipped
-    with a variety of specialized functions for common string manipulation needs.
-    The D programming language standard library among others offers a nice assortment in $(STD string),
-     as well as generic functions  from $(STD algorithm) that work with strings.
-    Still no amount of fixed functionality could cover all needs, as naturally flexible text data
-    needs flexible solutions.
+    $(H3 はじめに)
+    $(P 文字列処理は、ほとんどのアプリケーションが何度も実行するありふれた操作です。
+    多くのプログラミング言語が、よくある文字列操作に特化した様々な機能を提供しているのも、
+    不思議はありません。
+    中でも、プログラミング言語 D の標準ライブラリは $(STD string) に素敵な機能の詰め合わせを用意し、
+    また $(STD algorithm) の汎用アルゴリズムも文字列に使えるようになっています。
+    とはいえ、固定の機能のセットがすべての欲求に答えるというわけにはいきません。
+    テキストデータの種類も様々ですから、様々な柔軟性にとんだ解決策が必要なのです。
     )
-    $(P Here is where $(LUCKY regular expressions) come in handy, often succinctly called as regexes.
-     Regexes are simple yet powerful language for defining patterns of strings, 
-     put together with a substitution mechanism, they form a Swiss Army knife of text processing.
-     They are considered so useful that a number of languages provides built-in support
-     for regular expressions. This does $(B not) nessary mean that
-     built-in implies $(B faster) processing or more features. It's more a matter of providing
-     $(B convenient and friendly syntax) for typical operations and usage patterns.
+    $(P そこで、短く regex とも呼ばれる $(LUCKY 正規表現) が、お手軽な解決策です。
+     正規表現は、文字列のパターンを定義するための簡潔ながらも強力な言語であり、
+     置換のメカニズムと組み合わせることで、文字列処理の万能ナイフとなります。
+     非常に有用なので、いくつもの言語が正規表現を言語組み込みの機能としてサポートしています。
+     かといって、組み込み機能にすることが $(B 高速な) あるいは高機能な処理に繋がる、
+     とは限り$(B ません)。むしろ、
+     典型的な用例に対して $(B 便利で使いやすい構文) を提供できる、というところが焦点です。
     )
-    $(P The D programming language provides a standard library module $(STD regex).
-     Being a highly expressive systems language, D allows regexes to be $(I efficiently) implemented 
-     within the language itself, yet have the same level of readability and usability as built-in version would provide.
-     We'll see below how close to built-in regexes look and feel we can achieve.
+    $(P D言語では、標準ライブラリモジュール $(STD regex) を提供しています。
+     D は非常に表現力の高い言語ですから、正規表現を D 言語自身による $(I 高効率な)
+     実装でありながら、組み込み機能と同程度の読みやすさと使いやすさで提供しています。
+     以下では、組み込み機能にどれほど近い look & feel が達成されているか、見ていきます。
     )
-    $(P By the end of article you'll have a good understanding of regular expression capabilities in this library,
-     and how to utilize its API in a most straightforward way. Examples in this article assume that the reader
-     has fairly good understanding of regex elements, yet it's not required to understand the API.
+    $(P この記事を最後まで読めば、このライブラリの正規表現機能をよく理解でき、
+     また、そのAPIを一番ストレートに活用する方法を知ることができます。なお、記事中の例は、
+     読者が正規表現の各要素についてご存じであると想定していますが、APIについては知っている必要はありません。
     )
 
-    $(H3 A warm up)
-    $(P How do you check if something is a phone number by looking at it? )
-    $(P Yes, it's something with numbers, and there may be a country code in front of that...
-    Ok, going for an international format should make it more strict. As this is the first time, let's
-    put together a full program:
+    $(H3 準備運動)
+    $(P あるテキストが電話番号かどうかをチェックするにはどうすればいいでしょう？)
+    $(P はい、まず何か数字が並んでいて、国コードがその前についているかもしれなくて……。
+    オーケー、国際電話の書式に従った方が厳格でしょうか。まずは最初の例なので、
+    プログラム全体を掲載します:
     ---
 import std.stdio, std.regex;
 void main(string argv[]){
-    string phone = argv[1]; //assuming phone is passed as first argument on the command line
+    string phone = argv[1]; // 番号はコマンドラインの第一引数で渡されるとする
     if(match(phone, r"^\+[1-9][0-9]* [0-9 ]*$"))
-        writeln("It looks like a phone number.");
+        writeln("電話番号っぽいです。");
     else
-        writeln("Nope, it's not a phone number.");
+        writeln("ちがう、電話番号じゃない。");
 }
     ---
-    And that's it! Just keep in mind the boundaries of regular expressions power - to truly establish a
-    validness of a phone number, one has to try dialing it or contact the authority.
+    完成です！ ここで一言、正規表現には限界があることはよく覚えておいて下さい。
+    真に電話番号としての有効性を確かめるには、実際に電話をかけてみるか関係機関に問い合わせなければいけません。
     )
-    $(P Now, come to think of it, this tiny sample showed a lot of useful things already:
+    $(P さて、改めて考えてみましょう。この小さなサンプルにはすでに役に立つ内容が詰まっています:
         $(UL
-        $(LI a row string literal of form r"...", that allows writing a regex pattern in its natural notation )
-        $(LI $(D match) function, is an universal tool that we'll see in other work scenarios as well.
-        To check if there was a match on a string, just test the return value explicitly as boolean.  )
-        $(LI when trying to match special regex characters like  +, *, (, ), [, ] and $ don't forget to use escaping with \ )
-        $(LI Unless there is a lot of text processing going on, it's OK to pass a plain string as a pattern.
-        The internal representation used to do the actual work is cached, to speed up subsequent calls. )
+        $(LI 生文字列リテラル r"..." を使うと、正規表現パターンを自然な記法で書くことができます。)
+        $(LI $(D match) 関数は、あとで見るように他の目的にも使える万能ツールです。
+        文字列がパターンにマッチするかを調べるには、返値を bool として調べれば良いです。)
+        $(LI 正規表現の特殊文字 +, *, (, ), [, ], $ とのマッチを調べる時は、\ でのエスケープをお忘れなく。)
+        $(LI たくさんの文字列処理を行うのでなければ、単なる素の文字列をパターンとして渡して構いません。
+        実際の処理をするための内部表現はキャッシュされ、以降の呼び出しを高速化します。)
         )
     )
-    $(P Continuing with the phone number example, it could be useful to get the exact value of 
-    country code, as well as the whole number. For the sake of experiment let's also explicitly store
-    compiled regex pattern via $(D regex) to see how it works.
+    $(P 電話番号の例を続けましょう。電話番号全体だけでなく、国コードの部分を取り出すことができると便利です。
+    ついでに、実験のため、正規表現パターンを $(D regex) でコンパイルしたものを明示的に保持する、
+    ということもやってみます。
     )
     ---
-string phone = "+31 650 903 7158"; //fictional, any coincidence is just that
+string phone = "+31 650 903 7158"; // 架空の番号、偶然何かと一致しても偶然です
 auto phoneReg = regex(r"^\+([1-9][0-9]*) [0-9 ]*$");
 auto m = match(phone, phoneReg);
 assert(m);
 assert(m.captures[0] == "+31 650 903 7158");
 assert(m.captures[1] == "31");
-//you shouldn't really care about the type of regex object,
-//but here it is
+// regexオブジェクトの型を気にする必要はまったくありませんが、
+// 一応、こんな型です。
 static assert(is(typeof(phoneReg) : Regex!char));
     ---
    
-    $(H3 To search and replace)
-    $(P There is a frequent need to find all matches in piece of text.
-    Picking an easy task, let's see how to filter out all white space-only lines.
-    There is no special routine for looping over input like search() or similar as found in some libraries.
-    Instead $(D std.regex) provides a natural syntax for looping over all matches via plain foreach.
+    $(H3 検索と置換)
+    $(P テキストから、マッチする部分をすべて取り出したいということはよくあります。
+    簡単な課題として、空白のみの行をすべて取り除く、という処理を考えてみましょう。
+    幾つかのライブラリに見られるような、入力の上をループする search() とかそういった特別なルーチンはありません。
+    代わりに、$(D std.regex) では普通の foreach でループするという自然な使い方ができます。
     )
     ---
 auto buffer = std.file.readText("regex.d");
 foreach(m; match(buffer, regex(r"^.*[^\p{WhiteSpace}]+.*$","gm"))){
-    writeln(m.hit); //hit is a shorthand for m.captures[0]
+    writeln(m.hit); // hit は m.captures[0] の簡略記法
 }
     ---
-    $(P It just works as the result of match is an input range. 
-    An element type is Captures for the string type being used, it is a random access range of submatches.
-    I won't go into full detail of the range concept, suffice to say, that it's a primary way of representing sequences of data in D.
-    Random access here implies one can peek at any element with direct indexing. To have a feeling of how this affects the API:
+    $(P マッチの結果は入力レンジとして動作します。
+    ループの要素の型は使われた文字列の Captures 型で、部分マッチへのランダムアクセスレンジとなっています。
+    「レンジ」という概念の詳細についてここでは触れませんが、ここでは、D でデータの列を表す基本的な方法とだけ理解しておいて下さい。
+    ランダムアクセスというのは、全ての要素にインデックスで直接アクセスできるということです。それがどう関係してくるか、以下の例を見て下さい。
     )
     ---
-auto m = match("Ranges are hot!", r"(\w)\w*(\w)"); //at least 3 "word" symbols
+auto m = match("Ranges are hot!", r"(\w)\w*(\w)"); // 3文字以上の"単語"文字にマッチ
 assert(m.front[0] == "Ranges");
-//m.captures is a historical alias for the first element of match range (.front).
+// m.captures はマッチレンジの先頭要素 (.front) の歴史的な別名
 assert(m.captures[1] == m.front[1]);
 auto captures = m.front;
 assert(captures[2] == "s");
 foreach(c; captures)
-    writeln(c); //will show lines: Ranges, R, s
+    writeln(c); // Ranges, R, s の3行を表示
 
     ---
-    $(P By playing by the rules $(STD regex) gets some nice benefits in interaction with other modules e.g.
-    this is how one could count non-empty lines in text buffer
-    (just don't forget to import $(STD algorithm) when trying that at home):
+    $(P このレンジの規則に則ることで、$(STD regex) は他のモジュールと巧く連携することできます。
+    例えば、以下の例ではテキストバッファ中の空ではない行数を数えています
+    (試すときは $(STD algorithm) の import をお忘れなく！):
     )
     ---
 auto buffer = std.file.readText("regex.d");
 int count = count(match(text, regex(r"^.*\P{WhiteSpace}+.*$","gm")));
     ---
-    $(P This by the way tells me that $(STD regex) has 7128 non-blank lines as of this writing. But let's get back to the regular expression itself.
-    A seasoned regex user catches instantly that Unicode properties are supported with perl-style \p{xxx}, to spice that all of Scripts and Blocks are supported.
-    Let us dully note that \P{xxx} means not having an xxx property, i.e here not a white space character.
-    Refer to the Unicode standard $(LINK2 http://Unicode.org/reports/tr18/, UTS 18) for full list and specific details.
+    $(P 余談ですが、これを動かしたおかげで $(STD regex) は現時点で 7128 の空でない行があることがわかりました。それはともかく正規表現に戻りましょう。
+    手慣れた正規表現ユーザなら、すぐに Unicode プロパティが Perl 式の \p{xxx} でサポートされていることにお気づきでしょう。付け加えると、全ての Script と Block に対応しています。
+    蛇足かもしれませんが注意しておくと、\P{xxx} はプロパティxxx、ここでは空白文字を持たないことを意味しています。
+    完全な一覧と詳細については Unicode 標準 $(LINK2 http://Unicode.org/reports/tr18/, UTS 18) を見てください。
     )
 
-    $(P Another thing of importance is the option string - "gm",  where g stands for global and m for multi-line mode.
-    While global is obvious in this context, what multi-line mode does deserves some explanation.
+    $(P もう一つ重要なのは、オプション文字列 "gm" です。g はグローバルの意味で、m は複数行モードの意味です。
+    グローバルが何を意味するのかは明らかですが、複数行モードには説明が必要かと思います。
     )
 
-    $(P Historically utilities that supported regex patterns (unix grep, sed, etc.) processed text line by line.
-    At that time anchors like ^, $ meant the start of the whole input buffer that has been same as that of line.
-    As regular expressions became more ubiquitous the need to recognize multiple lines in a chunk of text,
-    with anchors ^ & $ matching before and after line break literally. For the curious, line break is defined as
-    (\n | \v | \r | \f | \u0085 | \u2028 | \u2029 | \r\n). Needless to say, one need not to turn on multi-line mode if not using any of ^, $.
+    $(P 歴史的には、正規表現に対応したユーティリティ (unix grep, sed, など) はテキストを１行１行毎に処理していました。
+    その頃は、^, $ のような位置指定は入力バッファ全体の先頭と終端を意味し、これは行の先頭と終端と一致していました。
+    正規表現がより普及してくると、複数行のテキストに対してマッチしたいという要求が生まれてきて、
+    ^ と $ は文字通り改行の前後を意味させることができるようになりました。興味のある方向けに、改行とは
+    (\n | \v | \r | \f | \u0085 | \u2028 | \u2029 | \r\n) と定義されています。言うまでもなく、^ や $ を使わないのならば複数行モードを気にする必要はありません。
     )
 
-    $(P Now that search was covered, the topic suggest that it's about time to do some replacements.
-    For instance to replace all dates in a text from "MM/dd/YYYY" format to a sortable version of "YYYY-MM-dd":
+    $(P さあ、検索の話は終わりました。章のタイトルを見ると、次は置換の話が始まるようです。
+    例として、"MM/dd/YYYY" 形式の日付をすべて、時刻順ソートが可能な "YYYY-MM-dd" に置き換えてみましょう:
     )
     ---
 auto text = readText(...);
 auto replaced = replace(text,
     regex(r"([0-9]{1,2})/([0-9]{1,2})/([0-9]{4})","g"), "$(DOLLAR)3-$(DOLLAR)1-$(DOLLAR)2");
     ---
-    $(P The "all dates" part comes from the fact that regex has global option set, omit it to replace only the first occurrence.
-    As seen the replacement is controlled by format string not unlike one in C's famous printf.
-    The &#36;1, &#36;2, &#36;3 substituted with content of sub-expresions.
-    Aside from referencing sub-matches, one can include the whole part of input preceding the match via &#36;` and &#36;'
-     for the content following right after the match.
+    $(P "すべて" の部分は正規表現にグローバルオプションをセットすることで表現されています。これを省くと最初の一個だけを置き換えることになります。
+    見ておわかりのように、置換文字列は C の有名な printf とは違う形式で記述されています。
+    &#36;1, &#36;2, &#36;3 は部分マッチの中身で置き換えられます。
+    部分マッチを参照するだけでなく、マッチより前にくる入力の全体は &#36;` で、後に来る部分全体は &#36;'
+    で参照できます。
     )
-    $(P Ok, now let's aim for something bigger, this time to show that $(STD regex) can do things that
-    are unattainable by classic textual substitution alone. Imagine you want to translate a web shop catalog so
-    that it display prices in your currency. Yes, one can use calculator or estimate it, once having current ratio.
-    Being programmers we can do better, so let's wrap up a simple program that converts text to use correct prices everywhere.
-    For the sake of example let it be UK pounds and US dollars.
+    $(P さて、ではそろそろ、もっと大きなことをやってみましょう。今度は、古典的なテキスト置換だけではできないことを $(STD regex)
+    ではできる所をお見せします。ウェブショップのカタログを変換して、自分の通貨で値段を表示したいという状況を考えましょう。
+    はい、現在のレートさえわかっていれば、電卓を使ったり概算したりはできる作業です。
+    しかしせっかく私たちはプログラマなのですから、テキストを正しい価格に置き換える簡単なプログラムを一発書いてしまいましょう。
+    例として、英ポンドと米ドルの変換を考えます。
     )
     ---
 import std.conv, std.regex, std.range, std.file, std.stdio;
 import std.string : format;
 
 void main(string[] argv){
-    immutable ratio = 1.5824; //UK pounds to US dollar as of this writing
+    immutable ratio = 1.5824; // 執筆時点での英ポンドの対米ドルレート
     auto to_dollars(Captures!string price){
         real value = to!real(price["integer"]);
         if(!price["fraction"].empty)
@@ -166,65 +166,65 @@ void main(string[] argv){
     write(converted);
 }
     ---
-    $(P Getting current conversion rates and supporting more currencies is left as an exercise for the reader. 
-    What at work here is so-called replace with delegate, analogous to a callout ability found in other languages and regex libraries.
-    The magic is simple: whenever replace finds a match it calls a user supplied callback on the captured piece,
-    then it uses the return value as replacement. And so on for other matches, given the "g" flag of regex.
+    $(P 変換レートの取得や、他の種類の通貨への対応は読者への宿題とします。
+    ここで使ったのは、デリゲートによる置換と呼ばれる機能で、他の言語や正規表現ライブラリにある呼び出し機能に相当するものです。
+    種は簡単で、replace が、マッチする部分が見つかるたびにユーザーに指定された関数にキャプチャ情報を渡しているのです。
+    その返値へとマッチ部分が置換されます。"g" フラグがあれば、この作業を残りのマッチにも適用していきます。
     )
    
-    $(P I couldn't resist to spice this example up with yet another feature - named groups.
-    Names work just like opaque aliases for numbers of captured subexpressions.
-    Meaning that with the same exact regular expression one could as well change these lines to:
+    $(P この例には、もう一つの素敵な機能を盛り込んでしまう誘惑に耐えきれませんでした - 名前付きグループです。
+    名前は、キャプチャした部分マッチを指す番号の別名として働きます。
+    つまり、先ほどの例はまったく同じ正規表現のままで、こう書くこともできました。
     ---
 real value = to!real(price[1]);
 if(!price[3].empty)
             value += 0.01*to!real(price[3]);
     ---
-    Though that lacks readability and is not future proof. Also note that optional captures are still represented,
-    it's just they can be an empty string if not matched.
+    可読性も将来の発展性もありませんが。最後に一言、? による選択的なキャプチャも表現されていることにご注意下さい。
+    マッチしなかった場合は単に空文字列が返ります。
     )
 
-    $(H3 More features, more options)
+    $(H3 さらなる機能とオプション)
    
-    $(P As core functionallity was already presented, let's move on to extras.
-    Sometimes it's useful to do almost the opposite of searching - split up input using regex as separator.
-    Like the following sample, that outputs text by sentences:
+    $(P 中心となる基本機能の紹介は終わりました。追加の機能に移りましょう。
+    時には、検索のまったく逆のことをする機能もあると便利です。たとえば、正規表現をセパレータにして文字列を分割するときなどです。
+    次の例では、テキストを文ごとに区切って表示します:
     )
     ---
 foreach(sentence; splitter(argv[1], regex(r"(?<=[.?!]+(?![?!]))\s*")))
     writeln(sentence);
     ---
-    $(P Again the type of splitter is range, thus allowing foreach iteration.
-    Notice the usage of lookaround in regex, it's a neat trick here as
-    stripping off final punctuation is not our intention. Breaking down this example, (?<=[.?!]) part looks behind for first ., ? or !.
-    This get us half way to our goal because \s* also matches between elements of punctuation like "?!", 
-    so a negative lookahead is introduced $(I inside lookbehind) to make sure we are past all of the punctuation marks.
-    Admittedly, barrage of ? and ! makes this regex rather obscure, more then it's actually is.
-    Observe that there are no restrictions on contents of lookaround expressions,
-    one can go for lookahead inside lookbehind and so on. 
-    However in general it's recommended to use them sparingly, keeping them as weapon of last resort.
+    $(P 今度もsplitterの返すものはレンジで、つまりforeachでループできます。
+    正規表現の lookaround 機能の使い方に着目しましょう。これは、
+    最後の句読点を区切りの一部として取り除いてしまわないための小技です。細かく見ていくと、(?<=[.?!]) の部分は最初の . か ? か ! の出現が前にある位置を探しています。
+    これでやりたいことの半分はできました。\s* が "?!" の間のような句読点の間にもマッチしてしまうので、
+    これを避けるのに否定先読みを $(I 後読みの中で) 使って、句読点をすべて確実に通り過ぎます。
+    正直なところ、? と ! の乱射がこの正規表現を見通し悪くしています。実際にそうである以上にです。
+    いずれにせよ、先読み式の中で使える表現には特に制約はありません。
+    後読みの中で先読み等々、なんでもできます。
+    とはいっても、一般には、これらは最後の手段としてとっておいて、できるだけ控えめに使うことをお勧めします。
     )
    
-    $(P Now for something completely different yet exactly the same. For one, there is an ability
-    to precompile constant regex at compile-time:
+    $(P 続いて完全に別ですが完璧に同じになる話題を始めます。
+    コンパイル時に正規表現を前もってコンパイルする機能があります:
     )
     ---
 static r = regex("Boo-hoo");
 assert(match("What was that? Boo-hoo?", r));
     ---
-    $(P Importantly it's the exact same Regex object that works through all of the API we've seen so far.
-    It's just takes less then 1 μs of run-time to initialize.
-    Run-time version took around 10-20 μs on my machine, 
-    keep in mind that it was a trivial pattern.
+    $(P 重要なのは、これで、ここまで全ての例で使ってきたAPIで動くまったく同じ正規表現オブジェクトが作られると言うことです。
+    コンパイル時コンパイルされた正規表現は初期化に 1μs も掛かりません。
+    実行時版は私のマシンで 10-20μs かかりました。
+    ここまでの例のような単純なパターンでもです。
     )
-    $(P Now stepping futher in this direction there is an ability to construct specialized
-    native machine code that matches a given regex to speed up matching.
-    All of this at compile time, and again the module usage stays consistent!
+    $(P さらにこの方向をもう一歩進めて、正規表現のマッチングを高速化するために、
+    ネイティブの機械語を生成することもできます。
+    これも全てコンパイル時に行われますし、繰り返しますが、使い方は全く同じです！
     )
-    $(P Recalling the phone number example:
+    $(P 電話番号の例を思い出しながら…
     )
     ---
-//It's only a 5 characters difference!
+//違いは5文字だけ！
 string phone = "+31 650 903 7158";
 auto phoneReg = ctRegex!r"^\+([1-9][0-9]*) [0-9 ]*$";
 auto m = match(phone, phoneReg);
@@ -232,39 +232,39 @@ assert(m);
 assert(m.captures[0] == "+31 650 903 7158");
 assert(m.captures[1] == "31");
     ---
-    $(P In this particular case it matched roughly 50% faster for me though I haven't done comprehensive analysis of this case.
-    Not to spoil the excitement, but as of this writing the feature is experimental and temporarily lacks some extensions.
-    Continuing the gloomy trend, be warned that compiler might choke on it, and it's also less tested. 
-    That being sad, there is no doubt ctRegex facility will only improve over time.
-    So start with run-time version, then go compile-time if willing to experiment or
-    when need to squeeze out some more performance.
+    $(P この特定の例では、ちゃんとした解析をしたわけではありませんが、私の環境でざっと50%高速化しました。
+    ただし、水を差すわけではありませんが、現時点ではこの機能はまだ実験的で、一時的に幾つかの拡張機能が使えなくなっています。
+    悲しい話をもう少し続けると、コンパイラを酷使するためコンパイラの突然死の恐れがあります。また、この機能はテストがまだ足りていません。
+    とはいっても、ctRegex の機能が今後改善されていくことは間違いありません。
+    まとめると、基本的には実行時バージョンで使い始めて、実験してみたい気分になったときや、
+    パフォーマンスを絞り出したいときにはコンパイル時バージョンをお試しください。
     )
    
-    $(H3 Conclusion)
-    $(P The article represents a walkthrough of $(D std.regex) focused on showcasing the API.
-    By following a series of easy yet meaningful tasks, its features are exposed in combinations,
-    that underline the elegance and flexibility of this library solution.
-    The good thing that not only the API is natural, but it also follows established 
-    standards and integrates well with the rest of Phobos.
-    Putting together its major features for a short-list, $(STD regex) is:
+    $(H3 まとめ)
+    $(P 以上、$(D std.regex) の概観を、APIの展覧に焦点をあててご紹介しました。
+    簡単、でも意味のある課題を通してまとめてその機能を提示することで、
+    このライブラリのエレガントさと柔軟さを味わっていただくことができたと思います。
+    良いところは、API が自然なだけではなく、既存の標準をきちんとサポートしていて、
+    他の Phobos の機能とも統合されているということです。
+    最後に $(STD regex) の主要な機能を短くまとめると:
     )
      $(UL
-     $(LI Fully Unicode-aware, qualifies to standard full level 1 Unicode support)
-     $(LI Lots of modern extensions, including unlimited generalized lookaround. 
-     It makes porting regexes from other libraries a breeze)
-     $(LI Lean API that consists of a few flexible tools: $(D match), $(D replace), $(D splitter) )
-     $(LI Uniform and powerful, with unique abilities like precompiling regex or using ctRegex
-     specially tailored engine at compile-time. All of this fits within the common interface without a notch.)
+     $(LI 完全に Unicode を考慮していて、Unicode 標準 Level 1 準拠の対応度です)
+     $(LI 無制限の一般先読みなど、最新の拡張を数多くサポート。
+     他のライブラリを使ったコードの移植はとても簡単です。)
+     $(LI 少数の柔軟なツール $(D match), $(D replace), $(D splitter) からなる無駄のないAPI)
+     $(LI 統一のとれ、しか強力で類のない機能。たとえば ctRegex
+     によるコンパイル時の正規表現事前コンパイルなど。これらは全て変な引っかかりなく共通のインターフェイスで扱えます。)
      )
-    $(P The format of this article is intentionally more of an overview, as such it doesn't stop to talk in-depth about
-     certain capabilities like case-insensitive matching (via simple casefolding rules of Unicode),
-     backreferences, lazy quantifiers.
-     And even more features are coming, as there are interesting opportunities not exploited.
+    $(P この記事は、意図的に、概要にさらりと触れるだけの形式をとっています。
+      （Unicodeの規則に基づく）大文字小文字を区別しないマッチや、後方参照、
+	遅延量化子などの特定の機能の深い詳細については立ち止まりませんでした。
+    実は、まだまだ掘り下げられていない興味深いチャンスが残っており、さらなる機能が搭載されていく予定です。
     )
 
 )
 Macros:
-TITLE=Regular expressions
+TITLE=正規表現
 H3 = <h3>$0</h3>
 DOLLAR = $
 STD = $(LINK2 phobos/std_$0.html, std.$0)
