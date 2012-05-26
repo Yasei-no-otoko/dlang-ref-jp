@@ -1,35 +1,35 @@
 Ddoc
 
-$(SPEC_S Structs &amp; Unions,
+$(SPEC_S 構造体と共用体,
 
-        $(P Whereas classes are reference types, structs are value types.
-        Any C struct can be exactly represented as a D struct.
-        In C++ parlance, a D struct is a
-        $(DPLLINK glossary.html#pod, POD (Plain Old Data)) type,
-        with a trivial constructors and destructors.
-        Structs and unions are meant as simple aggregations of data, or as a way
-        to paint a data structure over hardware or an external type. External
-        types can be defined by the operating system API, or by a file format.
-        Object oriented features are provided with the class data type.
+        $(P クラスは参照型ですが、構造体は値型です。
+	Cの構造体はすべて、Dの構造体として正確に表現することができます。
+	C++ 用語で言うと、 Dの構造体は
+        $(DPLLINK glossary.html#pod, POD (Plain Old Data))  型、
+	すなわち"自明な"コンストラクタとデストラクタを持った型とも言えます。
+	構造体と共用体は、シンプルなデータの集約や、ハードウェアや外部の型の上に
+	データ構造を定義する方法として使うことを意図されています。
+	外部の型とは、OSのAPIや、ファイルフォーマットなどによって定義される型です。
+	オブジェクト指向的な機能はクラスによって提供されます。
         )
 
-        $(P A struct is defined to not have an identity; that is,
-        the implementation is free to make bit copies of the struct
-        as convenient.)
+        $(P 構造体には同一性(identity)の概念はありません。
+	つまり、
+	実装は必要ならいつでも構造体のビット単位のコピーを作って良いことになっています。)
 
-        $(TABLE2 Struct$(COMMA) Class Comparison Table,
+        $(TABLE2 構造体とクラスの対比,
 
         $(TR
-        $(TH Feature)
-        $(TH struct)
-        $(TH class)
-        $(TH C struct)
-        $(TH C++ struct)
-        $(TH C++ class)
+        $(TH 特徴)
+        $(TH 構造体)
+        $(TH クラス)
+        $(TH C の構造体)
+        $(TH C++ の構造体)
+        $(TH C++ のクラス)
         )
 
         $(TR
-        $(TD value type)
+        $(TD 値型)
         $(YES)
         $(NO)
         $(YES)
@@ -38,7 +38,7 @@ $(SPEC_S Structs &amp; Unions,
         )
 
         $(TR
-        $(TD reference type)
+        $(TD 参照型)
         $(NO)
         $(YES)
         $(NO)
@@ -47,7 +47,7 @@ $(SPEC_S Structs &amp; Unions,
         )
 
         $(TR
-        $(TD data members)
+        $(TD データメンバ)
         $(YES)
         $(YES)
         $(YES)
@@ -56,7 +56,7 @@ $(SPEC_S Structs &amp; Unions,
         )
 
         $(TR
-        $(TD hidden members)
+        $(TD 隠れメンバ)
 $(V1    $(NO))
 $(V2    $(YES))
         $(YES)
@@ -66,7 +66,7 @@ $(V2    $(YES))
         )
 
         $(TR
-        $(TD static members)
+        $(TD 静的メンバ)
         $(YES)
         $(YES)
         $(NO)
@@ -75,7 +75,7 @@ $(V2    $(YES))
         )
 
         $(TR
-        $(TD default member initializers)
+        $(TD デフォルト初期化子)
         $(YES)
         $(YES)
         $(NO)
@@ -84,7 +84,7 @@ $(V2    $(YES))
         )
 
         $(TR
-        $(TD bit fields)
+        $(TD ビットフィールド)
         $(NO)
         $(NO)
         $(YES)
@@ -93,7 +93,7 @@ $(V2    $(YES))
         )
 
         $(TR
-        $(TD non-virtual member functions)
+        $(TD 非仮想メンバ関数)
         $(YES)
         $(YES)
         $(NO)
@@ -102,7 +102,7 @@ $(V2    $(YES))
         )
 
         $(TR
-        $(TD virtual member functions)
+        $(TD 仮想メンバ関数)
         $(NO)
         $(YES)
         $(NO)
@@ -112,7 +112,7 @@ $(V2    $(YES))
 
 $(V1
         $(TR
-        $(TD constructors)
+        $(TD コンストラクタ)
         $(NO)
         $(YES)
         $(NO)
@@ -120,7 +120,7 @@ $(V1
         $(YES)
         )
         $(TR
-        $(TD destructors)
+        $(TD デストラクタ)
         $(NO)
         $(YES)
         $(NO)
@@ -136,7 +136,7 @@ $(V1
         $(YES)
         )
         $(TR
-        $(TD assign overload)
+        $(TD 代入のオーバーロード)
         $(NO)
         $(NO)
         $(NO)
@@ -146,7 +146,7 @@ $(V1
 )
 $(V2
         $(TR
-        $(TD $(LINK2 #Struct-Constructor, constructors))
+        $(TD $(LINK2 #Struct-Constructor, コンストラクタ))
         $(YES)
         $(YES)
         $(NO)
@@ -154,7 +154,7 @@ $(V2
         $(YES)
         )
         $(TR
-        $(TD $(LINK2 #StructPostblit, postblit)/copy constructors)
+        $(TD $(LINK2 #StructPostblit, postblit)/copy コンストラクタ)
         $(YES)
         $(NO)
         $(NO)
@@ -162,7 +162,7 @@ $(V2
         $(YES)
         )
         $(TR
-        $(TD $(LINK2 #StructDestructor, destructors))
+        $(TD $(LINK2 #StructDestructor, デストラクタ))
         $(YES)
         $(YES)
         $(NO)
@@ -170,7 +170,7 @@ $(V2
         $(YES)
         )
         $(TR
-        $(TD $(GLINK2 class, SharedStaticConstructor)s)
+        $(TD $(GLINK2 class, shared静的コンストラクタ))
         $(YES)
         $(YES)
         $(NO)
@@ -178,7 +178,7 @@ $(V2
         $(NO)
         )
         $(TR
-        $(TD $(GLINK2 class, SharedStaticDestructor)s)
+        $(TD $(GLINK2 class, shared静的デストラクタ))
         $(YES)
         $(YES)
         $(NO)
@@ -194,7 +194,7 @@ $(V2
         $(YES)
         )
         $(TR
-        $(TD $(LINK2 #AssignOverload, assign overload))
+        $(TD $(LINK2 #AssignOverload, 代入のオーバーロード))
         $(YES)
         $(NO)
         $(NO)
@@ -204,7 +204,7 @@ $(V2
 )
 
         $(TR
-        $(TD $(LINK2 #StructLiteral, literals))
+        $(TD $(LINK2 #StructLiteral, リテラル))
         $(YES)
         $(NO)
         $(NO)
@@ -213,7 +213,7 @@ $(V2
         )
 
         $(TR
-        $(TD operator overloading)
+        $(TD 演算子オーバーロード)
         $(YES)
         $(YES)
         $(NO)
@@ -222,7 +222,7 @@ $(V2
         )
 
         $(TR
-        $(TD inheritance)
+        $(TD 継承)
         $(NO)
         $(YES)
         $(NO)
@@ -231,7 +231,7 @@ $(V2
         )
 
         $(TR
-        $(TD invariants)
+        $(TD 不変条件)
         $(YES)
         $(YES)
         $(NO)
@@ -240,7 +240,7 @@ $(V2
         )
 
         $(TR
-        $(TD unit tests)
+        $(TD 単体テスト)
         $(YES)
         $(YES)
         $(NO)
@@ -249,7 +249,7 @@ $(V2
         )
 
         $(TR
-        $(TD synchronizable)
+        $(TD 同期処理)
         $(NO)
         $(YES)
         $(NO)
@@ -258,7 +258,7 @@ $(V2
         )
 
         $(TR
-        $(TD parameterizable)
+        $(TD パラメタ化)
         $(YES)
         $(YES)
         $(NO)
@@ -267,7 +267,7 @@ $(V2
         )
 
         $(TR
-        $(TD alignment control)
+        $(TD アラインメント制御)
         $(YES)
         $(YES)
         $(NO)
@@ -276,7 +276,7 @@ $(V2
         )
 
         $(TR
-        $(TD member protection)
+        $(TD メンバのアクセス制御)
         $(YES)
         $(YES)
         $(NO)
@@ -285,7 +285,7 @@ $(V2
         )
 
         $(TR
-        $(TD default public)
+        $(TD デフォルトでpublic)
         $(YES)
         $(YES)
         $(YES)
@@ -294,7 +294,7 @@ $(V2
         )
 
         $(TR
-        $(TD tag name space)
+        $(TD タグ名前空間)
         $(NO)
         $(NO)
         $(YES)
@@ -303,7 +303,7 @@ $(V2
         )
 
         $(TR
-        $(TD anonymous)
+        $(TD 無名構造体/クラス)
         $(YES)
         $(NO)
         $(YES)
@@ -312,7 +312,7 @@ $(V2
         )
 
         $(TR
-        $(TD static constructor)
+        $(TD 静的コンストラクタ)
         $(YES)
         $(YES)
         $(NO)
@@ -321,7 +321,7 @@ $(V2
         )
 
         $(TR
-        $(TD static destructor)
+        $(TD 静的デストラクタ)
         $(YES)
         $(YES)
         $(NO)
@@ -340,7 +340,7 @@ $(V2
         )
 
         $(TR
-        $(TD inner nesting)
+        $(TD 内部ネスト)
         $(TD $(LINK2 #nested, YES))
         $(TD $(DDSUBLINK class, nested, YES))
         $(NO)
@@ -381,87 +381,87 @@ $(GNAME StructDeallocator):
     $(GLINK2 class, ClassDeallocator)
 )
 
-$(P They work like they do in C, with the following exceptions:)
+$(P Cの場合と同様に動きます。ただし、以下の例外を除きます：)
 
 $(UL
-        $(LI no bit fields)
-        $(LI alignment can be explicitly specified)
-        $(LI no separate tag name space - tag names go into the current scope)
-        $(LI declarations like:
+        $(LI ビットフィールドはありません)
+        $(LI アラインメントを明示的に指定できます)
+        $(LI タグ名の名前空間は分離されていません - タグ名は現在のスコープに入ります)
+        $(LI 次のような宣言:
 
 ------
 struct ABC x;
 ------
-        are not allowed, replace with:
+        は不正です。次のように書きます：
 
 ------
 ABC x;
 ------
         )
-        $(LI anonymous structs/unions are allowed as members of other structs/unions)
-        $(LI Default initializers for members can be supplied.)
-        $(LI Member functions and static members are allowed.)
+        $(LI 他の構造体/共用体のメンバとして、無名構造体/共用体が使えます)
+        $(LI メンバのデフォルト初期化子を指定できます)
+        $(LI メンバ関数やstaticメンバを作れます)
 )
 
 
-<h3>Opaque Structs and Unions</h3>
+<h3>不透明構造体と共用体</h3>
 
-	$(P Opaque struct and union declarations do not have a $(GLINK StructBody):)
+	$(P $(GLINK StructBody) を持たない構造体/共用体宣言を不透明(opaque)であると言います:)
 
 ---
 struct S;
 union U;
 ---
 
-	$(P The members are completely hidden to the user, and so the only operations
-	on those types are ones that do not require any knowledge of the contents
-	of those types. For example:)
+	$(P メンバは完全にユーザーから隠されるため、
+	可能な操作はこれらの型の内容に関する知識がゼロでも実行できるものに限ります。
+	例えば:)
 
 ---
 struct S;
-S.sizeof; // error, size is not known
-S s;      // error, cannot initialize unknown contents
-S* p;     // ok, knowledge of members is not necessary
+S.sizeof; // エラー。サイズはわからない
+S s;      // エラー。不明な内容の初期化はできない
+S* p;     // OK。内容の知識はいらない
 ---
 
-	$(P They can be used to implement the
-	$(LINK2 http://en.wikipedia.org/wiki/Opaque_pointer, PIMPL idiom).)
+	$(P これらは
+	$(LINK2 http://en.wikipedia.org/wiki/Opaque_pointer, pimpl イディオム) の実装などに使えます。)
 
 
-<h3>Static Initialization of Structs</h3>
+<h3>構造体の静的初期化</h3>
 
-        Static struct members are by default initialized to whatever the
-        default initializer for the member is, and if none supplied, to
-        the default initializer for the member's type.
-        If a static initializer is supplied, the
-        members are initialized by the member name,
-        colon, expression syntax. The members may be initialized in any order.
-        Initializers for statics must be evaluatable at compile time.
-        Members not specified in the initializer list are default initialized.
+	静的構造体メンバは、
+	メンバに対して指定されたデフォルト初期化値へと初期化されます。
+	指定がなかった場合は、そのメンバの型のデフォルト初期化値が使用されます。
+	もし静的初期化子が指定されていれば、メンバは メンバ名 コロン 式、
+	の三つ組みで初期化されます。メンバ初期化の順序は問われません。
+	静的メンバの初期化子はコンパイル時に評価可能なものに限られます
+	初期化リストに指定されていないメンバは、
+	デフォルト値で初期化されます。
 
 ------
 struct S { int a; int b; int c; int d = 7;}
-static S x = { a:1, b:2};            // c is set to 0, d to 7
+static S x = { a:1, b:2};            // c は 0, d は 7
 static S z = { c:4, b:5, a:2 , d:5}; // z.a = 2, z.b = 5, z.c = 4, z.d = 5
 ------
 
-        C-style initialization, based on the order of the members in the
-        struct declaration, is also supported:
+	C方式の、
+	メンバの順序に基づいた初期化もサポートされています：
 
 ------
 static S q = { 1, 2 }; // q.a = 1, q.b = 2, q.c = 0, q.d = 7
 ------
 
-        $(P Struct literals can also be used to initialize statics, but
-        they must be evaluable at compile time.)
+        $(P static変数の初期化には構造体リテラルも使用可能ですが、
+	コンパイル時評価可能なものに限られます。)
 
 -----
 static S q = S( 1, 2+3 ); // q.a = 1, q.b = 5, q.c = 0, q.d = 7
 -----
 
-        $(P The static initializer syntax can also be used to initialize
-        non-static variables, provided that the member names are not given.
-        The initializer need not be evaluatable at compile time.)
+        $(P static初期化子の構文は、メンバ名を指定しない形式に限り、
+	非static変数の初期化にも使用可能です。
+	この場合はコンパイル時評価の不可能な式を指定することもできます。)
 
 ----
 void test(int i) {
@@ -470,34 +470,34 @@ void test(int i) {
 ----
 
 
-<h3>Static Initialization of Unions</h3>
+<h3>共用体の静的初期化</h3>
 
-        Unions are initialized explicitly.
+	共用体は明示的に初期化します。
 
 ------
 union U { int a; double b; }
 static U u = { b : 5.0 }; // u.b = 5.0
 ------
 
-        Other members of the union that overlay the initializer,
-        but occupy more storage, have
-        the extra storage initialized to zero.
+	初期化子と重なるけれどもより大きなメモリを使うメンバがある場合、
+	その部分は、
+	0初期化されます。
 
-<h3>Dynamic Initialization of Structs</h3>
+<h3>構造体の動的初期化</h3>
 
-        $(P Structs can be dynamically initialized from another
-        value of the same type:)
+        $(P 構造体は、
+	同じ型の別の値を使って動的に初期化できます:)
 
 ----
 struct S { int a; }
-S t;      // default initialized
+S t;      // デフォルト初期化
 t.a = 3;
-S s = t;  // s.a is set to 3
+S s = t;  // s.a は 3 になる
 ----
 
-        $(P If $(D opCall) is overridden for the struct, and the struct
-        is initialized with a value that is of a different type,
-        then the $(D opCall) operator is called:)
+        $(P $(D opCall) がその構造体でオーバーライドされていて、
+	別の型の値で構造体が初期化されようとしているときには、
+        $(D opCall) 演算子が呼び出されます:)
 
 ----
 struct S {
@@ -516,88 +516,88 @@ struct S {
   }
 }
 
-S s = 3; // sets s.a to 3
-S t = s; // sets t.a to 3, S.$(B opCall)(s) is not called
+S s = 3; // s.a は 3 になる
+S t = s; // t.a は 3 になる。 S.$(B opCall)(s) は呼ばれない
 ----
 
-<h3>$(LNAME2 StructLiteral, Struct Literals)</h3>
+<h3>$(LNAME2 StructLiteral, 構造体リテラル)</h3>
 
-        $(P Struct literals consist of the name of the struct followed
-        by a parenthesized argument list:)
+        $(P 構造体リテラルは、
+	構造体名のあとに括弧で引数リストを続けた物です：)
 
 ---
 struct S { int x; float y; }
 
 int foo(S s) { return s.x; }
 
-foo( S(1, 2) ); // set field x to 1, field y to 2
+foo( S(1, 2) ); // フィールド x を 1 に、フィールド y を 2 にセット。
 ---
 
-        $(P Struct literals are syntactically like function calls.
-        If a struct has a member function named $(CODE opCall), then
-        struct literals for that struct are not possible.
-        It is an error if there are more arguments than fields of
-        the struct.
-        If there are fewer arguments than fields, the remaining
-        fields are initialized with their respective default
-        initializers.
-        If there are anonymous unions in the struct, only the first
-        member of the anonymous union can be initialized with a
-        struct literal, and all subsequent non-overlapping fields are default
-        initialized.
+        $(P 構造体リテラルは、構文的には関数呼び出しのように見えます。
+	構造体がメンバ関数 $(CODE opCall) を実装していた場合は、
+	その構造体のリテラルは使えません。
+	フィールド数より多い引数を書くと
+	エラーです。
+	フィールド数より引数の数が少ない場合は、
+	残りのフィールドは
+	デフォルト初期化されます。
+	構造体のメンバに無名unionが会った場合、
+	構造体リテラルで初期化できるのは１つめのunionのメンバのみです。
+	残りの、
+	重なっていない部分はデフォルト初期化されます。
         )
 
-<h3>Struct Properties</h3>
+<h3>構造体のプロパティ</h3>
 
-$(TABLE2 Struct Properties,
-$(TR $(TD .sizeof) $(TD Size in bytes of struct))
-$(TR $(TD .alignof) $(TD Size boundary struct needs to be aligned on))
-$(TR $(TD .tupleof) $(TD Gets type tuple of fields))
+$(TABLE2 構造体のプロパティ,
+$(TR $(TD .sizeof) $(TD 構造体のbyte単位でのサイズ))
+$(TR $(TD .alignof) $(TD 構造体が整列されなければならないバイト境界の値))
+$(TR $(TD .tupleof) $(TD フィールドのタプルを取得))
 )
 
-<h3>Struct Field Properties</h3>
+<h3>構造体フィールドのプロパティ</h3>
 
-$(TABLE2 Struct Field Properties,
-$(TR $(TD .offsetof) $(TD Offset in bytes of field from beginning of struct))
+$(TABLE2 構造体フィールドのプロパティ,
+$(TR $(TD .offsetof) $(TD 構造体の開始位置からのオフセットバイト数))
 )
 
 $(V2
-$(SECTION3 <a name="ConstStruct">Const and Immutable Structs</a>,
+$(SECTION3 <a name="ConstStruct">const/immutable 構造体</a>,
 
-        $(P A struct declaration can have a storage class of
-        $(CODE const), $(CODE immutable) or $(CODE shared). It has an equivalent
-        effect as declaring each member of the struct as
-        $(CODE const), $(CODE immutable) or $(CODE shared).
+        $(P 構造体の宣言を記憶域クラス
+        $(CODE const) か $(CODE immutable) か $(CODE shared) で修飾することができます。
+	これは、すべてのメンバを
+        $(CODE const) か $(CODE immutable) か $(CODE shared) で修飾したのと同じ効果があります。
         )
 
 ----
 const struct S { int a; int b = 2; }
 
 void main() {
-  S s = S(3); // initializes s.a to 3
-  S t;        // initializes t.a to 0
-  t = s;      // error, t is const
-  t.a = 4;    // error, t.a is const
+  S s = S(3); // s.a を 3 に初期化
+  S t;        // t.a を 0 に初期化
+  t = s;      // エラー。t は const
+  t.a = 4;    // エラー。t.a は const
 }
 ----
 )
 )
 
 $(V2
-$(SECTION3 <a name="Struct-Constructor">Struct Constructors</a>,
+$(SECTION3 <a name="Struct-Constructor">構造体コンストラクタ</a>,
 
-        $(P Struct constructors are used to initialize an instance
-        of a struct.
-        The $(I ParameterList) may not be empty.
-        Struct instances that are not instantiated with a constructor
-        are default initialized to their $(CODE .init) value.
+        $(P 構造体コンストラクタは、
+	構造体のインスタンスの初期化のために使用されます。
+        $(I ParameterList) を空にすることはできません。
+	コンストラクタ以外の方法でインスタンス化された構造体インスタンスは、
+	デフォルト値 $(CODE .init) で初期化されます。
         )
 
 ------
 struct S {
   int x, y;
 
-  this()  // error, cannot implement default ctor for structs
+  this()  // エラー。構造体のデフォルトコンストラクタは定義できない
   {
   }
 
@@ -611,42 +611,42 @@ struct S {
 void main()
 {
   S a = S(4, 5);
-  auto b = S();  // same as auto b = S.init;
+  auto b = S();  // auto b = S.init; と同じ
 }
 ------
 )
 )
 
 $(V2
-$(SECTION3 <a name="StructPostblit">Struct Postblits</a>,
+$(SECTION3 <a name="StructPostblit">構造体 Postblits</a>,
 
 $(GRAMMAR
 $(GNAME StructPostblit):
     $(B this(this)) $(GLINK2 function, FunctionBody)
 )
 
-        $(P $(I Copy construction) is defined as initializing
-         a struct instance from another struct of the same type.
-         Copy construction is divided into two parts:)
+        $(P $(I コピーコンストラクト) とは、
+	 構造体のインスタンスを同じ型の別のインスタンスによって初期化することと定義されます。
+	 コピーコンストラクトには二つの段階で構成されます:)
 
         $(OL
-        $(LI blitting the fields, i.e. copying the bits)
-        $(LI running $(I postblit) on the result)
+        $(LI フィールドのblit。つまり、ビット毎のコピー)
+        $(LI その結果に対し $(I postblit) を実行)
         )
 
-        $(P The first part is done automatically by the language,
-        the second part is done if a postblit function is defined
-        for the struct.
-        The postblit has access only to the destination struct object,
-        not the source.
-        Its job is to $(SINGLEQUOTE fix up) the destination as necessary, such as
-        making copies of referenced data, incrementing reference counts,
-        etc. For example:
+        $(P 一段階目は言語によって自動的に処理され、
+	二段階目は、構造体に postblit
+	関数が定義されていた場合に実行されます。
+	postblit は、コピー先の構造体オブジェクトに対してのみアクセス可能で、
+	コピー元を触ることはできません。
+	ここで行われるべき処理は、
+		必要に応じて参照型データをコピーしたり参照カウントを増やすなどの、
+        コピー先の $(SINGLEQUOTE fix up) 処理です。例：
         )
 
 ---
 struct S {
-  int[] a;    // array is privately owned by this instance
+  int[] a;    // この配列はインスタンス毎にprivateに所有させたい
   this(this) {
     a = a.dup;
   }
@@ -656,65 +656,65 @@ struct S {
 }
 ---
 
-	$(P Unions may not have fields that have postblits.)
+	$(P 共用体に postblit が必要なフィールドを持たせることはできません。)
 )
 )
 
 $(V2
-$(SECTION3 <a name="StructDestructor">Struct Destructors</a>,
+$(SECTION3 <a name="StructDestructor">構造体デストラクタ</a>,
 
-        $(P Destructors are called when an object goes out of scope.
-        Their purpose is to free up resources owned by the struct
-        object.
+        $(P デストラクタは、オブジェクトがスコープを外れたときに呼び出されます。
+	構造体オブジェクトの所有するリソースの解放などが
+	主な目的です。
         )
 
-	$(P Unions may not have fields that have destructors.)
+	$(P 構造体にデストラクタのあるフィールドを持たせることはできません。)
 )
 )
 
 $(V2
-$(SECTION3 <a name="AssignOverload">Assignment Overload</a>,
+$(SECTION3 <a name="AssignOverload">代入のオーバーロード</a>,
 
-        $(P While copy construction takes care of initializing
-        an object from another object of the same type,
-        assignment is defined as copying the contents of one
-        object over another, already initialized, type:
+        $(P コピーコンストラクトはオブジェクトを別のオブジェクトによって
+	初期化する際の作業のことをいいますが、
+	代入は、別のオブジェクトの内容を他の既に初期化済みのオブジェクトにコピーすること、
+	と定義されています：
         )
 
 ---
 struct S { ... }
-S s;      // default construction of s
-S t = s;  // t is copy-constructed from s
-t = s;    // t is assigned from s
+S s;      // s のデフォルト初期化
+S t = s;  // t は s からコピーコンストラクトされる
+t = s;    // t は s から代入される
 ---
 
-        $(P Struct assignment $(CODE t=s) is defined to be semantically
-        equivalent to:
+        $(P 構造体代入 $(CODE t=s) は、
+	意味的に以下と同等に解釈されます:
         )
 
 ---
 t.opAssign(s);
 ---
 
-        $(P where $(CODE opAssign) is a member function of S:)
+        $(P デフォルトの $(CODE opAssign) は概念的に以下のような処理をする S のメンバ関数です:)
 
 ---
 S* opAssign(ref const S s)
-{   ... bitcopy *this into tmp ...
-    ... bitcopy s into *this ...
-    ... call destructor on tmp ...
+{   ... *this を tmp にビットコピー ...
+    ... s を *this にビットコピー ...
+    ... tmp のデストラクタ呼び出し ...
     return this;
 }
 ---
 
-        $(P While the compiler will generate a default $(CODE opAssign)
-        as needed, a user-defined one can be supplied. The user-defined
-        one must still implement the equivalent semantics, but can
-        be more efficient.
+        $(P 必要に応じてコンパイラはデフォルトの $(CODE opAssign) を生成しますが、
+	これをユーザー定義することも可能です。
+	ユーザー定義の際も同じ意味論を持った定義しなければなりませんが、
+	より効率のよい実装を提供することは可能です。
         )
 
-        $(P One reason a custom $(CODE opAssign) might be more efficient
-        is if the struct has a reference to a local buffer:
+        $(P ユーザー定義 $(CODE opAssign) の方が効率的になる場合としては、
+	以下のように構造体がローカルバッファへの参照を保持している場合などがあります：
         )
 
 ---
@@ -737,24 +737,24 @@ struct S {
 }
 ---
 
-        $(P Here, $(CODE S) has a temporary workspace $(CODE buf[]).
-        The normal postblit
-        will pointlessly free and reallocate it. The custom $(CODE opAssign)
-        will reuse the existing storage.
+        $(P $(CODE S) はテンポラリの作業領域 $(CODE buf[])> をメンバに持っています。
+	通常の postblit
+	は無駄にこれをfreeし再割り当てしますが、カスタムの $(CODE opAssign)
+	では既存の領域を再利用することができます。
         )
 
 )
 )
 
 $(V2
-<h2>$(LNAME2 nested, Nested Structs)</h2>
+<h2>$(LNAME2 nested, ネスト構造体)</h2>
 
-        $(P A $(I nested struct) is a struct that is declared inside the scope
-        of a function or a templated struct that has aliases to local
-        functions as a template argument.
-        Nested structs have member functions.
-        It has access to the context of its enclosing scope
-        (via an added hidden field).
+        $(P A $(I ネスト構造体) とは、
+	関数スコープの内側で定義された構造体と、
+	ローカル関数をalias引数にとるテンプレート構造体のことを言います。
+	ネスト構造体はメンバ関数を持つことができ、
+	（追加された隠しフィールドを通して）
+	囲むスコープのコンテキストにアクセス可能です。
         )
 
 ---
@@ -766,12 +766,12 @@ void foo() {
   }
   SS s;
   s.x = 3;
-  s.bar(); // returns 11
+  s.bar(); // 11 を返す
 }
 ---
 
-        $(P Nested structs cannot be used as fields or as the
-        element type of an array:
+        $(P ネスト構造体は、
+	フィールドや配列の要素として使うことはできません。
         )
 
 ---
@@ -782,17 +782,17 @@ void foo() {
     int bar() { return x + i + 1; }
   }
   struct DD {
-    SS s;  // error, cannot be field
+    SS s;  // エラー。フィールドにはできない
   }
-  SS[3] a; // error, cannot be array element
-  SS[] a;  // error, cannot be array element
+  SS[3] a; // エラー。配列要素にはできない
+  SS[] a;  // エラー。配列要素にはできない
 }
 ---
 
-        $(P A struct can be prevented from being nested by
-        using the static attribute, but then of course it
-        will not be able to access variables from its enclosing
-        scope.)
+        $(P static 属性を明示することで、
+	構造体がネスト構造体となることを阻止できます。
+	当然、
+	その場合は囲むスコープの変数にはアクセスできません。)
 
 ---
 void foo() {
@@ -800,14 +800,14 @@ void foo() {
   $(B static) struct SS {
     int x,y;
     int bar() {
-      return i; // error, SS is not a nested struct
+      return i; // エラー。SS はネスト構造体ではない
     }
   }
 }
 ---
 
-        $(P A templated struct can become a nested struct if it
-        has a local function passed as an aliased argument:
+        $(P ローカル関数をalias引数としてとる構造体テンプレートは、
+	ネスト構造体になります。
         )
 
 ---
@@ -829,7 +829,7 @@ void main() {
 )
 
 Macros:
-        TITLE=Structs, Unions
+        TITLE=構造体, 共用体
         WIKI=Struct
         CATEGORY_SPEC=$0
         NO=$(TD &nbsp;)
