@@ -1,6 +1,6 @@
 Ddoc
 
-$(SPEC_S Declarations,
+$(SPEC_S 宣言,
 
 $(GRAMMAR
 $(V1 $(GNAME Declaration):
@@ -248,70 +248,70 @@ $(GNAME StructMemberInitializer):
     $(I Identifier) $(B :) $(GLINK NonVoidInitializer)
 )
 
-<h3>Declaration Syntax</h3>
+<h3>宣言の構文</h3>
 
-$(P Declaration syntax generally reads right to left:)
-
---------------------
-int x;    // x is an int
-int* x;   // x is a pointer to int
-int** x;  // x is a pointer to a pointer to int
-int[] x;  // x is an array of ints
-int*[] x; // x is an array of pointers to ints
-int[]* x; // x is a pointer to an array of ints
---------------------
-
-$(P Arrays read right to left as well:)
+$(P 宣言の構文は、基本的に左から右へと読むことができます:)
 
 --------------------
-int[3] x;     // x is an array of 3 ints
-int[3][5] x;  // x is an array of 5 arrays of 3 ints
-int[3]*[5] x; // x is an array of 5 pointers to arrays of 3 ints
+int x;    // x は int
+int* x;   // x は int　へのポインタ
+int** x;  // x は int　へのポインタ　へのポインタ
+int[] x;  // x は int　の配列
+int*[] x; // x は int　へのポインタ　の配列
+int[]* x; // x は int　の配列　へのポインタ
 --------------------
 
-$(P
-Pointers to functions are declared using the $(B function) keyword:
-)
+$(P 配列も、左から右へ読みます:)
 
 --------------------
-int $(B function)(char) x; // x is a pointer to
-                     // a function taking a char argument
-                     // and returning an int
-int $(B function)(char)[] x; // x is an array of
-                     // pointers to functions
-                     // taking a char argument
-                     // and returning an int
+int[3] x;     // xは　int　の3要素配列
+int[3][5] x;  // xは　int　の3要素配列　の5要素配列
+int[3]*[5] x; // xは　int　の3要素配列　へのポインタ　の5要素配列
 --------------------
 
 $(P
-$(V1 C-style array, function pointer and pointer to array declarations are possible as an alternative:)
-$(V2 C-style array, function pointer and pointer to array declarations are deprecated:)
+関数へのポインタは $(B function) キーワードを使って宣言します:
 )
 
 --------------------
-int x[3];          // x is an array of 3 ints
-int x[3][5];       // x is an array of 3 arrays of 5 ints
-int (*x[5])[3];    // x is an array of 5 pointers to arrays of 3 ints
-int (*x)(char);    // x is a pointer to a function taking a char argument
-                   // and returning an int
-int (*[] x)(char); // x is an array of pointers to functions
-                   // taking a char argument and returning an int
+int $(B function)(char) x; // x はcharを引数としてintを返す関数
+                     // へのポインタ
+
+int $(B function)(char)[] x; // x はcharを引数としてintを返す関数
+                     // へのポインタ　の配列
+
+
 --------------------
 
 $(P
-In a declaration declaring multiple symbols, all the declarations
-must be of the same type:
+$(V1 C風の宣言構文も使用可能です:)
+$(V2 C風の宣言構文は非推奨となっています:)
 )
 
 --------------------
-int x,y;   // x and y are ints
-int* x,y;  // x and y are pointers to ints
-int x,*y;  // error, multiple types
-int[] x,y; // x and y are arrays of ints
-int x[],y; // error, multiple types
+int x[3];          // x は int　の3要素配列
+int x[3][5];       // x は int　の5要素配列　の3要素配列
+int (*x[5])[3];    // x は int　の3要素配列　へのポインタ　の5要素配列
+int (*x)(char);    // x はcharを引数としてintを返す関数
+                   // へのポインタ
+int (*[] x)(char); // x はcharを引数としてintを返す関数
+                   // へのポインタ　の配列
 --------------------
 
-<h3><a name="AutoDeclaration">Implicit Type Inference</a></h3>
+$(P
+一行で複数のシンボルを宣言をする時は、
+全ての変数が同じ型でなくてはなりません：
+)
+
+--------------------
+int x,y;   // x と y は int
+int* x,y;  // x と y は intへのポインタ
+int x,*y;  // エラー, ２種類の型
+int[] x,y; // x と y は intの配列
+int x[],y; // エラー, ２種類の型
+--------------------
+
+<h3><a name="AutoDeclaration">暗黙の型推論</a></h3>
 
 $(GRAMMAR
 $(GNAME AutoDeclaration):
@@ -322,44 +322,44 @@ $(GNAME AutoDeclarationX):
     $(I AutoDeclarationX) $(B ,) $(I Identifier) $(B =) $(GLINK Initializer)
 )
 
-        $(P If a declaration starts with a $(I StorageClass) and has
-        a $(I NonVoidInitializer) from which the type can be inferred,
-        the type on the declaration can be omitted.
+        $(P 宣言が $(I StorageClass) で始まって、
+		型のわかる $(I NonVoidInitializer) が指定されているとき、
+	宣言の型は省略することが可能です。
         )
 
 ----------
-static x = 3;      // x is type int
-auto y = 4u;       // y is type uint
-$(V1 auto s = "string"; // s is type char[6])
-$(V2 auto s = "string"; // s is type immutable(char)[])
+static x = 3;      // x はint型
+auto y = 4u;       // y はuint型
+$(V1 auto s = "string"; // s はchar[6]型)
+$(V2 auto s = "string"; // s はimmutable(char)[]型)
 
 class C { ... }
 
-auto c = new C();  // c is a handle to an instance of class C
+auto c = new C();  // c はクラスCのインスタンスへのハンドル
 ----------
 
-        $(P The $(I NonVoidInitializer) cannot contain forward references
-        (this restriction may be removed in the future).
-        The implicitly inferred type is statically bound
-        to the declaration at compile time, not run time.
+        $(P $(I NonVoidInitializer) に前方参照を含むことはできません
+		（この制限は将来的に取り除かれる予定です）。
+		暗黙に推論される型は、
+		実行時ではなくコンパイル時に静的に決まります。
         )
 
 $(V2
-        $(P An $(GLINK2 expression, ArrayLiteral)
-        is inferred to be a dynamic array
-        type rather than a static array:)
+        $(P $(GLINK2 expression, ArrayLiteral)
+	 	の型は、
+		静的配列ではなく動的配列と推論されます:)
 
 ---
-auto v = ["hello", "world"]; // type is string[], not string[2]
+auto v = ["hello", "world"]; // 型は string[]。 string[2] ではない
 ---
 )
 
 $(V1
-<h3><a name="typedef">Type Defining</a></h3>
+<h3><a name="typedef">型の定義</a></h3>
 
         $(P
-        Strong types can be introduced with the typedef. Strong types are semantically a
-        distinct type to the type checking system, for function overloading, and for the debugger.
+		typedef によって、「強い型」を導入できます。強い型とは、型システムによって、
+		関数オーバーロードやデバッガに対して、オリジナルの型と厳密に区別される型です。
         )
 
 --------------------
@@ -370,23 +370,23 @@ void foo(myint m) { . }
 
  .
 myint b;
-foo(b);         // calls foo(myint)
+foo(b);         // foo(myint) が呼ばれる
 --------------------
 
-Typedefs can specify a default initializer different from the
-default initializer of the underlying type:
+	元の型とは違う初期値を
+	typedef で指定することができます：
 
 --------------------
 typedef int myint = 7;
-myint m;        // initialized to 7
+myint m;        // 7 に初期化される
 --------------------
 )
 
-<h3><a name="alias">Type Aliasing</a></h3>
+<h3><a name="alias">型の別名</a></h3>
 
         $(P
-	$(GLINK AliasDeclaration)s create a symbol that is an alias for another type,
-	and can be used anywhere that other type may appear.
+	$(GLINK AliasDeclaration) は他の型の別名となるシンボルを作り、
+	その型の代わりとしてどんな場所でも使えるようにします。
         )
 
 --------------------
@@ -394,29 +394,29 @@ $(B alias) abc.Foo.bar myint;
 --------------------
 
         $(P
-        Aliased types are semantically identical to the types they are aliased to. The
-        debugger cannot distinguish between them, and there is no difference as far as function
-        overloading is concerned. For example:
+		別名となっている型は、意味論的には元の型と全く同一に扱われます。
+		デバッガは二つの型を区別しませんし、関数オーバーロードの際も、
+		違いは生じません。例として：
         )
 
 --------------------
 $(B alias) int myint;
 
 void foo(int x) { . }
-void foo(myint m) { . } // error, multiply defined function foo
+void foo(myint m) { . } // ラー。同じ関数fooが二回以上定義されている
 --------------------
 
 $(V1
         $(P
-        Type aliases are equivalent to the C typedef.
+        型の別名は C の typedef と同等の機能です。
         )
 )
 
-<h3>Alias Declarations</h3>
+<h3>別名宣言</h3>
 
         $(P
-        A symbol can be declared as an $(I alias) of another symbol.
-        For example:
+        型だけでなく、任意のシンボルに対する $(I alias) を宣言できます。
+        例:
         )
 
 --------------------
@@ -424,11 +424,11 @@ import string;
 
 $(B alias) string.strlen mylen;
  ...
-int len = mylen("hello"); // actually calls string.strlen()
+int len = mylen("hello"); // 実際には string.strlen() が呼ばれる
 --------------------
 
         $(P
-        The following alias declarations are valid:
+		次のような別名宣言が全て有効です：
         )
 
 --------------------
@@ -438,16 +438,16 @@ $(B alias) Foo2!(int).t t2;
 $(B alias) t1.t t3;
 $(B alias) t2 t4;
 
-t1.t v1;  // v1 is type int
-t2 v2;    // v2 is type int
-t3 v3;    // v3 is type int
-t4 v4;    // v4 is type int
+t1.t v1;  // v1 はint型
+t2 v2;    // v2 はint型
+t3 v3;    // v3 はint型
+t4 v4;    // v4 はint型
 --------------------
 
         $(P
-        Aliased symbols are useful as a shorthand for a long qualified
-        symbol name, or as a way to redirect references from one symbol
-        to another:
+		シンボルの別名は、
+		長く修飾された名前を省略したり、
+		シンボルから別のシンボルへ転送する方法として役に立ちます：
         )
 
 --------------------
@@ -462,8 +462,8 @@ version (linux)
 --------------------
 
         $(P
-        Aliasing can be used to $(SINGLEQUOTE import) a symbol from an import into the
-        current scope:
+        シンボルを現在のスコープへ  $(SINGLEQUOTE import) するのに alias
+	を利用できます：
         )
 
 --------------------
@@ -471,8 +471,8 @@ $(B alias) string.strlen strlen;
 --------------------
 
         $(P
-        Aliases can also $(SINGLEQUOTE import) a set of overloaded functions, that can
-        be overloaded with functions in the current scope:
+        alias によってオーバーロードされた関数達をまとめて $(SINGLEQUOTE import) することも可能で、
+		その際には、新しく導入される関数は、現在のスコープに存在した関数とさらにオーバーロードされます：
         )
 
 --------------------
@@ -498,43 +498,43 @@ void test()
     D b = new D();
     int i;
 
-    i = b.foo(1, 2u);   // calls B.foo
-    i = b.foo(1);       // calls C.foo
+    i = b.foo(1, 2u);   // B.foo が呼ばれる
+    i = b.foo(1);       // C.foo が呼ばれる
 }
 --------------------
 
         $(P
-        $(B Note:) Type aliases can sometimes look indistinguishable from
-        alias declarations:
+        $(B 注:) 型のaliasは、見かけだけではシンボルの alias
+		宣言と区別できないことがあります：
         )
 
 --------------------
-$(B alias) foo.bar abc; // is it a type or a symbol?
+$(B alias) foo.bar abc; // 型？ シンボル？
 --------------------
 
         $(P
-        The distinction is made in the semantic analysis pass.
+		この区別は意味解析のフェーズで行われます。
         )
 
-        $(P Aliases cannot be used for expressions:)
+        $(P aliasを式に対して使うことはできません:)
 
 -----------
 struct S { static int i; }
 S s;
 
-alias s.i a; // illegal, s.i is an expression
+alias s.i a; // 不正。s.i は式
 alias S.i b; // ok
-b = 4;       // sets S.i to 4
+b = 4;       // S.i を 4 にする
 -----------
 
-<h3><a name="extern">Extern Declarations</a></h3>
+<h3><a name="extern">extern 宣言</a></h3>
 
-        Variable declarations with the storage class $(B extern) are
-        not allocated storage within the module.
-        They must be defined in some other object file with a matching
-        name which is then linked in.
-        The primary usefulness of this is to connect with global
-        variable declarations in C files.
+    記憶域クラス $(B extern) つきで宣言された変数の領域は、
+	モジュール内には確保されません。
+	同じ名前で変数を定義した別のオブジェクトファイルを
+	リンクする必要があります。
+	この機能の使いどころは、
+	C言語のグローバル変数宣言の利用です。
 
 <h3><a name="typeof">typeof</a></h3>
 
@@ -545,47 +545,47 @@ $(GNAME Typeof):
 )
 
         $(P
-        $(I Typeof) is a way to specify a type based on the type
-        of an expression. For example:
+        $(I Typeof) は、式の型に基づいて型を指定する方法です。
+		例えば：
         )
 
 --------------------
 void func(int i) {
- $(B typeof)(i) j;       // j is of type int
- $(B typeof)(3 + 6.0) x; // x is of type double
- $(B typeof)(1)* p;      // p is of type pointer to int
- int[$(B typeof)(p)] a;  // a is of type int[int*]
+ $(B typeof)(i) j;       // j の型はint
+ $(B typeof)(3 + 6.0) x; // x の型はdouble
+ $(B typeof)(1)* p;      // p の型はintへのポインタ
+ int[$(B typeof)(p)] a;  // a の型はint[int*]
 
- writefln("%d", $(B typeof)('c').sizeof); // prints 1
- double c = cast($(B typeof)(1.0))j; // cast j to double
+ writefln("%d", $(B typeof)('c').sizeof); // 1を表示
+ double c = cast($(B typeof)(1.0))j; // jをdoubleへキャスト
 }
 --------------------
 
         $(P
-        $(I Expression) is not evaluated, just the type of it is
-        generated:
+        $(I Expression) は評価されず、
+		その型情報のみが生成されます：
         )
 
 --------------------
 void func() {
  int i = 1;
- $(B typeof)(++i) j; // j is declared to be an int, i is not incremented
- writefln("%d", i);  // prints 1
+ $(B typeof)(++i) j; // j はintと宣言される。iは増加しない。
+ writefln("%d", i);  // 1と表示
 }
 --------------------
 
-        $(P There are $(V1 two) $(V2 three) special cases: )
+        $(P $(V1 二つ)$(V2 三つ)ほど、特別な場合があります： )
         $(OL
-        $(LI $(B typeof(this)) will generate the type of what $(B this)
-        would be in a non-static member function, even if not in a member
-        function.
+        $(LI $(B typeof(this)) は、例えメンバ関数の外であっても、
+		非静的メンバ関数の中で $(B this)
+        が指すはずの型になることがあります。
         )
-        $(LI Analogously, $(B typeof(super)) will generate the type of what
-        $(B super) would be in a non-static member function.
+        $(LI 同様に、$(B typeof(super)) は非静的メンバ関数の中で 
+        $(B super) が指すであろう型になることがあります。
         )
 $(V2
-        $(LI $(B typeof(return)) will, when inside a function scope,
-        give the return type of that function.
+        $(LI $(B typeof(return)) は、関数の中では、
+		その関数の返値の型になります。
         )
 )
         )
@@ -595,61 +595,61 @@ $(V2
 class A { }
 
 class B : A {
- $(B typeof(this)) x;  // x is declared to be a B
- $(B typeof(super)) y; // y is declared to be an A
+ $(B typeof(this)) x;  // x は B と宣言される
+ $(B typeof(super)) y; // y は A と宣言される
 }
 
 struct C {
- $(B typeof(this)) z;  // z is declared to be a C*
- $(B typeof(super)) q; // error, no super struct for C
+ $(B typeof(this)) z;  // z は C* と宣言される
+ $(B typeof(super)) q; // エラー。構造体 C には super がない
 }
 
-$(B typeof(this)) r;   // error, no enclosing struct or class
+$(B typeof(this)) r;   // エラー。構造体やクラス宣言の内部でない
 --------------------
 
         $(P
-        Where $(I Typeof) is most useful is in writing generic
-        template code.
+        $(I Typeof) がもっとも有効なのは、
+		templateを使ったジェネリックなコードを書く時です。
         )
 
-<h3>Void Initializations</h3>
+<h3>void 初期化子</h3>
 
 $(GRAMMAR
 $(GNAME VoidInitializer):
     $(B void)
 )
 
-        $(P Normally, variables are initialized either with an explicit
-        $(I Initializer) or are set to the default value for the
-        type of the variable. If the $(I Initializer) is $(B void),
-        however, the variable is not initialized. If its value is
-        used before it is set, undefined program behavior will result.
+        $(P 通常、変数は明示的な 
+        $(I Initializer) で初期化されるか、
+		その型のデフォルトの値がセットされます。しかし $(I Initializer) が $(B void) であった場合に限り、
+		変数は初期化されません。そのような変数が
+		値をセットされる前に使用されると、未定義動作を引き起こすことがあります。
 	)
 
 -------------------------
 void foo() {
  int x = void;
- writefln(x);  // will print garbage
+ writefln(x);  // 意味のない値を表示
 }
 -------------------------
 
-        $(P Therefore, one should only use $(B void) initializers as a
-        last resort when optimizing critical code.
+        $(P ですから、$(B void)
+		初期化子は速度が最優先のコードを最適化する最後の手段としておくべきです。
 	)
 
-<h3>Global and Static Initializers</h3>
+<h3>グローバル初期化子と静的初期化子</h3>
 
-	$(P The $(GLINK Initializer) for a global or static variable must be
-	evaluatable at compile time.
-	Whether some pointers can be initialized with the addresses of other
-	functions or data is implementation defined.
-	Runtime initialization can be done with static constructors.
+	$(P グローバル変数と静的変数の $(GLINK Initializer) は、
+	コンパイル時評価が可能でなければなりません。
+	ポインタが他の関数やデータのアドレスで初期化できるかどうかは、
+	実装定義です。
+	実行時初期化は静的コンストラクタを使って行ってください。
 	)
 
 )
 
 Macros:
-        TITLE=Declarations
+        TITLE=宣言
         WIKI=Declaration
         CATEGORY_SPEC=$0
         OPT=<sub>opt</sub>
