@@ -1,516 +1,516 @@
 Ddoc
 
-$(D_S Overview,
+$(D_S 概要,
 
-$(SECTION2 What is D?,
+$(SECTION2 D って何？,
 
-	$(P D is a general purpose systems and applications programming language.
-	It is a high level language, but retains the ability
-	to write high performance code and interface directly with the
-	operating system
-	<acronym title="Application Programming Interface">API</acronym>'s
-	and with hardware.
-	D is well suited to writing medium to large scale
-	million line programs with teams of developers. D is easy
-	to learn, provides many capabilities to aid the programmer,
-	and is well suited to aggressive compiler optimization technology.
+	$(P Dは、汎用のシステム／アプリケーション
+	プログラミング言語です。
+	高級言語ですが、高速なコードを書く能力や、
+	OS の
+	<acronym title="Application Programming Interface">API</acronym>
+	やハードウェアへの直接アクセスの機能も維持しています。Dは、
+	中規模から100万行単位の大規模ソフトウェアをチームで開発するのに適しています。
+	Dは学習が簡単で、
+	プログラマを補助する沢山の機能を提供し、
+	コンパイラの強力な最適化技術と相性の良い言語です。
 
 	<img src="images/d3.gif" border=0 align=right alt="D Man">
 	)
 
-	$(P D is not a scripting language, nor an interpreted language.
-	It doesn't
-	come with a <acronym title="Virtual Machine">VM</acronym>,
-	a religion, or an overriding
-	philosophy. It's a practical language for practical programmers
-	who need to get the job done quickly, reliably, and leave behind
-	maintainable, easy to understand code.
+	$(P Dはスクリプト言語でも、
+	インタプリタ言語でもありません。
+	<acronym title="Virtual Machine">VM</acronym> を持たず、
+	宗教やおおげさな哲学とも縁がありません。
+	信頼性・保守性の高い・読みやすいコードを書いて仕事をサクサク進める必要のある
+	現実的なプログラマのための、
+	現実的な言語です。
 	)
 
-	$(P D is the culmination of decades of experience implementing
-	compilers for many diverse languages, and attempting to construct
-	large projects using those languages. D draws inspiration from
-	those other languages (most especially C++) and tempers it with
-	experience and real world practicality.
+	$(P D は、様々な言語のコンパイラを実装し、
+	その言語で大きなプロジェクトを構築してきた数十年の経験の集大成です。
+	D はそれらの言語（特に、C++）からインスピレーションを受け、
+	経験によって、
+	現実の実用性の面から調整して取り込んでいます。
 	)
 )
 
 
-$(SECTION2 Why D?,
+$(SECTION2 なぜ、 D ？,
 
-	$(P Why, indeed. Who needs another programming language?
+	$(P なぜ、まったく、誰がまた新しいプログラミング言語を必要とすると言うのでしょうか？
 	)
 
-	$(P The software industry has come a long way since the C language was
-	invented.
-	Many new concepts were added to the language with C++, but backwards
-	compatibility with C was maintained, including compatibility with
-	nearly all the weaknesses of the original design.
-	There have been many attempts to fix those weaknesses, but the
-	compatibility issue frustrates it.
-	Meanwhile, both C and C++ undergo a constant accretion of new
-	features. These new features must be carefully fitted into the
-	existing structure without requiring rewriting old code.
-	The end result is very complicated - the C standard is nearly
-	500 pages, and the C++ standard is about 750 pages!
-	C++ is a difficult and costly language to implement,
-	resulting in implementation variations that make it frustrating
-	to write fully portable C++ code.
+	$(P ソフトウェア産業は、C言語が開発されて以来、
+	長い道を歩んできました。
+	沢山の新しい概念が C++言語 に盛り込まれましたが、C との互換性、
+	特にCの設計上の欠点もほとんど全て、そのまま保たれています。
+	それらの欠点を修正しようという試みは多くありましたが、
+	しかし、互換性の問題が足かせになっていました。
+	一方で、CもC++も、新機能の増大を経験しています。
+	これら新機能は、
+	古いコードを書き直す必要がないように、
+	既存の機構に注意深くはめ込まれなければなりませんでした。
+	その結果は、物凄い複雑さ - C言語の標準規格は約500ページ、
+	C++ に至っては 750ページ！ - です。
+	C++ は実装するのにコストがかかり難しい言語で、
+	その結果、異なる実装の間で完全に移植性のある C++
+	コードを書くのはかなりイライラする作業となってしまいました。
 	)
 
-	$(P C++ implements things like resizable arrays and string
-	concatenation as part of the standard library, not as part of the
-	core language.  $(REDO Not being part of the core language has
-	several $(LINK2 cppstrings.html, suboptimal consequences).))
+	$(P C++では、可変長配列や文字列の結合といった機能は言語の一部ではなく、
+	標準ライブラリとして実装されています。
+	$(REDO 言語のコアの一部でないということは、
+	幾つか $(LINK2 cppstrings.html, 最適でない結果) をもたらします。))
 
-	$(P Can the power and capability of C++ be extracted, redesigned,
-	and recast into a language that is simple, orthogonal,
-	and practical?
-	Can it all be put into a package
-	that is easy for compiler
-	writers to correctly implement, and
-	which enables compilers to efficiently generate aggressively
-	optimized code?
+	$(P C++のパワーと可能性を取り出して再設計し、
+	単純で、
+	直交性のある、
+	実用的な言語へと変換することは可能でしょうか？
+	その言語を、
+	コンパイラ作成者が正しい実装を簡単に書けるように、
+	そして積極的に最適化を進めたコードを生成できるように、
+	まとめあげることは果たしてできるのでしょうか？
 	)
 
-	$(P Modern compiler technology has progressed to the point where language
-	features for the purpose of compensating for primitive compiler
-	technology can be omitted. (An
-	example of this would be the $(SINGLEQUOTE register) keyword in C, a more
-	subtle example is the macro
-	preprocessor in C.)
-	We can rely on modern compiler optimization technology to not
-	need language features necessary to get acceptable code quality out of
-	primitive compilers.
+	$(P M現在のコンパイラ技術は進歩の結果、
+	かつて未熟だったコンパイラ技術を補うために存在した
+	幾つかの言語仕様を省くことができるようになりました。
+	（例としては、C言語のキーワード $(SINGLEQUOTE register)
+	であったり、
+	もっと微妙な例ではCのマクロプリプロセッサがあります。）
+	私たちは現在のコンパイラ最適化技術に頼って、
+	原始的なコンパイラからまともな品質のコードを得るために必要だった言語仕様から
+	抜け出すことができます。
 	)
 
-$(SECTION3 Major Design Goals of D,
+$(SECTION3 D言語の設計の主な目標,
 
-	$(P Everything in designing a language is a tradeoff. Keeping some
-	principles in mind will help to make the right decisions.)
+	$(P 言語設計の全ては、何らかのトレードオフです。
+	なにかの原理を常に念頭に置いておくことは、正しい決定をする助けになります。)
 
     $(OL
-	$(LI Make it easier to write code that is portable from compiler
-	to compiler, machine to machine, and operating system to operating
-	system. Eliminate undefined and implementation defined behaviors
-	as much as practical.)
+	$(LI コンパイラからコンパイラへ、
+		マシンからマシンへ、
+		OSからOSへの移植できるコードを簡単に書けること。
+		実用的でありうる範囲で可能な限り、未定義動作や処理系依存の動作を取り除くこと。)
 
-	$(LI Provide syntactic and semantic constructs that eliminate or
-	at least reduce common mistakes. Reduce or even eliminate the need
-	for third party static code checkers.)
+	$(LI よくある間違いを無くす、あるいは少なくとも減らすように構文と意味論を構成すること。
+	サードパーティの静的コード検査器の必要を減らす、
+	あるいは完全に無くすこと。)
 
-	$(LI Support memory safe programming.)
+	$(LI メモリ安全なプログラミングのサポート。)
 
-	$(LI Support multi-paradigm programming, i.e. at a minimum support
-	imperative, structured, object oriented, generic and even
-	functional programming paradigms.)
+	$(LI マルチパラダイムプログラミングのサポート。つまり少なくとも、
+		手続き型、構造化、オブジェクト指向、ジェネリックプログラミング、
+		さらに関数型プログラミングをサポートすること。)
 
-	$(LI Make doing things the right way easier than the wrong way.)
+	$(LI 間違ったやり方より正しいやり方の方が簡単に書けるようにすること。)
 
-	$(LI Have a short learning curve for programmers comfortable with
-	programming in C, C++ or Java.)
+	$(LI CやC++, Javaに慣れたプログラマに対する
+		短い学習曲線。)
 
-	$(LI Provide low level bare metal access as required. Provide a means
-	for the advanced programmer to escape checking as necessary.)
+	$(LI 低レベルなマシン直接操作を自由にできる言語の提供。
+	腕利きのプログラマならば、必要な時には言語のチェックを迂回できる方法を提供すること。)
 
-	$(LI Make D reasonably easy to implement a compiler for.)
+	$(LI コンパイラの実装が十分に簡単な言語にすること。)
 
-	$(LI Be compatible with the local C application binary interface.)
+	$(LI 各環境でのCアプリとのバイナリインターフェイス互換性の保持。)
 
-	$(LI Where D code looks the same as C code, have it either behave the
-	same or issue an error.)
+	$(LI DのコードがCと同じに見えるときには、同じに振る舞うか、
+	明示的にエラーを出すかのどちらかにすること。)
 
-	$(LI Have a context-free grammar. Successful parsing must not require
-	semantic analysis.)
+	$(LI 文脈自由な文法。
+	意味解析なしで構文解析ができるようにすること。)
 
-	$(LI Easily support writing internationalized applications.)
+	$(LI 国際化されたアプリケーションを容易に書けるようサポート。)
 
-	$(LI Incorporate Contract Programming and unit testing methodology.)
+	$(LI 契約プログラミングや単体テストとの相互運用性。)
 
-	$(LI Be able to build lightweight, standalone programs.)
+	$(LI 軽量の、単独で動作するプログラムをビルド可能。)
 
-	$(LI Reduce the costs of creating documentation.)
+	$(LI ドキュメント作成の手間を削減。)
 
-	$(LI Provide sufficient semantics to enable advances in compiler optimization
-	technology.)
+	$(LI コンパイラの最適化技術の進展を有効活用できるような十分な意味論の提供。
+	)
 
-	$(LI Cater to the needs of numerical analysis programmers.)
+	$(LI 数値解析プログラマの必要に応えること。)
 
-	$(LI Obviously, sometimes these goals will conflict. Resolution will be
-	in favor of usability.)
+	$(LI 当然ながら、これら複数のゴールはしばしば衝突します。
+	その解消は、usability の良い案を優先する、という方針で行われます。)
     )
 )
 
-$(SECTION3 Features To Keep,
+$(SECTION3 既存言語から引き継いだ特徴,
 
-	$(P The general look of D is like C and C++. This makes it easier to learn
-	and port code to D. Transitioning from C/C++ to D should feel natural.
-	The
-	programmer will not have to learn an entirely new way of doing things.
+	$(P D の見かけは、全体的に C や C++ に似ています。これによって、
+	Dを学習したりコードを移植したりするのが容易になります。
+	C/C++ から D への以降は自然で、
+	新しいことを丸々学んだりする必要がありません。
 	)
 
-	$(P Using D will not mean that the programmer will become restricted to a
-	specialized runtime vm (virtual machine) like the Java vm or the
-	Smalltalk vm.
-	There is no D vm, it's a straightforward compiler that generates
-	linkable object files.
-	D connects to the operating system just like C does.
-	The usual familiar tools like $(B make) will fit right in with
-	D development.
+	$(P Dを使うと言うことは、
+	プログラマが特別な実行時VM (仮想マシン) に縛られる
+	Java VM や Smalltalk VM のような機構とは無関係です。
+	D VM なんてものは存在せず、
+	D は普通にリンクできるオブジェクトファイルを生成する、
+	直接的なコンパイラです。D は C と同様にOSに直結しています。
+	$(B make) のような一般的なツールも、
+	Dの開発にピッタリ使うことができます。
 	)
 
     $(UL
-	$(LI The general $(B look and feel) of C/C++ is maintained.
-	It uses the same algebraic syntax, most of the same expression
-	and statement forms, and the general layout.
+	$(LI 全体的なC/C++の $(B ルック＆フィール) は維持されています。
+		同じように数式を書けますし、ほとんどの式や文、
+		全体的なレイアウトも同じ形です。
 	)
 
-	$(LI D programs can be written either in
-	C style $(B function-and-data),
-	C++ style $(B object-oriented),
-	C++ style $(B template metaprogramming),
-	or any mix of the three.
+	$(LI D のプログラムは、
+	C の $(B 関数とデータ) スタイルでも
+	C++ の $(B オブジェクト指向) スタイルでも
+	C++ の $(B テンプレートメタプログラミング) スタイルでも
+	あるいはその３つの混合でも記述できます。
 	)
 
-	$(LI The $(B compile/link/debug) development model is
-	carried forward,
-	although nothing precludes D from being compiled into bytecode
-	and interpreted.
+	$(LI $(B コンパイル/リンク/デバッグ) という開発モデルも引き継いでいます。
+		Dをバイトコードへコンパイルしたり
+		インタープリタで動かしたりすることを妨げる要因もまた、
+		ありませんが。
 	)
 
-	$(LI $(B Exception handling).
-	More and more experience with exception handling shows it to be a
-	superior way to handle errors than the C traditional method of using
-	error codes and errno globals.
+	$(LI $(B 例外処理)。
+		例外処理に関する経験を積めば積むほど、エラーコードやグローバル変数
+		errnoを使うCの伝統的な方法と比べて、
+		例外による方法が優れていることがわかります。
 	)
 
-	$(LI $(B Runtime Type Identification).
-	This is partially implemented in C++;
-	in D it is taken to its
-	next logical step. Fully supporting it enables better garbage
-	collection, better debugger support, more automated persistence, etc.
+	$(LI $(B 実行時型識別)。
+		これはC++に部分的に実装されています。D では、
+		これをさらにもう一歩進めました。実行時型識別に完全に対応することで、
+		よりよりガベージコレクションやデバッグのサポート、
+		より自動化された永続性などが可能になります。
 	)
 
-	$(LI D maintains function link compatibility with the $(B C calling
-	conventions). This makes
-	it possible for D programs to access operating system API's directly.
-	Programmers' knowledge and experience with existing programming API's
-	and paradigms can be carried forward to D with minimal effort.
+	$(LI $(B Cの呼び出し規約) を持つ関数との呼び出し互換性を維持しています。
+		Dのプログラムから直接OSのAPIへアクセスできます。
+		プログラマの、
+		既存のプログラミングAPIやパラダイムに関する知識と経験は、
+		最小の作業でDへと引き継ぐことができます。
 	)
 
-	$(LI $(B Operator overloading).
-	D programs can overload operators enabling
-	extension of the basic types with user defined types.
+	$(LI $(B 演算子オーバーロード)。
+		D のプログラムは、演算子オーバーロードを有効にすることで、
+		ユーザー定義型によって基本型を拡張できます。
 	)
 
-	$(LI $(B Template Metaprogramming).
-	Templates are a way to implement generic programming.
-	Other ways include using macros or having a variant data type.
-	Using macros is out. Variants are straightforward, but
-	inefficient and lack type checking.
-	The difficulties with C++ templates are their
-	complexity, they don't fit well into the syntax of the language,
-	all the various rules for conversions and overloading fitted on top of
-	it, etc. D offers a much simpler way of doing templates.
+	$(LI $(B テンプレート メタプログラミング)。
+		テンプレートは generic programming を実装する方法の一つです。
+		他には、マクロを使うとか可変データ型(Variant)を使うといった方法があります。
+		マクロを使うのは駄目です。Variantを使うのは直接的ですが、
+		非効率ですし型チェックの欠如が問題です。
+		C++のtemplateが難しいのは、その複雑さが原因でした。
+		言語の構文とうまくなじまず、
+		その上に変換やオーバーロードの大量の規則が築かれているなどなど。。。
+		D では、template を使うずっと簡単な方法を提供します。
 	)
 
 	$(LI <acronym title="Resource Acquisition Is Initialization">$(B RAII)</acronym>
-	(Resource Acquisition Is Initialization).
-	RAII techniques are an essential component of writing reliable
-	software.
+		（「リソース獲得は初期化時に」イディオム）。
+		RAII のテクニックは、
+		信頼性の高いソフトウェアを書くために欠かすことのできない部分です。
 	)
 
-	$(LI $(B Down and dirty programming). D retains the ability to
-	do down-and-dirty programming without resorting to referring to
-	external modules compiled in a different language. Sometimes,
-	it's just necessary to coerce a pointer or dip into assembly
-	when doing systems work. D's goal is not to $(I prevent) down
-	and dirty programming, but to minimize the need for it in
-	solving routine coding tasks.
+	$(LI $(B Down and dirty programming)。 D には、
+		低レベルでダーティなプログラミングをする能力が保たれています。
+		他の言語でコンパイルした外部モジュールなどに頼る必要はありません。
+		システム関係の仕事をしていると、時には、
+		ポインタを使う必要やアセンブラを弄る必要が出てくるものです。
+		D の目標は、低レベルでダーティなプログラミングを $(I 妨げる) ことではなく、
+		日常的なコーディングの際にその必要を最小にすることです。
 	)
     )
 )
 
-$(SECTION3 Features To Drop,
+$(SECTION3 取り除かれた特徴,
 
 $(UL
-	$(LI C source code compatibility. Extensions to C that maintain
-	source compatibility
-	have already been done (C++ and ObjectiveC). Further work in this
-	area is hampered by so much legacy code it is unlikely that significant
-	improvements can be made.
+	$(LI Cとのソースコード互換性。互換性を保ったCの拡張は、
+		既になされています（C++ と ObjectiveC）。
+		この方面でのこれ以上の拡張は、
+		大量のレガシーなコードが足かせになりますし、
+		大した改善も見込めないように思います。
 	)
 
-	$(LI Link compatibility with C++. The C++ runtime object model is just
-	too complicated - properly supporting it would essentially imply
-	making D a full C++ compiler too.
+	$(LI C++とのリンク互換性。C++の実行時オブジェクトモデルは複雑すぎます
+		- これ適切にサポートするとなると、D を完全な C++
+		コンパイラにするのと本質的に変わりません。
 	)
 
-	$(LI The C preprocessor. Macro processing is an easy way to extend
-	a language, adding in faux features that aren't really there (invisible
-	to the symbolic debugger). Conditional compilation, layered with
-	#include text, macros, token concatenation, etc., essentially forms
-	not one language but two merged together with no obvious distinction
-	between them. Even worse (or perhaps for the best) the C preprocessor
-	is a very primitive macro language. It's time to step back, look at
-	what the preprocessor is used for, and design support for those
-	capabilities directly into the language.
+	$(LI Cのプリプロセッサ。マクロプリプロセスは、言語を拡張して、
+		実際にはない（デバッガには見えない）模造の特徴を追加する簡易な方法です。
+		条件コンパイルや、テキストの #include 、
+		マクロ、トークン結合など…
+		実質的にCは明確な区別のない二つの言語の混在となっています。
+		さらに悪いことに（もしかしたら幸いなことに？）C
+		のプリプロセッサは非常に原始的なマクロ言語です。
+		今が、一度振り返ってプリプロセッサの用途を見直し、
+		それらの用途をカバーする設計を言語自体に組み込む時です。
 	)
 
-	$(LI Multiple inheritance. It's a complex
-	feature of debatable value. It's very difficult to implement in an
-	efficient manner, and compilers are prone to many bugs in implementing
-	it. Nearly all the value of
-	<acronym title="multiple inheritance">MI</acronym> can be handled with
-	single inheritance
-	coupled with interfaces and aggregation. What's left does not
-	justify the weight of MI implementation.
+	$(LI 多重継承。データテーブルの値に関する複雑な機能です。
+		効率良くこれを実装するのは非常に大変で、
+		実装の際にコンパイラに沢山のバグを持たらす傾向にあります。
+		<acronym title="multiple inheritance">MI</acronym>
+		のほとんど全ての価値は、
+		単一継承にインターフェイスとアグリゲートを合わせれば達成できます。
+		残った部分だけでは、
+		MIを実装する手間を正当化するには足りません。
 	)
 
-	$(LI Namespaces. An attempt to deal with the problems resulting from
-	linking together independently developed pieces of code that
-	have conflicting names. The idea of modules is simpler and works
-	much better.
+	$(LI 名前空間。
+		独立に開発されたコードどうしで名前が衝突することを避けることを
+		目的とした技術です。モジュールを使う考え方の方が簡単で、
+		ずっとうまく動作します。
 	)
 
-	$(LI Tag name space. This misfeature of C is where the tag names
-	of structs are in a separate but parallel symbol table. C++
-	attempted to merge the tag name space with the regular name space,
-	while retaining backward compatibility with legacy C code. The
-	result is needlessly confusing.
+	$(LI タグ名空間。構造体のタグ名を別のシンボルテーブルに置く、というのは
+		C言語の間違った機能です。C++
+		ではタグ名と通常のシンボル名を一つに合わせると同時に、
+		古いCコードとの後方互換性をも残そうとしました。
+		結果は、不必要な混乱を招くものになっています。
 	)
 
-	$(LI Forward declarations. C compilers semantically only know
-	about what has lexically preceded the current state. C++ extends this
-	a little, in that class members can rely on forward referenced class
-	members. D takes this to its logical conclusion, forward declarations
-	are no longer necessary at the module level.
-	Functions can be defined in a natural
-	order rather than the typical inside-out order commonly used in C
-	programs to avoid writing forward declarations.
+	$(LI 前方宣言。Cコンパイラは、
+		カレント状態よりテキスト的に前に処理した部分のみを知っています。
+		C++はこれを少しだけ拡張して、
+		クラスのメンバ同士は順番によらず参照可能になりました。Dはこれを
+		その当然の論理的帰結へと押し進め、前方宣言は完全に不要になりました。Cでは、
+		前方宣言を書くのを嫌って呼び出し関係の順に関数を並べることがよくありましたが、
+		Dではモジュールレベルで、
+		自然な順序に関数を書くことができます。
 	)
 
-	$(LI Include files. A major cause of slow compiles as each
-	compilation unit
-	must reparse enormous quantities of header files. Include files
-	should be done as importing a symbol table.
+	$(LI ファイルのinclude。
+		コンパイル単位毎に巨大なファイルを何度もparseするのは、
+		コンパイルを遅くさせる主な原因となっています。ファイルの取り込みは、
+		シンボル表の import によってなされるべきです。
 	)
 
-	$(LI Trigraphs and digraphs. Unicode is the future.
+	$(LI 三連文字や二連文字。今は Unicode の時代です。
 	)
 
-	$(LI Non-virtual member functions. In C++, a class designer decides
-	in advance if a function is to be virtual or not. Forgetting to retrofit
-	the base class member function to be virtual when the function gets
-	overridden is a common (and very hard to find) coding error.
-	Making all member functions virtual, and letting the compiler decide
-	if there are no overrides and hence can be converted to non-virtual,
-	is much more reliable.
+	$(LI 非仮想メンバ関数。C++では、関数がvirtualになるかどうかは
+		クラスの設計者が前もって決定します。
+		メンバ関数をオーバーライドすることにしたのに、基底クラスの方で改造を忘れる…
+		というのは、よくある（けれども非常に見つけにくい）コーディングミスです。
+		全てのメンバはvirtualにしておき、
+		オーバーライドが存在しないことをコンパイラが検知して非
+		virtual に変える、というアプローチの方が信頼性があります。
 	)
 
-	$(LI Bit fields of arbitrary size.
-	Bit fields are a complex, inefficient feature rarely used.
+	$(LI 任意サイズのビットフィールド。ビットフィールドは複雑で、
+		非効率かつめったに使われない機能です。
 	)
 
-	$(LI Support for 16 bit computers.
-	No consideration is given in D for mixed near/far pointers and all the
-	machinations necessary to generate good 16 bit code. The D language
-	design assumes at least a 32 bit flat memory space. D will fit smoothly
-	into 64 bit architectures.
+	$(LI 16bitマシンのサポート。
+		Dでは、near/far ポインタをはじめとする、良い
+		16bit コードの生成に必要な機能は考慮されていません。
+		D言語は、最低32bitのフラットなメモリ空間を前提に設計されています。
+		Dは64bitアーキテクチャにはうまくフィットします。
 	)
 
-	$(LI Mutual dependence of compiler passes. In C++, successfully parsing
-	the source text relies on having a symbol table, and on the various
-	preprocessor commands. This makes it
-	impossible to preparse C++ source, and makes writing code analyzers
-	and syntax directed editors painfully difficult to do correctly.
+	$(LI コンパイラパスの相互依存。C++では、ソーステキストをきちんと構文解析するには
+		シンボル表と、様々なプリプロセッサ命令が必要です。このせいで、
+		C++のソースをあらかじめparseしておくことが不可能になり、また、
+		コード解析ソフトや構文強調を行うエディタを正確に実装するのが
+		無茶苦茶大変になっています。
 	)
 
-	$(LI Compiler complexity. Reducing the complexity of an implementation
-	makes it more likely that multiple, $(I correct) implementations
-	are available.
+	$(LI コンパイラの複雑さ。
+		実装の複雑さを軽減することで、
+		複数の $(I 正しい) 実装が登場しやすくなります。
 	)
 
-	$(LI Dumbed down floating point. If one is using hardware that
-	implements modern floating point, it should be available to the
-	programmer rather than having floating point support dumbed down
-	to the lowest common denominator among machines. In particular,
-	a D implementation must support IEEE 754 arithmetic and if
-	extended precision is available it must be supported.)
+	$(LI 低機能な浮動小数点数。
+	今やモダンな浮動小数点演算器の乗ったハードウェアが使われている以上、
+	マシン間の最小公約数にあわせた低機能なものではなく、
+	高度な浮動小数点数の機能がプログラマに使えるようになっているべきです。
+	特に、Dの実装は必ず IEEE 754 算術をサポートすることになっており、
+	また拡張精度演算のあるハードウェアではそれも必ずサポートされることになっています。)
 
-	$(LI Template overloading of &lt; and &gt; symbols.
-	This choice has caused years of bugs, grief, and confusion
-	for programmers, C++ implementors, and C++ source parsing tool
-	vendors. It makes it
-	impossible to parse C++ code correctly without doing a nearly complete
-	C++ compiler. D uses !( and ) which fit neatly and
-	unambiguously into the grammar.
+	$(LI テンプレートでの、&lt; と &gt; の多重利用。
+	この記号が選択されたことで、プログラマとC++実装者とC++ソース解析ツールのベンダの間には、
+	長年の間、バグと嘆きと困惑が積もり積もっています。
+	これがあるせいで、ほとんど完全なC++コンパイラそのものを作らない限り、
+	正しくC++のコードを構文解析するのは不可能になっています。
+	D は !( と ) を使っており、
+	見た目も悪くありませんし文法も明確になっています。
 	)
 )
 )
 
-$(SECTION3 Who D is For,
+$(SECTION3 D を必要とする人は？,
 
 $(UL
-	$(LI Programmers who routinely use lint or similar code analysis tools
-	to eliminate bugs before the code is even compiled.
+	$(LI 日常的にlintなどのコード分析ツールを使って、
+		コンパイルより前にバグを取り除こうとしているプログラマ。
 	)
 
-	$(LI People who compile with maximum warning levels turned on and who
-	instruct the compiler to treat warnings as errors.
+	$(LI コンパイラの警告レベルはいつも最大にして、
+		警告はエラーとして扱うように設定している人。
 	)
 
-	$(LI Programming managers who are forced to rely on programming style
-	guidelines to avoid common C bugs.
+	$(LI Cでよくあるタイプのバグを避けられるようなプログラミングスタイルを採用したい、
+		と考えているプロジェクト管理者。
 	)
 
-	$(LI Those who decide the promise of C++ object oriented
-	programming is not fulfilled due to the complexity of it.
+	$(LI C++は複雑すぎてオブジェクト指向プログラミングを十分に行えない、
+		と考えている人。
 	)
 
-	$(LI Programmers who enjoy the expressive power of C++ but are
-	frustrated by
-	the need to expend much effort explicitly managing memory and finding
-	pointer bugs.
+	$(LI C++の強力な表現力は好きだけれど、
+		明示的なメモリ管理や
+		ポインタ周りのバグには
+		悩まされているというプログラマ。
 	)
 
-	$(LI Projects that need built-in testing and verification.
+	$(LI built-inのテストや検証機能が必要なプロジェクト。
 	)
 
-	$(LI Teams who write apps with a million lines of code in it.
+	$(LI 何百万行にもなるアプリケーションを書くチーム。
 	)
 
-	$(LI Programmers who think the language should provide enough
-	features to obviate
-	the continual necessity to manipulate pointers directly.
+	$(LI 言語は、
+		直接ポインタを扱うことによる危険性を未然に不要にするだけの
+		十分な機能を提供すべきだ、と考えているプログラマ。
 	)
 
-	$(LI Numerical programmers. D has many features to directly
-	support features needed by numerics programmers, like
-	extended floating point precision,
-	core support for complex and imaginary floating types
-	and defined behavior for
-	<acronym title="Not A Number">NaN</acronym>'s and infinities.
-	(These are added in the new
-	C99 standard, but not in C++.)
+	$(LI 数値計算プログラマ。 
+		D は、数値計算に必要な機能を多く直接サポートしています。
+		例えば、拡張精度浮動小数点数や
+		組み込みの複素数と虚数型、
+		<acronym title="Not A Number">NaN</acronym>
+		や∞に対する動作の定義など。
+		（これらは新しいC99標準には追加されましたが、
+		C++には存在しません。）]
 	)
 
-	$(LI Programmers who write half their application in scripting
-	languages like Ruby and Python, and the other half in C++ to
-	speed up the bottlenecks. D has many of the productivity features
-	of Ruby and Python, making it possible to write the entire app
-	in one language.)
+	$(LI アプリケーションを基本的にはRubyやPythonのようなスクリプト言語で書いて、
+	ボトルネック部分だけスピードを稼ぐためにC++で書いているようなプログラマ。
+	Dには、
+	RubyやPythonにあるような生産性の高い機能が多く実装されていて、
+	アプリケーション全体を１つの言語で書くことが可能になっています。)
 
-	$(LI D's lexical analyzer and parser are totally independent of each other and of the
-	semantic analyzer. This means it is easy to write simple tools to manipulate D source
-	perfectly without having to build a full compiler. It also means that source code can be
-	transmitted in tokenized form for specialized applications.
+	$(LI Dの字句解析器と構文解析器は、お互いに、そして意味解析器とも完全に独立しています。これは、
+		コンパイラを全て作りあげずとも、Dのソースを扱うツールを簡単に書けることを意味しています。
+		これはまた、特別なアプリケーションのために、
+		ソースをトークン分けした状態で伝達できることも意味しています。
 	)
 )
 )
 
-$(SECTION3 Who D is Not For,
+$(SECTION3 D を必要としない人は？,
 
     $(UL
-	$(LI Realistically, nobody is going to convert million line C or C++
-	programs into D.
-	Since D does not compile unmodified C/C++
-	source code, D is not for
-	legacy apps.
-	(However, D supports legacy C API's very well. D can connect
-	directly to any code that exposes a C interface.)
+	$(LI 現実問題として、
+		何百万行ものCやC++プログラムをDへ変換する人はいないでしょう。
+		DはC/C++のコードをそのままではコンパイルできないため、
+		過去のレガシーなソフトの開発にはDは使えません。
+		（しかしながら、
+		D はレガシーな C の API はしっかりサポートしています。
+		D からは、C言語インターフェイスを提供しているコードであれば全て直接呼び出すことができます。）
 	)
 
-	$(LI As a first programming language - Basic or Java is more suitable
-	for beginners. D makes an excellent second language for intermediate
-	to advanced programmers.
+	$(LI 最初に学ぶプログラミング言語として。
+		Basic か Java が初心者には向いています。
+		D は、中級～上級者プログラマが二番目に修得する言語として優れています。
 	)
 
-	$(LI Language purists. D is a practical language, and each feature
-	of it is evaluated in that light, rather than by an ideal.
-	For example, D has constructs and semantics that virtually eliminate
-	the need for pointers for ordinary tasks. But pointers are still
-	there, because sometimes the rules need to be broken.
-	Similarly, casts are still there for those times when the typing
-	system needs to be overridden.
-	)
-    )
-)
-
-)
-
-
-
-$(SECTION2 Major Features of D,
-
-	$(P This section lists some of the more interesting features of D
-	in various categories.
-	)
-
-$(SECTION3 Object Oriented Programming,
-
-    $(SECTION4 Classes,
-
-	$(P D's object oriented nature comes from classes.
-	The inheritance model is single inheritance enhanced
-	with interfaces. The class Object sits at the root
-	of the inheritance hierarchy, so all classes implement
-	a common set of functionality.
-	Classes are instantiated
-	by reference, and so complex code to clean up after exceptions
-	is not required.
-	)
-    )
-
-    $(SECTION4 Operator Overloading,
-
-	$(P Classes can be crafted that work with existing operators to extend
-	the type system to support new types. An example would be creating
-	a bignumber class and then overloading the +, -, * and / operators
-	to enable using ordinary algebraic syntax with them.
+	$(LI 言語原理主義者。 D は実用的な言語であって、
+		どの側面もその観点から作られています。理想を追う観点からではありません。
+		例えば、D ではポインタの必要性を実質的になくすセマンティクスが組まれています。
+		しかし、時には規則を破る必要もありますから、
+		ポインタはまだ残されています。
+		同様に型システムを上書きする必要のあるときを考え、
+		キャストもまた残っています。
 	)
     )
 )
 
-$(SECTION3 Functional Programming,
+)
 
-	$(P Functional programming has a lot to offer in terms of encapsulation,
-	concurrent programming, memory safety, and composition. D's support for
-	functional style programming include:
+
+
+$(SECTION2 D の主要な特徴,
+
+	$(P この節では、様々なカテゴリにわたる、
+	D の興味深い特徴をリストアップします。
+	)
+
+$(SECTION3 オブジェクト指向プログラミング,
+
+    $(SECTION4 クラス,
+
+	$(P D のオブジェクト指向的特徴は、
+	クラスによるものです。
+	継承のモデルは、
+	単一継承 + インターフェイス となっています。
+	Objectクラスが継承階層のルートに存在し、
+	全てのクラスがその機能を実装します。
+	クラスは参照としてインスタンス化されるため、
+	例外発生時の複雑なクリーンアップコードが必要でなくなります。
+	)
+    )
+
+    $(SECTION4 演算子オーバーロード,
+
+	$(P クラスは、新しい型をサポートするよう型システムを拡張することで、
+	既存の演算子と共にはたらくように作ることができます。
+	例としては、bignumber クラスを作って、通常の代数的な構文を使えるよう、
+	+, -, *, / 演算子をオーバーロードする、などがあります。
+	)
+    )
+)
+
+$(SECTION3 関数型プログラミング,
+
+	$(P 関数型プログラミングは、カプセル化や並行プログラミング、メモリ安全性、
+	プログラム合成などに多くの利点をもたらします。
+	Dでの関数型のプログラミングスタイルをサポートする機能は、以下の通りです：
 	)
 
 	$(UL
-	$(LI Pure functions)
-	$(LI Immutable types and data structures)
-	$(LI Lambda functions and closures)
+	$(LI pure 関数)
+	$(LI immutable 型とデータ構造)
+	$(LI 無名関数とクロージャ)
 	)
 
 )
 
-$(SECTION3 Productivity,
+$(SECTION3 生産性,
 
-    $(SECTION4 Modules,
+    $(SECTION4モジュール,
 
-	$(P Source files have a one-to-one correspondence with modules.
-	Instead of #include'ing the text of a file of declarations,
-	just import the module. There is no need to worry about
-	multiple imports of the same module, no need to wrapper header
-	files with $(D #ifndef/#endif) or $(D #pragma once) kludges,
-	etc.
+	$(P ソースファイルは、モジュールと１対１に対応しています。
+	ファイルから宣言をテキストとして #include する代わりに、
+	単にモジュール内のシンボルを import します。
+	複数回同じモジュールをimportする心配は不要で、
+	ヘッダを $(D #ifndef/#endif) で囲うラッパや $(D #pragma once)
+	などの必要がなくなりました。
 	)
     )
 
-    $(SECTION4 Declaration vs Definition,
+    $(SECTION4 宣言 vs 定義,
 
-	$(P C++ usually requires that functions and classes be declared twice - the declaration
-	that goes in the .h header file, and the definition that goes in the .c source
-	file. This is an error prone and tedious process. Obviously, the programmer
-	should only need to write it once, and the compiler should then extract the
-	declaration information and make it available for symbolic importing. This is
-	exactly how D works.
+	$(P C++という言語は通常、関数やクラスを２回宣言することを要求します -
+	.h ヘッダファイルに書く宣言と、.c ソースファイルに書く定義と。
+	これはエラーを生みやすく、退屈な作業です。明らかに、
+	プログラマが記述する必要があるのは１回だけで、
+	あとはコンパイラがシンボルのimportに必要な宣言情報を取り出せばよいのです。
+	そしてそれが、まさしくDのする動作です。
 	)
 
-	$(P Example:
+	$(P 例:
 	)
 
 -----------------------
@@ -522,8 +522,8 @@ class ABC
 int q;
 -----------------------
 
-	$(P There is no longer a need for a separate definition of member functions, static
-	members, externs, nor for clumsy syntaxes like:
+	$(P もはや、メンバ関数やstaticメンバ、externなどの定義を分けて書く必要はありません。
+	次のようなわずらわしい構文も不要です：
 	)
 
 $(CCODE
@@ -532,10 +532,10 @@ int ABC::z = 7;
 extern int q;
 )
 
-	$(P Note: Of course, in C++, trivial functions like $(D { return 7; })
-	are written inline too, but complex ones are not. In addition, if
-	there are any forward references, the functions need to be prototyped.
-	The following will not work in C++:
+	$(P 注：もちろん、C++ でも $(D { return 7; }) のような単純な関数は
+	インライン で書けます。が、複雑なものはそうではありません。それに加え、
+	前方参照がある場合は関数のプロトタイプ宣言が必要になります。
+	次のコードはC++では動作しません：
 	)
 
 $(CCODE
@@ -551,7 +551,7 @@ class Bar
 };
 )
 
-	$(P But the equivalent D code will work:
+	$(P しかし、これと同等のDのコードは動作します:
 	)
 
 -----------------------
@@ -566,44 +566,44 @@ class Bar
 }
 -----------------------
 
-	$(P Whether a D function is inlined or not is determined by the
-	optimizer settings.
+	$(P Dの関数がインライン化されるかどうかは、
+	最適化の設定によって決定されます。
 	)
     )
 
-    $(SECTION4 Templates,
+    $(SECTION4 テンプレート,
 
-	$(P D templates offer a clean way to support generic programming while
-	offering the power of partial specialization.
-	Template classes and template functions are available, along
-	with variadic template arguments and tuples.
+	$(P D のテンプレートは、部分特殊化能力の提供によって、
+	ジェネリックプログラミングを綺麗にサポートします。
+	テンプレートクラスもテンプレート関数も利用可能で、
+	可変個引数テンプレートやタプルといった強力な機能を備えています。
 	)
     )
 
-    $(SECTION4 Associative Arrays,
+    $(SECTION4 連想配列,
 
-	$(P Associative arrays are arrays with an arbitrary data type as
-	the index rather than being limited to an integer index.
-	In essence, associated arrays are hash tables. Associative
-	arrays make it easy to build fast, efficient, bug-free symbol
-	tables.
+	$(P 連想配列は、自然数のindexに制限されず、
+	任意の型の値を配列の添え字として使えるようにした配列です。
+	連想配列の本質は、ハッシュ表です。連想配列によって、
+	高速で効率的な、
+	バグのないシンボルテーブルが簡単に実装できます。
 	)
     )
 
 $(V1
-    $(SECTION4 Real Typedefs,
+    $(SECTION4 Real Typedef,
 
-	$(P C and C++ typedefs are really type $(I aliases), as no new
-	type is really introduced. D implements real typedefs, where:
+	$(P C と C++ の typedef は、本当は型の $(I 別名) に過ぎず、
+	新しい型は実際には導入されていませんでした。D は、本物のtypedefを実装しています：
 	)
 
 -----------------------
 typedef int handle;
 -----------------------
 
-	$(P really does create a new type $(B handle). Type checking is
-	enforced, and typedefs participate in function overloading.
-	For example:
+	$(P このコードは、実際に新しい型 $(B handle) を作成します。
+	型チェックが働き、typedefされた型で関数をオーバーロードできます。
+	例えば：
 	)
 
 -----------------------
@@ -613,469 +613,469 @@ int foo(handle h);
     )
 )
 
-    $(SECTION4 Documentation,
+    $(SECTION4 ドキュメント化,
 
-	$(P Documentation has traditionally been done twice - first there
-	are comments documenting what a function does, and then this gets
-	rewritten into a separate html or man page.
-	And naturally, over time, they'll tend to diverge as the code
-	gets updated and the separate documentation doesn't.
-	Being able to generate the requisite polished documentation directly
-	from the comments embedded in the source will not only cut the time
-	in half needed to prepare documentation, it will make it much easier
-	to keep the documentation in sync with the code.
-	$(LINK2 ddoc.html, Ddoc) is the specification for the D
-	documentation generator. This page was generated by Ddoc, too.
+	$(P ドキュメント化は、従来、２つのステップに分かれて行われてきました
+	- まずコメントとして機能の説明が書かれ、
+	それとは別のhtmlやmanページとして改めて書き直されるという形で。
+	当然の帰結として、時間がたつにつれ、コードは更新されても分離されたドキュメントは
+	更新されず、次第に説明と実態が乖離していくようになります。
+	ソースに書き込まれたコメントから
+	必要なドキュメントを直接生成できるようにすることで、
+	ドキュメント書きの時間を半分に減らせるだけでなく、
+	コードとドキュメントの一貫性を保つのもずっと簡単になります。
+	$(LINK2 ddoc.html, Ddoc) が、Dのドキュメント生成の仕様となっています。
+	このページもDdocによって生成されています。
 	)
 
-	$(P Although third party tools exist to do this for C++, they have some
-	serious shortcomings:
+	$(P C++にもサードパーティ製のツールはいくつか作られましたが、
+	それらには重大な欠点がありました：
 
 	$(UL
 
-	$(LI It is spectacularly difficult to parse C++ 100% correctly. To
-	do so really requires a full C++ compiler. Third party tools tend to
-	parse only a subset of C++ correctly, so their use will constrain
-	the source code to that subset.)
+	$(LI C++を100%完全に構文解析するのは非常に難しい作業で、実質的に、
+	完全なC++コンパイラを書くのと同等な作業が必要です。サードパーティ製のツールは大抵、
+	C++の一部分だけしか正しく解析できず、
+	書けるコードがそれによって制限されてしまいます。)
 
-	$(LI Different compilers support different versions of C++ and have
-	different extensions to C++. Third party tools have a problem matching
-	all these variations.)
+	$(LI 異なるコンパイラは異なったバージョンのC++をサポートし、
+	異なる拡張をC++に施しています。
+	サードパーティ製のツールでは、これら全てをカバーするのは困難です。)
 
-	$(LI Third party tools may not be available for all the desired
-	platforms, and they're necessarily on a different upgrade cycle
-	from the compilers.)
+	$(LI サードパーティ製のツールは、
+	必要な全てのプラットフォームで動作しないことがあります。
+	コンパイラとは別々の更新サイクルが必要になります。)
 
-	$(LI Having it builtin to the compiler means it is standardized across
-	all D implementations. Having a default one ready to go at all times
-	means it is far more likely to be used.)
+	$(LI ドキュメント化ツールをコンパイラの一部として組み込むことで、
+	全てのDの実装で標準化されます。いつでもデフォルトのものが使えるということは、
+	コメントによるドキュメント生成がより一層使われうることを意味しています。)
 
 	)
 	)
     )
 )
 
-$(SECTION3 Functions,
+$(SECTION3 関数,
 
-	$(P D has the expected support for ordinary functions including
-	global functions, overloaded functions, inlining of functions,
-	member functions, virtual functions, function pointers, etc.
-	In addition:
+	$(P D には、グローバル関数、関数のオーバーロード、インライン化、
+	メンバ関数、仮想関数、関数ポインタ…など、
+	従来通りの関数は期待されるとおりにサポートしています。
+	それに加えて：
 	)
 
-    $(SECTION4 Nested Functions,
+    $(SECTION4 ネストした関数,
 
-	$(P Functions can be nested within other functions.
-	This is highly useful for code factoring, locality, and
-	function closure techniques.
-	)
-    )
-
-    $(SECTION4 Function Literals,
-
-	$(P Anonymous functions can be embedded directly into an expression.
+	$(P 関数は他の関数の中にネストすることができます。
+	これは、コードの局所性や、
+	関数クロージャを使うテクニックで有用です。
 	)
     )
 
-    $(SECTION4 Dynamic Closures,
+    $(SECTION4 関数リテラル,
 
-	$(P Nested functions and class member functions can be referenced
-	with closures (also called delegates), making generic programming
-	much easier and type safe.
+	$(P 無名関数を式中に直接埋め込めます。
 	)
     )
 
-    $(SECTION4 In$(COMMA) Out$(COMMA) and Ref Parameters,
+    $(SECTION4 動的クロージャ,
 
-	$(P Not only does specifying this help make functions more
-	self-documenting, it eliminates much of the necessity for pointers
-	without sacrificing anything, and it opens up possibilities
-	for more compiler help in finding coding problems.
+	$(P ネストした関数やクラスのメンバ関数は、
+	クロージャ（デリゲートとも呼ばれます）
+	として参照でき、ジェネリックプログラミングをより簡単で型安全にします。
+	)
+    )
+
+    $(SECTION4 in$(COMMA) out$(COMMA) ref 引数,
+
+	$(P これらの引数を指定するのは、
+	関数の可読性を上げるだけでなく、
+	何も失うことなくポインタの必要な場面を減らし、また、
+	コンパイラがコードの問題を発見しやすくする可能性を残します。
 	)
 
-	$(P Such makes it possible for D to directly interface to a
-	wider variety of foreign API's. There would be no need for
-	workarounds like "Interface Definition Languages".
+	$(P これによって、D を様々な外部のAPIと直接繋ぐことが可能になります。
+	"インターフェイス定義言語 (IDL)"
+	のような対策は不要になるでしょう。
 	)
     )
 )
 
-$(SECTION3 Arrays,
+$(SECTION3 配列,
 
-	$(P C arrays have several faults that can be corrected:
+	$(P Cの配列には、いくつか直すべき欠点があります：
 	)
 
 	$(UL
 
-	$(LI Dimension information is not carried around with
-	the array, and so has to be stored and passed separately.
-	The classic example of this are the argc and argv
-	parameters to $(D main(int $(D_PARAM argc), char *$(D_PARAM argv)[])).
-	(In D, main is declared as $(D main(char[][] $(D_PARAM args))).)
+	$(LI 配列に次元情報が保持されず、
+		別に格納したり引数として渡す必要があります。
+		皆さんご存じの例をあげれば、
+		$(D main(int $(D_PARAM argc), char *$(D_PARAM argv)[])) の引数です。
+		（Dでは、main は $(D main(char[][] $(D_PARAM args)))と宣言されます。）
 	)
 
-	$(LI Arrays are not first class objects. When an array	is passed to a function, it is
-	converted to a pointer, even though the prototype confusingly says it's an
-	array. When this conversion happens, all array type information
-	gets lost.
+	$(LI 配列がfirst-classオブジェクトではありません。配列を関数へ渡すと、
+		例えプロトタイプ宣言は配列に見える書き方をされていても、
+		ポインタに変換されます。
+		この変換によって、全ての配列型情報は失われます。
 	)
 
-	$(LI C arrays cannot be resized. This means that even simple aggregates like a stack
-	need to be constructed as a complex class.)
+	$(LI Cの配列はサイズを変更できません。これは、単純な構造、例えばスタックでさえ、
+		複雑なクラスとして構成しなければならないことを意味しています。)
 
-	$(LI C arrays cannot be bounds checked, because they don't know
-	what the array bounds are.)
+	$(LI Cの配列はどこが境界であるかの情報を持たないため、
+		境界チェックができません。)
 
-	$(LI Arrays are declared with the [] after the identifier. This leads to
-	very clumsy
-	syntax to declare things like a pointer to an array:
+	$(LI 配列は識別子の後ろに []
+		を置くことで宣言されます。
+		これは、配列へのポインタなどを宣言する際に構文がややこしくなる原因です:
 
 $(CCODE
 int (*array)[3];
 )
 
-	$(P In D, the [] for the array go on the left:
+	$(P Dでは、配列宣言の [] は左に行きました：
 	)
 
 -----------------------
-int[3]* array;		// declares a pointer to an array of 3 ints
-long[] func(int x);	// declares a function returning an array of longs
+int[3]* array;		// int の3要素配列 へのポインタ を宣言
+long[] func(int x);	// longの配列を返す関数の宣言
 -----------------------
 
-	$(P which is much simpler to understand.
+	$(P ずっと理解しやすくなっています。
 	)
 	)
 	)
 
-	$(P D arrays come in several varieties: pointers, static arrays, dynamic
-	arrays, and associative arrays.
+	$(P Dの配列には、
+	ポインタ、静的配列、動的配列、連想配列といった種類があります。
 	)
 
-	$(P See $(LINK2 arrays.html, Arrays).
+	$(P 参照： $(LINK2 arrays.html, 配列).
 	)
 
-    $(SECTION4 Strings,
+    $(SECTION4 文字列,
 
-	$(P String manipulation is so common, and so clumsy in C and C++, that
-	it needs direct support in the language. Modern languages handle
-	string concatenation, copying, etc., and so does D. Strings are
-	a direct consequence of improved array handling.
+	$(P 文字列の処理は非常にありふれた作業ですが、C/C++では扱いにくいものになっています。
+	この機能は、言語の直接サポートが必要です。
+	モダンな言語は文字列の連結やコピーなどをサポートしますが、D も同様です。
+	文字列周りの改善は、配列の扱いを改善したことの直接の帰結です。
 	)
     )
 )
 
-$(SECTION3 Resource Management,
+$(SECTION3 リソース管理,
 
-    $(SECTION4 Automatic Memory Management,
+    $(SECTION4 自動メモリ管理,
 
-	$(P D memory allocation is fully garbage collected. Empirical experience
-	suggests that a lot of the complicated features of C++ are necessary
-	in order to manage memory deallocation. With garbage collection, the
-	language gets much simpler.
+	$(P Dのメモリ割り当ては完全にガベージコレクタの下で行われます。
+	C++では経験的に、メモリ解放を管理するためには複雑な機能が
+	沢山必要であることがわかっています。ガベージコレクタによって、
+	言語は非常に簡単になります。
 	)
 
-	$(P There's a perception that garbage collection is for lazy, junior
-	programmers. I remember when that was said about C++, after all,
-	there's nothing in C++ that cannot be done in C, or in assembler
-	for that matter.
+	$(P 今は、ガベージコレクションは怠け者や初心者プログラマのためのものだ、
+	という認識があります。これと同じことが C++
+	に対しても言われていたのを思い出します。C++にできてCでできないこと、
+	もっと言えばアセンブラでできないこと、は結局の所存在しないのだそうな。
 	)
 
-	$(P Garbage collection eliminates the tedious, error prone memory
-	allocation
-	tracking code necessary in C and C++. This not only means much
-	faster development time and lower maintenance costs,
-	but the resulting program frequently runs
-	faster!
+	$(P ガベージコレクションは、
+	CやC++では必要だった、
+	面倒な、
+	エラーの元になるメモリ割り当て管理のコードを不要にします。
+	これは開発時間を早め保守のコストを下げるだけでなく、
+	できたプログラムもしばしばより高速に動作するようになるのです！
 	)
 
-	$(P Sure, garbage collectors can be used with C++, and I've used them
-	in my own C++ projects. The language isn't friendly to collectors,
-	however, impeding the effectiveness of it. Much of the runtime
-	library code can't be used with
-	collectors.
+	$(P もちろん、C++で使えるガベージコレクタはありますし、
+	実際私も自分の
+	C++のプロジェクトでは使っています。しかしながら、
+	この言語はGCとの親和性が悪く、その効果性は十分発揮されません。
+	ランタイムライブラリの大くもGCと同時に使うことができないのです。
 	)
 
-	$(P For a fuller discussion of this, see
-	$(LINK2 garbage.html, garbage collection).
+	$(P より完全な議論については、
+	$(LINK2 garbage.html, ガベージコレクション) の項をご覧下さい。
 	)
     )
 
-    $(SECTION4 Explicit Memory Management,
+    $(SECTION4 明示的なメモリ管理,
 
-	$(P Despite D being a garbage collected language, the new and delete
-	operations can be overridden for particular classes so that
-	a custom allocator can be used.
+	$(P DはGCを採用した言語ではありますが、
+	特定のクラスでは new/delete
+	演算をオーバーライドして、独自のメモリ割り当てを行うことができます。
 	)
     )
 
     $(SECTION4 RAII,
 
-	$(P RAII is a modern software development technique to manage resource
-	allocation and deallocation. D supports RAII in a controlled,
-	predictable manner that is independent of the garbage collection
-	cycle.
+	$(P RAII は、リソースの管理と解放を管理するための、
+	モダンなソフトウェア開発技術です。
+	Dは、RAIIをガベージコレクションのサイクルとは独立の、
+	制御・予測可能な方法でサポートします。
 	)
     )
 )
 
 
-$(SECTION3 Performance,
+$(SECTION3 パフォーマンス,
 
-    $(SECTION4 Lightweight Aggregates,
+    $(SECTION4 Lightweightな構造体,
 
-	$(P D supports simple C style structs, both for compatibility with
-	C data structures and because they're useful when the full power
-	of classes is overkill.
+	$(P D は、C形式の単純な構造体をサポートしています。これには、
+	Cのデータ構造との互換性と、クラスの能力が過剰であるときに使えるように、
+	との二つの理由があります。
 	)
     )
 
-    $(SECTION4 Inline Assembler,
+    $(SECTION4 インラインアセンブラ,
 
-	$(P Device drivers, high performance system applications, embedded systems,
-	and specialized code sometimes need to dip into assembly language
-	to get the job done. While D implementations are not required
-	to implement the inline assembler, it is defined and part of the
-	language. Most assembly code needs can be handled with it,
-	obviating the need for separate assemblers or DLL's.
+	$(P デバイスドライバやハイパフォーマンスが必要なシステムアプリケーション、
+	組み込みシステムなど、特化されたコードはしばしば、
+	アセンブリ言語に浸って仕事をなしとげる必要があります。
+	Dの実装は必ずしもインラインアセンブラを実装する必要はありませんが、
+	インラインアセンブラは、言語の一部として定義されています。
+	ほとんど場合必要なアセンブラコードは扱えるので、別のアセンブラやDLLは不必要になります。
 	)
 
-	$(P Many D implementations will also support intrinsic functions
-	analogously to C's support of intrinsics for I/O port manipulation,
-	direct access to special floating point operations, etc.
+	$(P 多くのDの実装は、Cでのそれに似た、
+	組み込み関数をサポートしています。
+	I/Oポートの制御や特別な浮動小数点数演算への直接アクセスなどができます。
 	)
     )
 )
 
 
-$(SECTION3 Reliability,
+$(SECTION3 信頼性,
 
-	$(P A modern language should do all it can to help the programmer flush
-	out bugs in the code. Help can come in many forms;
-	from making it easy to use more robust techniques,
-	to compiler flagging of obviously incorrect code, to runtime checking.
+	$(P モダンな言語は、できる限り、プログラマがバグを発見する手助けとなるべきです。
+	様々な形の"手助け"があります。
+	よりロバストな技術を簡単に使えるようにしたり、
+	明らかに間違ったコードを実行時に検出させるフラグをコンパイラにつけるなどなど。
 	)
 
-    $(SECTION4 Contracts,
+    $(SECTION4 契約,
 
 	$(P Contract Programming (invented by B. Meyer) is a revolutionary
-	technique
-	to aid in ensuring the correctness of programs. D's version of
-	DBC includes function preconditions, function postconditions, class
-	invariants, and assert contracts.
-	See $(LINK2 dbc.html, Contracts) for D's implementation.
+	tech契約プログラミング
+	 （Contract Programming。B. Meyer によって発明されました）は、
+	プログラムの正しさを保証する助けとなる革命的な技術です。
+	DでのDBCは、関数の事前条件、事後条件、クラス不変条件、
+	assert契約を含んでいます。Dの実装については、$(LINK2 dbc.html, 契約) の項をご覧下さい。
 	)
     )
 
-    $(SECTION4 Unit Tests,
+    $(SECTION4 単体テスト,
 
-	$(P Unit tests can be added to a class, such that they are automatically
-	run upon program startup. This aids in verifying, in every build,
-	that class implementations weren't inadvertently broken. The unit
-	tests form part of the source code for a class. Creating them
-	becomes a natural part of the class development process, as opposed
-	to throwing the finished code over the wall to the testing group.
+	$(P 単体テストをクラスへ追加して、プログラムの起動時に自動実行することができます。
+	この機能は、気付かぬ内にクラスの実装にバグが入っていないかを、
+	ビルドのたびに確かめる助けになります。
+	単体テストは、クラスのソースコードの一部です。
+	書き上げたコードをテスターに放り投げる従来のテスト方法とは対照的に、
+	テストを作ることが、自然にクラスの開発の過程に含まれるようになります。
 	)
 
-	$(P Unit tests can be done in other languages, but the result is kludgy
-	and the languages just aren't accommodating of the concept.
-	Unit testing is a main feature of D. For library functions it works
-	out great, serving both to guarantee that the functions
-	actually work and to illustrate how to use the functions.
+	$(P 単体テストは他の言語でも可能ですが、
+	言語自体がその概念にぴったり適合していないため、
+	しっくりこない結果になります。単体テストは D の最大の特徴です。
+	Dのライブラリ関数は、単体テストによって、実際に関数が動くことの保証と、
+	使い方の説明の両方がうまくなされています。
 	)
 
-	$(P Consider the many C++ library and application code bases out there for
-	download on the web. How much of it comes with *any* verification
-	tests at all, let alone unit testing? Less than 1%? The usual practice
-	is if it compiles, we assume it works. And we wonder if the warnings
-	the compiler spits out in the process are real bugs or just nattering
-	about nits.
+	$(P WebでダウンロードできるC++のライブラリや、
+	アプリケーションのコードを考えて下さい。
+	そのうちのどれだけが、単体テストはもちろん、*多少なりとも*検証を行っているでしょう。
+	1% 未満？ 普通我々は、コンパイルが通ったなら、動作すると仮定しています。
+	そして、コンパイラが警告を吐くと、実際にバグなのかそれとも余計なお世話なのか、
+	疑問に思って悩む程度です。
 	)
 
-	$(P Along with Contract Programming, unit testing makes D far and away
-	the best language for writing reliable, robust systems applications.
-	Unit testing also gives us a quick-and-dirty estimate of the quality
-	of some unknown piece of D code dropped in our laps - if it has no
-	unit tests and no contracts, it's unacceptable.
-	)
-    )
-
-
-    $(SECTION4 Debug Attributes and Statements,
-
-	$(P Now debug is part of the syntax of the language.
-	The code can be enabled or disabled at compile time, without the
-	use of macros or preprocessing commands. The debug syntax enables
-	a consistent, portable, and understandable recognition that real
-	source code needs to be able to generate both debug compilations and
-	release compilations.
+	$(P 単体テストを契約プログラミングとともに用いることで、D は、
+	信頼性のあるロバストなシステムを構築するための最高の言語となります。
+	単体テストは、手に入れたDのコード片の質の簡単な評価手段にもなります
+	- つまり、もしそのコードに単体テストや契約が書かれていなければ、
+	却下。
 	)
     )
 
-    $(SECTION4 Exception Handling,
 
-	$(P The superior $(I try-catch-finally) model is used rather than just
-	try-catch. There's no need to create dummy objects just to have
-	the destructor implement the $(I finally) semantics.
+    $(SECTION4 debug属性・debug文,
+
+	$(P デバッグは、言語の構文の一部になりました。
+	デバッグコードは、マクロやプリプロセッサのコマンドを使わずとも、
+	コンパイル時に有効にしたり無効にしたりできます。
+	debug構文は、
+	リリース用とデバッグ用の両方のコードを生成しなければならない現実のソースコードを、
+	理解しやすく、一貫性と移植性のあるものにします。
 	)
     )
 
-    $(SECTION4 Synchronization,
+    $(SECTION4 例外処理,
 
-	$(P Multithreaded programming is becoming more and more mainstream,
-	and D provides primitives to build multithreaded programs with.
-	Synchronization can be done at either the method or the object level.
+	$(P 単なる try-catch ではなく、より優れた $(I try-catch-finally) モデルが使われています。
+	$(I finally)
+	を実現するためのダミーオブジェクトとデストラクタを作る必要はありません。
+	)
+    )
+
+    $(SECTION4 同期,
+
+	$(P マルチスレッドのプログラミングが、どんどん主流になってきています。
+	そこで、D はマルチスレッドのプログラムを作るための要素を提供します。
+	同期処理は、メソッドまたはオブジェクト単位でなされます。
 	)
 
 -----------------------
 synchronized int func() { ... }
 -----------------------
 
-	$(P Synchronized functions allow only one thread at a time to be
-	executing that function.
+	$(P 同期された関数は、
+	一度に一つのスレッドだけが実行することができます。
 	)
 
-	$(P The synchronize statement puts a mutex around a block of statements,
-	controlling access either by object or globally.
+	$(P 同期された文は、周りにmutexを置くことで、
+	オブジェクト単位、またはグローバルにアクセスを制御します。
 	)
     )
 
-    $(SECTION4 Support for Robust Techniques,
+    $(SECTION4 ロバストな技術のサポート,
 
 	$(UL
-	$(LI Dynamic arrays instead of pointers)
+	$(LI ポインタの代わりに、動的配列)
 
-	$(LI Reference variables instead of pointers)
+	$(LI ポインタの代わりに、参照変数)
 
-	$(LI Reference objects instead of pointers)
+	$(LI ポインタの代わりに、参照オブジェクト)
 
-	$(LI Garbage collection instead of explicit memory management)
+	$(LI 明示的メモリ管理の代わりに、ガベージコレクション)
 
-	$(LI Built-in primitives for thread synchronization)
+	$(LI スレッド同期処理のための組み込みプリミティブ)
 
-	$(LI No macros to inadvertently slam code)
+	$(LI コードを気付かぬうちに汚す"マクロ"を持たない)
 
-	$(LI Inline functions instead of macros)
+	$(LI マクロの代わりに、インライン関数)
 
-	$(LI Vastly reduced need for pointers)
+	$(LI ポインタの必要性を大幅に削減)
 
-	$(LI Integral type sizes are explicit)
+	$(LI 整数型のサイズが明確)
 
-	$(LI No more uncertainty about the signed-ness of chars)
+	$(LI char型の符号の扱いに不明確さなし)
 
-	$(LI No need to duplicate declarations in source and header files.)
+	$(LI ソースとヘッダで同じ宣言を書く必要なし)
 
-	$(LI Explicit parsing support for adding in debug code.)
+	$(LI デバッグコードの追加の明示的な構文サポート)
 	)
     )
 
-    $(SECTION4 Compile Time Checks,
+    $(SECTION4 コンパイル時チェック,
 
 	$(UL
-	$(LI Stronger type checking)
+	$(LI 強い型チェック)
 
-	$(LI No empty ; for loop bodies)
+	$(LI ループ本体の 空の ; 禁止)
 
-	$(LI Assignments do not yield boolean results)
+	$(LI 代入の結果を論理値として使えない)
 
-	$(LI Deprecating of obsolete API's)
+	$(LI 廃止されたAPI の非推奨性チェック)
 	)
     )
 
-    $(SECTION4 Runtime Checking,
+    $(SECTION4 実行時チェック,
 
 	$(UL
-	$(LI assert() expressions)
+	$(LI assert() 式)
 
-	$(LI array bounds checking)
+	$(LI 配列の境界チェック)
 
-	$(LI undefined case in switch exception)
+	$(LI switchの、未定義状態例外)
 
-	$(LI out of memory exception)
+	$(LI メモリ不足例外)
 
-	$(LI In, out, and class invariant Contract Programming support)
+	$(LI 事前,事後,クラス不変条件 による「契約プログラミング」サポート)
 	)
     )
 )
 
-$(SECTION3 Compatibility,
+$(SECTION3 互換性,
 
-    $(SECTION4 Operator precedence and evaluation rules,
+    $(SECTION4 演算子の優先順位、評価規則,
 
-	$(P D retains C operators and their precedence rules, order of
-	evaluation rules, and promotion rules. This avoids subtle
-	bugs that might arise from being so used to the way C
-	does things that one has a great deal of trouble finding
-	bugs due to different semantics.
+	$(P D は、Cの演算子とその優先順位、
+	式の評価順序規則、
+	型の昇格規則を全て保っています。これにより、
+	C風に書いたのに実際の動作は違う、
+	という見つけにくいバグを避けることができます。
 	)
     )
 
-    $(SECTION4 Direct Access to C API's,
+    $(SECTION4 C API への直接アクセス,
 
-	$(P Not only does D have data types that correspond to C types,
-	it provides direct access to C functions. There is no need
-	to write wrapper functions, parameter swizzlers, nor code to copy
-	aggregate members one by one.
+	$(P Dは、C の型に対応するデータ型があるだけでなく、
+	C の関数への直接アクセスを提供しています。
+	ラッパ関数や、パラメタの調整、集成体のメンバを一つ一つ設定するコード、
+	などは一切必要ありません。
 	)
     )
 
-    $(SECTION4 Support for all C data types,
+    $(SECTION4 C の全ての型のサポート,
 
-	$(P Making it possible to interface to any C API or existing C
-	library code. This support includes structs, unions, enums,
-	pointers, and all C99 types.
-	D includes the capability to
-	set the alignment of struct members to ensure compatibility with
-	externally imposed data formats.
+	$(P これによって、既存のCで書かれたライブラリやC形式のAPIとの
+	インターフェイシングが可能になります。
+	Dは、構造体、共用体、
+	列挙型、ポインタ、C99の全ての基本データ型のサポートを含みます。
+	外部で規定されたデータ形式との互換性を保つために、
+	構造体メンバのアラインメントを設定する機能も備えています。
 	)
     )
 
-    $(SECTION4 OS Exception Handling,
+    $(SECTION4 OS例外の処理,
 
-	$(P D's exception handling mechanism will connect to the way
-	the underlying operating system handles exceptions in
-	an application.
+	$(P Dの例外処理メカニズムは、
+	動作するOSがアプリケーション
+	の例外を扱う方法と結合されています。
 	)
     )
 
-    $(SECTION4 Uses Existing Tools,
+    $(SECTION4 既存のツールの利用,
 
-	$(P D produces code in standard object file format, enabling the use
-	of standard assemblers, linkers, debuggers, profilers, exe compressors,
-	and other analyzers, as well as linking to code written in other
-	languages.
-	)
-    )
-)
-
-$(SECTION3 Project Management,
-
-    $(SECTION4 Versioning,
-
-	$(P D provides built-in support for generation of multiple versions
-	of a program from the same text. It replaces the C preprocessor
-	#if/#endif technique.
-	)
-    )
-
-    $(SECTION4 Deprecation,
-
-	$(P As code evolves over time, some old library code gets replaced
-	with newer, better versions. The old versions must be available
-	to support legacy code, but they can be marked as $(I deprecated).
-	Code that uses deprecated versions will be normally flagged
-	as illegal, but would be allowed by a compiler switch.
-	This will make it easy for maintenance
-	programmers to identify any dependence on deprecated features.
+	$(P D は標準的なオブジェクトファイル形式のコードを生成します。これにより、
+	標準的なアセンブラ、リンカ、デバッガ、プロファイラ、exe圧縮ソフト、
+	その他の解析ソフトが使用でき、
+	他の言語で書かれたコードとのリンクも可能になります。
 	)
     )
 )
+
+$(SECTION3 プロジェクト管理,
+
+    $(SECTION4 バージョン付け,
+
+	$(P D には、
+	同じソースから複数のバージョンを生成する機能のサポートが組み込まれています。
+	これは C プリプロセッサでの #if/#endif テクニックに置き換わるものです。
+	)
+    )
+
+    $(SECTION4 非推奨属性,
+
+	$(P コードが発展して行くにつれ、古いライブラリのコードは、新しい、
+	より良いものに置き換わっていきます。
+	レガシーなコードに対応するためには古い版も残しておく必要がありますが、これらには $(I deprecated)
+	という印をつけられます。deprecated な機能を使おうとするコードは
+	通常不正となりますが、コンパイラスイッチの設定によって許可もできます。
+	また、
+	メンテナンスプログラマが非推奨の機能への依存箇所を認識するのが簡単になります。
+	)
+    )
+)
 )
 
 
-$(SECTION2 Sample D Program (sieve.d),
+$(SECTION2 D プログラムのサンプル (sieve.d),
 
 --------------------------
-/* Sieve of Eratosthenes prime numbers */
+/* エラトステネスの素数ふるい */
 
 import std.stdio;
 
@@ -1110,6 +1110,6 @@ int main()
 )
 
 Macros:
-	TITLE=Overview
+	TITLE=概要
 	WIKI=Overview
 	CATEGORY_OVERVIEW=$0
