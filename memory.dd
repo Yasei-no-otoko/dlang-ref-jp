@@ -1,49 +1,49 @@
 Ddoc
 
-$(D_S Memory Management,
+$(D_S メモリ管理,
 
-	$(P Most non-trivial programs needs to allocate and free memory.
-	Memory management techniques become more and more important as
-	programs increase in complexity, size, and performance.
-	D offers many options for managing memory.
+	$(P 少しでも大きなプログラムなら、
+	ほぼ確実に、メモリ割り当てと解放が必要になります。
+	プログラムが複雑に、大きくなるにつれ、メモリ管理技術はより一層重要になります。
+	Dは、メモリ管理の様々なオプションを提供します。
 	)
 
-	$(P The three primary methods for allocating memory in D are:)
+	$(P Dでメモリを割り当てる簡便な方法とは次の３つです：)
 
 	$(OL
-	$(LI Static data, allocated in the default data segment.)
-	$(LI Stack data, allocated on the CPU program stack.)
-	$(LI $(LINK2 garbage.html, Garbage collected data),
-	allocated dynamically on the
-	garbage collection heap.)
+	$(LI 静的データ。デフォルトのデータセグメントに割り当てられる。)
+	$(LI スタックデータ。CPUのプログラムスタックへ割り当てられる。)
+	$(LI $(LINK2 garbage.html, ガベージコレクトされたデータ)。
+	GC
+	のヒープから動的に割り当てられる。)
 	)
 
-	$(P The techniques for using them, as well
-	as some advanced alternatives are:
+	$(P この章では、これらを使うテクニックと、
+	より高度な代替手段について説明します。
 	)
 
 	$(UL
-	$(LI $(LINK2 #copy-on-write, Strings (and Array) Copy-on-Write))
-	$(LI <a href="#realtime">Real Time</a>)
-	$(LI <a href="#smoothoperation">Smooth Operation</a>)
-	$(LI <a href="#freelists">Free Lists</a>)
-	$(LI <a href="#referencecounting">Reference Counting</a>)
-	$(LI <a href="#newdelete">Explicit Class Instance Allocation</a>)
+	$(LI $(LINK2 #copy-on-write, 文字列 (と 配列) の Copy-on-Write))
+	$(LI <a href="#realtime">リアルタイム</a>)
+	$(LI <a href="#smoothoperation">スムーズな操作</a>)
+	$(LI <a href="#freelists">フリーリスト</a>)
+	$(LI <a href="#referencecounting">参照カウント</a>)
+	$(LI <a href="#newdelete">明示的なクラスインスタンス割り当て</a>)
 	$(LI <a href="#markrelease">Mark/Release</a>)
 	$(LI <a href="#raii">RAII (Resource Acquisition Is Initialization)</a>)
-	$(LI <a href="#stackclass">Allocating Class Instances On The Stack</a>)
-	$(LI <a href="#uninitializedarrays">Allocating Uninitialized Arrays On The Stack</a>)
-	$(LI $(LINK2 #isr, Interrupt Service Routines))
+	$(LI <a href="#stackclass">スタックへのクラスインスタンス割り当て</a>)
+	$(LI <a href="#uninitializedarrays">スタックへの未初期化配列の割り当て</a>)
+	$(LI $(LINK2 #isr, 割り込みサービスルーチン))
 	)
 
-<h2>$(LNAME2 copy-on-write, Strings (and Array) Copy-on-Write)</h2>
+<h2>$(LNAME2 copy-on-write, 文字列 (と 配列) の Copy-on-Write)</h2>
 
-	$(P Consider the case of passing an array to a function, possibly
-	modifying the contents of the array, and returning the modified
-	array. As the contents of an array are accessed through a reference,
-	a crucial issue is who owns the contents of the array?
-	For example, a function to convert an array of characters to
-	upper case:
+	$(P 配列を受け取って、
+	それを（もしかしたら）変更して返す関数を考えてみましょう。
+	配列は値ではなく参照渡しされますので、
+	"この配列の内容の所有者は誰だ？"
+	という重大な問題が持ち上がります。
+	例えば、配列の内容を大文字に変換する関数：
 	)
 
 ------
@@ -61,23 +61,23 @@ char[] toupper(char[] s)
 }
 ------
 
-	$(P Note that the caller's version of s[] is also modified. This may
-	be not at all what was intended, or worse, s[] may be a slice
-	into a read-only section of memory.
+	$(P 呼び出し側のs[]も変更されることに注意してください。これは、
+	意図しない動作かもしれません。あるいはもっと悪く、s[]
+	はメモリの読み取り専用領域のスライスかもしれません。
 	)
 
-	$(P If a copy of s[] was always made by toupper(), then that will
-	unnecessarily consume time and memory for strings that are already
-	all upper case.
+	$(P しかし、toupper() で常に s[] のコピーを作ると、
+	既に文字列が大文字だった場合には、
+	無駄にメモリと時間を消費してしまいます。
 	)
 
-	$(P The solution is to implement copy-on-write, which means that a copy
-	is made only if the string needs to be modified. Some string
-	processing languages do do this as the default behavior, but there
-	is a huge cost to it. The string "abcdeF" will wind up being copied 5
-	times by the function. To get the maximum efficiency using the protocol,
-	it'll have to be done explicitly in the code. Here's toupper()
-	rewritten to implement copy-on-write in an efficient manner:
+	$(P 解決策は copy-on-write、
+	つまり文字列を変更する必要があるときだけコピーする、
+	方式で実装することです。いくつかの文字列処理言語では、
+	これが実際にデフォルトの挙動となっていますが、これは大きなコストがかかっています。
+	文字列 "abcdeF" は関数によって５回コピーされることになるでしょう。
+	最大に効率的に実装するには、copy-on-write を明示的にコードとして書くことです。
+	以下に、効率的にcopy-on-writeを実装して書き直したtoupperを示します。
 	)
 
 ------
@@ -107,61 +107,61 @@ char[] toupper(char[] s)
 
 ------
 
-	$(P Copy-on-write is the protocol implemented by array processing
-	functions in the D Phobos runtime library.
+	$(P D の Phobos ランタイムライブラリでは、配列処理関数は copy-on-write
+	で実装されています。
 	)
 
-<h2><a name="realtime">Real Time</a></h2>
+<h2><a name="realtime">リアルタイム</a></h2>
 
-	$(P Real time programming means that a program must be able to
-	guarantee a maximum latency, or time to complete an operation.
-	With most memory allocation schemes, including malloc/free and
-	garbage collection, the latency is theoretically not bound.
-	The most reliable way to guarantee latency is to preallocate
-	all data that will be needed by the time critical portion.
-	If no calls to allocate memory are done, the GC will not run
-	and so will not cause the maximum latency to be exceeded.
+	$(P リアルタイムプログラミングでは、プログラムは、遅れ時間の上限か
+	操作完了にかかる時間の保証をしなくてはなりません。ほとんどの
+	メモリ割り当て操作、これはmalloc/freeやGCを含みますが、には、
+	理論的な時間の上限はありません。
+	レイテンシを保証する最も信頼性のある方法は、
+	時間制限の厳しい箇所で必要なメモリは全てあらかじめ割り当てておく、
+	という手です。もしそこにメモリ割り当てのコードがなければ、
+	GCは走らず、時間制限を超過してしまう原因にもなりません。
 	)
 
-<h2><a name="smoothoperation">Smooth Operation</a></h2>
+<h2><a name="smoothoperation">スムーズな操作</a></h2>
 
-	$(P Related to real time programming is the need for a program to
-	operate smoothly, without arbitrary pauses while the garbage
-	collector stops everything to run a collection.
-	An example of such a program would be an interactive shooter
-	type game. Having the game play pause erratically, while not
-	fatal to the program, can be annoying to the user.
+	$(P リアルタイムプログラミングに関連した事項として、
+	プログラムがGCによって任意の時点で動作中断することなく、
+	スムーズに切れ目無く動作することが必要な場合があります。
+	このようなプログラムの例としては、ガンシューティング・ゲームが上げられます。
+	ゲームが不規則に中断するのは、プログラムにとっては致命的ではありませんが、
+	ユーザーにとっては迷惑なことでしょう。
 	)
 
-	$(P There are several techniques to eliminate or mitigate the effect:)
+	$(P いくつか、この挙動を和らげるテクニックがあります：)
 
 $(UL
-	$(LI Preallocate all data needed before the part of the code
-	that needs to be smooth is run.)
+	$(LI スムーズに動作しなくてはならない箇所の前に、
+		必要なデータを全て割り当てておく。)
 
-	$(LI Manually run a GC collection cycle at points in program
-	execution where it is already paused. An example of such a place
-	would be where the program has just displayed a prompt for user
-	input and the user has not responded yet.
-	This reduces the odds that a collection cycle will be needed
-	during the smooth code.)
+	$(LI 元々プログラムが停止しているような箇所で、
+		手動でGCを走らせる。
+		そのような箇所の例としては、
+		ユーザーにプロンプトを出したけれど
+		ユーザー入力がまだ無い、という状態があります。これによって、
+		GCが起きて欲しくない箇所でGCが走る確率を減らすことができます。)
 
-	$(LI Call std.gc.disable() before the smooth code is run, and
-	std.gc.enable() afterwards. This will cause the GC to favor allocating
-	more memory instead of running a collection pass.)
+	$(LI スムーズ動作の前に、std.gc.disable() を呼んでおき、後に std.gc.enable()
+		を呼び出す。これによって、GCは未使用メモリを回収せずに新しいメモリを
+		割り当てるようになります。)
 )
 
-<h2><a name="freelists">Free Lists</a></h2>
+<h2><a name="freelists">フリーリスト</a></h2>
 
-	$(P Free lists are a great way to accelerate access to a frequently
-	allocated and discarded type. The idea is simple - instead of
-	deallocating an object when done with it, put it on a free list.
-	When allocating, pull one off the free list first.
+	$(P フリーリストは、頻繁に割り当て/破棄が行われる型へのアクセスを高速化する
+	強力な手法です。考え方は簡単で、使い終わったオブジェクトは、解放せずに
+	フリーリストへ積んで置くというだけです。割り当て時は、
+	まずフリーリストのオブジェクトを１つ取り出してきて使います。
 	)
 ------
 class Foo
 {
-    static Foo freelist;		// start of free list
+    static Foo freelist;		// フリーリストの先頭
 
     static Foo allocate()
     {   Foo f;
@@ -181,7 +181,7 @@ class Foo
 	freelist = f;
     }
 
-    Foo next;		// for use by FooFreeList
+    Foo next;		// FooFreeList で使うため
     ...
 }
 
@@ -193,48 +193,48 @@ void test()
 }
 ------
 
-	Such free list approaches can be very high performance.
+	このようなフリーリスト方式で、高いパフォーマンスを得ることも可能です。
 
 	$(UL
-	$(LI If used by multiple threads, the allocate() and
-	deallocate() functions need to be synchronized.)
+	$(LI 複数のスレッドから使う場合、allocate() と deallocate()
+		関数には同期処理が必要です。)
 
-	$(LI The Foo constructor is not re-run by allocate() when
-	allocating from the free list, so the allocator may need
-	to reinitialize some of the members.)
+	$(LI allocate()
+		によってフリーリストから取得されるとき、
+		Fooのコンストラクタは再実行されません。)
 
-	$(LI It is not necessary to practice RAII with this, since
-	if any objects are not passed to deallocate() when done, because
-	of a thrown exception, they'll eventually get picked up by
-	the GC anyway.)
+	$(LI RAIIと組み合わせる必要はありません。
+		例外が投げられてフリーリストへ
+		戻されなかったオブジェクトなども、
+		いずれGCによって回収されます。)
 	)
 
-<h2><a name="referencecounting">Reference Counting</a></h2>
+<h2><a name="referencecounting">参照カウント</a></h2>
 
-	$(P The idea behind reference counting is to include a count
-	field in the object. Increment it for each additional reference
-	to it, and decrement it whenever a reference to it ceases.
-	When the count hits 0, the object can be deleted.
+	$(P 参照カウントとは、オブジェクトにカウント変数を含める、
+	ということです。
+	オブジェクトを指す参照が増えればカウントを増やし、参照が終われば
+	カウントを減らします。カウントが0になったオブジェクトは削除できます。
 	)
 
-	$(P D doesn't provide any automated support for reference counting,
-	it will have to be done explicitly.
+	$(P D は参照カウントを自動化する方法を提供していません。
+	明示的に記述する必要があります。
 	)
 
-	$(P <a href="COM.html">Win32 COM programming</a>
-	uses the members AddRef() and Release()
-	to maintain the reference counts.
+	$(P <a href="COM.html">Win32 COM プログラミング</a>
+	では、参照カウントの管理に、
+	メンバ AddRef() と Release() を使います。
 	)
 
-<h2><a name="newdelete">Explicit Class Instance Allocation</a></h2>
+<h2><a name="newdelete">明示的なクラスインスタンス割り当て</a></h2>
 
-	$(P D provides a means of creating custom allocators and deallocators
-	for class instances. Normally, these would be allocated on the
-	garbage collected heap, and deallocated when the collector decides
-	to run. For specialized purposes, this can be handled by
-	creating $(I NewDeclaration)s and $(I DeleteDeclaration)s.
-	For example, to allocate using the C runtime library's
-	$(TT malloc) and $(TT free):
+	$(P D は、クラスのインスタンスのためのカスタムアロケータ/デアロケータを
+	作る方法を提供しています。通常、インスタンスはGCのヒープから確保され、
+	GCが走ったときに解放されます。特定の目的に対しては、
+	$(I NewDeclaration) と $(I DeleteDeclaration)
+	を書いてメモリ割り当てを管理することができます。
+	例えば、Cのランタイム関数 
+	$(TT malloc) と $(TT free) で割り当てを行う例です：
 	)
 
 ------
@@ -268,73 +268,73 @@ class Foo
 }
 ------
 
-	$(P The critical features of new() are:)
+	$(P new() の重要な特徴は：)
 
 	$(UL
-	$(LI new() does not have a return type specified,
-	but it is defined to be void*. new() must return
-	a void*.)
+	$(LI nnew() には返値型を指定しませんが、
+		void*として定義されます。
+		new() は void* を返さなくてはなりません。)
 
-	$(LI If new() cannot allocate memory, it must
-	not return null, but must throw an exception.)
+	$(LI new() がメモリを割り当てられなかった場合、null を返すのではなく、
+		必ず例外を投げるようにします。)
 
-	$(LI The pointer returned from new() must be to memory
-	aligned to the default alignment. This is 8 on win32
-	systems.)
+	$(LI new() の返すポインタは、
+		デフォルトのメモリ境界に整列されている
+		必要があります。Win32 システムでは、8バイト境界です。)
 
-	$(LI The $(I size) parameter is needed in case the
-	allocator is called from a class derived from Foo and is
-	a larger size than Foo.)
+	$(LI 割り当て関数が Foo から派生したより大きいサイズのクラスから
+		呼び出された場合のために、$(I size)
+		パラメタが必要です。)
 
-	$(LI A null is not returned if storage cannot be allocated.
-	Instead, an exception is thrown. Which exception gets thrown
-	is up to the programmer, in this case, OutOfMemory() is.)
+	$(LI メモリを割り当てられなかった場合、null を返すのではなく、
+		必ず例外を投げます。どの例外を投げるかはプログラマに任されています。
+		この例の場合は OutOfMemory でした。)
 
-	$(LI When scanning memory for root pointers into the garbage
-	collected heap, the static data segment and the stack are
-	scanned automatically. The C heap is not. Therefore, if Foo
-	or any class derived from Foo using the allocator contains
-	any references to data allocated by the garbage collector, the
-	GC needs to be notified. This is done with the std.gc.addRange()
-	method.)
+	$(LI GCがメモリ中のポインタを探索する時には、
+		静的データセグメントと
+		スタックは自動的に探索されますが、
+		C のヒープはそうではありません。
+		このため、FooやFooから派生したクラスがGCから確保した領域への参照を
+		保持するときには、そのことをGCに伝える必要があります。
+		これは、std.gc.addRange() メソッドによって行います)
 
-	$(LI No initialization of the memory is necessary, as code
-	is automatically inserted after the call to new() to set the
-	class instance members to their defaults and then the constructor
-	(if any) is run.)
+	$(LI メモリの初期化は必要ありません。インスタンスのメンバを
+		デフォルト初期化をするコードや、（もしあれば）
+		コンストラクタを呼ぶコードが new() の呼び出しの後ろに
+		自動で挿入されます。)
 	)
 
-	The critical features of delete() are:
+	deleteの重要な特徴は：
 
 	$(UL
-	$(LI The destructor (if any) has already been called on the
-	argument p, so the data it points to should be assumed to
-	be garbage.)
+	$(LI （もし存在すれば）デストラクタは、
+		既に 引数p に対して呼び出されています。
+		従って、pの指すメモリは既にゴミとなっていると仮定すべきです。)
 
-	$(LI The pointer p may be null.)
+	$(LI ポインタ p は null である可能性があります。)
 
-	$(LI If the GC was notified with std.gc.addRange(), a corresponding
-	call to std.gc.removeRange() must happen in the deallocator.)
+	$(LI GC へ std.gc.addRange() で通知してあった場合は、deleteでは対応して
+		std.gc.removeRange() を呼び出す必要があります。)
 
-	$(LI If there is a delete(), there should be a corresponding new().)
+	$(LI delete() を作るなら、対応する new() も作成してください。)
 	)
 
-	$(P If memory is allocated using class specific allocators and deallocators,
-	careful coding practices must be followed to avoid memory leaks
-	and dangling references. In the presence of exceptions, it is
-	particularly important to practice RAII to prevent memory leaks.
+	$(P クラス特有のアロケータを使ってメモリを割り当てる場合は、
+	'宙ぶらりんポインタ' や 'メモリリーク' が発生しないように
+	注意深くコードを書かなくてはなりません。例外の存在まで考慮すると、
+	メモリリークを防ぐためには RAII を使う習慣が重要です。
 	)
 
-	$(P Custom allocators and deallocators can be done for structs
-	and unions, too.)
+	$(P 構造体や共用体についても、
+	カスタムアロケータを定義して使うすることができます。)
 
 <h2><a name="markrelease">Mark/Release</a></h2>
 
-	$(P Mark/Release is equivalent to a stack method of allocating and
-	freeing memory. A $(SINGLEQUOTE stack) is created in memory. Objects are allocated
-	by simply moving a pointer down the stack. Various points are
-	$(SINGLEQUOTE marked), and then whole sections of memory are released
-	simply by resetting the stack pointer back to a marked point.
+	$(P Mark/Release は、スタックを使うのと同等のメモリ割り当て/解放方法です。
+	$(SINGLEQUOTE スタック) はメモリ中に作られます。オブジェクトは、メモリ中でポインタを
+	下に動かすことで作成します。個々のポイントが
+	$(SINGLEQUOTE mark) され、
+	それまでに確保されたオブジェクトを解法します。
 	)
 
 ------
@@ -402,58 +402,58 @@ class Foo
 void main()
 {
     int m  = Foo.mark();
-    Foo f1 = new Foo;           // allocate
-    Foo f2 = new Foo;           // allocate
+    Foo f1 = new Foo;           // 割り当て
+    Foo f2 = new Foo;           // 割り当て
 
-    Foo.release(m);             // deallocate f1 and f2
+    Foo.release(m);             // f1 と f2
 }
 ------
 
-	$(P The allocation of buffer[] itself is added as
-	a region to the GC, so there is no need for a separate
-	call inside Foo.new() to do it.)
+	$(P 割り当て用の buffer[] それ自身は、
+		GC 対象領域に追加されます。
+		このため、Foo.new() でその作業をするコードは必要ありません。)
 
 <h2><a name="raii">RAII (Resource Acquisition Is Initialization)</a></h2>
 
-	$(P RAII techniques can be useful in avoiding memory leaks
-	when using explicit allocators and deallocators.
-	Adding the <a href="attribute.html#scope">scope attribute</a>
-	to such classes can help.
+	$(P 明示的なアロケータ/デアロケータを使っているときは、
+	メモリリークを避けるためにRAIIというテクニックが有効です。
+	そのようなクラスには <a href="attribute.html#scope">scope 属性</a>
+	を加えると良いでしょう。
 	)
 
-<h2>$(LNAME2 stackclass, Allocating Class Instances On The Stack)</h2>
+<h2>$(LNAME2 stackclass, スタックへのクラスインスタンス割り当て)</h2>
 
-	$(P Class instances are normally allocated on the garbage
-	collected heap. However, if they:)
+	$(P クラスのインスタンスは、通常はガベージコレクタに管理された
+	ヒープに割り当てられます。しかし、以下の条件が満たされていれば…)
 
 	$(UL
-	$(LI are allocated as local symbols in a function and)
-	$(LI are allocated using $(B new) and)
-	$(LI use $(B new) with no arguments (constructor arguments are allowed) and)
-	$(LI have the $(B scope) storage class)
+	$(LI 関数のローカルシンボルで)
+	$(LI $(B new) で割り当てられていて)
+	$(LI その $(B new) にはアロケータ用の引数が指定されておらず（コンストラクタ用の引数は可）)
+	$(LI $(B scope) 宣言されている)
 	)
 
-	$(P then they are allocated on the stack. This is more efficient
-	than doing an allocate/free cycle on the instance. But be
-	careful that any reference to the object does not survive
-	the return of the function.)
+	$(P …インスタンスはスタックに割り当てられます。
+	これはインスタンスのallocate/freeを行うよりも効率的ですが、
+	オブジェクトへの参照が関数からのreturn後も生き延びることのないよう、
+	注意が必要です。)
 
 ---
 class C { ... }
 
-scope c = new C();	// c is allocated on the stack
-scope c2 = new C(5);    // allocated on stack
-scope c3 = new(5) C();  // allocated by a custom allocator
+scope c = new C();	// c はスタックに割り当てられる
+scope c2 = new C(5);    // スタックに割り当てられる
+scope c3 = new(5) C();  // カスタムアロケータで割り当てられる
 ---
 
-	$(P If the class has a destructor, then that destructor is
-	guaranteed to be run when the class object goes out of scope,
-	even if the scope is exited via an exception.)
+	$(P クラスにデストラクタが定義されていた場合、
+	そのデストラクタが、オブジェクトがスコープを抜けるタイミングで呼ばれることが保証されます。
+	例外でスコープを抜けるときも同様です。)
 
 
-<h2><a name="uninitializedarrays">Allocating Uninitialized Arrays On The Stack</a></h2>
+<h2><a name="uninitializedarrays">スタックへの未初期化配列の割り当て</a></h2>
 
-	$(P Arrays are always initialized in D. So, the following declaration:)
+	$(P Dでは、配列は常に初期化されます。例えば、以下の宣言：)
 
 ------
 void foo()
@@ -464,10 +464,10 @@ void foo()
 }
 ------
 
-	$(P will not be as fast as it might be since the buffer[] contents
-	are always initialized. If careful profiling of the program shows
-	that this initialization is a speed problem, it can be eliminated using
-	a $(I VoidInitializer):
+	$(P wiは、最初にbuffer[]の中身を初期化するため、
+	あなたが思うほどは速くないかもしれません。もし注意深くプロファイルを取った結果、
+	この初期化がスピードに関して問題になっているとわかったならば、
+	$(I VoidInitializer) によってこれを除去することができます:
 	)
 
 ------
@@ -479,75 +479,75 @@ void foo()
 }
 ------
 
-	$(P Uninitialized data on the stack comes with some caveats that need
-	to be carefully evaluated before using:
+	$(P スタック上の未初期化データには、
+	使用する前によく考えておかねばならない危険が伴います：
 	)
 
 	$(UL
 
-	$(LI The uninitialized data that is on the stack will get scanned by the
-	garbage collector looking for any references to allocated memory. Since
-	the uninitialized data consists of old D stack frames, it is highly
-	likely that some of that garbage will look like references into the GC
-	heap, and the GC memory will not get freed. This problem really does
-	happen, and can be pretty frustrating to track down.)
+	$(LI スタック上の未初期化データは、参照が残っていないか、
+	ガベージコレクタによって探索されます。未初期化データの中身は元々 D
+	のスタックフレームだったものでしょうから、たぶんそこには GC
+	のヒープへの参照が残っていて、その部分のGCメモリが解放されなくなります。
+	この問題は実際に発生するもので、
+	追跡するのは極めてやっかいです。)
 
-	$(LI It's possible for a function to pass out of it a reference to data
-	on that function's stack frame. By then allocating a new stack frame
-	over the old data, and not initializing, the reference to the old data
-	may still appear to be valid. The program will then behave erratically.
-	Initializing all data on the stack frame will greatly increase the
-	probability of forcing that bug into the open in a repeatable manner.)
+	$(LI 関数から、スタックフレームに割り当てられたデータへの参照を
+	外に返すことは可能です。
+	その後新しいスタックフレームを古いデータの上に割り当て、未初期化で使った場合、
+	古いデータへのリファレンスはまだ有効であるかのように振る舞います。
+	このようなプログラムはエラーの要因です。スタックフレーム上の全てのデータの初期化は、
+	多くのバグを確実に再現性があるものにするのに大きな役に立ちます。)
 
-	$(LI Uninitialized data can be a source of bugs and trouble, even when
-	used correctly. One design goal of D is to improve reliability and
-	portability by eliminating sources of undefined behavior, and
-	uninitialized data is one huge source of undefined, unportable, erratic
-	and unpredictable behavior. Hence this idiom should only be used after
-	other opportunities for speed optimization are exhausted and if
-	benchmarking shows that it really does speed up the overall execution.)
+	$(LI 未初期化データは、正しく使ってさえ、バグとトラブルの元です。
+	我々のDの設計の目的は、
+	未定義動作のもとを除いて信頼性と移植性を高めることでした。
+	そして、未初期化データは未定義・無移植性・エラー的・予測不能動作の大元です。
+	したがって、ここにあげたイディオムは、他に最適化の種が尽きて、
+	ベンチマークが確かに該当箇所が全体のボトルネックになっていることが確認できた時のみ、
+	使用されるべきです。)
 
 	)
 
-<h2><a name="isr">Interrupt Service Routines</a></h2>
+<h2><a name="isr">割り込みサービスルーチン</a></h2>
 
-	$(P When the garbage collector does a collection pass, it must
-	pause all running threads in order to scan their stacks and register
-	contents for references to GC allocated objects.
-	If an ISR (Interrupt Service Routine) thread is paused,
-	this can break the program.
+	$(P ガベージコレクタがメモリ回収を実行するときには、
+	レジスタやスタックの内容を調べてGCで割り当てたオブジェクトへの参照を集めるために、
+	いったん全てのスレッドの実行を停止する必要があります。
+	しかし、ISR (Interrupt Service Routine / 割り込みサービスルーチン)
+	スレッドを停止してしまうと、プログラムの動きがおかしくなってしまいます。
 	)
 
-	$(P Therefore, the ISR thread should not be paused.
-	Threads created with the $(LINK2 phobos/core_thread.html, core.thread)
-	functions will be paused. But threads created with C's
-	$(TT _beginthread()) or equivalent won't be, the GC
-	won't know they exist.
+	$(P Tこのため、ISR スレッドは停止すべきではありません。
+	標準ライブラリ $(LINK2 phobos/core_thread.html, core.thread)
+	の関数で作ったスレッドは停止しますが、Cの
+	$(TT _beginthread()) やそれと同等のルーチンで作ったスレッドは、
+	GCがその存在を知らないため、停止しません。
 	)
 
-	$(P For this to work successfully:)
+	$(P これを使って適切な動作を得るためには:)
 
 	$(UL
 
-	$(LI The ISR thread cannot allocate any memory using the GC.
-	This means that the global $(TT new) cannot be used.
-	Nor can dynamic arrays be resized, nor can any elements be
-	added to associative arrays. Any use of the D runtime library
-	should be examined for any possibility of allocating GC memory -
-	or better yet, the ISR should not call any D runtime library
-	functions at all.)
+	$(LI ISR スレッドはGCでメモリを割り当てることはできません。
+	つまり、グローバルな $(TT new) を使用できないということです。
+	さらに、動的配列のリサイズや、
+	連想配列への要素追加も不可です。Dランタイムライブラリを使うときは、
+	GCでメモリを割り当てる可能性がないことを確認するか…
+	もっとベターなのは、ISR では D 
+	のライブラリ関数を呼ばないことです。)
 
-	$(LI The ISR cannot hold the sole reference to any GC allocated
-	memory, otherwise the GC may free the memory while the ISR
-	is still using it. The solution is to have one of the paused
-	threads hold a reference to it too, or store a reference to
-	it in global data.)
+	$(LI 「ISR だけがGCで割り付けたオブジェクトへの参照を保持している状態」
+	を作ってはいけません。そうなると、たとえISRで使用中でも
+	GC がメモリを解放するおそれがあります。解決策としては、
+	別にダミーの停止スレッドを作ってそこにも参照を置いておくか、
+	参照をグローバルに保持しておくことです。)
 
 	)
 )
 
 Macros:
-	TITLE=Memory Management
+	TITLE=メモリ管理
 	WIKI=Memory
 	CATEGORY_ARTICLES=$0
 
