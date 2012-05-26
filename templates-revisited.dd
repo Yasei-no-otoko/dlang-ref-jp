@@ -1,8 +1,8 @@
 Ddoc
 
-$(D_S Templates Revisited,
+$(D_S テンプレート再訪,
 
-<center>
+
 $(I by Walter Bright, $(LINK http://www.digitalmars.com/d))
 
 <br>
@@ -14,70 +14,70 @@ the third or fourth year of graduate school... It is my task to convince you not
 to turn away because you don't understand it. You see my programming students
 don't understand it... That is because I don't understand it. Nobody does.
 )
-</center>
 
-<h2>Abstract</h2>
+
+<h2>要旨</h2>
 
 $(P
-Templates in C++ have evolved from little more than token substitution into a
-programming language in itself. Many useful aspects of C++ templates have been
-discovered rather than designed. A side effect of this is that C++ templates are
-often criticized for having an awkward syntax, many arcane rules, and being very
-difficult to implement properly. What might templates look like if one takes a
-step back, looks at what templates can do and what uses they are put to, and
-redesign them? Can templates be powerful, aesthetically pleasing, easy to
-explain and straightforward to implement?
-This article takes a look at an alternative design of templates in the D
-Programming Language [1].
+C++のテンプレートは、単なるトークンの置き換え機能を越えて、それ自身確立された
+プログラミング言語へと発展を遂げています。設計時に意図されたよりも遙かに多く
+C++テンプレートの有用な側面が"発見"されました。このような歴史的経緯の結果、
+C++テンプレートはその不格好な構文や、難解な規則、そして実装の難しさについて
+多くの批判にさらされています。さて、テンプレートに何ができてどのように使われるのかが
+わかった今、もし、一歩戻って言語を再設計していたら、テンプレートはどんな様子になって
+いたでしょうか。より強力で、美しく、説明も実装も
+簡単なテンプレートが実現できるでしょうか。
+この記事では、プログラミング言語D [1] での、
+C++に代わるテンプレートの設計を紹介します。
 )
 
-<h2>Similarities</h2>
+<h2>類似点</h2>
 
 $(UL
-$(LI compile time semantics)
-$(LI function templates)
-$(LI class templates)
-$(LI type parameters)
-$(LI value parameters)
-$(LI template parameters)
-$(LI partial and explicit specialization)
-$(LI type deduction)
-$(LI implicit function template instantiation)
+$(LI コンパイル時処理であること)
+$(LI 関数テンプレート)
+$(LI クラステンプレート)
+$(LI 型パラメータ)
+$(LI 値パラメータ)
+$(LI テンプレートパラメータ)
+$(LI 部分特殊化、明示特殊化)
+$(LI 型演繹)
+$(LI 暗黙のテンプレートインスタンス化)
 $(LI $(ACRONYM SFINAE, Substitution Failure Is Not An Error))
 )
 
 
-<h2>Argument Syntax</h2>
+<h2>引数の構文</h2>
 
 $(P
-The first thing that comes to mind is the use of &lt; &gt; to enclose parameter
-lists and argument lists. &lt; &gt; has a couple serious problem, however.
-They are ambiguous with operators &lt;, &gt;, and &gt;&gt;. This means that expressions
-like:
+まず目につくのが、実引数リストや仮引数リストを囲む &lt; &gt; です。
+この &lt; &gt; にはしかし、重大な問題があります。
+この括弧は、演算子 &lt;, &gt;, &gt;&gt; と区別がつかないのです。
+つまり、次のような式や
 )
 
 $(CCODE
 a&lt;b,c&gt;d;
 )
 
-and:
+次のような式は
 
 $(CCODE
 a&lt;b&lt;c&gt;&gt;d;
 )
 
 $(P
-are syntactically ambiguous, both to the compiler and the programmer.
-If you run across $(D a&lt;b,c&gt;d;) in unfamiliar code, you've got to slog through
-an arbitrarily large amount of declarations and $(D .h) files to figure out
-if it is a template or not.
-How much effort has been expended by programmers, compiler writers, and
-language standard writers to deal with this?
+プログラマにとってもコンパイラにとっても、構文的に曖昧です。
+不慣れなコード中で $(D a&lt;b,c&gt;d;) という式を見たときには、
+この式がテンプレートなのかそうでないのかを判断するには、大量の $(D .h) ファイルの
+中の宣言を探し回る羽目になります。
+この曖昧さのせいで、プログラマ、コンパイラ制作者、そして言語標準規格の制定者の
+労力がどれほど費やされていることでしょう。
 )
 
 $(P
-There's got to be a better way. D solves it by noticing that ! is not used
-as a binary operator, so replacing:
+もっと巧い方法があります。D言語では、! が二項演算子に使われていないことに
+着目して、これを解決しました。
 )
 
 $(CCODE
@@ -85,7 +85,7 @@ a&lt;b,c&gt;
 )
 
 $(P
-with:
+と書くかわりに、
 )
 
 ---
@@ -93,18 +93,18 @@ a!(b,c)
 ---
 
 $(P
-is syntactically unambiguous. This makes it easy to parse, easy to generate
-reasonable error messages for, and makes it easy for someone inspecting the
-code to determine that yes, $(D a) must be a template.
+と書くことで、曖昧さを無くしています。これによって、構文解析は簡単になり、
+意味のあるエラーメッセージを出すことも簡単になり、そして、そう、コードを読む人が
+この $(D a) はテンプレートなんだと判断するのも簡単になります。
 )
 
 
-<h2>Template Definition Syntax</h2>
+<h2>テンプレート定義の構文</h2>
 
 $(P
-C++ can define two broad types of templates: class templates, and function
-templates. Each template is written independently, even if they are
-closely related:
+C++ では、大きく分けて二種類のテンプレート、クラステンプレートと関数テンプレート
+を定義できます。例え密接に関係がある場合でも、それぞれのテンプレートは
+別々に記述されます。
 )
 
 $(CCODE
@@ -116,11 +116,11 @@ template&lt;class T, class U&gt; static T abc;
 )
 
 $(P
-POD (Plain Old Data, as in C style) structs
-bring together related data declarations, classes bring together
-related data and function declarations, but there's nothing to logically group
-together templates that are to be instantiated together.
-In D, we can write:
+POD (C方式の Plain Old Data) 構造体には大抵、関連するデータの宣言が
+伴いますし、クラスにも大抵、関連するデータや関数の宣言が伴います。
+しかし、これらを同時にインスタンス化される論理的にまとまった
+テンプレートとして記述することはできませんでした。
+Dでは、次のように書けます。
 )
 
 ----
@@ -132,13 +132,13 @@ template Foo(T, U)
 
   T abc;
 
-  typedef T* Footype;	// any declarations can be templated
+  typedef T* Footype;	// 任意の宣言はテンプレート化可能
 }
 ----
 
 $(P
-The $(D Foo) forms a name space for the templates, which are accessed by,
-for example:
+$(D Foo) がテンプレートの名前空間になっていて、
+例えば次のようにアクセスできます。
 )
 
 ---
@@ -148,8 +148,8 @@ Foo!(int,char).abc = 3;
 ---
 
 $(P
-Of course, this can get a little tedious, so one can use an alias
-for a particular instantiation:
+もちろんこれが少々面倒なこともありますから、その場合は、
+特定のインスタンスに対しaliasを使うと記述が簡単です。
 )
 
 ---
@@ -160,8 +160,8 @@ f.abc = 3;
 ---
 
 $(P
-For class templates, there's an even simpler syntax. A class is defined
-like:
+クラステンプレートについては、さらに簡単な構文も用意されています。
+次のように宣言されたクラスは…
 )
 
 ---
@@ -173,7 +173,7 @@ class Abc
 ---
 
 $(P
-This can be turned into a template by just adding a parameter list:
+パラメータリストを加えるだけで、テンプレートにできます。
 )
 
 ---
@@ -185,15 +185,15 @@ class Abc(T)
 ---
 
 
-<h2>Template Declaration, Definition, and Export</h2>
+<h2>テンプレートの宣言、定義、エクスポート</h2>
 
 $(P
-C++ templates can be in the form of a template declaration, a template
-definition, and an exported template.
-Because D has a true module system, rather than textual #include files,
-there are only template definitions in D. The need for template declarations
-and export is irrelevant. For example, given a template definition in
-module $(D A):
+C++のテンプレートは、テンプレート宣言、テンプレート定義、
+そしてexportテンプレート、の３種類の形式で書かれ得ます。
+Dには、#includeによるテキスト貼り付けではない真のモジュールシステムがありますから、
+Dではテンプレート定義のみが存在します。テンプレート宣言やexportテンプレートは
+もはや不要です。例えば、モジュール $(D A)
+でテンプレート定義があったとします：
 )
 
 ---
@@ -206,7 +206,7 @@ template Foo(T)
 ---
 
 $(P
-it can be accessed from module $(D B) like:
+これは別のモジュール $(D B) から次のようにアクセスできます。
 )
 
 ---
@@ -221,7 +221,7 @@ void test()
 ---
 
 $(P
-As usual, an alias can be used to simplify access:
+アクセスの簡略化のためにaliasを使うのももちろん自由です。
 )
 
 ---
@@ -237,31 +237,31 @@ void test()
 ---
 
 
-<h2>Template Parameters</h2>
+<h2>テンプレート・パラメータ</h2>
 
 $(P
-C++ template parameters can be:)
+C++でテンプレート・パラメータとして使えるもの：)
 
 $(UL
-$(LI types)
-$(LI integral values)
-$(LI static/global addresses)
-$(LI template names)
+$(LI 型)
+$(LI 整数値)
+$(LI static/global なアドレス)
+$(LI テンプレート名)
 )
 
-$(P D template parameters can be:)
+$(P Dでテンプレート・パラメータとして使えるもの：)
 
 $(UL
-$(LI types)
-$(LI integral values)
-$(LI floating point values)
-$(LI string literals)
-$(LI templates)
-$(LI or any symbol)
+$(LI 型)
+$(LI 整数値)
+$(LI 浮動小数点数値)
+$(LI 文字列リテラル)
+$(LI テンプレート)
+$(LI その他、任意の識別子)
 )
 
-$(P Each can have default values,
-and type parameters can have (a limited form of) constraints:
+$(P いずれもデフォルト値を指定することができ、
+型パラメータについては（ある種の）制約を加えることもできます。
 )
 
 ---
@@ -269,33 +269,33 @@ class B { ... }
 interface I { ... }
 
 class Foo(
-  R,            // R can be any type
-  P:P*,         // P must be a pointer type
-  T:int,        // T must be int type
-  S:T*,         // S must be pointer to T
-  C:B,          // C must be of class B or derived
-                // from B
-  U:I,          // U must be a class that
-                // implements interface I
+  R,            // R はどんな型でもよい
+  P:P*,         // P は必ずポインタ型
+  T:int,        // T は必ずint型
+  S:T*,         // S は必ずTへのポインタ型
+  C:B,          // C はクラスBかその派生型
+                // 
+  U:I,          // U はインターフェイスIを
+                // 実装したクラス型
   string str = "hello",
-                // string literal,
-                // default is "hello"
-  alias A = B   // A is any symbol
-                // (including template symbols),
-                // defaulting to B
+                // 文字列リテラル
+                // デフォルトは "hello"
+  alias A = B   // A は任意の識別子
+                // (テンプレート識別子も含む)
+                // デフォルトは B
   )
 {
     ...
 }
 ---
 
-<h2>Specialization</h2>
+<h2>特殊化</h2>
 
 $(P
-Partial and explicit specialization work as they do in C++, except that
-there is no notion of a $(SINGLEQUOTE primary) template. All the templates with the
-same name are examined upon template instantiation, and the one with the
-best fit of arguments to parameters is instantiated.
+部分特殊化や明示特殊化は、C++と同じように動作します。ただし、C++のような
+$(SINGLEQUOTE primary) テンプレートの概念はありません。インスタンス化の際には同名のテンプレート
+全てが調べられ、引数がもっとも良くマッチしたものが
+インスタンス化されます。
 )
 
 ---
@@ -305,24 +305,24 @@ template Foo(T, U:T) ...
 template Foo(T, U) ...
 template Foo(T, U:int) ...
 
-Foo!(long)       // picks Foo(T)
-Foo!(long[])     // picks Foo(T), T is long[]
-Foo!(int*)       // picks Foo(T*), T is int
-Foo!(long,long)  // picks Foo(T, T)
-Foo!(long,short) // picks Foo(T, U)
-Foo!(long,int)   // picks Foo(T, U:int)
-Foo!(int,int)    // ambiguous - Foo(T, U:T)
-                 // or Foo(T, U:int)
+Foo!(long)       // Foo(T) を選択
+Foo!(long[])     // Foo(T) を選択。T は long[]
+Foo!(int*)       // Foo(T*) を選択。T は int
+Foo!(long,long)  // Foo(T, T) を選択
+Foo!(long,short) // Foo(T, U) を選択
+Foo!(long,int)   // Foo(T, U:int) を選択
+Foo!(int,int)    // 曖昧 - Foo(T, U:T)
+                 // と Foo(T, U:int)
 ---
 
-<h2>Two Level Name Lookup</h2>
+<h2>二段階名前探索</h2>
 
 $(P
-C++ has some unusual rules for name lookup inside templates, such
-as not looking inside base classes, not allowing scoped redeclaration
-of template parameter names, and not considering overloads that
-happen after the point of definition (this example is
-derived from one in the C++98 Standard):
+C++ では、テンプレートの内部では通常と異なる名前探索規則が適用されます。
+例えば、基底クラスの名前空間を見ないことや、スコープを切ったテンプレートパラメータ名の
+再定義を許さないこと、テンプレート定義箇所より後ろで定義されたオーバーロードは
+考慮しないこと、などがあります。（以下の例は
+C++98標準 から抜粋しました）
 )
 
 $(CCODE
@@ -337,19 +337,19 @@ template&lt;class T&gt; B
 
 template&lt;class T&gt; struct X : B&lt;T&gt;
 {
-  A a;              // a has type double
-  int T;            // error, T redeclared
+  A a;              // a はdouble型
+  int T;            // エラー、T が再宣言された
   int foo()
-  {  char T;        // error, T redeclared
-     return g(1);   // always returns 1
+  {  char T;        // エラー、T が再宣言された
+     return g(1);   // 常に 1 を返す
   }
 };
 
-int g(int i) { return 2; }	// this definition not seen by X
+int g(int i) { return 2; }	// この定義はXからは見えない
 )
 
 $(P
-Scoped lookup rules in D match the rules for the rest of the language:
+Dでは、テンプレートを使わない場合と全く同じ規則が適用されます。
 )
 
 ---
@@ -364,27 +364,27 @@ class B(T)
 
 class X(T) : B!(T)
 {
-  A a;             // a has type int
-  int T;           // ok, T redeclared as int
+  A a;             // a は int 型
+  int T;           // ok, T を int に再宣言
   int foo()
-  {   char T;      // ok, T redeclared as char
-     return g(1);  // always returns 2
+  {   char T;      // ok, T を char に再宣言
+     return g(1);  // 常に 2 を返す
   }
 };
 
-int g(int i) { return 2; }	// functions can be forward referenced
+int g(int i) { return 2; }	// 関数は前方参照可能
 ---
 
 
 
-<h2>Template Recursion</h2>
+<h2>テンプレートの再帰</h2>
 
 $(P
-Template recursion combined with specialization means that C++ templates
-actually form a programming language, although certainly
-an odd one. Consider a set of templates that computes a factorial at
-run time. Like "hello world" programs, factorial is the canonical example
-of template metaprogramming:
+テンプレートの再帰は特殊化と組み合わさることで、
+C++テンプレートを一つの（いささか変わってはいますが）プログラミング言語としています。
+階乗を計算するテンプレート群を考えてみましょう。
+"hello world" プログラムのように、階乗計算は、
+テンプレートメタプログラミングの標準的な例題です。
 )
 
 $(CCODE
@@ -411,7 +411,7 @@ void test()
 )
 
 $(P
-Recursion works as well in D, though with significantly less typing:
+Dでも再帰は同じように使えます。タイプ数も少なく済みます。
 )
 
 ---
@@ -427,13 +427,13 @@ template factorial(int n : 1)
 
 void test()
 {
-  writefln(factorial!(4));  // prints 24
+  writefln(factorial!(4));  // 24と表示
 }
 ---
 
 $(P
-Through using the $(CODE static if) construct it can be done in just one
-template:
+$(CODE static if) を使えば
+テンプレート一つで記述することも可能です。
 )
 
 ---
@@ -447,18 +447,18 @@ template factorial(int n)
 ---
 
 $(P
-reducing 13 lines of code to an arguably much cleaner 7 lines.
-$(D static if)'s are the equivalent of C++'s $(D #if).
-But $(D #if) cannot access template
-arguments, so all template conditional compilation must be handled with
-partial and explicitly specialized templates.
-$(D static if) dramatically simplifies
-such constructions.
+13行のコードが、ずっと簡潔な7行に収まりました。
+$(D static if) は C++ の $(D #if) とほぼ同じ物です。
+しかし $(D #if) はテンプレート引数の値を知ることができないため、
+テンプレートを使った条件分岐は全て
+部分ないしは明示特殊化で記述しなければなりませんでした。
+$(D static if) はこのような状況を
+劇的に改善します。
 )
 
-$(P D can make this even simpler. Value generating templates such
-as the factorial one are possible, but it's easier to just write
-a function that can be computed at compile time:)
+$(P D では、これは更に簡単になります。
+上に載せたように階乗の値を生成するテンプレートを書くことも可能ですが、
+コンパイル時に計算可能な関数を書いてしまうのがもっと簡単です:)
 
 ---
 int factorial(int n)
@@ -469,15 +469,15 @@ int factorial(int n)
     return n * factorial(n - 1);
 }
 
-static int x = factorial(5);  // x is statically initialized to 120
+static int x = factorial(5);  // x は 120 にコンパイル時に初期化される
 ---
 
 <h2>$(ACRONYM SFINAE, Substitution Failure Is Not An Error)</h2>
 
 $(P
-This determines if the template's argument type is a function,
-from "$(I C++ Templates: The Complete Guide)",
-Vandevoorde &amp; Josuttis pg. 353:
+以下の例は、テンプレート引数型が関数型かどうかを判定しています。
+Vandevoorde &amp; Josuttis の "$(I C++ Templates: The Complete Guide)",
+353ページ からの引用です。
 )
 
 $(CCODE
@@ -503,20 +503,20 @@ void test()
 )
 
 $(P
-Template $(D IsFunctionT) relies on two side effects to achieve its result.
-First, it relies on arrays of functions being an invalid C++ type.
-Thus, if $(D U) is a function type, the second $(D test) will not be selected
-since to do so would cause an error ($(SFINAE)).
-The first $(D test) will be selected.
-If $(D U) is not a function type, the second $(D test) is a better fit than ... .
-Next, it is determined which $(D test) was selected by examining the size
-of the return value, i.e. $(D sizeof(One)) or $(D sizeof(Two)).
-Unfortunately, template metaprogramming in C++ often seems to be relying
-on side effects rather than being able to expressly code what is desired.
+$(D IsFunctionT) テンプレートは、二つの副作用によってその機能が実現されて
+います。一つめは、関数の配列というのがC++では不正な型であることです。
+このため、$(D U) が関数型だった場合、二番目の $(D test)を選択すると
+エラーになるため ($(SFINAE)) こちらは選ばれず、一つめの
+$(D test) が選択されます。
+$(D U) が関数型ではなかった場合、二番目の $(D test) が...よりも適合度の高い
+マッチになります。次に、どちらの $(D test) が選択されたかが、返値の
+サイズ…つまり $(D sizeof(One)) か $(D sizeof(Two)) かによって判定されます。
+残念なことにC++でのテンプレートメタプログラミングは、直接表現したいことを
+記述するコードではなく、副作用に頼ったコードになってしまいがちです。
 )
 
 $(P
-In D this can be written:
+Dでは次のように書けます。
 )
 
 ---
@@ -537,15 +537,15 @@ void test()
 ---
 
 $(P
-The $(D is(T[])) is the equivalent of $(SFINAE).
-It tries to build an array of $(D T),
-and if $(D T) is a function type, it is an array of functions. Since this is
-an invalid type, the $(D T[]) fails and $(D is(T[])) returns false.
+$(D is(T[])) は $(SFINAE)
+と同じ効果を持ちます。$(D T) の配列型を作ろうとしますが、
+$(D T) が関数型の場合、これは関数の配列です。これはDでも
+不正な型であるため、$(D T[]) は失敗して $(D is(T[])) はfalseを返します。
 )
 
 $(P
-Although $(SFINAE) can be used, the is expressions can test a type directly,
-so it isn't even necessary to use a template to ask questions about a type:
+このように $(SFINAE) を用いることもできますが、is式はもっと直接的に型を調べることが
+可能です。型についての条件を書くのにテンプレートを使う必要すらありません。
 )
 
 ---
@@ -557,12 +557,12 @@ void test()
 }
 ---
 
-<h2>Template Metaprogramming With Floats</h2>
+<h2>浮動小数点数を使ったテンプレートメタプログラミング</h2>
 
 $(P
-Let's move on to things that are impractical with templates in C++.
-For example, this template returns the square root of
-real number $(D x) using the Babylonian method:
+ここからは、C++のテンプレートでは現実的に実装するのが難しい例に移りましょう。
+例えば、実数 $(D x) の平方根を
+Babylonian method で計算するテンプレートです。
 )
 
 ---
@@ -571,13 +571,13 @@ import std.stdio;
 template sqrt(real x, real root = x/2, int ntries = 0)
 {
   static if (ntries == 5)
-    // precision doubles with each iteration,
-    // 5 should be enough
+    // 繰り返しのたびに精度は倍になる。
+    // 5 回で十分。
     const sqrt = root;
   else static if (root * root - x == 0)
-    const sqrt = root;  // exact match
+    const sqrt = root;  // ちょうどぴったり
   else
-    // iterate again
+    // 再度繰り返し
     const sqrt = sqrt!(x, (root+x/root)/2, ntries+1);
 }
 
@@ -589,19 +589,19 @@ void main()
 ---
 
 $(P
-Literal square roots are often needed for speed reasons in other runtime
-floating point computations, such as computing the gamma function.
-These template floating point algorithms need not be efficient as they are
-computed at compile time, they only need to be accurate.
+平方根リテラルは、例えばガンマ関数などの、他の実行時の浮動小数点演算の
+高速化のために必要となることがあります。
+これらのテンプレート浮動小数点アルゴリズムはコンパイル時に完了するため、
+それほど効率的である必要はなく、ただ正確であることが求められます。
 )
 
 $(P
-Much more complex templates can be built, for example, Don Clugston
-has written a template to compute &pi; at compile time. [2]
+もっと複雑なテンプレートを構築することも可能で、例えば Don Clugston は
+コンパイル時に円周率 &pi; を計算するテンプレートを書いています。[2]
 )
 
-$(P Again, we can just do this with a function that can be executed
-at compile time:)
+$(P これも、
+コンパイル時に実行される関数として記述することができます:)
 
 ---
 real sqrt(real x)
@@ -615,14 +615,14 @@ real sqrt(real x)
     }
     return root;
 }
-static y = sqrt(10);   // y is statically initialized to 3.16228
+static y = sqrt(10);   // y はコンパイル時に 3.16228 へと初期化される
 ---
 
-<h2>Template Metaprogramming With Strings</h2>
+<h2>文字列を使ったテンプレートメタプログラミング</h2>
 
 $(P
-Even more interesting things can be done with strings. This example
-converts an integer to a string at compile time:
+文字列を使うと、もっと面白いことができます。次の例は、
+コンパイル時に整数を文字列に変換します。
 )
 
 ---
@@ -643,12 +643,12 @@ template itoa(long n)
 
 string foo()
 {
-  return itoa!(264);   // returns "264"
+  return itoa!(264);   // "264"を返す
 }
 ---
 
 $(P
-This template will compute the hash of a string literal:
+以下のテンプレートは文字列リテラルのハッシュ値を計算します。
 )
 
 ---
@@ -666,36 +666,36 @@ uint foo()
 }
 ---
 
-<h2>Regular Expression Compiler</h2>
+<h2>正規表現コンパイラ</h2>
 
 $(P
-How do D templates fare with something much more significant, like
-a regular expression compiler? Eric Niebler has written one for C++
-that relies on expression templates. [4]
-The problem with using expression templates is that one is restricted
-to using only C++ operator syntax and precedence.
-Hence, regular expressions using expression templates don't look like
-regular expressions, they look like C++ expressions.
-Eric Anderton has written one for D that relies on the ability of
-templates to parse strings. [5]
-This means that, within the strings, one can use the expected regular
-expression grammar and operators.
+Dのテンプレートはもっとずっと有意義なもの
+をどんな風に扱うのでしょう。例えばC++では、Eric Niebler が、
+Expression Template を用いて正規表現コンパイラを実装しています [4]。
+Expression Template を使うことの問題点は、C++の演算子の構文と優先順位しか
+使えなくなることです。
+このため、Expression Template を使った正規表現はあまり正規表現には見えず、
+要するに"C++表現"にしか見えません。
+Eric Anderton は、文字列を構文解析できるというテンプレートの能力を活かして
+Dでこれを実装しました [5]。
+これはつまり、パターン文字列の中で、普通に使われている正規表現の文法と
+演算子を使えると言うことです。
 )
 
 $(P
-The regex compiler templates parse the regex string argument,
-pulling off tokens
-one by one from the front, and instantiating custom template functions
-for each token predicate,
-eventually combining them all into one function that directly implements
-the regular expression.
-It even gives reasonable error messages for syntax errors in
-the regular expression.
+この正規表現コンパイラテンプレートは、文字列引数を構文解析して
+トークンを先頭から一つずつ切り出しつつ、
+それぞれのトークンに対応する正規表現マッチを行う
+カスタム関数を生成し、
+それらを最終的に一つにまとめて
+正規表現全体を表す関数を作り上げます。
+正規表現の文法エラーに対しては、
+意味のあるエラーメッセージをきちんと表示することができます。
 )
 
 $(P
-Calling that function with an argument of a string to match returns
-an array of matching strings:
+生成された関数に文字列を渡すと、
+マッチした部分文字列の配列が返されます。
 )
 
 ---
@@ -710,9 +710,9 @@ void main()
 ---
 
 $(P
-What follows is a cut-down version of Eric Anderton's regex compiler.
-It is just enough to compile the regular expression above,
-serving to illustrate how it is done.
+以下に、Eric Anderton の正規表現コンパイラの簡略化版を掲載します。
+上の例の正規表現がどのようにコンパイルされるかを見て取るのに
+必要な部分の抜粋となっています。
 )
 
 -------------
@@ -721,9 +721,9 @@ module regex;
 const int testFail = -1;
 
 /**
- * Compile pattern[] and expand to a custom generated
- * function that will take a string str[] and apply the
- * regular expression to it, returning an array of matches.
+ * pattern[] をコンパイルして、このパターン用の関数をカスタム生成します。
+ * 生成された関数は文字列 str[] を受け取って正規表現を適用し、
+ * マッチした部分の配列を返します。
  */
 
 template regexMatch(string pattern)
@@ -739,24 +739,24 @@ template regexMatch(string pattern)
 }
 
 /******************************
- * The testXxxx() functions are custom generated by templates
- * to match each predicate of the regular expression.
+ * testXxxx() 関数はテンプレートによってカスタム生成されるもので、
+ * 正規表現の要素それぞれに対応しています。
  *
  * Params:
- *	string str	the input string to match against
+ *	string str	マッチ対象の入力文字列
  *
  * Returns:
- *	testFail	failed to have a match
- *	n >= 0		matched n characters
+ *	testFail	マッチ失敗
+ *	n >= 0		n文字マッチ
  */
 
-/// Always match
+/// 常にマッチ
 template testEmpty()
 {
   int testEmpty(string str) { return 0; }
 }
 
-/// Match if testFirst(str) and testSecond(str) match
+/// testFirst(str) とそれに続けて testSecond(str) がマッチすればマッチ
 template testUnion(alias testFirst, alias testSecond)
 {
   int testUnion(string str)
@@ -772,7 +772,7 @@ template testUnion(alias testFirst, alias testSecond)
   }
 }
 
-/// Match if first part of str[] matches text[]
+/// str[] の先頭が text[] ならばマッチ
 template testText(string text)
 {
   int testText(string str)
@@ -786,7 +786,7 @@ template testText(string text)
   }
 }
 
-/// Match if testPredicate(str) matches 0 or more times
+/// testPredicate(str) が0回以上マッチすればマッチ
 template testZeroOrMore(alias testPredicate)
 {
   int testZeroOrMore(string str)
@@ -805,7 +805,7 @@ template testZeroOrMore(alias testPredicate)
   }
 }
 
-/// Match if term1[0] <= str[0] <= term2[0]
+/// term1[0] <= str[0] <= term2[0] ならマッチ
 template testRange(string term1, string term2)
 {
   int testRange(string str)
@@ -817,7 +817,7 @@ template testRange(string term1, string term2)
   }
 }
 
-/// Match if ch[0]==str[0]
+/// ch[0]==str[0] ならマッチ
 template testChar(string ch)
 {
   int testChar(string str)
@@ -828,7 +828,7 @@ template testChar(string ch)
   }
 }
 
-/// Match if str[0] is a word character
+/// str[0] が単語文字ならマッチ
 template testWordChar()
 {
   int testWordChar(string str)
@@ -851,8 +851,8 @@ template testWordChar()
 /*****************************************************/
 
 /**
- * Returns the front of pattern[] up until
- * the end or a special character.
+ * pattern[] の先頭から
+ * 終端か特殊文字までを切り出し
  */
 
 template parseTextToken(string pattern)
@@ -870,10 +870,10 @@ template parseTextToken(string pattern)
 }
 
 /**
- * Parses pattern[] up to and including terminator.
+ * terminatorを含めてそこまでを pattern[] から切り出し
  * Returns:
- *	token[]	 	everything up to terminator.
- *	consumed	number of characters in pattern[] parsed
+ *	token[]	 	terminatorの直前までの文字列
+ *	consumed	pattern[] から切り出された文字数
  */
 template parseUntil(string pattern,char terminator,bool fuzzy=false)
 {
@@ -922,12 +922,12 @@ template parseUntil(string pattern,char terminator,bool fuzzy=false)
 }
 
 /**
- * Parse contents of character class.
+ * 文字クラスの内容を構文解析
  * Params:
- *   pattern[] = rest of pattern to compile
+ *   pattern[] = コンパイルしたい残りのパターン
  * Output:
- *   fn       = generated function
- *   consumed = number of characters in pattern[] parsed
+ *   fn       = 生成される関数
+ *   consumed = pattern[] から切り出された文字数
  */
 
 template regexCompileCharClass2(string pattern)
@@ -944,14 +944,14 @@ template regexCompileCharClass2(string pattern)
           const uint thisConsumed = 3;
           const string remaining = pattern[3 .. $];
         }
-        else // length is 2
+        else // 長さは 2
         {
           pragma(msg,
             "Error: expected char following '-' in char class");
           static assert(false);
         }
       }
-      else // not '-'
+      else // '-' ではない
       {
         alias testChar!(pattern[0..1]) termFn;
         const uint thisConsumed = 1;
@@ -976,14 +976,14 @@ template regexCompileCharClass2(string pattern)
 }
 
 /**
- * Used to recursively parse character class.
+ * 文字クラスを再帰的に構文解析
  * Params:
- *  termFn = generated function up to this point
- *  pattern[] = rest of pattern to compile
+ *  termFn = ここまでに生成された関数
+ *  pattern[] = コンパイルしたい残りのパターン
  * Output:
- *  fn = generated function including termFn and
- *       parsed character class
- *  consumed = number of characters in pattern[] parsed
+ *  fn = termFn と今回解析した文字クラスをあわせて
+ *       生成された関数
+ *  consumed = pattern[] から切り出された文字数
  */
 
 template regexCompileCharClassRecurse(alias termFn,string pattern)
@@ -1002,12 +1002,12 @@ template regexCompileCharClassRecurse(alias termFn,string pattern)
 }
 
 /**
- * At start of character class. Compile it.
+ * 文字クラスの先頭。コンパイルする
  * Params:
- *  pattern[] = rest of pattern to compile
+ *  pattern[] = コンパイルしたいパターンの残り
  * Output:
- *  fn = generated function
- *  consumed = number of characters in pattern[] parsed
+ *  fn = 生成された関数
+ *  consumed = pattern[] から切り出された文字数
  */
 
 template regexCompileCharClass(string pattern)
@@ -1034,13 +1034,13 @@ template regexCompileCharClass(string pattern)
 }
 
 /**
- * Look for and parse '*' postfix.
+ * 接尾辞 '*' を探して切り出し
  * Params:
- *  test = function compiling regex up to this point
- *  pattern[] = rest of pattern to compile
+ *  test = ここまでにコンパイルされた正規表現の関数
+ *  pattern[] = コンパイルしたいパターンの残り
  * Output:
- *  fn = generated function
- *  consumed = number of characters in pattern[] parsed
+ *  fn = 生成された関数
+ *  consumed = pattern[] から切り出された文字数
  */
 
 template regexCompilePredicate(alias test, string pattern)
@@ -1058,12 +1058,12 @@ template regexCompilePredicate(alias test, string pattern)
 }
 
 /**
- * Parse escape sequence.
+ * エスケープシーケンスを構文解析。
  * Params:
- *  pattern[] = rest of pattern to compile
+ *  pattern[] = コンパイルしたいパターンの残り
  * Output:
- *  fn = generated function
- *  consumed = number of characters in pattern[] parsed
+ *  fn = 生成された関数
+ *  consumed = pattern[] から切り出された文字数
  */
 
 template regexCompileEscape(string pattern)
@@ -1094,11 +1094,11 @@ template regexCompileEscape(string pattern)
 }
 
 /**
- * Parse and compile regex represented by pattern[].
+ * pattern[] で表されたパターンをコンパイル
  * Params:
- *  pattern[] = rest of pattern to compile
+ *  pattern[] = コンパイルしたいパターンの残り
  * Output:
- *  fn = generated function
+ *  fn = 生成された関数
  */
 
 template regexCompile(string pattern)
@@ -1150,7 +1150,7 @@ template regexCompileRecurse(alias term,string pattern)
     alias term.fn fn;
 }
 
-/// Utility function for parsing
+/// 構文解析のためのユーティリティ関数
 template isSpecial(string pattern)
 {
   static if (
@@ -1172,7 +1172,7 @@ template isSpecial(string pattern)
 }
 ---
 
-<h2>More Template Metaprogramming</h2>
+<h2>さらにテンプレートメタプログラミング</h2>
 
     $(OL
 	$(LI Tomasz Stachowiak's compile time $(LINK2 http://h3.gd/ctrace/, raytracer).)
@@ -1180,39 +1180,39 @@ template isSpecial(string pattern)
 	$(LI Don Clugston's compile time $(LINK2 http://www.99-bottles-of-beer.net/language-d-1212.html, 99 Bottles of Beer).)
     )
 
-<h2>References</h2>
+<h2>参考文献</h2>
 
-	$(P [1] D programming language,
-	see $(LINK http://www.digitalmars.com/d/)
+	$(P [1] プログラミング言語 D,
+	$(LINK http://www.digitalmars.com/d/)
 	)
 
-	$(P [2] Don Clugston's &pi; calculator, see
+	$(P [2] Don Clugston, 円周率計算機,
 	$(LINK http://trac.dsource.org/projects/ddl/browser/trunk/meta/demo/calcpi.d)
 	)
 
-	$(P [3] Don Clugston's decimaldigit and itoa,
-	see $(LINK http://trac.dsource.org/projects/ddl/browser/trunk/meta/conv.d)
+	$(P [3] Don Clugston, decimaldigit と itoa,
+	$(LINK http://trac.dsource.org/projects/ddl/browser/trunk/meta/conv.d)
 	)
 
-	$(P [4] Eric Niebler's Boost.Xpressive regular expression template
-	library is at $(LINK http://boost-sandbox.sourceforge.net/libs/xpressive/doc/html/index.html)
+	$(P [4] Eric Niebler, 正規表現テンプレートライブラリ "Boost.Xpressive", 
+	$(LINK http://boost-sandbox.sourceforge.net/libs/xpressive/doc/html/index.html)
 	)
 
-	$(P [5] Eric Anderton's Regular Expression template library
-	for D is at $(LINK http://trac.dsource.org/projects/ddl/browser/trunk/meta/regex.d)
+	$(P [5] Eric Anderton, D言語向け正規表現テンプレートライブラリ, 
+	$(LINK http://trac.dsource.org/projects/ddl/browser/trunk/meta/regex.d)
 	)
 
-<h2>Acknowledgements</h2>
+<h2>謝辞</h2>
 
 $(P
-I gratefully acknowledge the inspiration and assistance
-of Don Clugston, Eric Anderton and Matthew Wilson.
+Don Clugston, Eric Anderton, Matthew Wilson
+の助言、助力に心から感謝します。
 )
 
 )
 
 Macros:
-	TITLE=Templates Revisited
+	TITLE=テンプレート再訪
 	WIKI=TemplatesRevisited
 	CATEGORY_ARTICLES=$0
 
