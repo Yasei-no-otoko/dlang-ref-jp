@@ -1,388 +1,388 @@
 Ddoc
 
-$(SPEC_S Garbage Collection,
+$(SPEC_S ガベージコレクション,
 
-	$(P D is a fully garbage collected language. That means that it is never
-	necessary
-	to free memory. Just allocate as needed, and the garbage collector will
-	periodically return all unused memory to the pool of available memory.
+	$(P D は完全にガベージコレクトされた言語です。
+	つまり、メモリを解放する必要は
+	全く必要ありません。必要なだけ確保して、あとはガベージコレクタが定期的に
+	使われていないメモリをプールへ戻します。
 	)
 
-	$(P C and C++ programmers accustomed to explicitly managing memory
-	allocation and
-	deallocation will likely be skeptical of the benefits and efficacy of
-	garbage collection. Experience both with new projects written with
-	garbage collection in mind, and converting existing projects to garbage
-	collection shows that:
-	)
-
-	$(UL
-
-	$(LI Garbage collected programs are faster. This is counterintuitive,
-	but the reasons are:
-
-	$(UL
-	    $(LI Reference counting is a common solution to solve explicit
-	    memory allocation problems. The code to implement the increment and
-	    decrement operations whenever assignments are made is one source
-	    of slowdown. Hiding it behind smart pointer classes doesn't help
-	    the speed. (Reference counting methods are not a general solution
-	    anyway, as circular references never get deleted.)
-	    )
-
-	    $(LI Destructors are used to deallocate resources acquired by an object.
-	    For most classes, this resource is allocated memory.
-	    With garbage collection, most destructors then become empty and
-	    can be discarded entirely.
-	    )
-
-	    $(LI All those destructors freeing memory can become significant when
-	    objects are allocated on the stack. For each one, some mechanism must
-	    be established so that if an exception happens, the destructors all
-	    get called in each frame to release any memory they hold. If the
-	    destructors become irrelevant, then there's no need to set up special
-	    stack frames to handle exceptions, and the code runs faster.
-	    )
-
-	    $(LI All the code necessary to manage memory can add up to quite a
-	    bit. The larger a program is, the less in the cache it is,
-	    the more paging it does, and the slower
-	    it runs.
-	    )
-
-	    $(LI Garbage collection kicks in only when memory gets tight. When
-	    memory is not tight, the program runs at full speed and does not
-	    spend any time freeing memory.
-	    )
-
-	    $(LI Modern garbage collectors are far more advanced now than the
-	    older, slower ones. Generational, copying collectors eliminate much
-	    of the inefficiency of early mark and sweep algorithms.
-	    )
-
-	    $(LI Modern garbage collectors do heap compaction. Heap compaction
-	    tends to reduce the number of pages actively referenced by a program,
-	    which means that memory accesses are more likely to be cache hits
-	    and less swapping.
-	    )
-
-	    $(LI Garbage collected programs do not suffer from gradual deterioration
-	    due to an accumulation of memory leaks.
-	    )
-	)
-	)
-
-	$(LI Garbage collectors reclaim unused memory, therefore they do not suffer
-	from "memory leaks" which can cause long running applications to gradually
-	consume more and more memory until they bring down the system. GC programs
-	have longer term stability.
-	)
-
-	$(LI Garbage collected programs have fewer hard-to-find pointer bugs. This
-	is because there are no dangling references to freed memory. There is no
-	code to explicitly manage memory, hence no bugs in such code.
-	)
-
-	$(LI Garbage collected programs are faster to develop and debug, because
-	there's no need for developing, debugging, testing, or maintaining the
-	explicit deallocation code.
-	)
-
-	$(LI Garbage collected programs can be significantly smaller, because
-	there is no code to manage deallocation, and there is no need for exception
-	handlers to deallocate memory.
-	)
-	)
-
-	$(P Garbage collection is not a panacea. There are some downsides:
+	$(P C/C++ プログラマは明示的なメモリ確保と解放に慣れていて、
+	ガベージコレクタの効率や利点については懐疑的なようです。
+	私は、
+	一からガベージコレクションを念頭に置いて書いたプロジェクトと、
+	既存のプロジェクトを
+	GC を使うように方向転換した経験のどちらも持っていますが：
 	)
 
 	$(UL
 
-	$(LI It is not predictable when a collection gets run, so the program
-	can arbitrarily pause.
+	$(LI ガベージコレクトされたプログラムの方が高速です。
+		これは直感に反するかもしれませんが、その理由は：
+
+	$(UL
+	    $(LI 明示的なメモリ管理の際によく使われる手法は、参照カウントです。
+		代入があるたびにカウントを増やしたり減らしたリソースを挿入するのは、
+		速度低下の原因になっています。スマートポインタクラスでラップしても、
+		速度的な解決にはなりません。（またいずれにせよ、
+		循環参照を削除できない参照カウント方式は、
+		一般的な解決策ではありません。）
+	    )
+
+	    $(LI オブジェクトによって獲得されたリソースの解放には、
+		デストラクタが使用されます。多くのクラスでは、このリソースとは
+		割り当てられたメモリのことです。GCを使えば、
+		ほとんどのデストラクタが空になり、完全に削除してしまえます。
+	    )
+
+	    $(LI メモリ管理のためのデストラクタは、
+		オブジェクトがスタックに置かれたときに影響が顕著になります。
+		例外が発生したときに、全てのスタックフレームでデストラクタが呼び出され、
+		メモリを解放するような仕組みが必要となるのです。
+		もしデストラクタが関係しなければ、例外を処理する特別なスタックフレームを
+		設定する必要がなくなり、コードは高速に実行されます。
+	    )
+
+	    $(LI メモリ管理に必要なコードは全てを合わせるとちょっとした量になります。
+		大きなプログラムになるほど、キャッシュに入らない部分が増え、
+		ページングが多く発生し、
+		プログラムが遅くなります。
+	    )
+
+	    $(LI GCは、メモリが残り少なくなってきたときのみ実行されます。
+		メモリに余裕があれば、プログラムは全速力で実行され、
+		メモリ解放に一切時間を取られません。
+	    )
+
+	    $(LI モダンなGCは、過去の遅いものより遙かに発展しています。
+		世代型のコピーGCには、
+		昔のマーク＆スイープアルゴリズムの非効率さはありません。
+	    )
+
+	    $(LI モダンなGCはヒープの詰め直しを行います。
+		これによってプログラムが活発に参照するページの数を減らし、
+		キャッシュヒット率を高め、
+		スワップ回数が減ります。
+	    )
+
+	    $(LI GCを使うプログラムは、メモリリークの積み重ねで次第にパフォーマンスが悪化、
+		という事態に縁がありません。
+	    )
+	)
 	)
 
-	$(LI The time it takes for a collection to run is not bounded. While in
-	practice it is very quick, this cannot be guaranteed.
+	$(LI GCは未使用のメモリを再利用しますから、長時間実行するプログラムが
+	システムを落とすまでじわじわとメモリを食いつぶす、
+	いわゆる"メモリリーク"に陥ることがありません。
+	GC付プログラムは長時間の安定性があります。
 	)
 
-	$(LI All threads other than the collector thread must be halted while
-	the collection is in progress.
+	$(LI GCを使うプログラムには、ポインタ周りの見つけにくいバグがほとんど存在しません。
+	既に解放されてしまったメモリを指す参照が存在しないからです。
+	メモリを明示管理するコードが必要ないので、そのようなコードかが生むバグもありません。
 	)
 
-	$(LI Garbage collectors can keep around some memory that an explicit
-	deallocator
-	would not. In practice, this is not much of an issue since explicit
-	deallocators usually have memory leaks causing them to eventually use
-	far more memory, and because explicit deallocators do not normally
-	return deallocated memory to the operating system anyway, instead just
-	returning it to its own internal pool.
+	$(LI GC付きプログラムは、開発もデバッグも高速です。
+	何故なら、メモリ管理のコードを開発する必要もデバッグする必要もテストする必要も、
+	管理する必要もありませんから。
 	)
 
-	$(LI Garbage collection should be implemented as a basic operating
-	system
-	kernel service. But since they are not, garbage collecting programs must
-	carry around with them the garbage collection implementation. While this
-	can be a shared DLL, it is still there.
+	$(LI GC付きプログラムは、有意に小さくなります。
+	メモリ解放を管理するコードや、
+	メモリを解放するための例外ハンドラが不要になるためです。
 	)
 	)
 
-	$(P These constraints are addressed by techniques outlined
-	in $(DPLLINK memory.html, Memory Management).
+	$(P ガベージコレクションは万能薬ではありません。欠点もあります：
 	)
 
-<h2>How Garbage Collection Works</h2>
+	$(UL
 
-	$(P The GC works by:)
+	$(LI いつメモリ回収が動くかが予測できません。
+	その結果、任意の時点でプログラムの動作が停止しえます。
+	)
+
+	$(LI メモリ回収にかかる時間に上限がありません。
+	実際には非常に高速に動作しますが、保証はされません。
+	)
+
+	$(LI メモリ回収時は、
+	他のスレッドが全て停止しなくてはなりません。
+	)
+
+	$(LI GCは、
+	明示的な解放ルーチンなら解放するメモリを保持し続けることがあります。
+	実際には、これは大きな問題ではありません。
+	というのは、明示的な解放ルーチンには大抵メモリリークがあって
+	余分なメモリが解放されずに残りますし、明示的ルーチンの方もいずれにせよ、
+	普通は解放されたメモリをOSに返すことはしません。
+	代わりに内部のプールに保持するのが一般的です。
+	)
+
+	$(LI GCは、
+	OSのカーネルサービスとして実装されるべきなのです。
+	しかし現実にはそうではないので、GC付プログラムは、
+	GCの実装をプログラムに付属させる必要があります。これは共有 DLL
+	にすることは可能ですが、それにしてもまだそのDLLが必要になります。
+	)
+	)
+
+	$(P これらの制約に対するテクニックについては、
+	$(DPLLINK memory.html, メモリ管理) の項で概要を述べています。
+	)
+
+<h2>ガベージコレクションの動作について</h2>
+
+	$(P GCは次のステップで動作しています:)
 
 	$(OL
-	$(LI Looking for all the pointer $(SINGLEQUOTE roots) into GC allocated memory.)
+	$(LI GCで確保された領域を指す $(SINGLEQUOTE roots) ポインタを全て列挙します。)
 
-	$(LI Recursively scanning all allocated memory pointed to by
-	roots looking for more pointers into GC allocated memory.)
+	$(LI rootから指されている領域内から、
+	再帰的にGCメモリ領域内を指しているポインタを探索します。)
 
-	$(LI Freeing all GC allocated memory that has no active pointers
-	to it.)
+	$(LI GCで割り当てられた領域のうち、
+	生きたポインタで指されていないことが分かった領域を全て解放します。)
 
-	$(LI Possibly compacting the remaining used memory by copying the
-	allocated objects (called a copying collector).)
+	$(LI 残ったメモリ領域のデータをコピーして使用領域をまとめる処理
+	 (コピーGCと呼ばれます) が実行される可能性があります。)
 	)
 
-<h2>Interfacing Garbage Collected Objects With Foreign Code</h2>
+<h2>GCの管理下にあるオブジェクトと外部コードとの接続</h2>
 
-	$(P The garbage collector looks for roots in:)
+	$(P GCは、以下の領域を探索の出発点(root)とします:)
 	$(OL
-	$(LI its static data segment)
-	$(LI the stacks and register contents of each thread)
-	$(LI any roots added by std.gc.addRoot() or std.gc.addRange())
+	$(LI staticデータセグメント)
+	$(LI 各スレッドのスタック)
+	$(LI std.gc.addRoot() か std.gc.addRange() で追加された領域)
 	)
 
-	$(P If the only root of an object
-	is held outside of this, then the collecter will miss it and free the
-	memory.
+	$(P もしこの他に出発点とすべきオブジェクトが存在していたとしても、
+	コレクタはそのオブジェクトを発見できず、
+	メモリを解放してしまいます。
 	)
 
-	$(P To avoid this from happening,)
+	$(P これが起きるのを避けるには、)
 
 	$(UL
-	$(LI Maintain a root to the object in an area the collector does scan
-	for roots.)
+	$(LI 出発点から探索できる領域に、
+	オブジェクトへの参照を置いておく。)
 
-	$(LI Add a root to the object using std.gc.addRoot() or std.gc.addRange().)
+	$(LI オブジェクトを std.gc.addRoot() か std.gc.addRange() でrootに追加しておく。)
 
-	$(LI Reallocate and copy the object using the foreign code's storage
-	allocator
-	or using the C runtime library's malloc/free.
+	$(LI オブジェクト用のメモリを、
+	外部のアロケータかCのライブラリ関数
+	malloc/free を使って明示的に再確保しておく。
 	)
 	)
 
-<h2>Pointers and the Garbage Collector</h2>
+<h2>ポインタとGC</h2>
 
-	$(P Pointers in D can be broadly divided into two categories: those that
-	point to garbage collected memory, and those that do not. Examples
-	of the latter are pointers created by calls to C's malloc(), pointers
-	received from C library routines, pointers to static data,
-	pointers to objects on the stack, etc. For those pointers, anything
-	that is legal in C can be done with them.
+	$(P Dでのポインタは、大きく分けて二種類に分類できます：一つは、
+	ガベージコレクタで管理されたメモリを指すもの、もう一つは、そうでないものです。
+	後者の例としては、C の malloc() を呼んで作られたポインタや、
+	C のライブラリが返すポインタ、
+	あるいは静的データやスタックへのポインタなどがあります。
+	これらのポインタに対しては、Cで合法な操作は全て実行できます。
 	)
 
-	$(P For garbage collected pointers and references, however, there are
-	some
-	restrictions. These restrictions are minor, but they are intended
-	to enable the maximum flexibility in garbage collector design.
+	$(P しかしながら、
+	ガベージコレクタに管理されたポインタと参照には、
+	幾つかの制限があります。大きな制限ではありませんが、
+	ガベージコレクタの設計に最大限の柔軟性を与えるために課されています。
 	)
 
-	$(P Undefined behavior:)
+	$(P 未定義な動作：)
 
 	$(UL
 
-	$(LI Do not xor pointers with other values, like the
-	xor pointer linked list trick used in C.
+	$(LI "xorポインタ-リンクリスト"技のように、
+	ポインタに他の値を xor することはできません
 	)
 
-	$(LI Do not use the xor trick to swap two pointer values.
+	$(LI 二つのポインタを交換するのにxorトリックを使うことはできません
 	)
 
-	$(LI Do not store pointers into non-pointer variables using casts and
-	other tricks.
+	$(LI キャストやその他の技を使って、
+	ポインタを非ポインタ変数へ格納することはできません
 
 ------
 void* p;
 ...
-int x = cast(int)p;   // error: undefined behavior
+int x = cast(int)p;   // エラー： 未定義動作
 ------
 
-	The garbage collector does not scan non-pointer types for roots.
+	ガベージコレクタは、ルートにある非ポインタ型は探索の対象としません。
 	)
 
-	$(LI Do not take advantage of alignment of pointers to store bit flags
-	in the low order bits:
+	$(LI アラインメントが行われることを利用して、
+	ポインタの下位ビットにビット値を格納することはできません：
 
 ------
-p = cast(void*)(cast(int)p | 1);  // error: undefined behavior
+p = cast(void*)(cast(int)p | 1);  // エラー： 未定義動作
 ------
 	)
 
-	$(LI Do not store into pointers values that may point into the
-	garbage collected heap:
+	$(LI ガベージコレクタ管理域を指すかもしれない整数値を、
+	ポインタ変数に格納することはできません。
 
 ------
-p = cast(void*)12345678;   // error: undefined behavior
+p = cast(void*)12345678;   // エラー： 未定義動作
 ------
 
-	A copying garbage collector may change this value.
+	コピーGCが値を変更する可能性があります。
 	)
 
-	$(LI Do not store magic values into pointers, other than $(D null).
+	$(LI $(D null) 以外のマジックナンバーをポインタに入れてはなりません。
 	)
 
-	$(LI Do not write pointer values out to disk and read them back in
-	again.
+	$(LI ポインタ値をディスクに書き出したり、
+	読み戻したりすることはできません。
 	)
 
-	$(LI Do not use pointer values to compute a hash function. A copying
-	garbage collector can arbitrarily move objects around in memory,
-	thus invalidating
-	the computed hash value.
+	$(LI ポインタの値をハッシュ値の計算に使用することはできません。
+	コピーGCアルゴリズムを使ったガベージコレクタは、
+	オブジェクトをメモリ上の任意の位置に再配置することがあり、
+	この時計算されたハッシュ値は無効になります。
 	)
 
-	$(LI Do not depend on the ordering of pointers:
+	$(LI ポインタの順序付けに依存することはできません：
 
 ------
-if (p1 < p2)  // error: undefined behavior
+if (p1 < p2)  // エラー： 未定義動作
   ...
 ------
-	since, again, the garbage collector can move objects around in
-	memory.
+	繰り返しになりますが、ガベージコレクタは、
+	オブジェクトをメモリ上で移動するかもしれません。
 	)
 
-	$(LI Do not add or subtract an offset to a pointer such that the result
-	points outside of the bounds of the garbage collected object originally
-	allocated.
+	$(LI D元々確保された範囲の外に出るような、
+	ポインタに対する
+	オフセットの加減算を行うことはできません。
 
 ------
 char* p = new char[10];
 char* q = p + 6; // ok
-q = p + 11;      // error: undefined behavior
-q = p - 1;       // error: undefined behavior
+q = p + 11;      // エラー： 未定義動作
+q = p - 1;       // エラー： 未定義動作
 ------
 	)
 
-	$(LI Do not misalign pointers if those pointers may
-	point into the gc heap, such as:
+	$(LI GCヒープを指す可能性があるポインタ変数を、
+	境界整列されていない位置に置くことはできません：
 
 ------
 align (1) struct Foo {
   byte b;
-  char* p;  // misaligned pointer
+  char* p;  // 境界整列されていないポインタ
 }
 ------
 
-	Misaligned pointers may be used if the underlying hardware
-	supports them $(B and) the pointer is never used to point
-	into the gc heap.
+	境界整列されていないポインタは、実行環境のハードウェアがそれをサポートしている場合
+	$(B かつ) そのポインタがGCヒープを決して指さない場合にのみ
+	使うことが出来ます。
 	)
 
-	$(LI Do not use byte-by-byte memory copies to copy pointer values.
-	This may result in intermediate conditions where there is
-	not a valid pointer, and if the gc pauses the thread in such a
-	condition, it can corrupt memory.
-	Most implementations of $(D memcpy()) will work since the
-	internal implementation of it does the copy in aligned chunks
-	greater than or equal to a pointer size, but since this kind of
-	implementation is not guaranteed by the C standard, use
-	$(D memcpy()) only with extreme caution.
+	$(LI ポインタ値をbyte毎byte毎のメモリコピーで複製することはできません。
+	この方法は、有効なポインタでない中間状態を作り出すことになるので、
+	そのような状態でGCがスレッドを停止すると、
+	メモリが破壊されることがあります。
+	ほとんどの $(D memcpy()) の実装にはこの問題はありません。
+	内部のコピーの実装では、ポインタサイズと同等かそれ以上のサイズの整列した
+	まとまり単位でコピーを行っているためです。しかし、その種の実装が
+	Cの標準規格で保証されているわけではありませんから、
+	$(D memcpy()) は十分に注意して使う必要があります。
 	)
 
-	$(LI Do not have pointers in a struct instance that point back
-	to the same instance. The trouble with this is if the instance
-	gets moved in memory, the pointer will point back to where it
-	came from, with likely disastrous results.
+	$(LI 構造体のメンバとして、自分自身を指すポインタを持ってはいけません。
+	これの問題点は、インスタンスがメモリ上で移動されたときに、
+	ポインタが移動前のインスタンスを指してしまい、
+	悲惨な結果になり得ることです。
 	)
 
 	)
 
-	$(P Things that are reliable and can be done:)
+	$(P 保証されている、実行してもよいこと：)
 
 	$(UL
 
-	$(LI Use a union to share storage with a pointer:
+	$(LI 共用体を使ってポインタのメモリ領域を他の変数と共有すること：
 
 ------
 union U { void* ptr; int value }
 ------
 	)
 
-	$(LI A pointer to the start of a garbage collected object need not
-	be maintained if a pointer to the interior of the object exists.
+	$(LI オブジェクト内部へのポインタが存在するならば、
+		オブジェクト先頭へのポインタを保持しておく必要はありません。
 
 ------
 char[] p = new char[10];
 char[] q = p[3..6];
-// q is enough to hold on to the object, don't need to keep
-// p as well.
+// q さえあれば、オブジェクト全体が生存しているとみなされます。
+// p を同時に保持する必要はありません。
 ------
 	)
 	)
 
-	$(P One can avoid using pointers anyway for most tasks. D provides
-	features
-	rendering most explicit pointer uses obsolete, such as reference
-	objects,
-	dynamic arrays, and garbage collection. Pointers
-	are provided in order to interface successfully with C APIs and for
-	some low level work.
+	$(P 実際のところ、
+	ほとんどの場合はポインタを使わずに済みます。
+	Dは大抵のポインタの使い道に置き換わる機能を用意しています。
+	例えばオブジェクトへの参照、動的配列、
+	そしてガベージコレクションです。
+	ポインタは、CのAPIとのインターフェイスとして使うためと、
+	あとは低レベル処理のために用意されているものです。
 	)
 
-<h2>Working with the Garbage Collector</h2>
+<h2>GCとうまくやって行くには</h2>
 
-	$(P Garbage collection doesn't solve every memory deallocation problem.
-	For
-	example, if a root to a large data structure is kept, the garbage
-	collector cannot reclaim it, even if it is never referred to again. To
-	eliminate this problem, it is good practice to set a reference or
-	pointer to an object to null when no longer needed.
+	$(P ガベージコレクションは、
+	メモリ解放に関する全ての問題を解決するわけではありません。
+	例えば、巨大なデータ構造へのアクセスルートが生きていれば、
+	例え実際には二度と参照されないとしても、GCはその領域を再利用できません。
+	この問題を回避するには、必要ないオブジェクトへの参照やポインタにはnullを
+	セットしておく、というのが良い習慣です。
 	)
 
-	$(P This advice applies only to static references or references embedded
-	inside other objects. There is not much point for such stored on the
-	stack to be nulled, since the collector doesn't scan for roots past the
-	top of the stack, and because new stack frames are initialized anyway.
+	$(P このアドバイスは、staticな参照かオブジェクトに埋め込まれた参照にのみ当てはまります。
+	スタック上の参照にnullを代入するのにはあまり意味はありません。
+	いずれ新しいスタックフレームで書き潰される領域なので、
+	GCはスタックトップより先は見に行きませんから。
 	)
 
-<h2>Object Pinning and a Moving Garbage Collector</h2>
+<h2>オブジェクトのピン留めとMove GC</h2>
 
-	$(P Although D does not currently use a moving garbage collector, by following
-	the rules listed above one can be implemented. No special action is required
-	to pin objects. A moving collector will only move objects for which there
-	are no ambiguous references, and for which it can update those references.
-	All other objects will be automatically pinned.
+	$(P 現在の D の実装は move GC を採用していませんが、
+	上に上げた規則を守っていれば move GC の実装も可能です。
+	オブジェクトをピン留めするのに特別な処理は必要ありません。Move GC は、
+	あいまいな参照がなく、その参照を更新可能なオブジェクトだけを移動します。
+	そのほかのオブジェクトは自動的にアドレスが固定されます。
 	)
 
-<h2>D Operations That Involve the Garbage Collector</h2>
+<h2>GC を使う D の操作</h2>
 
-	$(P Some sections of code may need to avoid using the garbage collector.
-	The following constructs may allocate memory using the garbage collector:
+	$(P コードの一部で、GCの起動を避けたいことがあるかもしれません。
+	以下が、GCによりメモリ割り当てを行う言語要素の一覧です:
 	)
 
 	$(UL
 	$(LI $(GLINK2 expression, NewExpression))
-	$(LI Array appending)
-	$(LI Array concatenation)
-	$(LI Array literals (except when used to initialize static data))
-	$(LI Associative array literals)
-	$(LI Any insertion, removal, or lookups in an associative array)
-	$(LI Extracting keys or values from an associative array)
+	$(LI 配列の要素追加)
+	$(LI 配列の結合)
+	$(LI 配列リテラル (静的初期化子として使われた場合は除く))
+	$(LI 連想配列リテラル)
+	$(LI 連想配列への挿入、削除、検索の全て)
+	$(LI 連想配列からのキーや値の取り出し)
 	$(V2
-	$(LI Taking the address of (i.e. making a delegate) a nested function that
-	 accesses variables in an outer scope)
-	$(LI A function literal that access variables in an outer scope)
+	$(LI 外のスコープの変数にアクセスするネスト関数のアドレスを取る (つまり delegate) 
+	 操作)
+	$(LI 外のスコープの変数にアクセスする関数リテラル)
 	)
-	$(LI An $(GLINK2 expression, AssertExpression) that fails its condition)
+	$(LI 失敗する $(GLINK2 expression, AssertExpression))
 	)
 
-<h2>References</h2>
+<h2>参考文献</h2>
 
 	$(UL
 	$(LI $(LINK2 http://en.wikipedia.org/wiki/Garbage_collection_%28computer_science%29, Wikipedia))
@@ -394,7 +394,7 @@ char[] q = p[3..6];
 )
 
 Macros:
-	TITLE=Garbage Collection
+	TITLE=ガベージコレクション
 	WIKI=Garbage
 	CATEGORY_SPEC=$0
 
