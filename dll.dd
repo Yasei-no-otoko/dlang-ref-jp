@@ -1,36 +1,36 @@
 Ddoc
 
-$(D_S Writing Win32 DLLs in D,
+$(D_S D で作る Win32 DLL,
 
-	$(P DLLs (Dynamic Link Libraries) are one of the foundations
-	of system programming for Windows. The D programming
-	language enables the creation of several different types of
-	DLLs.
+	$(P DLL (Dynamic Link Libraries) は、
+	Windows
+	のシステムプログラミングの基礎技術の一つです。
+	D言語では、様々な種類のDLLの作成が可能です。
 	)
 
-	$(P For background information on what DLLs are and how they work
-	Chapter 11 of Jeffrey Richter's book
-	$(LINK2 http://www.amazon.com/exec/obidos/ASIN/1572315482/classicempire,
-	Advanced Windows) is indispensible.
+	$(P DLLとは何でありどのように動くのか、といった背景知識に関しては
+	Jeffrey Richter の本
+	$(LINK2 http://www.amazon.co.jp/dp/4756138055,
+	Advanced Windows) の第11章が必読です。
 	)
 
-	$(P This guide will show how to create DLLs of various types with D.)
+	$(P この文書では、Dで様々な種類のDLLを作る方法を紹介します。)
 
 	$(UL 
-	$(LI <a href="#Cinterface">DLLs with a C interface</a>)
-	$(LI <a href="#com">DLLs that are COM servers</a>)
-	$(LI <a href="#Dcode">D code calling D code in DLLs</a>)
+	$(LI <a href="#Cinterface">C のインターフェイスを持つ DLL</a>)
+	$(LI <a href="#com">COMサーバDLL</a>)
+	$(LI <a href="#Dcode">DLL内のDのコードを呼ぶDのコード</a>)
 	)
 
-<h2><a name="Cinterface">DLLs with a C Interface</a></h2>
+<h2><a name="Cinterface">C のインターフェイスを持つ DLL</a></h2>
 
-	$(P A DLL presenting a C interface can connect to any other code
-	in a language that supports calling C functions in a DLL.
+	$(P C言語インターフェイスを提供するDLLは、
+	DLL内のC関数を呼ぶ機能に対応した他の言語と連携できます。
 	)
 
-	$(P DLLs can be created in D in roughly the same way as in C.
-	A $(D DllMain())
-	is required, looking like:
+	$(P DLL は
+	D でも C とだいたい同じ方法で作れます。
+	次のような $(D DllMain()) を書きます：
 	)
 
 --------------------------------
@@ -66,25 +66,25 @@ BOOL DllMain(HINSTANCE hInstance, ULONG ulReason, LPVOID pvReserved)
 
 -------------------------------
 
-	$(P Notes:)
+	$(P 注:)
 	$(UL 
-	$(LI DllMain simply forwards to the appropriate helper functions. These setup
-	     the runtime, create thread objects for interaction with the garbage collector
-	     and initialize thread local storage data.)
-	$(LI The DLL does not share its runtime or memory with other DLLs.)
-	$(LI The first boolean argument to the dll-helper functions specify whether all threads
-	     should be controlled by the garbage collector. You might need more control over
-	     this behaviour if there are threads in the process that must not be suspended.
-	     In this case pass false to disable the automatic handling of all threads.)
-	$(LI The presence of $(D DllMain()) is recognized by the compiler
-		causing it to emit a reference to
+	$(LI DllMain では、適切なヘルパ関数への単純な転送のみを行います。
+	     これによってランタイムが正しく設定され、
+	     GCやスレッドローカル記憶域の処理に関連するスレッドオブジェクトが生成されます。)
+	$(LI DLL は他のDLLとランタイムやメモリを共有しません。)
+	$(LI ヘルパ関数への第一引数のbool値は、
+	     全スレッドがGCにコントロールされるべきかを示すフラグです。
+	     もし、GC中も停止したくないスレッドがあれば、手動制御が必要です。
+	     その場合、自動制御を切るためにfalseを渡して下さい。)
+	$(LI $(D DllMain())
+		の存在はコンパイラが認識し、
 		$(LINK2 http://www.digitalmars.com/ctg/acrtused.html, __acrtused_dll)
-		and the $(TT phobos.lib) runtime library.)
+		と $(TT phobos.lib) ランタイムライブラリへの参照を自動的に追加します。)
 	)
 
-	Link with a .def
-	($(LINK2 http://www.digitalmars.com/ctg/ctgDefFiles.html, Module Definition File))
-	along the lines of:
+	ビルド時には、次のような
+	($(LINK2 http://www.digitalmars.com/ctg/ctgDefFiles.html, モジュール定義ファイル))
+	をリンクします：
 
 $(MODDEFFILE
 LIBRARY         MYDLL
@@ -101,12 +101,12 @@ EXPORTS
 		DllUnregisterServer     @5
 )
 
-	$(P The functions in the EXPORTS list are for illustration.
-	Replace them with the actual exported functions from MYDLL.
-	Alternatively, use
+	$(P EXPORTS の中に並べた関数名は一例です。
+	実際にMYDLLからexportしたい関数の名前に置き換えてください。
+	あるいは、
 	$(LINK2 http://www.digitalmars.com/ctg/implib.html, implib).
-	Here's an example of a simple DLL with a function print()
-	which prints a string:
+	を使います。以下に、文字列を出力する print() 関数を備える、
+	簡単なDLLの例を示します：
 	)
 
 	<h4>mydll.d:</h4>
@@ -116,10 +116,10 @@ import std.c.stdio;
 export void dllprint() { printf("hello dll world\n"); }
 -------------------------------
 
-	$(P Note: We use $(CODE printf)s in these examples
-	instead of $(CODE writefln)
-	to make the examples as
-	simple as possible.)
+	$(P 注: 例を可能な限り簡単にするために、
+	ここでは $(CODE printf) を
+	$(CODE writefln)
+	の代わりに使用しています。)
 
 	<h4>mydll.def:</h4>
 
@@ -131,9 +131,9 @@ CODE SHARED EXECUTE
 DATA WRITE
 )
 
-	$(P Put the code above that contains $(CODE DllMain()) into a file
-	$(TT dll.d).
-	Compile and link the dll with the following command:
+	$(P $(CODE DllMain()) を含む上記のコードを
+	$(TT dll.d) というファイルに書いたとします。
+	コンパイルとリンクは以下のようなコマンドで行います：
 	)
 
 $(CONSOLE
@@ -141,8 +141,8 @@ C:>dmd -ofmydll.dll -L/IMPLIB mydll.d dll.d mydll.def
 C:>
 )
 
-	$(P which will create mydll.dll and mydll.lib.
-	Now for a program, test.d, which will use the dll:
+	$(P これで、mydll.dll と mydll.lib が作られます。
+	次に、このDLLを使うプログラム、test.d です：
 	)
 
 	<h4>test.d:</h4>
@@ -156,21 +156,21 @@ int main()
 }
 -------------------------------
 
-	$(P Create an interface file mydll.di that doesn't have the function bodies:)
+	$(P 関数定義を消した、宣言だけのインターフェイスファイルを作ります：)
 
 	<h4>mydll.di:</h4>
 -------------------------------
 export void dllprint();
 -------------------------------
 
-	Compile and link with the command:
+	そして以下でコンパイル・リンクし：
 
 $(CONSOLE
 C:>dmd test.d mydll.lib
 C:>
 )
 
-	and run:
+	実行します：
 $(CONSOLE
 C:>test
 hello dll world
@@ -179,72 +179,72 @@ C:>
 
 
 
-<h3>Memory Allocation</h3>
+<h3>メモリ割り当て</h3>
 
-	$(P D DLLs use garbage collected memory management. The question is what
-	happens when pointers to allocated data cross DLL boundaries?
-	If the DLL presents a C interface, one would assume the reason
-	for that is to connect with code written in other languages.
-	Those other languages will not know anything about D's memory
-	management. Thus, the C interface will have to shield the
-	DLL's callers from needing to know anything about it.
+	$(P DのDLLはメモリ管理にガベージコレクタを使います。問題は、
+	割り当てられたメモリを指すポインタがDLLの外で使われるとどうなるか、という点です。
+	DLLがCインターフェイスを提供するならば、他言語で書かれたコードから
+	呼び出されることを想定しなければなりません。
+	それら他の言語達は、Dのメモリ管理について一切タッチしていません。
+	つまり、Cインターフェイスを提供する以上、DLL内部のメモリ管理について
+	DLLの呼び出し元が一切知る必要がないように工夫する必要があります。
 	)
 
-	$(P There are many approaches to solving this problem:)
+	$(P この問題に対しては沢山のアプローチがあります：)
 
 	$(UL 
 
-	$(LI Do not return pointers to D gc allocated memory to the caller of
-	the DLL. Instead, have the caller allocate a buffer, and have the DLL
-	fill in that buffer.)
+	$(LI Dのgcが割り当てたメモリは、DLLの呼び出し元へ返さない。代わりに、
+		呼び出し元の割り当てたバッファを受け取って、そこをDLLで埋める
+		インターフェイスにする。)
 
-	$(LI Retain a pointer to the data within the D DLL so the GC will not free
-	it. Establish a protocol where the caller informs the D DLL when it is
-	safe to free the data.)
+	$(LI そのポインタをDのDLL内に保持して、GCによって回収されないようにする。
+		そして、呼び出し元がデータが不要になったことをDLLに伝えるプロトコルを
+		用意しておく。)
 
-	$(LI Notify the GC about external references to a memory block by
-	calling GC.addRange.)
+	$(LI GC.addRange を呼び出すことで、GCに、
+	外部からの参照の存在を伝える。)
 
-	$(LI Use operating system primitives like VirtualAlloc() to allocate
-	memory to be transferred between DLLs.)
+	$(LI DLLの外とやりとりするメモリについては、例えば VirtualAlloc() のような
+		OSの機能を直接使って割り当てる。)
 
-	$(LI Use std.c.stdlib.malloc() (or another non-gc allocator) when
-	allocating data to be returned to the caller. Export a function
-	that will be used by the caller to free the data.)
+	$(LI U呼び出し元へ返されるメモリの割り当てには std.c.stdlib.malloc()
+	（またはその他のGC外のアロケータ）を使う。
+	呼び出し元がデータを解放するための関数も export しておく。)
 
 	)
 
-<h2><a name="com">COM Programming</a></h2>
+<h2><a name="com">COM プログラミング</a></h2>
 
-	Many Windows API interfaces are in terms of COM (Common Object Model)
-	objects (also called OLE or ActiveX objects). A COM object is an object
-	who's first field is a pointer to a vtbl[], and the first 3 entries
-	in that vtbl[] are for QueryInterface(), AddRef(), and Release().
+	Windows API の多くは、COM (Common Object Model) オブジェクト (OLE や ActiveX
+	オブジェクトとも呼ばれる) に基づいています。COM オブジェクトとは、第一フィールドが
+	vtbl[] へのポインタで、その最初の三つのエントリが QueryInterface(), AddRef(),
+	Release() であるオブジェクトのことです。
 	<p>
 
-	For understanding COM, Kraig Brockshmidt's
-	$(LINK2 http://www.amazon.com/exec/obidos/ASIN/1556158432/classicempire, Inside OLE)
-	is an indispensible resource.
+	COM の理解には、Kraig Brockshmidt の
+	$(LINK2 http://www.amazon.co.jp/dp/4756116183, Inside OLE)
+	が必読書です。
 	<p>
 
-	COM objects are analogous to D interfaces. Any COM object can be
-	expressed as a D interface, and every D object with an interface X
-	can be exposed as a COM object X.
-	This means that D is compatible with COM objects implemented
-	in other languages.
+	COMオブジェクトとDのinterfaceの間には類似性があります。COMオブジェクトは
+	皆Dのinterfaceとして表現できますし、interface Xを実装したDのオブジェクトは、
+	COMオブジェクトX として export できます。
+	これはつまり、Dは他の言語で実装された
+	COMオブジェクトとの相互運用ができるということです。
 	<p>
 
-	While not strictly necessary, the Phobos library provides an Object
-	useful as a super class for all D COM objects, called ComObject.
-	ComObject provides a default implementation for
-	QueryInterface(), AddRef(), and Release().
+	絶対必要なわけではありませんが、Phobosライブラリは、DのCOMオブジェクト
+	の基底クラスとして便利な、ComObjectクラスを提供しています。
+	ComObjectは QueryInterface(), AddRef(), Release()
+	の標準的な実装を備えています。
 	<p>
 
-	Windows COM objects use the Windows calling convention, which is not
-	the default for D, so COM functions need to have the attribute
-	extern (Windows).
+	Windows COM オブジェクトは、Dのデフォルトとは違う、
+	Windows呼び出し規約に従います。
+	このため、属性 extern (Windows) が必要です。
 
-	So, to write a COM object:
+	結論として、COMオブジェクトを書くには次のようになります：
 
 -------------------------------
 import std.c.windows.com;
@@ -256,34 +256,34 @@ class MyCOMobject : ComObject
 }
 -------------------------------
 
-	The sample code includes an example COM client program and server DLL.
+	サンプルディレクトリの中に、COMのクライアントとサーバDLLの例があります。
 
-<h2><a name="Dcode">D code calling D code in DLLs</a></h2>
+<h2><a name="Dcode">DLL内のDのコードを呼ぶDのコード</a></h2>
 
-	Having DLLs in D be able to talk to each other as if they
-	were statically linked together is, of course, very desirable
-	as code between applications can be shared, and different
-	DLLs can be independently developed.
+	DのコードをDLL内に含めて、
+	静的リンクの場合と全く同様に扱えるようにする機能はもちろん必要です。
+	それによって、コードを別のDLLとして独立に開発し、
+	しかもアプリケーション間での共有が可能になります。
 	<p>
 
-	The underlying difficulty is what to do about garbage collection (gc).
-	Each EXE and DLL will have their own gc instance. While
-	these gc's can coexist without stepping on each other,
-	it's redundant and inefficient to have multiple gc's running.
-	The idea explored here is to pick one gc and have the DLLs
-	redirect their gc's to use that one. The one gc used here will be
-	the one in the EXE file, although it's also possible to make a
-	separate DLL just for the gc.
+	潜在的に問題となるのは、ガベージコレクション（GC）の取り扱いです。
+	EXE と DLL のそれぞれがGCのインスタンスを保持しています。
+	これらのGC同士はお互いに影響せずに共存することも可能ですが、
+	複数のGCが走っているというのは、無駄で非効率的です。
+	そこで、GC一つを決めて、他のDLLのGCはそのGCへとリダイレクトするという
+	案を考えました。一つに決めるGCは、
+	ここでは EXE ファイルのものを使うこととしました。GC のために特別の
+	DLL を一つ用意しておくという方法もあります。
 	<p>
 
-	The example will show both how to statically load a DLL, and
-	to dynamically load/unload it.
+	以下は、DLLを静的にロードする方法と、
+	動的にロード/アンロードする方法の両方の例になっています。
 	<p>
 
-	Starting with the code for the DLL, mydll.d:
+	DLLのソースコード mydll.d から見ていきましょう：
 -------------------------------
 /*
- * MyDll demonstration of how to write D DLLs.
+ * MyDll D言語DLLの書き方デモ
  */
 
 import core.runtime;
@@ -372,80 +372,80 @@ export MyClass $(B getMyClass)()
 
 	<dl>
 	<dt>$(B DllMain)
-	<dd>This is the main entry point for any D DLL. It gets called
-	by the C startup code
-	(for DMC++, the source is $(TT \dm\src\win32\dllstart.c)).
-	The $(B printf)'s are placed there so one can trace how it gets
-	called.
-	Notice that the initialization and termination code seen in
-	the earlier DllMain sample code is in this version as well.
-	This is because the same DLL should be usable from both C and
-	D programs, so the same initialization process should work
-	for both.
+	<dd>全てのD言語DLLのエントリーポイントはこの関数です。
+	Cのスタートアップコードから呼び出されます。
+	（DMC++でいうと、ソースは $(TT \dm\src\win32\dllstart.c) です）。
+	$(B printf)
+	の表示結果で、
+	どのように呼び出されるかがわかります。
+	古い DllMain のサンプルコードにあった初期化と終了処理のコードは、
+	このバージョンでも存在しています。
+	これは、同じDLLがCプログラムからでもDプログラムからでも使えるようにするためで、
+	同じ初期化プロセスがどちらの場合でも正しく動作するように作られています。
 	<p>
 
 	<dt>$(B MyDLL_Initialize)
 	<dd>
-	When the DLL is dynamically linked via $(B Runtime.loadLibrary)()
-	the runtime makes sure that any initialization steps required
-	by the D program are executed after the library is loaded.  If
-	the library is statically linked, this routine is not called by
-	the program, so to make sure the DLL is initialized properly we
-	have to do some of the work ourselves.  And because the library
-	is being statically linked, we need a function specific to this
-	DLL to perform the initialization.
-	This function takes one argument, a handle to the
-	caller's gc. We'll see how that handle is obtained later.
-	To pass this handle to the runtime and override the DLL's built-in
-	gc we'll call $(B gc_setProxy)().
-	The function is $(B export)ed as that is how a function is made
-	visible outside of a DLL.
+	DLL が $(B Runtime.loadLibrary)() で動的にリンクされた場合、
+	ランタイムによって、Dプログラムに必要な初期化ステップがライブラリロード後に
+	実行されることが保証されます。
+	ライブラリが静的にリンクされた場合は、
+	プログラムからこの処理は呼び出されないため、
+	DLLを正しく動作させるためにいくつかの処理を自分で行う必要があります。
+	そして、静的リンクされているので、
+	DLLに固有の初期化処理関数が必要になります。
+	この関数は、呼び出し元のGCのハンドルを引数として取ります。
+	このハンドルを得る方法は後で説明します。
+	このハンドルをランタイムに渡してDLL組み込みのGCを上書きするには、
+	$(B gc_setProxy)() を呼び出します。
+	この関数は $(B export) されて、
+	DLLの外側から呼び出せるようになっています。
 	<p>
 
 	<dt>$(B MyDLL_Terminate)
-	<dd>Correspondingly, this function terminates the DLL, and is
-	called prior to unloading it.
-	It has only one job: informing the runtime that the DLL will
-	no longer be using the caller's gc via $(B gc_clrProxy)().
-	This is critical, as the DLL will be unmapped from memory,
-	and if the gc continues to scan its data areas it will cause
-	segment faults.
+	<dd>対応して、この関数はアンロードの前に呼び出され、
+	DLLの終了処理を担当します。
+	具体的な処理はひとつだけで、DLLが呼び出し側のGCを使うことはもうないと
+	$(B gc_clrProxy)() で通知します。
+	このステップは重要です。この後DLLがメモリからマップ解除された場合、
+	仮にGCがDLLのメモリ領域をスキャンしようとすると、
+	セグメント違反が発生してしまいます。
 	<p>
 
 	<dt>$(B static this, static ~this)
-	<dd>These are examples of the module's static constructor
-	and destructor,
-	here with a print in each to verify that they are running
-	and when.
+	<dd>モジュールの
+	静的コンストラクタと静的デストラクタの例です。
+	実行と実行タイミングの確認のために、
+	文字列を表示します。
 	<p>
 
 	<dt>$(B MyClass)
-	<dd>This is an example of a class that can be exported from
-	and used by the caller of a DLL. The $(B concat) member
-	function allocates some gc memory, and $(B free) frees gc
-	memory.
+	<dd>DLLからエクスポートされ、
+	呼び出し側から使えるようにするクラスの例です。$(B concat)
+	メンバ関数はGCによるメモリ割り当てを行い、$(B free)
+	はGCメモリの解放を行います。
 	<p>
 
 	<dt>$(B getMyClass)
-	<dd>An exported factory that allocates an instance of $(B MyClass)
-	and returns a reference to it.
+	<dd>$(B MyClass)のインスタンスを割り当て参照を返す factory
+		関数をエクスポートしています。
 	<p>
 
 	</dl>
 
-	To build the $(TT mydll.dll) DLL:
+	$(TT mydll.dll) DLL をビルドするには：
 
 	$(OL 
 	$(LI$(B $(TT dmd -c mydll -g))
-	<br>Compiles $(D mydll.d) into $(TT mydll.obj).
-	$(B -g) turns on debug info generation.
+	<br>$(D mydll.d) を $(TT mydll.obj) へコンパイル。
+	$(B -g) でデバッグ情報を生成します。
 	)
 
 	$(LI $(B $(TT dmd mydll.obj mydll.def -g -L/map))
-	<br>Links $(TT mydll.obj) into a DLL named $(TT mydll.dll).
-	$(TT mydll.def) is the
-	$(LINK2 http://www.digitalmars.com/ctg/ctgDefFiles.html, Module Definition File),
-	and has the contents:
+	<br> $(TT mydll.obj) を $(TT mydll.dll) という名前のDLLへとリンクします。
+	$(TT mydll.def) は
+	$(LINK2 http://www.digitalmars.com/ctg/ctgDefFiles.html, モジュール定義ファイル)
+	で、以下のような内容を記述しておきます：
 
 $(MODDEFFILE
 LIBRARY         MYDLL
@@ -454,23 +454,23 @@ EXETYPE		NT
 CODE            PRELOAD DISCARDABLE
 DATA            PRELOAD MULTIPLE
 )
-	$(B -g) turns on debug info generation, and
-	$(B -L/map) generates a map file $(TT mydll.map).
+	$(B -g) でデバッグ情報を生成し、
+	$(B -L/map) でマップファイル $(TT mydll.map) を生成します。
 	)
 
 	$(LI $(B $(TT implib /noi /system mydll.lib mydll.dll))
-	<br>Creates an
-	$(LINK2 http://www.digitalmars.com/ctg/implib.html, import library)
-	$(TT mydll.lib) suitable
-	for linking in with an application that will be statically
-	loading $(TT mydll.dll).
+	<br>静的に $(TT mydll.dll)
+	をロードするアプリケーションとのリンクに使う
+	$(LINK2 http://www.digitalmars.com/ctg/implib.html, インポートライブラリ)
+	$(TT mydll.lib)
+	を作ります。
 	)
 
 	)
 
-	$(P Here's $(TT test.d), a sample application that makes use of
-	$(TT mydll.dll). There are two versions, one statically binds to
-	the DLL, and the other dynamically loads it.
+	$(P 以下に、$(TT mydll.dll) を使うサンプルアプリケーション $(TT test.d)
+	の例を示します。静的にDLLとリンクするバージョンと、
+	動的にロードするバージョンの２つが含まれています。
 	)
 
 -------------------------------
@@ -524,7 +524,7 @@ version (DYNAMIC_LOAD)
     }
 }
 else
-{   // static link the DLL
+{   // DLLは静的リンク
     extern (C)
     {
         void* gc_getProxy();
@@ -552,27 +552,27 @@ void foo(MyClass c)
 }
 -------------------------------
 
-	$(P Let's start with the statically linked version, which is simpler.
-	It's compiled and linked with the command:
+	$(P まず簡単な方の、静的リンクするバージョンから見ていきましょう。
+	次のようなコマンドでコンパイルとリンクを行います：
 	)
 
 $(CONSOLE
 C:>dmd test mydll.lib -g
 )
 
-	$(P Note how it is linked with $(TT mydll.lib), the import library
-	for $(TT mydll.dll).
-	The code is straightforward, it initializes $(TT mydll.lib) with
-	a call to $(B MyDLL_Initialize)(), passing the handle
-	to $(TT test.exe)'s gc.
-	Then, we can use the DLL and call its functions just as if
-	it were part of $(TT test.exe). In $(B foo)(), gc memory
-	is allocated and freed both by $(TT test.exe) and $(TT mydll.dll).
-	When we're done using the DLL, it is terminated with
-	$(B MyDLL_Terminate)().
+	$(P $(TT mydll.dll) のインポートライブラリ $(TT mydll.lib)
+	とリンクしています。
+	コードは簡単です。$(TT test.exe) のGCのハンドルを渡して
+	$(B MyDLL_Initialize)() を呼び出し、
+	$(TT mydll.lib) を初期化しています。
+	その後はDLL内の関数を、
+	$(TT test.exe) の中にあるのと全く同様に使うことが可能です。$(B foo)()
+	では、GC によるメモリの割り当てと解放が $(TT test.exe) と $(TT mydll.dll) の双方で行われています。
+	DLLを使い終わった後は、
+	$(B MyDLL_Terminate)() で終了します。
 	)
 
-	$(P Running it looks like this:)
+	$(P 実行結果は次のようになります：)
 
 $(CONSOLE
 C:>test
@@ -587,29 +587,29 @@ End...
 C:>
 )
 
-	$(P The dynamically linked version is a little harder to set up.
-	Compile and link it with the command:
+	$(P 動的リンクの方は準備が少し複雑です。
+	次のようなコマンドでコンパイルとリンクを行います：
 	)
 
 $(CONSOLE
 C:>dmd test -version=DYNAMIC_LOAD -g
 )
-	$(P The import library $(TT mydll.lib) is not needed.
-	The DLL is loaded with a call to
+	$(P インポートライブラリ $(TT mydll.lib) は不要です。
+	DLLは、
 	$(B Runtime.loadLibrary)(),
-	and each exported function has to be retrieved via
-	a call to
-	$(B GetProcAddress)().
-	An easy way to get the decorated name to pass to $(B GetProcAddress)()
-	is to copy and paste it from the generated $(TT mydll.map) file
-	under the $(B Export) heading.
-	Once this is done, we can use the member functions of the
-	DLL classes as if they were part of $(TT test.exe).
-	When done, release the DLL with
-	$(B Runtime.unloadLibrary)().
+	の呼び出しでロードし、
+	エクスポートされた関数それぞれは、
+	$(B GetProcAddress)() の呼び出しで取得します。
+	$(B GetProcAddress)() に渡すための修飾名を簡単に得るには、
+	生成された $(TT mydll.map) ファイルの
+	$(B Export) 以下の部分からコピー＆貼り付けという方法があります。
+	一度この作業が終わると、DLL内クラスのメンバ関数も、
+	$(TT test.exe) 内のものと同様に使うことができます。
+	終了時には、DLLを
+	$(B Runtime.unloadLibrary)() で解放します。
 	)
 
-	$(P Running it looks like this:)
+	$(P 実行結果は次のようになります：)
 
 $(CONSOLE
 C:>test
@@ -626,6 +626,6 @@ C:>
 )
 
 Macros:
-	TITLE=Writing Win32 DLLs
+	TITLE=D で作る Win32 DLL
 	WIKI=DLLs
 	CATEGORY_HOWTOS=$0
