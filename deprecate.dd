@@ -1,113 +1,113 @@
 Ddoc
 
-$(SPEC_S Deprecated Features,
+$(SPEC_S 廃止される機能,
 
-	$(P Sometimes it becomes clear that a feature is just a bad idea.
-	These are called $(I deprecated features) and once they are judged
-	to merit removal from the language, they follow a procedure in
-	order to allow plenty of time for users to adjust to the change.
+	$(P ある機能が悪いアイデアであった、と判明することはしばしばあります。
+	これらは $(I 廃止される機能) という扱いになり、
+	言語仕様から削除する方がよいと判断されると、
+	ユーザーが変更に対応する十分な時間をとるための手順を踏んで取り除かれます。
 	)
 
-	$(TABLE2 Deprecated Features,
-	$(THEAD Feature,                                                          Spec,  Warn,   Dep,    Error,  Gone)
-	$(TROW $(DEPLINK Base Class Protection),                                  2.058, N/A,    2.058,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK Using length in index expressions),                      ?,     N/A,    2.041,  &nbsp;, &nbsp;)
+	$(TABLE2 廃止される機能,
+	$(THEAD 機能,                                                             Spec,  Warn,   Dep,    Error,  Gone)
+	$(TROW $(DEPLINK 基底クラスのアクセス制御),                               2.058, N/A,    2.058,  &nbsp;, &nbsp;)
+	$(TROW $(DEPLINK 添字式での length の使用),                               ?,     N/A,    2.041,  &nbsp;, &nbsp;)
 	$(TROW $(DEPLINK typedef),                                                2.057, N/A,    2.057,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK Variable shadowing inside functions),                    ?,     N/A,    0.161,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK invariant as an alias for immutable),                    2.057, N/A,    2.057,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK Using * to dereference arrays),                          ?,     N/A,    2.057,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK Removing an item from an associative array with delete), ?,     N/A,    0.127,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK .offset property),                                       ?,     N/A,    0.107,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK .size property),                                         ?,     N/A,    0.107,  0.107,  &nbsp;)
-	$(TROW $(DEPLINK Escape string literals),                                 ?,     N/A,    2.026,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK Lower case 'l' suffix for integer literals),             ?,     N/A,    1.054,  0.174,  &nbsp;)
-	$(TROW $(DEPLINK Octal literals),                                         2.054, N/A,    2.053,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK Upper case 'I' suffix for imaginary literals),           ?,     N/A,    0.154,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK HTML source files),                                      ?,     N/A,    2.013,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK .typeinfo property),                                     ?,     N/A,    0.093,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK C-style function pointers),                              ?,     N/A,    2.050,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK C-style array pointers),                                 ?,     N/A,    2.050,  &nbsp;, &nbsp;)
+	$(TROW $(DEPLINK 関数内での変数の隠蔽),                                   ?,     N/A,    0.161,  &nbsp;, &nbsp;)
+	$(TROW $(DEPLINK immutableの別名としてのinvariant),                       2.057, N/A,    2.057,  &nbsp;, &nbsp;)
+	$(TROW $(DEPLINK 配列の * によるデリファレンス),                          ?,     N/A,    2.057,  &nbsp;, &nbsp;)
+	$(TROW $(DEPLINK delete による連想配列からの要素削除),                    ?,     N/A,    0.127,  &nbsp;, &nbsp;)
+	$(TROW $(DEPLINK .offset プロパティ),                                     ?,     N/A,    0.107,  &nbsp;, &nbsp;)
+	$(TROW $(DEPLINK .size プロパティ),                                       ?,     N/A,    0.107,  0.107,  &nbsp;)
+	$(TROW $(DEPLINK エスケープ文字列リテラル),                               ?,     N/A,    2.026,  &nbsp;, &nbsp;)
+	$(TROW $(DEPLINK 整数リテラルの小文字の 'l' 接尾辞),                      ?,     N/A,    1.054,  0.174,  &nbsp;)
+	$(TROW $(DEPLINK 8進リテラル),                                            2.054, N/A,    2.053,  &nbsp;, &nbsp;)
+	$(TROW $(DEPLINK 虚数リテラルの大文字の 'I' 接尾辞),                      ?,     N/A,    0.154,  &nbsp;, &nbsp;)
+	$(TROW $(DEPLINK HTMLソースファイル),                                     ?,     N/A,    2.013,  &nbsp;, &nbsp;)
+	$(TROW $(DEPLINK .typeinfo プロパティ),                                   ?,     N/A,    0.093,  &nbsp;, &nbsp;)
+	$(TROW $(DEPLINK C形式の関数ポインタ),                                    ?,     N/A,    2.050,  &nbsp;, &nbsp;)
+	$(TROW $(DEPLINK C形式の配列ポインタ),                                    ?,     N/A,    2.050,  &nbsp;, &nbsp;)
 	$(TROW $(DEPLINK if (v; e)),                                              ?,     N/A,    0.149,  0.174,  &nbsp;)
 	$(TROW $(DEPLINK volatile),                                               2.013, N/A,    2.013,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK Non-final switch statements without a default case),     2.054, N/A,    2.054,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK Hiding base class functions),                            2.054, N/A,    2.054,  &nbsp;, &nbsp;)
-	$(TROW $(DEPLINK Windows 3.x and Windows 9x support),                     2.058, N/A,    N/A,    N/A,    2.058 )
+	$(TROW $(DEPLINK default なしの final でない switch 文),                  2.054, N/A,    2.054,  &nbsp;, &nbsp;)
+	$(TROW $(DEPLINK 基底クラスの関数の隠蔽),                                 2.054, N/A,    2.054,  &nbsp;, &nbsp;)
+	$(TROW $(DEPLINK Windows 3.x と Windows 9x 対応),                         2.058, N/A,    N/A,    N/A,    2.058 )
 
-    $(TROW $(DEPLINK .min property for floating point types),                 future, &nbsp;, &nbsp;, &nbsp;, &nbsp;)
-    $(TROW $(DEPLINK imaginary and complex types),                            future, &nbsp;, &nbsp;, &nbsp;, &nbsp;)
-    $(TROW $(DEPLINK floating point NCEG operators),                          future, &nbsp;, &nbsp;, &nbsp;, &nbsp;)
-    $(TROW $(DEPLINK .sort and .reverse properties for arrays),               future, &nbsp;, &nbsp;, &nbsp;, &nbsp;)
-    $(TROW $(DEPLINK delete),                                                 future, &nbsp;, &nbsp;, &nbsp;, &nbsp;)
-    $(TROW $(DEPLINK overriding without override),                            future, &nbsp;, &nbsp;, &nbsp;, &nbsp;)
+    $(TROW $(DEPLINK 浮動小数点型の .min プロパティ),                         予定,   &nbsp;, &nbsp;, &nbsp;, &nbsp;)
+    $(TROW $(DEPLINK 虚数型と複素数型),                                       予定,   &nbsp;, &nbsp;, &nbsp;, &nbsp;)
+    $(TROW $(DEPLINK 浮動小数点数の NCEG 演算子),                             予定,   &nbsp;, &nbsp;, &nbsp;, &nbsp;)
+    $(TROW $(DEPLINK 配列の .sort と .reverse プロパティ),                    予定,   &nbsp;, &nbsp;, &nbsp;, &nbsp;)
+    $(TROW $(DEPLINK delete),                                                 予定,   &nbsp;, &nbsp;, &nbsp;, &nbsp;)
+    $(TROW $(DEPLINK overrideなしでのオーバーライド),                         予定,   &nbsp;, &nbsp;, &nbsp;, &nbsp;)
 	)
 
 	$(DL
 	$(DT Spec)
-	$(DD Removal from the Specification)
+	$(DD 仕様からの削除)
 	$(DT Warn)
-	$(DD The compiler emits a warning if the feature is used)
+	$(DD 使われた場合にコンパイラが警告を出す)
 	$(DT Dep)
-	$(DD The compiler issues an error if not compiled with the -d switch)
+	$(DD -d スイッチなしで使われた場合にコンパイラがエラーにする)
 	$(DT Error)
-	$(DD It is an error to use the feature)
+	$(DD 使われた場合にコンパイラがエラーにする)
 	$(DT Gone)
-	$(DD The feature is completely gone)
+	$(DD 完全削除)
     )
 
 
 
 
-<h3>$(DEPNAME Base Class Protection)</h3>
-	Base class protections are things like:
+<h3>$(DEPNAME 基底クラスのアクセス制御)</h3>
+	基底クラスのアクセス制御とは次のようなものです:
 ---
 class A : $(B protected) B {
    ...
 }
 ---
-<h4>Corrective Action</h4>
-	$(P Delete the protection attribute keyword from in front of the base class
-	and base interfaces.
+<h4>修正方法</h4>
+	$(P 基底クラスの基底インターフェイスの前の、
+	アクセス保護属性キーワードを削除します。
 	)
-<h4>Rationale</h4>
-	$(P With D's module system, it doesn't seem to serve any useful purpose, and has never worked correctly.
+<h4>理由</h4>
+	$(P Dのモジュールシステムの元では、これはあまり有用な使い道がなく、正しく動作したこともないため。
     )
 
 
 
-<h3>$(DEPNAME Using length in index expressions)</h3>
-	When used inside an indexing or slicing expression, length is rewritten to be the length of the array being sliced.
+<h3>$(DEPNAME 添字式での length の使用)</h3>
+	配列のインデックスやスライス式の中では、length がその配列の長さに書き換えられていました。
 ---
 auto a = new int[5];
 a = a[0..length-1];
 ---
-<h4>Corrective Action</h4>
-	$(P Replace length with the equivalent $(LINK2 arrays.html#array-length, '$')
+<h4>修正方法</h4>
+	$(P length を、同じ意味の $(LINK2 arrays.html#array-length, '$') に書き換えます。
 	)
-<h4>Rationale</h4>
-	$(P The implicitly defined length variable shadows existing declarations, and is less concise than the alternative.
+<h4>理由</h4>
+	$(P 暗黙に定義される length が既存の宣言を隠すことがあり、また '$' と比べて冗長なため。
     )
 
 
 
 <h3>$(DEPNAME typedef)</h3>
-	typedef can be used to construct a strongly-typed alias of a type.
+	typedef は型の強く区別される別名を作ることができました。
 ---
 typedef int myint;
 static assert(!is(myint == int));
 ---
-<h4>Corrective Action</h4>
-	$(P Replace use of typedef with alias.
+<h4>修正方法</h4>
+	$(P typedef を alias に置き換えます。
 	)
-<h4>Rationale</h4>
-	$(P typedef is not flexible enough to cover all use cases.  This is better done with a library solution.
+<h4>理由</h4>
+	$(P typedef は全てのユースケースをカバーするほど柔軟ではなかったため。ライブラリによる解決を目指すべきです。
     )
 
 
 
 
 
-<h3>$(DEPNAME Variable shadowing inside functions)</h3>
-	Variable shadowing is when a variable in an inner scope has the same name as a variable in an enclosing scope.
+<h3>$(DEPNAME 関数内での変数の隠蔽)</h3>
+	内側のスコープで定義された変数が外側の変数と同じ名前を持つことがありました。
 ---
 void myFun()
 {
@@ -115,31 +115,31 @@ void myFun()
     if (x)
     {
         int var;
-        var = 3; // which var was meant?
+        var = 3; // どちらの var の意味？
     }
 }
 ---
-<h4>Corrective Action</h4>
-	$(P Rename shadowing variables so they don't conflict.
+<h4>修正方法</h4>
+	$(P 変数名を衝突しないように書き換えます。
 	)
-<h4>Rationale</h4>
-	$(P Variable shadowing can introduce hard to find bugs where the wrong variable is modified.
+<h4>理由</h4>
+	$(P 変数の隠蔽は、間違った変数を書き換えてしまうという発見の難しいバグをもたらすため。
     )
 
 
 
 
 
-<h3>$(DEPNAME invariant as an alias for immutable)</h3>
-	The invariant storage class and type modifier is an alias for immutable.
+<h3>$(DEPNAME immutableの別名としてのinvariant)</h3>
+	invariant 記憶域クラスは immutable の別名でした。
 ---
 static assert(is(invariant(int) == immutable(int)));
 ---
-<h4>Corrective Action</h4>
-	$(P Replace all uses of invariant as a storage class or type modifier with immutable.  The invariant() syntax for struct and class invariants is still supported.
+<h4>修正方法</h4>
+	$(P 記憶域クラスや型修飾子としての invariant を immutable に置き換えます。構造体やクラスの不変条件のための invariant() 構文は依然として有効です。
 	)
-<h4>Rationale</h4>
-	$(P The alias is unnecessary.
+<h4>理由</h4>
+	$(P 不要な別名なため。
     )
 
 
@@ -147,64 +147,64 @@ static assert(is(invariant(int) == immutable(int)));
 
 
 
-<h3>$(DEPNAME Using * to dereference arrays)</h3>
-	D array variables can be dereferenced to get the first element, much like pointers.
+<h3>$(DEPNAME 配列の * によるデリファレンス)</h3>
+	Dの配列変数は、ポインタのように先頭要素にアクセスすることができました。
 ---
 int[] arr = [1, 2, 3];
 assert(*arr == 1);
 ---
-<h4>Corrective Action</h4>
-	$(P Use indexing syntax to access first member.
+<h4>修正方法</h4>
+	$(P インデックス式を使います。
 ---
 int[] arr = [1, 2, 3];
 assert(arr[0] == 1);
 ---
 	)
-<h4>Rationale</h4>
-	$(P D arrays are not pointers.
+<h4>理由</h4>
+	$(P Dの配列はポインタではないため。
     )
 
 
 
 
-<h3>$(DEPNAME Removing an item from an associative array with delete)</h3>
-	delete can be used to remove an item from an associative array.
+<h3>$(DEPNAME delete による連想配列からの要素削除)</h3>
+	連想配列から要素を削除するのに delete 式が使えました。
 ---
 int[int] aa = [1 : 2];
 delete aa[1];
 assert(1 !in aa);
 ---
-<h4>Corrective Action</h4>
-	$(P Use .remove instead.
+<h4>修正方法</h4>
+	$(P .remove を代わりに使います。
 ---
 int[int] aa = [1 : 2];
 aa.remove(1);
 assert(1 !in aa);
 ---
 	)
-<h4>Rationale</h4>
-	$(P The delete syntax is confusing and conflicts with the normal delete syntax.
+<h4>理由</h4>
+	$(P delete 構文は混乱を招きやすく、また通常の delete 構文とも衝突するため。
     )
 
 
 
 
 
-<h3>$(DEPNAME .offset property)</h3>
-	The .offset property can be used to get member offset information.
+<h3>$(DEPNAME .offset プロパティ)</h3>
+	.offset プロパティはメンバのオフセット情報を取得するのに使えました。
 ---
 struct S { int a, b; }
 static assert(S.b.offset == 4);
 ---
-<h4>Corrective Action</h4>
-	$(P Use .offsetof instead
+<h4>修正方法</h4>
+	$(P .offsetof を代わりに使います。
 ---
 struct S { int a, b; }
 static assert(S.b.offsetof == 4);
 ---
 	)
-<h4>Rationale</h4>
-	$(P The .offset syntax has been superseded by .offsetof
+<h4>理由</h4>
+	$(P .offset は .offsetof に変更されたため。
     )
 
 
@@ -212,229 +212,229 @@ static assert(S.b.offsetof == 4);
 
 
 
-<h3>$(DEPNAME .size property)</h3>
-	The .size property can be used to get type size information
+<h3>$(DEPNAME .size プロパティ)</h3>
+	.size プロパティは型のサイズ情報を取得するのに使えました。
 ---
 struct S { int a, b; }
 static assert(S.size == 8);
 ---
-<h4>Corrective Action</h4>
-	$(P Use .sizeof instead
+<h4>修正方法</h4>
+	$(P .sizeof を代わりに使います。
 ---
 struct S { int a, b; }
 static assert(S.sizeof == 8);
 ---
 	)
-<h4>Rationale</h4>
-	$(P The .size syntax has been superseded by .sizeof
+<h4>理由</h4>
+	$(P .size は .sizeof に変更されたため。
     )
 
 
 
 
-<h3>$(DEPNAME Escape string literals)</h3>
-	Escape string literals can be used to describe characters using escape sequences.
+<h3>$(DEPNAME エスケープ文字列リテラル)</h3>
+	エスケープシーケースをそのまま書いて文字列リテラルとして使うことができました。
 ---
 string x = "hello" ~ \n;
 ---
-<h4>Corrective Action</h4>
-	$(P Put escape sequences inside a regular string literal.
+<h4>修正方法</h4>
+	$(P エスケープシーケンスを普通の文字列リテラルの中に入れます。
 ---
 string x = "hello\n";
 ---
 	)
-<h4>Rationale</h4>
-	$(P Escape string literals are unintuitive and unnecessary.
+<h4>理由</h4>
+	$(P エスケープ文字列リテラルは非直感的かつ必要でもないため。
     )
 
 
 
 
-<h3>$(DEPNAME Lower case 'l' suffix for integer literals)</h3>
-	Lower case 'l' is an alternative suffix to denote 64 bit integer literals.
+<h3>$(DEPNAME 整数リテラルの小文字の 'l' 接尾辞)</h3>
+	小文字の 'l' で整数リテラルの型が64bit整数であることを示すことができました。
 ---
 auto x = 123l;
 ---
-<h4>Corrective Action</h4>
-	$(P Use the upper case 'L' suffix.
+<h4>修正方法</h4>
+	$(P 大文字の 'L' 接尾辞を使います。
 ---
 auto x = 123L;
 ---
 	)
-<h4>Rationale</h4>
-	$(P The lower case suffix is easily confused with the digit '1'.
+<h4>理由</h4>
+	$(P 小文字は数字の '1' と紛らわしいため。
     )
 
 
 
 
-<h3>$(DEPNAME Octal literals)</h3>
-	Octal literals can be used to enter literals in base 8.
+<h3>$(DEPNAME 8進リテラル)</h3>
+	八進数で整数リテラルを記述できました。
 ---
 auto x = 0123;
 ---
-<h4>Corrective Action</h4>
-	$(P Use the octal!num template.
+<h4>修正方法</h4>
+	$(P octal!num テンプレートを使います。
 ---
 auto x = octal!123;
 ---
 	)
-<h4>Rationale</h4>
-	$(P The use of a leading zero is confusing, as 0123 != 123.
+<h4>理由</h4>
+	$(P 0123 != 123 など、先頭 0 は区別するのは混乱の元なため。
     )
 
 
 
 
 
-<h3>$(DEPNAME Upper case 'I' suffix for imaginary literals)</h3>
-	The 'I' suffix can be used to denote imaginary floating point values.
+<h3>$(DEPNAME 虚数リテラルの大文字の 'I' 接尾辞)</h3>
+	大文字の 'I' でリテラルが虚数型であることを示すことができました。
 ---
 auto x = 1.234I;
 ---
-<h4>Corrective Action</h4>
-	$(P Use the lower case 'i' suffix.
+<h4>修正方法</h4>
+	$(P 小文字の 'i' を使います。
 ---
 auto x = 1.234i;
 ---
 	)
-<h4>Rationale</h4>
-	$(P The 'I' suffix is easily confused with the digit '1'.
+<h4>理由</h4>
+	$(P 大文字は数字の '1' と紛らわしいため。
     )
 
 
 
 
 
-<h3>$(DEPNAME HTML source files)</h3>
-	The D compiler can parse html files by ignoring everything not contained in &lt;code&gt&lt/code&gt tags.
+<h3>$(DEPNAME HTMLソースファイル)</h3>
+	DコンパイラはHTMLファイルを構文解析して &lt;code&gt&lt/code&gt タグの中だけをDのコードとして解釈することができました。
 ---
 <html>
 <code>
-    ... source ...
+    ... ソース ...
 </code>
 </html>
 ---
-<h4>Corrective Action</h4>
-	$(P Extract code to regular source files.
+<h4>修正方法</h4>
+	$(P 普通のソースとしてコードを抽出します。
 	)
-<h4>Rationale</h4>
-	$(P This has been replaced for documentation by the introduction of ddoc
+<h4>理由</h4>
+	$(P ドキュメントを添える機能は、ddoc によるドキュメント化コメントによって置き換えられたため。
     )
 
 
 
 
 
-<h3>$(DEPNAME HTML source files)</h3>
-	The D compiler can parse html files by ignoring everything not contained in &lt;code&gt&lt/code&gt tags.
+<h3>$(DEPNAME HTMLソースファイル)</h3>
+	DコンパイラはHTMLファイルを構文解析して &lt;code&gt&lt/code&gt タグの中だけをDのコードとして解釈することができました。
 ---
 <html>
 <code>
-    ... source ...
+    ... ソース ...
 </code>
 </html>
 ---
-<h4>Corrective Action</h4>
-	$(P Extract code to regular source files.
+<h4>修正方法</h4>
+	$(P 普通のソースとしてコードを抽出します。
 	)
-<h4>Rationale</h4>
-	$(P This has been replaced for documentation by the introduction of ddoc
+<h4>理由</h4>
+	$(P ドキュメントを添える機能は、ddoc によるドキュメント化コメントによって置き換えられたため。
     )
 
 
 
 
-<h3>$(DEPNAME .typeinfo property)</h3>
-	The .typeinfo property can be used to get the associated TypeInfo class.
+<h3>$(DEPNAME .typeinfo プロパティ)</h3>
+	.typeinfo プロパティによってその型の TypeInfo クラスにアクセスできました。
 ---
 T.typeinfo
 ---
-<h4>Corrective Action</h4>
-	$(P Use typeid() instead
+<h4>修正方法</h4>
+	$(P typeid() を代わりに使います。
 ---
 typeid(T)
 ---
 	)
-<h4>Rationale</h4>
-	$(P The .typeinfo syntax has been superseded by typeid()
+<h4>理由</h4>
+	$(P .typeinfo は typeid() に変更になったため。
     )
 
 
 
 
-<h3>$(DEPNAME C-style function pointers)</h3>
-	C-style function pointers can be used in D.
+<h3>$(DEPNAME C形式の関数ポインタ)</h3>
+	C形式の関数ポインタをDでも使うことができました。
 ---
 alias void(*fptr)(int, long);
 ---
-<h4>Corrective Action</h4>
-	$(P Replace with D-style function pointers.
+<h4>修正方法</h4>
+	$(P D形式の関数ポインタに置き換えます。
 ---
 alias void function(int, long) fptr;
 ---
 	)
-<h4>Rationale</h4>
-	$(P The D syntax is much cleaner and easier to use.
+<h4>理由</h4>
+	$(P D形式の方がずっと綺麗で使いやすいため。
     )
 
 
 
-<h3>$(DEPNAME C-style array pointers)</h3>
-	C-style array pointers can be used in D.
+<h3>$(DEPNAME C形式の配列ポインタ)</h3>
+	C形式の配列ポインタをDでも使うことができました。
 ---
 alias float *arrayptr[10][15];
 ---
-<h4>Corrective Action</h4>
-	$(P Replace with D-style array pointers.
+<h4>修正方法</h4>
+	$(P D形式の配列ポインタに置き換えます。
 ---
 alias float[15][10]* arrayptr;
 ---
 	)
-<h4>Rationale</h4>
-	$(P The D syntax is much cleaner and easier to use.
+<h4>理由</h4>
+	$(P D形式の方がずっと綺麗で使いやすいため。
     )
 
 
 
 
 <h3>$(DEPNAME if (v; e))</h3>
-	This syntax can be used to declare a variable in an if statement condition.
+	この構文では if の条件部で変数宣言を導入できました。
 ---
 if (v; calculateAndReturnPointer()) { ... }
 ---
-<h4>Corrective Action</h4>
-	$(P Replace with an auto declaration.
+<h4>修正方法</h4>
+	$(P auto 宣言で置き換えます。
 ---
 if (auto v = calculateAndReturnPointer()) { ... }
 ---
 	)
-<h4>Rationale</h4>
-	$(P The syntax is clearer with auto.
+<h4>理由</h4>
+	$(P auto があった方が構文の意図が明確なため。
     )
 
 
 
 <h3>$(DEPNAME volatile)</h3>
-	volatile can be used to mark statement, in order to prevent some compiler optimizations.
+	volatile で文をマークすることで、ある種のコンパイラの最適化を抑止できました。
 ---
 volatile
 {
-    ... do something involving ghared variables ...
+    ... 共有変数を触る処理 ...
 }
 ---
-<h4>Corrective Action</h4>
-	$(P Convert the code to use synchronized statements instead.
+<h4>修正方法</h4>
+	$(P コードを synchronized 文に書き換えます。
 	)
-<h4>Rationale</h4>
-	$(P volatile statements are a misfeature.
+<h4>理由</h4>
+	$(P volatile 文は誤りでした。
     )
 
 
 
 
-<h3>$(DEPNAME Non-final switch statements without a default case)</h3>
-	Switch statements can be declared without a default case, and the compiler automatically adds one.
+<h3>$(DEPNAME default なしの final でない switch 文)</h3>
+	switch 文は default ケースなしで宣言でき、その場合がコンパイラが自動で補っていました。
 ---
 switch(a)
 {
@@ -442,13 +442,13 @@ case 1:
     break;
 case 2:
     break;
-// the compiler adds
+// コンパイラが自動で追加
 // default:
 //     throw new SwitchError();
 }
 ---
-<h4>Corrective Action</h4>
-	$(P Add the default case manually.
+<h4>修正方法</h4>
+	$(P default を手で明示します。
 ---
 switch(a)
 {
@@ -461,15 +461,15 @@ default:
 }
 ---
 	)
-<h4>Rationale</h4>
-	$(P Missing default cases can hide bugs, and making the default case explicit should be mandatory.
+<h4>理由</h4>
+	$(P default 抜けはバグを隠すことがあるため、明示することを義務化しました。
     )
 
 
 
 
-<h3>$(DEPNAME Hiding base class functions)</h3>
-	Declaration functions in a derived class that can be called with the same arguments as a function in a base class, but do not override that function causes the base class function to be hidden.
+<h3>$(DEPNAME 基底クラスの関数の隠蔽)</h3>
+	基底クラスのものと同じ引数で呼び出せるのにもかかわらず、オーバーライドにはなっていないような派生クラスの関数が、基底クラスの関数を隠蔽することがありました。
 ---
 class A
 {
@@ -480,8 +480,8 @@ class B : A
     void fun(long x) {}
 }
 ---
-<h4>Corrective Action</h4>
-	$(P Add the function to the base class, or use an alias to bring the base class overload into the derived class.
+<h4>修正方法</h4>
+	$(P 基底クラスに関数を追加するか、alias を使って派生クラスでオーバーロードを行います。
 ---
 class A
 {
@@ -495,82 +495,82 @@ class B : A
 }
 ---
 	)
-<h4>Rationale</h4>
-	$(P This is an error that is already detected at runtime, and is being extended to compile time.
+<h4>理由</h4>
+	$(P これは実行時に元々エラーとして検出されていましたが、コンパイル時エラーとしました。
     )
 
 
 
-<h3>$(DEPNAME Windows 3.x and Windows 9x support)</h3>
-	There is some code in Phobos for Windows 3.x/9x support.
-<h4>Corrective Action</h4>
-	$(P Upgrade Windows or switch to another supported OS.
+<h3>$(DEPNAME Windows 3.x と Windows 9x 対応)</h3>
+	Phobos には Windows 3.x/9x 対応のコードが含まれていました。
+<h4>修正方法</h4>
+	$(P Windows をバージョンアップするか、他の対応OSに移行します。
 	)
-<h4>Rationale</h4>
-	$(P Supporting such outdated and rarely used OS-es isn't worth the trouble.
+<h4>理由</h4>
+	$(P このような古く、もうほとんど使われないOSのサポートを続けるのは労力に見合わないため。
 	)
 
 
 
-<h3>$(DEPNAME .min property for floating point types)</h3>
-	Floating point types have the .min property to access the smallest value.
+<h3>$(DEPNAME 浮動小数点型の .min プロパティ)</h3>
+	浮動小数点型にはその最小値にアクセスする .min プロパティがあります。
 ---
 enum m = real.min;
 ---
-<h4>Corrective Action</h4>
-	$(P Replace with .min_normal
+<h4>修正方法</h4>
+	$(P .min_normal に置き換え。
 ---
 enum m = real.min_normal;
 ---
 	)
-<h4>Rationale</h4>
-	$(P The name min_normal is more accurate, as .min does not include denormalized floating point values.
+<h4>理由</h4>
+	$(P .min には非正規化数を含まない ので、min_normal という名前の方がより正確なため。
     )
 
 
-<h3>$(DEPNAME imaginary and complex types)</h3>
-	D currently supports imaginary and complex versions of all floating point types.
+<h3>$(DEPNAME 虚数型と複素数型)</h3>
+	Dは組み込みで虚数と複素数型を持っています。
 ---
 float a = 2;
 ifloat b = 4i;
 cfloat c = a + b;
 assert(c == 2 + 4i);
 ---
-<h4>Corrective Action</h4>
-	$(P Use the library types in std.complex
+<h4>修正方法</h4>
+	$(P std.complex ライブラリの型を使用します。
 	)
-<h4>Rationale</h4>
-	$(P These types are too specialized to be a part of the core lanugage.
+<h4>理由</h4>
+	$(P これらの型はコア言語の一部として持つには特殊すぎるため。
     )
 
 
 
 
 
-<h3>$(DEPNAME floating point NCEG operators)</h3>
-	D currently the NCEG floating point operators (!<>=, <>, <>=, !>, !>=, !<, !<=, !<>) for comparisons involving NaNs.
-<h4>Corrective Action</h4>
-	$(P Use the normal operators and std.math.isNaN.
+<h3>$(DEPNAME 浮動小数点数の NCEG 演算子)</h3>
+	D は現在のところ NCEG 浮動小数点演算子 (!<>=, <>, <>=, !>, !>=, !<, !<=, !<>) を、NaN の関わる比較のために提供しています。
+<h4>修正方法</h4>
+	$(P 普通の比較演算子と std.math.isNaN を使います。
 	)
-<h4>Rationale</h4>
-	$(P These operators are too specialized to be a part of the core lanugage.
+<h4>理由</h4>
+	$(P これらの演算子はコア言語の一部として持つには特殊すぎるため。
     )
 
 
 
 
 
-<h3>$(DEPNAME .sort and .reverse properties for arrays)</h3>
-	D arrays can be manipulated using these built-in properties.
+<h3>$(DEPNAME 配列の .sort と .reverse プロパティ)</h3>
+	D の配列はこれら組み込みで操作することができます。
 ---
 int[] x = [2, 3, 1];
 assert(x.sort == [1, 2, 3]);
 ---
-<h4>Corrective Action</h4>
-	$(P Use the generic functions in std.algorithm
+<h4>修正方法</h4>
+	$(P std.algorithm の汎用関数を使います。
 	)
-<h4>Rationale</h4>
-	$(P These operations are better implemented in the standard library
+<h4>理由</h4>
+	$(P これらの操作は標準ライブラリでよりよく実装されているため。
     )
 
 
@@ -578,28 +578,28 @@ assert(x.sort == [1, 2, 3]);
 
 
 <h3>$(DEPNAME delete)</h3>
-	Memory allocated on the GC heap can be freed with delete.
+	GCヒープに割り当てたメモリを delete で解放できます。
 ---
 auto a = new Class();
 delete a;
 ---
-<h4>Corrective Action</h4>
-	$(P Use object.clear() instead.
+<h4>修正方法</h4>
+	$(P object.clear() を代わりに使います。
 ---
 auto a = new Class();
 clear(a);
 ---
 	)
-<h4>Rationale</h4>
-	$(P delete makes assumptions about the type of garbage collector available that limits which implementations can be used, and can be replaced by a library solution.
+<h4>理由</h4>
+	$(P delete はガベージコレクタの種類に対するある種の仮定なしには実現できません。これは実装の自由度を制約してしまうため、ライブラリによる方法に置き換えられていくべきです。
     )
 
 
 
 
 
-<h3>$(DEPNAME overriding without override)</h3>
-	Virtual functions can currently override a function in a base class without the 'override' attribute.
+<h3>$(DEPNAME overrideなしでのオーバーライド)</h3>
+	現在のところ、仮想関数は 'override' 属性なしで基底クラスの関数をオーバーライドできます。
 ---
 class A
 {
@@ -607,12 +607,12 @@ class A
 }
 class B : A
 {
-    // overrides but is not marked with override
+    // override なしでのオーバーライド
     void fun() {}
 }
 ---
-<h4>Corrective Action</h4>
-	$(P Mark overriding functions with 'override'
+<h4>修正方法</h4>
+	$(P 'override' で明示的にマークします。
 ---
 class A
 {
@@ -624,8 +624,8 @@ class B : A
 }
 ---
 	)
-<h4>Rationale</h4>
-	$(P Making the 'override' attribute mandatory makes it explicit, and can catch errors when a base class function is accidentally overridden.
+<h4>理由</h4>
+	$(P 'override' 属性でのマーク付けを義務化することでコードが明確になり、また、うっかり基底クラスの関数をオーバーライドしてしまう間違いも検出可能になります。
     )
 
 
@@ -636,6 +636,6 @@ Macros:
 	DEPLINK=$(LINK2 #$0, $0)
 	DEPLINK2=$(LINK2 $1.html#$2, $2)
 	DEPNAME=$(LNAME2 $0, $0)
-	TITLE=Deprecated Features
+	TITLE=廃止される機能
 	WIKI=DeprecatedFeatures
 
