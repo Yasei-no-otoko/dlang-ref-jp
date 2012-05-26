@@ -1,33 +1,33 @@
 Ddoc
 
-$(D_S Function Hijacking Mitigation,
+$(D_S 関数ハイジャック軽減法,
 
-<div align="right">$(DIGG)</div>
+
 
 $(P
-As software becomes more complex, we become more reliant on module
-interfaces. An application may import and combine modules from multiple
-sources, including sources from outside the company. The module
-developers must be able to maintain and improve those modules without
-inadvertently stepping on the behavior of modules over which they cannot
-have knowledge of. The application developer needs to be notified if
-any module changes would break the application. This talk covers
-function hijacking, where adding innocent and reasonable declarations
-in a module
-can wreak arbitrary havoc on an application program in C++ and Java. We'll then
-look at how
-modest language design changes can largely eliminate the problem in the D
-programming language.
+ソフトウェアが複雑化するにつれ、我々は、より一層モジュールのインターフェイスに
+依存するようになっています。アプリケーションは、複数のソースからなる複数のモジュール、
+社外のソースを含むモジュールなども組み合わせて使っています。
+各モジュールの開発者は、一緒に使われる他のモジュールについて踏み込んだりする必要無しに、
+自分のモジュールの開発を続けることが可能でなければなりません。
+そしてアプリケーションの開発者は、モジュール側の変更がアプリケーションに破壊的な影響を与えるならば、
+その変更に気づけるようになっていることが重要です。
+このドキュメントでは、モジュールにおける無害な問題のない宣言の追加が、
+C++やJavaのアプリケーションプログラムにありとあらゆる大惨事を引き起こす
+「関数ハイジャック」についてお話しします。
+そして、D言語がどんな言語設計の変更で
+この問題を大幅に軽減しているのかについても
+見ていこうと思います。
 )
 
 
-$(SECTION2 Global Function Hijacking,
+$(SECTION2 グローバル関数ハイジャック,
 
-$(P Let's say we are developing an application that imports two modules:
-X from the XXX Corporation, and Y from the YYY Corporation.
-Modules X and Y are unrelated to each other, and are used for completely
-different purposes.
-The modules look like:
+$(P 二つのモジュール ‐ XXX社のXモジュールとYYY社のYモジュール ‐ を
+import するアプリケーションの開発中としましょう。
+モジュール X と Y はお互い無関係で、
+完全に違った目的に使用されます。
+こんな感じの関数を提供しています:
 )
 
 ----
@@ -43,7 +43,7 @@ module Y;
 void bar();
 ----
 
-$(P The application program would look like:
+$(P アプリケーション側のプログラムはこうなります:
 )
 
 ----
@@ -52,19 +52,19 @@ import Y;
 
 void abc()
 {
-    foo(1);  // calls X.foo(long)
+    foo(1);  // X.foo(long) を呼ぶ
 }
 
 void def()
 {
-    bar();   // calls Y.bar();
+    bar();   // Y.bar(); を呼ぶ
 }
 ----
 
-$(P So far, so good. The application is tested and works, and is shipped.
-Time goes by, the application programmer moves on, the application is
-put in maintenance mode. Meanwhile, YYY Corporation, responding to
-customer requests, adds a type $(CODE A) and a function $(CODE foo(A)):
+$(P ここまでのところは問題ありません。アプリケーションはテストされ無事動作し、出荷されました。
+時は流れ、プログラマも入れ替わり、このアプリケーションはメンテナンスモードに移ります。
+一方その頃、YYY社は顧客からの要望に応え、
+モジュールに 型 $(CODE A) と関数 $(CODE foo(A)) を追加しました:
 )
 
 ----
@@ -75,10 +75,10 @@ class A;
 void foo(A);
 ----
 
-$(P The application maintainer gets the latest version
-of Y, recompiles, and no problems. So far, so good.
-But then, YYY Corporation expands the functionality of $(CODE foo(A)),
-adding a function $(CODE foo(int)):
+$(P メンテナンスプログラマはYの最新版を手に入れ、
+再コンパイルします。まだ問題はありません。
+しかしここで、YYY社が $(CODE foo(A)) の機能を拡張し、
+関数 $(CODE foo(int)) を追加しました:
 )
 
 ----
@@ -90,8 +90,8 @@ void foo(A);
 void foo(int);
 ----
 
-$(P Now, our application maintainer routinely gets the latest version of Y,
-recompiles, and suddenly his application is doing something unexpected:
+$(P さて、我らがメンテナンスプログラマがいつものようにYを最新版に入れ替え再コンパイルすると、
+突然アプリケーションの挙動がおかしくなりました:
 )
 
 ----
@@ -100,103 +100,103 @@ import Y;
 
 void abc()
 {
-    foo(1);  // calls Y.foo(int) rather than X.foo(long)
+    foo(1);  // X.foo(long) ではなく Y.foo(int) を呼ぶ
 }
 
 void def()
 {
-    bar();   // calls Y.bar();
+    bar();   // Y.bar(); を呼ぶ
 }
 ----
 
-$(P because $(CODE Y.foo(int)) is a better overloading match than $(CODE X.foo(long)).
-But since $(CODE X.foo) does something completely and totally different than
-$(CODE Y.foo), the application now has a potentially very serious bug in it.
-Even worse, the compiler offers NO indication that this happened and cannot
-because, at least for C++, this is how the language is supposed to work.
+$(P $(CODE Y.foo(int)) の方が $(CODE X.foo(long))よりもオーバーロードのマッチとして適合度が高いためです。
+しかし、$(CODE X.foo) の行うはずだった処理は
+$(CODE Y.foo) とは完全に違うものなので、このアプリケーションは重大なバグを潜在的に抱え込むことになってしまいました。
+最悪なのは、コンパイラからはこのような事態になっていることを示唆することがない／できない、ということです。
+少なくともC++では、この動作が言語仕様の通りなのですから。
 )
 
-$(P In C++, some mitigation can be done by using namespaces or (hopefully)
-unique
-name prefixes within the modules
-X and Y. This doesn't help the application programmer, however, who probably
-has no control over X or Y.
+$(P C++ では、モジュール X や Y の中で名前空間や
+ユニーク(と期待される)
+接頭辞
+を使った回避策が知られています。これはしかし、X や Y に対して手を加えることのできない
+アプリケーションプログラマには役に立ちません。
 )
 
-$(P The first stab at fixing this problem in the D programming language was
-to add the rules:
-)
-
-$(OL
-$(LI by default functions can only overload against other functions in the same
-module)
-$(LI if a name is found in more than one scope, in order to use it it must
-be fully qualified)
-$(LI in order to overload functions from multiple modules together, an alias
-statement is used to merge the overloads)
-)
-
-$(P So now, when YYY Corporation added the $(CODE foo(int)) declaration, the
-application
-maintainer now gets a compilation error that foo is defined in both module
-X and module Y, and has an opportunity to fix it.
-)
-
-$(P This solution worked, but is a little restrictive. After all, there's no
-way $(CODE foo(A)) would be confused with $(CODE foo()) or $(CODE foo(long)),
-so why have the compiler
-complain about it? The solution turned out to be to introduce the notion
-of overload sets.
-)
-
-$(SECTION3 Overload Sets,
-
-$(P An overload set is formed by a group of functions with the same name
-declared
-in the same scope. In the module X example, the functions $(CODE X.foo()) and
-$(CODE X.foo(long)) form a single overload set. The functions
-$(CODE Y.foo(A)) and $(CODE Y.foo(int))
-form another overload set. Our method for resolving a call to foo becomes:
+$(P プログラミング言語 D でこの問題の解決のためにとった最初の方法は、
+以下のルールを追加することでした:
 )
 
 $(OL
-$(LI Perform overload resolution independently on each overload set)
-$(LI If there is no match in any overload set, then error)
-$(LI If there is a match in exactly one overload set, then go with that)
-$(LI If there is a match in more than one overload set, then error)
+$(LI デフォルトでは、同じモジュールの関数どうしのみが
+オーバーロードされる)
+$(LI 同名の関数が複数のモジュールに存在する場合は、呼び出しの際には
+完全修飾名を使わなければならない)
+$(LI 複数のモジュールの関数をオーバーロードするには、
+alias文を使ったオーバーロードのマージが必要)
 )
 
-$(P The most important thing about this is that even if there is a BETTER match
-in one overload set over another overload set, it is still an error.
-The overload sets must not overlap.
+$(P この規則があるため、YYY社が $(CODE foo(int)) の宣言を追加したときには
+アプリケーションメンテナは
+コンパイルエラーを目にすることになり（foo がモジュール X と Y の
+両方で定義されているため）、問題に対処する機会が与えられます。
 )
 
-$(P In our example:
+$(P これは一応の解決策にはなっていますが、制限が少しきつすぎます。例えば、
+$(CODE foo(A)) が $(CODE foo()) や $(CODE foo(long)) と
+混同されることはありえないのに、何故コンパイラがこれに文句を言うのでしょう？
+結局のところ、
+新たな解決策として「オーバーロード集合」の概念を持ち込むことになりました。
+)
+
+$(SECTION3 オーバーロード集合,
+
+$(P 同じスコープで宣言された同名の関数グループが、
+オーバーロード集合
+を形成します。モジュール X の例では、関数 $(CODE X.foo()) と
+$(CODE X.foo(long)) が１個のオーバーロード集合を形成します。
+そして、関数 $(CODE Y.foo(A)) と $(CODE Y.foo(int))
+もまた別のオーバーロード集合になります。fooの呼び出しを解決するステップは、以下のようになります:
+)
+
+$(OL
+$(LI それぞれのオーバーロード集合ごとに別々に、オーバーロードの解決を行う)
+$(LI どのオーバーロード集合でもマッチがなければ、エラー)
+$(LI １つのオーバーロード集合だけでマッチがあれば、それを選択)
+$(LI ２つ以上のオーバーロード集合でマッチしていれば、エラー)
+)
+
+$(P この規則でもっとも重要な点は、あるオーバーロード集合でのマッチが他のオーバーロード集合のマッチより
+より"適合度が高い"場合でも、依然としてエラーになるということです。
+１つの関数が複数のオーバーロード集合に同時に含まれることはありません。
+)
+
+$(P 先ほどの例を使うと:
 )
 
 ----
 void abc()
 {
-    foo(1);  // matches Y.foo(int) exactly, X.foo(long) with conversions
+    foo(1);  // Y.foo(int) には完全マッチ、X.foo(long) は暗黙変換を通したマッチ
 }
 ----
 
-$(P will generate an error, whereas:
+$(P はエラーになりますが:
 )
 
 ----
 void abc()
 {
     A a;
-    foo(a);  // matches Y.foo(A) exactly, nothing in X matches
-    foo();   // matches X.foo() exactly, nothing in Y matches
+    foo(a);  // Y.foo(A) に完全マッチ。Xからはマッチなし
+    foo();   // X.foo() に完全マッチ。Y からはマッチなし
 }
 ----
 
-$(P compiles without error, as we'd intuitively expect.
+$(P これは直感的に期待するとおりに、エラー無しでコンパイルされます。
 )
 
-$(P If overloading of $(CODE foo) between X and Y is desired, the following can be done:
+$(P X と Y の $(CODE foo) をオーバーロードしたい場合は、次のようなコードになります:
 )
 
 ----
@@ -208,24 +208,24 @@ alias Y.foo foo;
 
 void abc()
 {
-    foo(1);  // calls Y.foo(int) rather than X.foo(long)
+    foo(1);  // X.foo(long) ではなく Y.foo(int) を呼ぶ
 }
 ----
 
-$(P and no error is generated. The difference here is that the user
-deliberately combined the overload sets in X and Y, and so presumably
-both knows what he's doing and is willing to check the $(CODE foo)'s when
-X or Y is updated.
+$(P これはエラーにはなりません。先ほどのエラー例との違いは、
+この場合はアプリケーションプログラマがXとYのオーバーロード集合を意図的に合成しているので、
+何が起こるかをきちんと把握しており、XとYの更新時に $(CODE foo)
+に変更がないかチェックする意志があると仮定できるということです。
 )
 
 )
 
 )
 
-$(SECTION2 Derived Class Member Function Hijacking,
+$(SECTION2 派生クラスメンバ関数ハイジャック,
 
-$(P There are more cases of function hijacking. Imagine a class $(CODE A) coming
-from AAA Corporation:
+$(P 関数ハイジャックは他にもパターンがあります。AAA社のクラス $(CODE A)
+があったとしましょう:
 )
 
 ----
@@ -234,8 +234,8 @@ module M;
 class A { }
 ----
 
-$(P and in our application code, we derive from $(CODE A) and add a virtual
-member function $(CODE foo):
+$(P アプリケーションコードでは $(CODE A) から派生し、
+仮想メンバ関数 $(CODE foo) を追加しています:
 )
 
 ----
@@ -248,13 +248,13 @@ class B : A
 
 void abc(B b)
 {
-    b.foo(1);   // calls B.foo(long)
+    b.foo(1);   // B.foo(long) を呼ぶ
 }
 ----
 
-$(P and everything is hunky-dory. As before, things go on, AAA Corporation
-(who cannot know about $(CODE B)) extends $(CODE A)'s functionality a bit by
-adding $(CODE foo(int)):
+$(P 万事OKです。しかしまた月日は流れ、AAA社
+(もちろん $(CODE B) のことなど知りません) が $(CODE A) の機能をちょっと拡張するために
+$(CODE foo(int)) 関数を追加しました:
 )
 
 ----
@@ -266,9 +266,9 @@ class A
 }
 ----
 
-$(P Now, consider if we're using Java-style overloading rules, where base class
-member functions overload right alongside derived class functions. Now,
-our application call:
+$(P Java風のオーバーロード規則が採用されていたとすると、
+基底クラスの関数と派生クラスの関数はお互いをオーバーロードします。
+その結果、アプリケーション側の呼び出し:
 )
 
 ----
@@ -281,33 +281,33 @@ class B : A
 
 void abc(B b)
 {
-    b.foo(1);   // calls A.foo(int), AAAEEEEEIIIII!!!
+    b.foo(1);   // A.foo(int) を呼ぶ!!!!!!!!!!
 }
 ----
 
-$(P and the call to $(CODE B.foo(long)) was hijacked by the base class $(CODE A)
-to call $(CODE A.foo(int)),
-which likely has no meaning whatsoever in common with $(CODE B.foo(long)).
-This is why I don't like Java overloading rules.
-C++ has the right idea here in that functions in a derived class hide
-all the functions of the same name in a base class, even if the functions
-in the base class might be a better match. D follows this rule.
-And once again, if the user desires them to be overloaded against each other,
-this can be accomplished in C++ with a using declaration, and in D with
-an analogous alias declaration.
+$(P で $(CODE B.foo(long)) を呼んでいたはずの部分が基底クラス $(CODE A) の
+$(CODE A.foo(int)) にハイジャックされます。
+そしてこの関数はおそらく $(CODE B.foo(long)) とは違った処理をする関数でしょう。
+これが、私がJavaのオーバーロード規則を良しとしない理由です。
+C++ はこの点では正しく考えられていて、派生クラスでは、同名の基底クラスの関数を
+(例え基底クラスの関数の方がよりよいマッチであっても) マッチ候補としないようになっています。
+D もこの規則に従います。
+グローバル関数の場合と同様、両方の関数を混ぜてオーバーロードしたい場合は、
+C++ではusingを使うのと同じように
+D では alias 宣言で実現できます。
 )
 
 )
 
 
-$(SECTION2 Base Class Member Function Hijacking,
+$(SECTION2 基底クラスメンバ関数ハイジャック,
 
-$(P I bet you suspected there was more to it than that, and you'd be right.
-Hijacking can go the other way, too. A derived class can hijack a base
-class member function!
+$(P まだこれだけじゃないだろう、と思っておられる読者の方、正解です。
+逆方向のハイジャックもありるのです。
+派生クラスが基底クラスのメンバ関数をハイジャックするパターンです！
 )
 
-$(P Consider:
+$(P こんなクラスを考えます:
 )
 
 ----
@@ -319,8 +319,8 @@ class A
 }
 ----
 
-$(P and in our application code, we derive from $(CODE A) and add a virtual
-member function $(CODE foo):
+$(P アプリケーションコードでは、$(CODE A) から派生し
+仮想メンバ関数 $(CODE foo) を追加しています:
 )
 
 ----
@@ -333,14 +333,14 @@ class B : A
 
 void abc(B b)
 {
-    b.def();   // calls A.def()
+    b.def();   // A.def() を呼ぶ
 }
 ----
 
-$(P AAA Corporation once again knows nothing about $(CODE B), and adds a
-function
-$(CODE foo(long)) and uses it to implement some needed new functionality of
-$(CODE A):
+$(P AAA社は、またしても $(CODE B) について何も知らず、
+関数
+$(CODE foo(long)) を追加して何か
+$(CODE A) の新しい機能を実装するのに使用しました:
 )
 
 ----
@@ -352,28 +352,28 @@ class A
 
     void def()
     {
-        foo(1L);   // expects to call A.foo(long)
+        foo(1L);   // A.foo(long) を呼ぶと期待されている
     }
 }
 ----
 
-$(P but, whoops, $(CODE A.def()) now calls $(CODE B.foo(long)).
-$(CODE B.foo(long)) has hijacked
-the $(CODE A.foo(long)). So, you might say, the
-designer of A should have had the foresight for this, and make
-$(CODE foo(long)) a non-virtual function. The problem is that $(CODE A)'s
-designer
-may very easily have intended $(CODE A.foo(long)) to be virtual, as it's a new
-feature of $(CODE A). He cannot have known about $(CODE B.foo(long)).
-Take this to the logical conclusion, and we realize that under this system
-of overriding, there is no safe way to add any functionality to $(CODE A).
+$(P しかし、なんと困った、$(CODE A.def()) は $(CODE B.foo(long)) を呼び出してしまうのです。
+つまり $(CODE B.foo(long)) が
+$(CODE A.foo(long)) をハイジャックしたわけです。
+Aの設計者はこれを予見して 
+$(CODE foo(long)) を非仮想関数にしておくべきだった、と考える方もいらっしゃるでしょう。
+しかし問題なのは、$(CODE A)  の設計者が
+$(CODE A.foo(long)) を仮想関数として使うことを意図して機能追加することも大いにあり得るということです。
+彼にはすでに $(CODE B.foo(long)) が別の用途で存在することを知る術はありません。
+論理的な帰結として、
+このオーバーライドのシステムの中で安全に $(CODE A) に機能追加する方法はない、ということになります。
 )
 
-$(P The D solution is straightforward. If a function in a derived class
-overrides a function in a base class, it must use the storage class
-override. If it overrides without using the override storage class
-it's an error. If it uses the override storage class without overriding
-anything, it's an error.
+$(P D での解決策は簡単です。派生クラスの関数が基底クラスの関数をオーバーライドする際には、
+必ず override 宣言を行わなければなりません。
+override と宣言せずにオーバーライドを行おうとすると、
+エラーになります。また逆に、何もオーバーライドしていない関数を
+overrideと宣言するのもエラーです。
 )
 
 ----
@@ -385,22 +385,22 @@ class C
 class D : C
 {
     override void foo();  // ok
-    void bar();           // error, overrides C.bar()
-    override void abc();  // error, no C.abc()
+    void bar();           // エラー。C.bar() をオーバーライドしている
+    override void abc();  // エラー。C.abc() は存在しない
 }
 ----
 
-$(P This eliminates the potential of a derived class member function hijacking
-a base class member function.
+$(P これによって、派生クラスのメンバ関数が
+基底クラスのメンバ関数をハイジャックする潜在的な危険は取り除かれます。
 )
 
 )
 
 
-$(SECTION2 Derived Class Member Function Hijacking #2,
+$(SECTION2 派生クラスメンバ関数ハイジャック #2,
 
-$(P There's one last case of base member function hijacking a derived
-member function. Consider:
+$(P 最後にもう一つ、基底クラスのメンバ関数が派生クラスのメンバ関数をハイジャックする
+パターンがあります。
 )
 
 ----
@@ -417,10 +417,10 @@ class A
 }
 ----
 
-$(P Here, $(CODE foo(long)) is a virtual function that provides a specific
-functionality.
-Our derived class designer overrides $(CODE foo(long)) to replace that behavior
-with one suited to the derived class' purpose:
+$(P $(CODE foo(long))
+は何か特定の機能を持った仮想関数とします。
+派生クラスの設計者は $(CODE foo(long)) をオーバーライドして、
+派生クラスの目的に合わせてカスタマイズしようとします:
 )
 
 ----
@@ -433,15 +433,15 @@ class B : A
 
 void abc(B b)
 {
-    b.def();   // eventually calls B.foo(long)
+    b.def();   // 中で B.foo(long) が呼ばれる
 }
 ----
 
-$(P So far, so good. The call to $(CODE foo(1)) inside $(CODE A)
-winds up correctly calling
-$(CODE B.foo(long)). Now $(CODE A)'s designer decides to optimize things, and
-adds
-an overload for $(CODE foo):
+$(P ここまでは問題ありません。$(CODE A) の内部の $(CODE foo(1))
+は正しく
+$(CODE B.foo(long)) を呼び出します。さて、$(CODE A) の設計者が最適化のために
+$(CODE foo):
+のオーバーロードを追加しました:
 )
 
 ----
@@ -459,7 +459,7 @@ class A
 }
 ----
 
-$(P Now,
+$(P この結果、
 )
 
 ----
@@ -472,13 +472,13 @@ class B : A
 
 void abc(B b)
 {
-    b.def();   // eventually calls A.foo(int)
+    b.def();   // 中で A.foo(int) が呼ばれる
 }
 ----
 
-$(P Doh! $(CODE B) thought he was overriding the behavior of $(CODE A)'s
-$(CODE foo), but did not.
-$(CODE B)'s programmer needs to add another function to $(CODE B):
+$(P おっと！ $(CODE B) は $(CODE A) の
+$(CODE foo) の機能を置き換えたつもりでいますが、そうなっていません。
+$(CODE B) のプログラマは、動作を正しく直すために別の関数を $(CODE B) に追加する必要があります:
 )
 
 ----
@@ -489,13 +489,13 @@ class B : A
 }
 ----
 
-$(P to restore correct behavior. But there's no clue he needs to do that.
-Compile time is of no help at all, as the compilation of $(CODE A) has no
-knowledge of what $(CODE B) overrides.
+$(P しかし、この変更が必要だとは誰も教えてくれません。
+$(CODE A) のコンパイル時には、
+$(CODE B) が何をオーバーライドするかなどの情報はまったくありませんから。
 )
 
-$(P Let's look at how $(CODE A) calls the virtual functions, which it
-does through the vtbl[]. $(CODE A)'s vtbl[] looks like:
+$(P さて、$(CODE A) でどのように仮想関数が呼ばれるかを考えてみましょう。
+仮想関数呼び出しは vtbl[] 経由で行われます。$(CODE A) の vtbl[] はこうなっています:
 )
 
 ----
@@ -503,7 +503,7 @@ A.vtbl[0] = &A.foo(long);
 A.vtbl[1] = &A.foo(int);
 ----
 
-$(P $(CODE B)'s vtbl[] looks like:
+$(P $(CODE B) の vtbl[] はこうです:
 )
 
 ----
@@ -511,10 +511,10 @@ B.vtbl[0] = &B.foo(long);
 B.vtbl[1] = &A.foo(int);
 ----
 
-$(P and the call in $(CODE A.def()) to $(CODE foo(int))
-is actually a call to vtbl[1].
-We'd really like $(CODE A.foo(int)) to be inaccessible from a $(CODE B) object.
-The solution is to rewrite $(CODE B)'s vtbl[] as:
+$(P $(CODE A.def()) 内での $(CODE foo(int)) の呼び出しは、
+実際には vtbl[1] の呼び出しです。
+本当は、$(CODE B) のオブジェクトから $(CODE A.foo(int)) へのアクセスは不可能としたいのです。
+解決策としては $(CODE B) の vtbl[] を:
 )
 
 ----
@@ -522,35 +522,35 @@ B.vtbl[0] = &B.foo(long);
 B.vtbl[1] = &error;
 ----
 
-$(P where, at runtime, an error function is called which will throw an
-exception. It isn't perfect since it isn't caught at compile time,
-but at least the application program won't blithely be calling the wrong
-function and continue on.
+$(P こう書き換えます。実行時にはエラー関数が呼び出され、例外を投げます。
+これはコンパイル時にエラーが検出されないという意味で、完璧ではありません。
+しかし少なくとも、アプリケーションプログラムが間違った関数を呼んで
+そのままそしらぬ顔で実行を続けてしまうということはなくなります。
 )
 
-$(P $(I Update: A compile time warning is now generated whenever the
-vtbl[] gets an error entry.)
-)
-
-)
-
-$(SECTION2 Conclusion,
-
-$(P Function hijacking is a pernicious and particularly nasty problem in
-complex C++ and Java programs because there is no defense against it
-for the application programmer. Some small modifications to the language
-semantics can defend against it without sacrificing any power or performance.
+$(P $(I 追記: 現在では、
+vtbl[] にエラーエントリが入るする場合は、コンパイル時に警告が出るようになっています。)
 )
 
 )
 
-$(SECTION2 References,
+$(SECTION2 まとめ,
+
+$(P 関数ハイジャックは、アプリケーションプログラマからはこれを防止する手段がないため、
+複雑なC++やJavaのプログラムでは特にやっかいな問題となっています。
+言語のセマンティクスにちょっとした修正を加えることで、
+表現力やパフォーマンスを失うことなく、これを防止することが可能になりました。
+)
+
+)
+
+$(SECTION2 参考文献,
 
 $(UL
 $(LI $(LINK2 http://www.digitalmars.com/d/archives/digitalmars/D/Hijacking_56458.html, digitalmars.D - Hijacking))
 $(LI $(LINK2 http://www.digitalmars.com/d/archives/digitalmars/D/Re_Hijacking_56505.html, digitalmars.D - Re: Hijacking))
 $(LI $(LINK2 http://www.digitalmars.com/d/archives/digitalmars/D/aliasing_base_methods_49572.html#N49577, digitalmars.D - aliasing base methods))
-$(LI Eiffel, Scala and C# use override or something analogous)
+$(LI Eiffel, Scala, C# には override やそれに似た機能があります)
 )
 
 $(P Credits:)
@@ -566,6 +566,6 @@ $(LI Andrei Alexandrescu)
 )
 
 Macros:
-	TITLE=Hijack
+	TITLE=関数ハイジャック
 	WIKI=Hijack
 	CATEGORY_ARTICLES=$0
