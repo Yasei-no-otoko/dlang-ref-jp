@@ -1,41 +1,41 @@
 Ddoc
 
-$(COMMUNITY Programming in D for C++ Programmers,
+$(COMMUNITY C++プログラマのためのD言語,
 
 <!--img src="images/cpp1.gif" border=0 align=right alt="C++"-->
 
-Every experienced C++ programmer accumulates a series of idioms and techniques
-which become second nature. Sometimes, when learning a new language, those
-idioms can be so comfortable it's hard to see how to do the equivalent in the
-new language. So here's a collection of common C++ techniques, and how to do the
-corresponding task in D.
+熟練したC++プログラマは誰でも、自然とさまざまなイディオムやテクニックを
+身につけているものです。新しい言語を学ぼうとすると、時にこれらのイディオムに
+慣れすぎたせいで、同じことを別の言語でどう実現するのかわからなくなってしまいます。
+そこでここに、C++のよく知られたテクニックと、
+対応するDでのやり方を集めてみました。
 <p>
 
-See also: <a href="ctod.html">Programming in D for C Programmers</a>
+参照: <a href="ctod.html">CプログラマのためのD言語</a>
 
 $(UL
-	$(LI $(LINK2 #constructors, Defining Constructors))
-	$(LI $(LINK2 #baseclass, Base class initialization))
-	$(LI $(LINK2 #structcmp, Comparing structs))
-	$(LI $(LINK2 #typedefs, Creating a new typedef'd type))
-	$(LI $(LINK2 #friends, Friends))
-	$(LI $(LINK2 #operatoroverloading, Operator overloading))
-	$(LI $(LINK2 #usingdeclaration, Namespace using declarations))
+	$(LI $(LINK2 #constructors, コンストラクタの定義))
+	$(LI $(LINK2 #baseclass, 基底クラスの初期化))
+	$(LI $(LINK2 #structcmp, 構造体の比較))
+	$(LI $(LINK2 #typedefs, typedef された型))
+	$(LI $(LINK2 #friends, friend))
+	$(LI $(LINK2 #operatoroverloading, 演算子オーバーロード))
+	$(LI $(LINK2 #usingdeclaration, 名前空間の using))
 	$(LI $(LINK2 #raii, RAII (Resource Acquisition Is Initialization)))
-	$(LI $(LINK2 #properties, Properties))
-	$(LI $(LINK2 #recursivetemplates, Recursive Templates))
-	$(LI $(LINK2 #metatemplates, Meta Templates))
+	$(LI $(LINK2 #properties, プロパティ))
+	$(LI $(LINK2 #recursivetemplates, 再帰的テンプレート))
+	$(LI $(LINK2 #metatemplates, メタテンプレート))
 	$(LI $(LINK2 #typetraits, Type Traits))
 )
 
 
 <hr><!-- -------------------------------------------- -->
 
-<h3><a name="constructors">Defining constructors</a></h3>
+<h3><a name="constructors">コンストラクタの定義</a></h3>
 
-<h4>The C++ Way</h4>
+<h4>C++ では</h4>
 
-	Constructors have the same name as the class:
+	コンストラクタはクラスと同じ名前を持ちます：
 
 $(CPPCODE
 class Foo
@@ -44,9 +44,9 @@ class Foo
 };
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	Constructors are defined with the this keyword:
+	コンストラクタは予約語thisで定義されます：
 
 ------
 class Foo
@@ -55,28 +55,28 @@ class Foo
 }
 ------
 
-	which reflects how they are used in D.
+	これがDでの方法です。
 
 <hr><!-- -------------------------------------------- -->
-<h3><a name="baseclass">Base class initialization</a></h3>
+<h3><a name="baseclass">基底クラスの初期化</a></h3>
 
-<h4>The C++ Way</h4>
+<h4>C++ では</h4>
 
-	Base constructors are called using the base initializer syntax.
+	基底クラスのコンストラクタは、基底クラス初期化構文で呼び出します：
 
 $(CPPCODE
 class A { A() {... } };
 class B : A
 {
      B(int x)
-	: A()		// call base constructor
+	: A()		// 基底のコンストラクタ呼び出し
      {	...
      }
 };)
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	The base class constructor is called with the super syntax:
+	基底クラスのコンストラクタは、super構文で呼び出します：
 
 ------
 class A { this() { ... } }
@@ -84,14 +84,14 @@ class B : A
 {
      this(int x)
      {	...
-	super();	// call base constructor
+	super();	// 基底のコンストラクタ呼び出し
 	...
      }
 }
 ------
 
-	It's superior to C++ in that the base constructor call can be flexibly placed anywhere in the derived
-	constructor. D can also have one constructor call another one:
+	C++と比べて優れている点として、基底クラスのコンストラクタ呼び出しを、派生クラスのコンストラクタの中の好きな場所に置ける、という点があります。
+	また、Dではコンストラクタからまた別のコンストラクタを呼び出せます：
 
 ------
 class A
@@ -106,8 +106,8 @@ class A
 }
 ------
 
-	Members can also be initialized to constants before the constructor is ever called, so the above example is
-	equivalently written as:
+	メンバは、コンストラクタの呼び出しより前に定数値で初期化できます。
+	これを用いると、上のサンプルは次のように書き換わります：
 
 ------
 class A
@@ -123,11 +123,11 @@ class A
 ------
 
 <hr><!-- -------------------------------------------- -->
-<h3><a name="structcmp">Comparing structs</a></h3>
+<h3><a name="structcmp">構造体の比較</a></h3>
 
-<h4>The C++ Way</h4>
+<h4>C++ では</h4>
 
-	While C++ defines struct assignment in a simple, convenient manner:
+	C++では、構造体の代入には単純で便利な方法がありますが：
 
 $(CPPCODE
 struct A x, y;
@@ -135,8 +135,8 @@ struct A x, y;
 x = y;
 )
 
-	it does not for struct comparisons. Hence, to compare two struct
-	instances for equality:
+	構造体の比較はそうでもありません。
+	二つのインスタンスの等値性を比較するには：
 
 $(CPPCODE
 #include &lt;string.h&gt;
@@ -152,34 +152,34 @@ if (x == y)
     ...
 )
 
-	Note that the operator overload must be done for every struct
-	needing to be compared, and the implementation of that overloaded
-	operator is free of any language help with type checking.
-	The C++ way has an additional problem in that just inspecting the
-	(x == y) does not give a clue what is actually happening, you have
-	to go and find the particular overloaded operator==() that applies
-	to verify what it really does.
+	比較したい全ての構造体毎に、演算子オーバーロードが必要です。
+	しかも、上の==演算子の定義では型チェックによる
+	言語の助けを受けることが、全く出来ていません。
+	C++方式のもう一つの問題は、(x == y) と書いてあるのを見ただけでは、
+	実際に何が起きるのか何もわからないということです。
+	実際の挙動を確認するには、適用される operator==()
+	の定義を探して見る必要があります。
 	<p>
 
-	There's a nasty bug lurking in the memcmp() implementation of operator==().
-	The layout of a struct, due to alignment, can have $(SINGLEQUOTE holes) in it.
-	C++ does not guarantee those holes are assigned any values, and so
-	two different struct instances can have the same value for each member,
-	but compare different because the holes contain different garbage.
+	しかも、memcmp() による operator==() の実装には困ったバグが潜んでいます。
+	アラインメントのせいで、構造体のメンバの間には $(SINGLEQUOTE 穴) があるかもしれません。
+	C++ はこの穴にどんな値が入るかは保証してくれませんので、
+	例え全てのメンバの値が等しくても、インスタンスによって'穴'の値が違うせいで
+	"異なっている"と判定されてしまうかもしれません。
 	<p>
 
-	To address this, the operator==() can be implemented to do a memberwise
-	compare. Unfortunately, this is unreliable because (1) if a member is added
-	to the struct definition one may forget to add it to operator==(), and
-	(2) floating point nan values compare unequal even if their bit patterns
-	match.
+	これを避けるには結局、operator==() では各メンバを一つ一つ比較していく
+	ことになります。しかし残念なことに、これは信頼性の高い方法ではありません。
+	なぜなら (1) 構造体にメンバを追加したときに、operator==() への追加を
+	忘れるかもしれません (2) 浮動小数点数のNaNは、ビットパターンが同じでも
+	等しくないと判定されます。
 	<p>
 
-	There just is no robust solution in C++.
+	結局、C++の範囲ではロバストな解決策はありません。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	D does it the obvious, straightforward way:
+	Dでは直接的で明確な書き方ができます：
 
 ------
 A x, y;
@@ -189,13 +189,13 @@ if (x == y)
 ------
 
 <hr><!-- -------------------------------------------- -->
-<h3><a name="typedefs">Creating a new typedef'd type</a></h3>
+<h3><a name="typedefs">typedef された型</a></h3>
 
-<h4>The C++ Way</h4>
+<h4>C++ では</h4>
 
-	Typedef's in C++ are weak, that is, they really do not introduce
-	a new type. The compiler doesn't distinguish between a typedef
-	and its underlying type.
+	C++のtypedefは'弱い'typedefです。どういうことかというと、
+	このtypedefは実際には新しい型を定義しない、ということです。
+	コンパイラはtypedefされた型と元の型を区別しません。
 
 $(CPPCODE
 #define HANDLE_INIT	((Handle)(-1))
@@ -204,24 +204,24 @@ void foo(void *);
 void bar(Handle);
 
 Handle h = HANDLE_INIT;
-foo(h);			// coding bug not caught
+foo(h);			// みつかりにくいバグ
 bar(h);			// ok
 )
 
-	The C++ solution is to create a dummy struct whose sole
-	purpose is to get type checking and overloading on the new type.
+	C++での解決策は、型チェックとオーバーロードを提供するだけのために
+	ダミーの構造体型を作ることです。
 
 $(CPPCODE
 #define HANDLE_INIT	((void *)(-1))
 struct Handle
 {   void *ptr;
 
-    // default initializer
+    // デフォルト初期化子
     Handle() { ptr = HANDLE_INIT; }
 
     Handle(int i) { ptr = (void *)i; }
 
-    // conversion to underlying type
+    // 元の型への変換
     operator void*() { return ptr; }
 };
 void bar(Handle);
@@ -233,9 +233,9 @@ if (h != HANDLE_INIT)
     ...
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	No need for idiomatic constructions like the above. Just write:
+	上のようなイディオムは不要で、単にこう書けます：
 
 ------
 typedef void* Handle = cast(void*)-1;
@@ -248,17 +248,17 @@ if (h != Handle.init)
     ...
 ------
 
-	Note how a default initializer can be supplied for the typedef as
-	a value of the underlying type.
+	typedefされた型ごとに元の型と違うデフォルト初期化値をあたえられる点にも、
+	ご注目下さい。
 
 <hr><!-- -------------------------------------------- -->
-<h3><a name="friends">Friends</a></h3>
+<h3><a name="friends">friend</a></h3>
 
-<h4>The C++ Way</h4>
+<h4>C++ では</h4>
 
-	Sometimes two classes are tightly related but not by inheritance,
-	but need to access each other's private members. This is done
-	using $(D friend) declarations:
+	しばしば、二つのクラスが非常に強く結びついていて、
+	継承関係にはないけれど互いのprivateメンバにアクセスしたい、
+	ということがあります。これは $(D friend) 宣言で実現します：
 
 $(CPPCODE
 class A
@@ -288,12 +288,12 @@ int B::bar(A *j) { return j->a; }
 int abc(A *p) { return p->a; }
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	In D, friend access is implicit in being a member of the same
-	module. It makes sense that tightly related classes should be
-	in the same module, so implicitly granting friend access to
-	other module members solves the problem neatly:
+	Dでは、同じモジュールのメンバどうしは暗黙のうちにfriend関係になります。
+	強く結びついたクラスは同じモジュールにあるべき、
+	というのは理にかなっていますから、
+	モジュール内はfriendとする、というのは巧みな解決策です：
 
 ------
 module X;
@@ -319,17 +319,17 @@ class B
 int abc(A p) { return p.a; }
 ------
 
-	The $(D private) attribute prevents other modules from
-	accessing the members.
+	$(D private) 属性は、
+	他のモジュールからのメンバへのアクセスを禁じます。
 
 <hr><!-- -------------------------------------------- -->
-<h3><a name="operatoroverloading">Operator overloading</a></h3>
+<h3><a name="operatoroverloading">演算子オーバーロード</a></h3>
 
-<h4>The C++ Way</h4>
+<h4>C++ では</h4>
 
-	Given a struct that creates a new arithmetic data type,
-	it's convenient to overload the comparison operators so
-	it can be compared against integers:
+	struct
+	を使って新しい算術データ型を作ったならば、
+	intと比較できるように比較演算子をオーバーロードすると便利です：
 
 $(CPPCODE
 struct A
@@ -346,12 +346,12 @@ int operator &gt;  (int i, A &a) { return a &lt;  i; }
 int operator &gt;= (int i, A &a) { return a &lt;= i; }
 )
 
-	A total of 8 functions are necessary.
+	合わせて8個の関数が必要でした。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	D recognizes that the comparison operators are all fundamentally
-	related to each other. So only one function is necessary:
+	Dは、比較演算子どうしには本質的に互いに関係があることを認識しています。
+	その結果、関数は一つだけしか必要ありません：
 
 ------
 struct A
@@ -360,25 +360,25 @@ struct A
 }
 ------
 
-	The compiler automatically interprets all the
-	&lt;, &lt;=, &gt; and &gt;=
-	operators in terms of the $(D cmp) function, as well
-	as handling the cases where the left operand is not an
-	object reference.
+	コンパイラは自動で &lt;, &lt;=, &gt; and &gt;=
+	を解釈して、
+	左オペランドがオブジェクトへの参照でない場合も含めて、
+	 $(D opCmp)
+	関数を使って適切に処理します。
 	<p>
 
-	Similar sensible rules hold for other operator overloads,
-	making using operator overloading in D much less tedious and less
-	error prone. Far less code needs to be written to accomplish
-	the same effect.
+	同様の賢い規則は他の演算子のオーバーロードにでも成り立ちます。
+	Dでの演算子オーバーロードはより手間いらずで、エラーの出にくい
+	設計になっています。C++と同じことを為し遂げるのにより少ないコードで
+	十分用が足ります。
 
 <hr><!-- -------------------------------------------- -->
-<h3><a name="usingdeclaration">Namespace using declarations</a></h3>
+<h3><a name="usingdeclaration">名前空間の using</a></h3>
 
-<h4>The C++ Way</h4>
+<h4>C++ では</h4>
 
-	A $(I using-declaration) in C++ is used to bring a name from
-	a namespace scope into the current scope:
+	C++ の $(I using-declaration) は、
+	他の名前空間の名前を現在のスコープへと持ち込みます：
 
 $(CPPCODE
 namespace foo
@@ -388,34 +388,34 @@ namespace foo
 using foo::x;
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	D uses modules instead of namespaces and #include files, and
-	alias declarations take the place of using declarations:
+	Dは名前空間と#includeの代わりにモジュールを使い、
+	using宣言の代わりにはalias宣言を使用します：
 
 ------
-/** Module foo.d **/
+/** モジュール foo.d **/
 module foo;
 int x;
 
-/** Another module **/
+/** 別のモジュール **/
 import foo;
 alias foo.x x;
 ------
 
-	Alias is a much more flexible than the single purpose using
-	declaration. Alias can be used to rename symbols, refer to
-	template members, refer to nested class types, etc.
+	alias は using宣言よりも高い柔軟性をそなえています。
+	シンボルの名前付け替えや、テンプレートメンバの参照、
+	ネストされたクラス名への名前付けなども alias で可能です。
 
 <hr><!-- -------------------------------------------- -->
 <h3><a name="raii">RAII (Resource Acquisition Is Initialization)</a></h3>
 
-<h4>The C++ Way</h4>
+<h4>C++ では</h4>
 
-	In C++, resources like memory, etc., all need to be handled
-	explicitly. Since destructors automatically get called when
-	leaving a scope, RAII is implemented by putting the resource
-	release code into the destructor:
+	C++では、メモリなどのようなリソースは、
+	全て明示的に扱う必要があります。
+	スコープを抜けるときには自動的にデスクトラクタが呼び出されるので、
+	リソースを解放するコードはデストラクタに置くことで、RAIIが実装されます：
 
 $(CPPCODE
 class File
@@ -428,17 +428,17 @@ class File
 };
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	The bulk of resource release problems are simply keeping track
-	of and freeing memory. This is handled automatically in D by
-	the garbage collector. The second common resources used are semaphores
-	and locks, handled automatically with D's $(D synchronized)
-	declarations and statements.
+	リソース管理の問題の多くは、
+	メモリ利用の追跡と解放です。
+	この問題はDではガベージコレクタによって自動的に処理されています。
+	二番目によく使われるリソースはセマフォやロックですが、
+	$(D synchronized) 宣言/文 で自動的に処理されます。
 	<p>
 
-	The few RAII issues left are handled by $(I scope) classes.
-	Scope classes get their destructors run when they go out of scope.
+	残った数少ないRAIIの問題は、$(I scope) クラスで扱います。
+	scopeクラスのデストラクタはスコープ終了と同時に呼び出されます。
 
 ------
 scope class File
@@ -455,19 +455,19 @@ void test()
     if (...)
     {   scope f = new File();
 	...
-    } // f.~this() gets run at closing brace, even if
-      // scope was exited via a thrown exception
+    } // 閉じ括弧に来ると f.~this() が呼ばれます。
+      // 例え例外が投げられたときでも。
 }
 ------
 
 <hr><!-- -------------------------------------------- -->
-<h3><a name="properties">Properties</a></h3>
+<h3><a name="properties">プロパティ</a></h3>
 
-<h4>The C++ Way</h4>
+<h4>C++ では</h4>
 
-	It is common practice to define a field,
-	along with object-oriented
-	get and set functions for it:
+	オブジェクト指向の考え方に沿って、
+	フィールドを定義するのと一緒に
+	get や set 関数を作る習慣は一般的です：
 
 $(CPPCODE
 class Abc
@@ -485,14 +485,14 @@ a.setProperty(3);
 int x = a.getProperty();
 )
 
-	All this is quite a bit of typing, and it tends to make
-	code unreadable by filling
-	it with getProperty() and setProperty() calls.
+	これらはタイプ量はちょっとしたものですし、getProperty() や
+	setProperty() の呼び出しで溢れかえって、
+	コードを読みにくくする傾向もあります。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	Properties can be get and set using the normal field syntax,
-	yet the get and set will invoke methods instead.
+	プロパティは通常のフィールドアクセスの構文で get/set でき、
+	しかしgetとsetの際には代わりにメソッドが呼び出されます。
 
 ------
 class Abc
@@ -508,33 +508,33 @@ class Abc
 }
 ------
 
-	which is used as:
+	これは次のように使います：
 
 ------
 Abc a;
-a.property = 3;		// equivalent to a.property(3)
-int x = a.property;	// equivalent to int x = a.property()
+a.property = 3;		// a.property(3) と同じ
+int x = a.property;	// int x = a.property() と同じ
 ------
 
-	Thus, in D a property can be treated like it was a simple field name.
-	A property can start out actually being a simple field name,
-	but if later if becomes
-	necessary to make getting and setting it function calls,
-	no code needs to be modified other
-	than the class definition.
-	It obviates the wordy practice of defining get and set properties
-	$(SINGLEQUOTE just in case) a derived class should need to override them.
-	It's also a way to have interface classes, which do not have
-	data fields, behave syntactically as if they did.
+	つまり、
+	D ではプロパティは単にフィールド名と同じように扱うことができます。
+	最初は本物のフィールド名として書き始めて後で読み書き用の関数を
+	かませる必要ができたときも、
+	クラス定義以外のコードを書き直す必要が全くありません。
+	派生クラスでオーバーライドの必要ができるかもしれないので
+	$(SINGLEQUOTE 万が一のために) get/setプロパティを定義しておく、
+	と言った冗長な慣習は不要のもととなります。
+	"データフィールドを持たないけれども、構文上は持っているかのように動作する
+	インターフェイスクラス" を作る方法としても活用できます。
 
 <hr><!-- -------------------------------------------- -->
-<h3><a name="recursivetemplates">Recursive Templates</a></h3>
+<h3><a name="recursivetemplates">再帰的テンプレート</a></h3>
 
-<h4>The C++ Way</h4>
+<h4>C++ では</h4>
 
-	An advanced use of templates is to recursively expand
-	them, relying on specialization to end it. A template
-	to compute a factorial would be:
+	テンプレートの発展的な使い方としては、
+	特殊化によって停止を期待して、再帰的なテンプレート展開を行うことです。
+	階乗を計算するテンプレートはこうなります：
 
 $(CPPCODE
 template&lt;int n&gt; class factorial
@@ -555,11 +555,11 @@ void test()
 }
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	The D version is analogous, though a little simpler, taking
-	advantage of promotion of single template members to the
-	enclosing name space:
+	D版も同様ですが、若干シンプルになっています。
+	テンプレートメンバが一つだけの時は
+	識別子が周囲の名前空間へ昇格できる、という性質をうまく利用しています：
 
 ------
 template factorial(int n)
@@ -574,41 +574,41 @@ template factorial(int n : 1)
 
 void test()
 {
-    writefln("%d", factorial!(4));	// prints 24
+    writefln("%d", factorial!(4));	// 24を表示
 }
 ------
 
 <hr><!-- -------------------------------------------- -->
 
-<h3><a name="metatemplates">Meta Templates</a></h3>
+<h3><a name="metatemplates">メタテンプレート</a></h3>
 
-	The problem: create a typedef for a signed integral type that is at
-	least $(I nbits) in size.
+	問題： 最低 $(I nbits) のサイズを持つ符号付き整数型への
+	typedef を作りたい。
 
-<h4>The C++ Way</h4>
+<h4>C++ では</h4>
 
-	This example is simplified and adapted from one written by
-	Dr. Carlo Pescio in
+	この例は、Dr. Carlo Pescio による記事
 	<a href="http://www.eptacom.net/pubblicazioni/pub_eng/paramint.html">
 	Template Metaprogramming: Make parameterized integers portable with this novel technique</a>.
+	を簡単にしたものです。
 	<p>
 
-	There is no way in C++ to do conditional compilation based
-	on the result of an expression based on template parameters, so
-	all control flow follows from pattern matching of the template
-	argument against various explicit template specializations.
-	Even worse, there is no way to do template specializations based
-	on relationships like "less than or equal to", so the example
-	uses a clever technique where the template is recursively expanded,
-	incrementing the template value argument by one each time, until
-	a specialization matches.
-	If there is no match, the result is an unhelpful recursive compiler
-	stack overflow or internal error, or at best a strange syntax
-	error.
+	C++では、テンプレート引数を使った式の結果に基づく条件コンパイルは、
+	不可能です。そこで全ての制御フローは、
+	多数の明示テンプレート特殊化とのパターンマッチングを
+	追うことで実現されます。
+	残念なことに、"より小さいか等しい" といった関係に基づくテンプレート特殊化を
+	記述する方法がないため、今回の例は、
+	テンプレートの再帰的展開を使った巧妙な技を使用します。
+	つまり、境界値にマッチするまでテンプレート引数値を1ずつ増やしていくことで、
+	"より小さいか等しい" を実現しているのです。特殊化版にマッチしなかった場合、
+	コンパイラの止まらない再帰によるスタックオーバーフローや内部エラーか、
+	良くても、
+	奇妙な構文エラーが出力されます。
 	<p>
 
-	A preprocessor macro is also needed to make up for the lack
-	of template typedefs.
+	template typedef の不在を補うために、
+	プリプロセッサマクロも必要です。
 
 $(CPPCODE
 #include &lt;limits.h&gt;
@@ -638,16 +638,16 @@ struct Integer&lt; 64 &gt;
     typedef long long int_type ;
 } ;
 
-// If the required size is not supported, the metaprogram
-// will increase the counter until an internal error is
-// signaled, or INT_MAX is reached. The INT_MAX
-// specialization does not define a int_type, so a
-// compiling error is always generated
+// 要求されたサイズをサポートしていない場合、メタプログラムは、
+// 内部エラーが発生するか INT_MAX に達するまで
+// カウンタを増やし続けます。 INT_MAX の特殊化版は
+// int_type を提供しないようにすることで、
+// 常にコンパイルエラーを起こすことができます。
 struct Integer&lt; INT_MAX &gt;
 {
 } ;
 
-// A bit of syntactic sugar
+// ちょっとした構文糖
 #define Integer( nbits ) Integer&lt; nbits &gt; :: int_type
 
 #include &lt;stdio.h&gt;
@@ -666,8 +666,8 @@ int main()
 
 <h4>The C++ Boost Way</h4>
 
-	This version uses the C++ Boost library. It was provided
-	by David Abrahams.
+	これは C++ Boost library を使ったバージョンです。
+	David Abrahams によって書かれました。
 
 $(CPPCODE
 #include &lt;boost/mpl/if.hpp&gt;
@@ -696,14 +696,14 @@ int main()
 }
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	The D version could also be written with recursive templates,
-	but there's a better way.
-	Unlike the C++ example, this one is fairly easy to
-	figure out what is going on.
-	It compiles quickly, and gives a sensible compile time message
-	if it fails.
+	D版も再帰テンプレートを使って書いても構いませんが、
+	もっといい方法があります。
+	C++の例とは違って、このコードによって何が起きているのかが
+	極めてわかりやすくなっています。
+	コンパイル速度も速く、コンパイル失敗するときも、
+	何が起きたかわかりやすいエラーメッセージを表示します。
 
 ------
 import std.stdio;
@@ -738,16 +738,16 @@ int main()
 
 <h3><a name="typetraits">Type Traits</a></h3>
 
-	Type traits are another term for being able to find out
-	properties of a type at compile time.
+	"Type traits" とは、
+	コンパイル時に型固有の情報を探し出す方法の別名です。
 
-<h4>The C++ Way</h4>
+<h4>C++ では</h4>
 
-	The following template comes from
-	<a href="http://www.amazon.com/exec/obidos/ASIN/0201734842/ref=ase_classicempire/102-2957199-2585768">
+	以下のテンプレートは、
+	<a href="http://www.amazon.co.jp/dp/0201734842">
 	C++ Templates: The Complete Guide, David Vandevoorde, Nicolai M. Josuttis</a>
-	pg. 353 which determines if the template's argument type
-	is a function:
+	の353ページから抜粋したものです。
+	テンプレート引数型が関数であるかどうかを判定しています：
 
 $(CPPCODE
 template&lt;typename T&gt; class IsFunctionT
@@ -769,14 +769,14 @@ void test()
 }
 )
 
-	This template relies on the $(SFINAE) principle.
-	Why it works is a fairly advanced template topic.
+	このテンプレートは、$(SFINAE) 原則を利用しています。
+	そのため、テンプレートの話題としては高度な部類に属するものとされています。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
+	Dでは、
 	$(ACRONYM SFINAE, Substitution Failure Is Not An Error)
-	can be done in D without resorting to template argument
-	pattern matching:
+	やテンプレート引数のパターンマッチといった小技に頼らず実現できます：
 
 ------
 template IsFunctionT(T)
@@ -795,10 +795,10 @@ void test()
 }
 ------
 
-	The task of discovering if a type is a function doesn't need a
-	template at all, nor does it need the subterfuge of attempting to
-	create the invalid array of functions type.
-	The $(ISEXPRESSION) expression can test it directly:
+	型が関数型かどうかを判定するという処理は、テンプレートの力を借りる必要は全くありませんし、
+	ましてや配列型の不正な配列を作ろうとするなどというおかしなコードなど、
+	全く不要です。
+	Dの $(ISEXPRESSION) がまさにこの仕事をやってのけます：
 
 ------
 void test()
@@ -813,6 +813,6 @@ void test()
 )
 
 Macros:
-	TITLE=Programming in D for C++ Programmers
+	TITLE=C++プログラマのためのD言語
 	WIKI=CPPtoD
 	CATEGORY_OVERVIEW=$0
