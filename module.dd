@@ -1,6 +1,6 @@
 Ddoc
 
-$(SPEC_S Modules,
+$(SPEC_S モジュール,
 
 $(GRAMMAR
 $(GNAME Module):
@@ -38,54 +38,54 @@ $(V2  	$(GLINK2 class, SharedStaticConstructor)
 )
 
 
-	$(P Modules have a one-to-one correspondence with source files.
-	The module name is the file name with the path and extension
-	stripped off.
+	$(P モジュールはソースファイルと１対１に対応します。
+	モジュール名は、
+	ソースファイル名からパスと拡張子を除いたものになります。
 	)
 
-	$(P Modules automatically provide a namespace scope for their contents.
-	Modules superficially resemble classes, but differ in that:
+	$(P モジュールは自動で、その中身をスコープとする名前空間となります。
+	モジュールは表面的にはクラスと似たところがありますが、別のものです：
 	)
 
 	$(UL
-	$(LI There's only one instance of each module, and it is
-	statically allocated.)
+	$(LI モジュール毎にインスタンスは１つだけで、
+		静的に割り当てられます。)
 
-	$(LI There is no virtual table.)
+	$(LI 仮想関数テーブルを持ちません。)
 
-	$(LI Modules do not inherit, they have no super modules, etc.)
+	$(LI モジュールには継承や親モジュールといった概念がありません。)
 
-	$(LI Only one module per file.)
+	$(LI １つのファイルには１つだけモジュールが対応します。)
 
-	$(LI Module symbols can be imported.)
+	$(LI モジュール内のシンボルはimportできます。)
 
-	$(LI Modules are always compiled at global scope, and are unaffected
-	by surrounding attributes or other modifiers.)
+	$(LI モジュールは常にグローバルスコープでコンパイルされ、
+		周りで宣言された属性に影響を受けることなどはありません。)
 	)
 
-	$(P Modules can be grouped together in hierarchies called $(I packages).
+	$(P モジュールは、$(I packages) と呼ばれる階層にまとめることができます。
 	)
 
-	$(P Modules offer several guarantees:)
+	$(P モジュールは数々の保証を提供します:)
 
 	$(UL
 
-	$(LI The order in which modules are imported does not affect the
-	semantics.)
+	$(LI モジュールを import
+	する順序がセマンティクスに影響することはありません。)
 
-	$(LI The semantics of a module are not affected by what imports
-	it.)
+	$(LI どこから import されるかによって、
+	そのモジュールのセマンティクスが変わることもありません。)
 
-	$(LI If a module C imports modules A and B, any modifications to B
-	will not silently change code in C that is dependent on A.)
+	$(LI モジュールが C がモジュール A と B をimportしてるときに、Bに対する変更によって、
+	Aに依存するC内のコードが勝手に変更されることはありません。)
 
 	)
 
-<h3>Module Declaration</h3>
+<h3>モジュール宣言</h3>
 
-	$(P The $(I ModuleDeclaration) sets the name of the module and what
-	package it belongs to. If absent, the module name is taken to be the
-	same name (stripped of path and extension) of the source file name.
+	$(P $(I ModuleDeclaration) では、モジュールの名前と、
+	属するパッケージを指定します。もし宣言が存在しなければ、
+	ソースファイル名と同じ名前（パスと拡張子は除かれる）が使用されます。
 	)
 
 $(GRAMMAR
@@ -107,35 +107,35 @@ $(GNAME PackageName):
 	$(I Identifier)
 )
 
-	$(P The $(I Identifiers) preceding the rightmost are the $(I Packages)
-	that the module is in. The packages correspond to directory names in
-	the source file path.
-	Package names cannot be keywords, hence the corresponding
-	directory names cannot be keywords, either.
+	$(P 右端の一個前にある $(I Identifiers) は、
+	モジュールが属する $(I パッケージ) を指します。
+	パッケージはソースファイルの置かれているディレクトリに対応します。
+	予約語をパッケージ名にすることはできません。
+	従って、予約語を対応するディレクトリ名に使うこともできません。
 	)
 
-	$(P If present, the $(I ModuleDeclaration) appears syntactically first
-	in the source file, and there can be only one per source file.
+	$(P もし $(I ModuleDeclaration) を書くならば、
+	ソースファイルの先頭に、一個だけ書く必要があります。
 	)
 
-	$(P Example:)
+	$(P 例：)
 
 ---------
-module c.stdio;    // this is module $(B stdio) in the $(B c) package
+module c.stdio;    // これはモジュール $(B stdio) で、パッケージ $(B c) に属します
 ---------
 
-	$(P By convention, package and module names are all lower case. This is
-	because those names have a one-to-one correspondence with the operating
-	system's directory and file names, and many file systems
-	are not case sensitive. All lower case package and module names will
-	minimize problems moving projects between dissimilar file systems.
+	$(P 慣習として、パッケージ名とモジュール名は全て小文字で書きます。
+	この名前はOSのファイル名やディレクトリ名に対応していて、
+	多くのファイルシステムでは大文字小文字を区別しないからです。
+	全て小文字にすると決めておくことで、
+	プロジェクトを別のファイルシステムへ持っていったときの問題が少なくなります。
 	)
 
-<h2><a name="ImportDeclaration">Import Declaration</a></h2>
+<h2><a name="ImportDeclaration">import 宣言</a></h2>
 
 	$(P
-	Symbols from one module are made available in another module
-	by using the $(I ImportDeclaration):
+	テキストをそのまま#includeするのではなく、Dでは、
+	$(I ImportDeclaration) によってシンボルだけをロードします:
 	)
 
 $(GRAMMAR
@@ -167,37 +167,37 @@ $(GNAME ModuleAliasIdentifier):
 	$(I Identifier)
 )
 
-	$(P There are several forms of the $(I ImportDeclaration),
-	from generalized to fine-grained importing.)
+	$(P $(I ImportDeclaration) には、一般化されたものからより粒度を細かくしたものまで、
+	いくつか種類があります。)
 
-	$(P The order in which $(I ImportDeclaration)s occur has no
-	significance.)
+	$(P $(I ImportDeclaration)
+	の順番は特に意味を持ちません。)
 
-	$(P $(I ModuleFullyQualifiedName)s in the $(I ImportDeclaration) must be
-	fully qualified
-	with whatever packages they are in. They are not considered to
-	be relative to the module that imports them.)
+	$(P $(I ImportDeclaration) の $(I ModuleFullyQualifiedName) は、
+	どのパッケージに含まれているかにかかわらず、
+	完全修飾が必要です。
+	import元モジュールからの相対パスの考慮などはなされません。)
 
-<h3>Basic Imports</h3>
+<h3>基本 import (Basic Import)</h3>
 
-	$(P The simplest form of importing is to just list the
-	modules being imported:)
+	$(P 一番シンプルなimport文は、
+	単にimportしたいモジュールを列挙します:)
 
 ---------
-import std.stdio; // import module $(B stdio) from the $(B std) package
-import foo, bar;  // import modules $(B foo) and $(B bar)
+import std.stdio; // モジュール $(B stdio) を $(B std) パッケージからimport
+import foo, bar;  // モジュール $(B foo) と $(B bar) をimport
 
 void main()
 {
-    writefln("hello!\n");  // calls std.stdio.writefln
+    writefln("hello!\n");  // std.stdio.writefln を呼び出す
 }
 ---------
 
-	$(P How basic imports work is that first a name is searched for in the
-	current namespace. If it is not found, then it is looked for in the
-	imports.
-	If it is found uniquely among the imports, then that is used. If it is
-	in more than one import, an error occurs.
+	$(P 前がカレントの名前空間から見つからなかった場合に、
+	import
+	したモジュールから名前が探索されます。
+	import中で見つかった名前が唯一だった場合は、それが採用されます。
+	複数見つかった場合はエラーになります。
 	)
 
 ---
@@ -217,8 +217,8 @@ module C;
 import A;
 void foo();
 void test()
-{ foo(); // C.foo() is called, it is found before imports are searched
-  bar(); // A.bar() is called, since imports are searched
+{ foo(); // C.foo() の呼び出し。importよりもカレント名前空間を先に探索する
+  bar(); // A.bar() の呼び出し。importが使われる
 }
 ---
 
@@ -227,9 +227,9 @@ module D;
 import A;
 import B;
 void test()
-{ foo();   // error, A.foo() or B.foo() ?
-  A.foo(); // ok, call A.foo()
-  B.foo(); // ok, call B.foo()
+{ foo();   // エラー。A.foo() か B.foo() か曖昧
+  A.foo(); // ok, A.foo()
+  B.foo(); // ok, B.foo()
 }
 ---
 
@@ -239,20 +239,20 @@ import A;
 import B;
 alias B.foo foo;
 void test()
-{ foo();   // call B.foo()
-  A.foo(); // call A.foo()
-  B.foo(); // call B.foo()
+{ foo();   // B.foo() の呼び出し
+  A.foo(); // A.foo() の呼び出し
+  B.foo(); // B.foo() の呼び出し
 }
 ---
 
-<h3>Public Imports</h3>
+<h3>公開 import (Public Import)</h3>
 
-	$(P By default, imports are $(I private). This means that
-	if module A imports module B, and module B imports module
-	C, then C's names are not searched for. An import can
-	be specifically declared $(I public), when it will be
-	treated as if any imports of the module with the $(I ImportDeclaration)
-	also import the public imported modules.
+	$(P デフォルトでは、import は $(I private) です。これは例えば
+	モジュール A がモジュール B を、モジュール B はモジュール
+	C をimportしていた場合、Cの名前はAでは探索されないということです。ただし、
+	import を特別に $(I public) と宣言すると、その import
+	が取り込むモジュール内の全ての名前が、
+	現在のモジュールを外からimportするモジュールにも見えるようになります。
 	)
 
 ---
@@ -270,26 +270,26 @@ module C;
 import A;
 public import B;
 ...
-foo();	// call  A.foo()
-bar();	// calls B.bar()
+foo();	// A.foo() の呼び出し
+bar();	// B.bar() の呼び出し
 ---
 
 ---
 module D;
 import C;
 ...
-foo();	// error, foo() is undefined
-bar();	// ok, calls B.bar()
+foo();	// foo() は未定義
+bar();	// ok, B.bar() の呼び出し
 ---
 
-<h3>Static Imports</h3>
+<h3>静的 import (Static Import)</h3>
 
-	$(P Basic imports work well for programs with relatively few modules
-	and imports. If there are a lot of imports, name collisions
-	can start occurring between the names in the various imported modules.
-	One way to stop this is by using static imports.
-	A static import requires one to use a fully qualified name
-	to reference the module's names:
+	$(P 基本importは、比較的少なめのモジュールとimportで成り立っているプログラムでは
+	うまく働きます。しかしimportの数が増えてくると、
+	多数のモジュールをimportしたことによる名前の衝突が起こり始めます。
+	これを避ける手段のひとつが、static importです。
+	static import した名前は、
+	使うときには完全修飾しなければいけません:
 	)
 
 ---
@@ -297,75 +297,75 @@ static import std.stdio;
 
 void main()
 {
- writefln("hello!");           // error, writefln is undefined
- std.stdio.writefln("hello!"); // ok, writefln is fully qualified
+ writefln("hello!");           // エラー。writefln は未定義
+ std.stdio.writefln("hello!"); // ok。writefln は完全修飾されている
 }
 ---
 
 
-<h3>Renamed Imports</h3>
+<h3>改名 import (Renamed Import)</h3>
 
-	$(P A local name for an import can be given, through which
-	all references to the module's symbols must be qualified
-	with:)
+	$(P importするモジュールにローカルな名前を与えて、
+	その名前で修飾したアクセスを
+	強制することができます:)
 
 ---
 import io = std.stdio;
 
 void main()
 {
- io.writefln("hello!");        // ok, calls std.stdio.writefln
- std.stdio.writefln("hello!"); // error, std is undefined
- writefln("hello!");           // error, writefln is undefined
+ io.writefln("hello!");        // ok。std.stdio.writefln の呼び出し
+ std.stdio.writefln("hello!"); // エラー。std は未定義
+ writefln("hello!");           // エラー。writefln は未定義
 }
 ---
 
-	$(P Renamed imports are handy when dealing with
-	very long import names.)
+	$(P 改名importは、
+	とても長いモジュール名を扱うのに便利です。)
 
-<h3>Selective Imports</h3>
+<h3>選択 import (Selective Import)</h3>
 
-	$(P Specific symbols can be exclusively imported from
-	a module and bound into the current namespace:)
+	$(P モジュールから一部のシンボルだけをimportして、
+	現在の名前空間で束縛することができます:)
 
 ---
 import std.stdio : writefln, foo = writef;
 
 void main()
 {
- std.stdio.writefln("hello!"); // error, std is undefined
- writefln("hello!");           // ok, writefln bound into current namespace
- writef("world");              // error, writef is undefined
- foo("world");                 // ok, calls std.stdio.writef()
- fwritefln(stdout, "abc");     // error, fwritefln undefined
+ std.stdio.writefln("hello!"); // エラー。std は未定義
+ writefln("hello!");           // ok。writefln はカレントの名前空間で束縛されている
+ writef("world");              // エラー。writef は未定義
+ foo("world");                 // ok。std.stdio.writef() の呼び出し
+ fwritefln(stdout, "abc");     // エラー。fwritefln は未定義
 }
 ---
 
-	$(P $(B static) cannot be used with selective imports.)
+	$(P $(B static) は選択importに対しては指定できません。)
 
-<h3>Renamed and Selective Imports</h3>
+<h3>改名選択 import</h3>
 
-	$(P When renaming and selective importing are combined:)
+	$(P 改名importと選択importを組み合わせた例です：)
 
 ------------
 import io = std.stdio : foo = writefln;
 
 void main()
 {
- writefln("bar");           // error, writefln is undefined
- std.stdio.foo("bar");      // error, foo is bound into current namespace
- std.stdio.writefln("bar"); // error, std is undefined
- foo("bar");                // ok, foo is bound into current namespace,
-                            // FQN not required
- io.writefln("bar");        // ok, io=std.stdio bound the name io in
-                            // the current namespace to refer to the entire module
- io.foo("bar");             // error, foo is bound into current namespace,
-                            // foo is not a member of io
+ writefln("bar");           // エラー。writefln は未定義。
+ std.stdio.foo("bar");      // エラー。foo は現在の名前空間で束縛されている。
+ std.stdio.writefln("bar"); // エラー。std は未定義。
+ foo("bar");                // ok。foo は現在の名前空間にある。
+                            // 完全修飾名は不要。
+ io.writefln("bar");        // ok。io=std.stdio で、ioという名前が
+                            // モジュール全体を指すよう導入されている。
+ io.foo("bar");             // エラー。
+                            // foo は現在の名前空間にある io のメンバではない
 --------------
 
-<h3>Scoped Imports</h3>
+<h3>スコープ限定 import (Scoped Import)</h3>
 
-    $(P Import declarations may be used at any scope. For example:)
+    $(P import 宣言は任意のスコープで使用できます。例:)
 
 --------------
 void main() {
@@ -374,36 +374,36 @@ void main() {
 }
 --------------
 
-    $(P The imports are looked up to satisfy any unresolved symbols at that scope.
-    Imported symbols may hide symbols from outer scopes.)
+    $(P このimportは、そのスコープ内での未解決シンボルを探すのに使われます。
+    importされたシンボルが、外部のスコープのシンボルを隠すことがあります。)
 
 
-	$(P In function scopes, imported symbols only become visible after the
-	import declaration
-	lexically appears in the function body. In other words, imported symbols
-	at function scope cannot be forward referenced.
+	$(P 関数スコープでは、import 宣言がソースコード中で現れた箇所より下でのみ、
+	import されたシンボルが見えるようになります。
+	言い方を変えると、関数スコープでの import
+	は前方参照できません。
 	)
 
 --------------
 void main() {
   void writeln(string) {}
   void foo() {
-    writeln("bar"); // calls main.writeln
+    writeln("bar"); // main.writeln を呼ぶ
     import std.stdio;
-    writeln("bar"); // calls std.stdio.writeln
+    writeln("bar"); // std.stdio.writeln を呼ぶ
     void writeln(string) {}
-    writeln("bar"); // calls main.foo.writeln
+    writeln("bar"); // main.foo.writeln を呼ぶ
   }
-  writeln("bar"); // calls main.writeln
-  std.stdio.writeln("bar");  // error, std is undefined
+  writeln("bar"); // main.writeln を呼ぶ
+  std.stdio.writeln("bar");  // エラー。std は未定義
 }
 --------------
 
-<h3>Module Scope Operator</h3>
+<h3>モジュールのスコープ解決演算子</h3>
 
-	Sometimes, it's necessary to override the usual lexical scoping rules
-	to access a name hidden by a local name. This is done with the
-	global scope operator, which is a leading $(SINGLEQUOTE .):
+	ローカルの名前で隠されてしまったグローバルの識別子にアクセスしたいこと、
+	たまにあります。
+	そんな時は、Dではスコープ解決演算子 $(SINGLEQUOTE .) を使います:
 
 ---------
 int x;
@@ -411,99 +411,99 @@ int x;
 int foo(int x)
 {
  if (y)
-   return x;  // returns foo.x, not global x
+   return x;  // グローバルの x ではなく foo.x を返す
  else
-   return .x; // returns global x
+   return .x; // グローバルの x を返す
 }
 ---------
 
-	The leading $(SINGLEQUOTE .) means look up the name at the module scope level.
+	名前の前に $(SINGLEQUOTE .) を付けると、モジュールスコープレベルで名前を探索することを意味します。
 
-<a name="staticorder"><h2>Static Construction and Destruction</h2></a>
+<a name="staticorder"><h2>静的コンストラクタ・デストラクタ</h2></a>
 
-	$(P Static constructors are code that gets executed to initialize
-	a module or a class before the main() function gets called.
-	Static destructors are code that gets executed after the main()
-	function returns, and are normally used for releasing
-	system resources.)
+	$(P 静的コンストラクタ、とは、main() 関数を呼び出すより前に
+	モジュールやクラスの初期化のために実行されるコードのことです。
+	静的デストラクタは、
+	逆にmain()の後に、モジュールが確保した
+	システムリソースの解放などのために実行されるコードです。)
 
-	$(P There can be multiple static constructors and static destructors
-	within one module. The static constructors are run in lexical order,
-	the static destructors are run in reverse lexical order.)
+	$(P 一つのモジュールに複数の静的コンストラクタや静的デストラクタを定義することもできます。
+	静的コンストラクタはソースコードに書かれた順に上から実行され、
+	静的デストラクタはその逆順に実行されます。)
 
 $(V2
-	$(P Static constructors and static destructors run on thread local
-	data, and are run whenever threads are created or destroyed.)
+	$(P 静的コンストラクタや静的デストラクタはスレッドローカル記憶域に対して実行され、
+	スレッドが生成/破棄されるたびに実行されます。)
 
-	$(P Shared static constructors and shared static destructors are run
-	on global shared data, and constructors are run once on program startup
-	and destructors are run once on program termination.
+	$(P shared静的コンストラクタやshared静的デストラクタはグローバル記憶域に対して実行され、
+	プログラムの開始時と終了時に、
+	一度ずつだけ実行されます。
 	)
 )
 
-<h3>Order of Static Construction</h3>
+<h3>静的コンストラクタの順序</h3>
 
 $(V2
-	$(P Shared static constructors on all modules are run before any static
-	constructors.
+	$(P 各モジュールのshared静的コンストラクタは、
+	どの静的コンストラクタよりも前に実行されます。
 	)
 )
 
-	$(P The order of static initialization is implicitly determined by
-	the $(I import) declarations in each module. Each module is
-	assumed to depend on any imported modules being statically
-	constructed first.
-	Other than following that rule, there is no imposed order
-	on executing the module static constructors.
+	$(P 静的初期化の順序は、各モジュールに書かれた
+	$(I import) によって、暗黙のうちに決定されます。各モジュールは
+	import している他のモジュールに依存していると仮定し、
+	被依存モジュールを先に構築するように順序が決まります。
+	このルールに従ってさえいれば、
+	その他のモジュールどうしの実行順序については特に定まっていません。
 	)
 
-	$(P Cycles (circular dependencies) in the import declarations are
-	allowed as long as not both of the modules contain static constructors
-	or static destructors. Violation of this rule will result
-	in a runtime exception.
+	$(P import宣言の循環（モジュールがお互いをimportしあう、循環依存）は、
+	どちらか一方が静的構築の不要なモジュールであれば、問題ありません。
+	双方とも静的構築が必要であった場合は、
+	実行時例外が発生します。
 	)
 
-<h3>Order of Static Construction within a Module</h3>
+<h3>モジュール内部での静的構築の順序</h3>
 
-	Within a module, the static construction occurs in the lexical
-	order in which they appear.
+	モジュールの内部では、静的コンストラクタは、
+	ソースコードに書かれた順で上から実行されていきます。
 
-<h3>Order of Static Destruction</h3>
+<h3>静的デストラクタの順序</h3>
 
-	$(P It is defined to be exactly the reverse order that static
-	construction was performed in. Static destructors for individual
-	modules will only be run if the corresponding static constructor
-	successfully completed.
+	$(P 静的コンストラクタのちょうど逆の順番で実行される、
+	と定義されています。
+	モジュールの静的デストラクタコードは、
+	対応する静的コンストラクタが正しく完了していた場合にのみ実行されます。
 	)
 $(V2
-	$(P Shared static destructors are executed after static destructors.
+	$(P shared静的デストラクタは全ての静的デストラクタより後に実行されます。
 	)
 )
 
 
-<h3>Order of Unit tests</h3>
+<h3>単体テストの順序</h3>
 
-	Unit tests are run in the lexical order in which they appear
-	within a module.
+	モジュールの内部では、単体テストは、
+	ソースコードに書かれた順で上から実行されていきます。
 
-<h2>$(LNAME2 MixinDeclaration, Mixin Declaration)</h2>
+<h2>$(LNAME2 MixinDeclaration, mixin 宣言)</h2>
 
 $(GRAMMAR
 $(GNAME MixinDeclaration):
     $(B mixin) $(B $(LPAREN)) $(ASSIGNEXPRESSION) $(B $(RPAREN)) $(B ;)
 )
 
-	$(P The $(ASSIGNEXPRESSION)
-	must evaluate at compile time
-	to a constant string.
-	The text contents of the string must be compilable as a valid
-	$(GLINK DeclDefs), and is compiled as such.
+	$(P $(ASSIGNEXPRESSION)
+	は、
+	コンパイル時定数へと評価される文字列である必要があります。
+	その文字列の内容は正当な 
+	$(GLINK DeclDefs) としてコンパイルできるものでなければならず、その場合、その通りにコンパイルされます。
 	)
 
 )
 
 Macros:
-	TITLE=Modules
+	TITLE=モジュール
 	WIKI=Module
 	CATEGORY_SPEC=$0
 	FOO=
