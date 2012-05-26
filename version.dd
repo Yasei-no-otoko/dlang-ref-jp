@@ -1,11 +1,11 @@
 Ddoc
 
-$(SPEC_S Conditional Compilation,
+$(SPEC_S 条件コンパイル,
 
-	$(P $(I Conditional compilation) is the process of selecting which
-	code to compile and which code to not compile.
-	(In C and C++, conditional compilation is done with the preprocessor
-	directives $(CODE #if) / $(CODE #else) / $(CODE #endif).)
+	$(P $(I Conditional compilation) とは、
+	コンパイルするコードとしないコードを選択する過程のことを言います。
+	（C や C++ では、条件コンパイラは、プリプロセッサの
+	$(CODE #if) / $(CODE #else) / $(CODE #endif) によって実現されていました。）
 	)
 
 $(GRAMMAR
@@ -28,31 +28,31 @@ $(GNAME ConditionalStatement):
     $(GLINK Condition) $(GLINK2 statement, NoScopeNonEmptyStatement) $(B else) $(GLINK2 statement, NoScopeNonEmptyStatement)
 )
 
-	$(P If the $(GLINK Condition) is satisfied, then the following
-	$(I CCDeclarationBlock) or $(I Statement) is compiled in.
-	If it is not satisfied, the $(I CCDeclarationBlock) or $(I Statement)
-	after the optional $(CODE else) is compiled in.
+	$(P $(GLINK Condition) が満たされた時に、その後ろの
+	$(I CCDeclarationBlock) か $(I Statement) がコンパイルされます。
+	条件が満たされなかったときは、$(CODE else) がもしあればその後ろの
+	$(I CCDeclarationBlock) か $(I Statement) がコンパイルされます。
 	)
 
-	$(P Any $(I CCDeclarationBlock) or $(I Statement) that is not
-	compiled in still must be syntactically correct.
+	$(P 例えコンパイルされない $(I CCDeclarationBlock) や $(I Statement) であっても、
+	文法的には正しいD言語のコードである必要があります。
 	)
 
-	$(P No new scope is introduced, even if the
-	$(I CCDeclarationBlock) or $(I Statement)
-	is enclosed by $(CODE { }).
+	$(P 新しいスコープは導入されません。
+	例え $(I CCDeclarationBlock) や $(I Statement)
+	が $(CODE { }) で囲まれていたとしてもです。
 	)
 
-	$(P $(I ConditionalDeclaration)s and $(I ConditionalStatement)s
-	can be nested.
+	$(P $(I ConditionalDeclaration) と $(I ConditionalStatement)
+	はネストすることが可能です。
 	)
 
-	$(P The $(GLINK StaticAssert) can be used
-	to issue errors at compilation time for branches of the conditional
-	compilation that are errors.
+	$(P $(GLINK StaticAssert) は、
+	コンパイル時にエラーを表示する機能です。
+	条件コンパイルの分岐でエラーとしたい部分などに使います。
 	)
 
-	$(P $(I Condition) comes in the following forms:
+	$(P $(I Condition) は以下の形式で記述します：
 	)
 
 $(GRAMMAR
@@ -62,7 +62,7 @@ $(GNAME Condition):
     $(GLINK StaticIfCondition)
 )
 
-<h2>$(LNAME2 version, Version Condition)</h2>
+<h2>$(LNAME2 version, version 条件)</h2>
 
 $(GRAMMAR
 $(GNAME VersionCondition):
@@ -72,55 +72,55 @@ $(V2
     $(B version $(LPAREN)) $(B unittest) $(B $(RPAREN)))
 )
 
-	$(P Versions enable multiple versions of a module to be implemented
-	with a single source file.
+	$(P version は、
+	一つのソースファイルで複数バージョンのモジュールを実装することを可能にします。
 	)
 
-	$(P The $(I VersionCondition) is satisfied if the $(I IntegerLiteral)
-	is greater than or equal to the current $(I version level),
-	or if $(I Identifier) matches a $(I version identifier).
+	$(P $(I VersionCondition) 条件は、$(I IntegerLiteral)
+	が現在の $(I バージョンレベル) 以上の時か、
+	$(I Identifier) が現在の $(I バージョン識別子) にマッチしたときに満たされます。
 	)
 
-	$(P The $(I version level) and $(I version identifier) can
-	be set on the command line by the $(B -version) switch
-	or in the module itself with a $(GLINK VersionSpecification),
-	or they can be predefined by the compiler.
+	$(P $(I バージョンレベル) と $(I バージョン識別子) は、
+	コマンドラインの $(B -version) スイッチで指定するか、
+	モジュールの中の $(GLINK VersionSpecification) で指定するか、
+	コンパイラの定義済みバージョンであるかのいずれかです。
 	)
 
-	$(P Version identifiers are in their own unique name space, they do
-	not conflict with debug identifiers or other symbols in the module.
-	Version identifiers defined in one module have no influence
-	over other imported modules.
+	$(P デバッグ識別子は専用の名前空間を持つので、
+	バージョン識別子をはじめとする他の識別子とは衝突しません。
+	デバッグ識別子は書かれたモジュール内にのみ影響し、
+	他にimportされたモジュールには影響しません。
 	)
 
 ------
 int k;
-version (Demo) // compile in this code block for the demo version
+version (Demo) // デモ版ではこのブロックをコンパイルする
 { int i;
-  int k;    // error, k already defined
+  int k;    // エラー。kが既に定義されている
 
   i = 3;
 }
-x = i;      // uses the i declared above
+x = i;      // 上で定義された i を使用
 ------
 
 ------
 version (X86)
 {
-  ... // implement custom inline assembler version
+  ... // カスタムのインラインアセンブラ版を実装
 }
 else
 {
-  ... // use default, but slow, version
+  ... // デフォルトの、遅い版
 }
 ------
 
-$(V2	$(P The $(B version(unittest)) is satisfied if and only if the code is
-	compiled with unit tests enabled (the $(D -unittest) option on $(B dmd)).
+$(V2	$(P $(B version(unittest)) は、
+	コードが単体テスト付きでコンパイルされている時 ($(B dmd) の $(D -unittest) のオプション) のみ有効になります。
 	)
 )
 
-<h3>$(LNAME2 VersionSpecification, Version Specification)</h3>
+<h3>$(LNAME2 VersionSpecification, version 条件指定)</h3>
 
 $(GRAMMAR
 $(GNAME VersionSpecification):
@@ -128,8 +128,8 @@ $(GNAME VersionSpecification):
     $(B version =) $(GLINK2 lex, IntegerLiteral) $(B ;)
 )
 
-	$(P The version specification makes it straightforward to group
-	a set of features under one major version, for example:
+	$(P バージョン条件指定を使うと、
+	メジャーバージョン毎に導入したい機能の切り分けなどが簡単になります。例えば：
 	)
 
 ------
@@ -146,11 +146,11 @@ version (HomeEdition)
 ...
 version (FeatureB)
 {
-  ... implement Feature B ...
+  ... Feature B の実装 ...
 }
 ------
 
-	$(P Version identifiers or levels may not be forward referenced:
+	$(P バージョン識別子やバージョン番号の前方参照は、不正です：
 	)
 
 ------
@@ -158,20 +158,20 @@ version (Foo)
 {
   int x;
 }
-version = Foo;	// error, Foo already used
+version = Foo;	// エラー、Foo は既に使用されている
 ------
-	$(P $(I VersionSpecification)s may only appear at module scope.)
+	$(P $(I VersionSpecification) はモジュールスコープでのみ記述することができます)
 
-	$(P While the debug and version conditions superficially behave the
-	same,
-	they are intended for very different purposes. Debug statements
-	are for adding debug code that is removed for the release version.
-	Version statements are to aid in portability and multiple release
-	versions.
+	$(P Wversion条件はdebug条件に非常によく似ていますが、
+	目的は全く異なります。
+	debugはリリース版では取り除きたいデバッグ用の
+	コードのためであるのに対して、
+	version文は、
+	同じソースから複数のリリース版を作るための機能です。
 	)
 
-	$(P Here's an example of a $(I full) version as opposed to
-	a $(I demo) version:)
+	$(P 以下は、$(I full) バージョンと
+	$(I demo) バージョンを区別する例です：)
 
 ------
 class Foo {
@@ -182,133 +182,133 @@ class Foo {
     int extrafunctionality()
     {
       ...
-      return 1;  // extra functionality is supported
+      return 1;  // 発展的な機能のサポート
     }
   }
   else // demo
   {
     int extrafunctionality()
     {
-      return 0;  // extra functionality is not supported
+      return 0;  // 発展的な機能はサポートされない
     }
   }
 }
 ------
 
-	Various different version builds can be built with a parameter
-	to version:
+	versionへのパラメタによって、
+	複数種類のバージョンをビルドできます：
 
 ------
-version($(I n)) // add in version code if version level is &gt;= $(I n)
+version($(I n)) // バージョンレベル $(I n) 以上ならコードを追加
 {
    ... version code ...
 }
 
-version($(I identifier)) // add in version code if version
-                         // keyword is $(I identifier)
+version($(I identifier)) // バージョン識別子が
+                         // $(I identifier) ならコードを追加
 {
    ... version code ...
 }
 ------
 
-	$(P These are presumably set by the command line as
-	$(D -version=$(I n)) and $(D -version=$(I identifier)).
+	$(P これらは、あらかじめコマンドラインから 
+	$(D -version=$(I n)) と $(D -version=$(I identifier)) でも指定できます。
 	)
 
 
-<h3><a name="PredefinedVersions">Predefined Versions</a></h3>
+<h3><a name="PredefinedVersions">定義済みのバージョン識別子</a></h3>
 
-	$(P Several environmental version identifiers and identifier
-	name spaces are predefined for consistent usage.
-	Version identifiers do not conflict
-	with other identifiers in the code, they are in a separate name space.
-	Predefined version identifiers are global, i.e. they apply to
-	all modules being compiled and imported.
+	$(P 環境に関するいくつかのバージョン識別子は、
+	一貫した使われ方をされるように、予め定義されています。
+	バージョン識別子はその他の種類の識別子とは衝突しない、
+	別の名前空間におかれています。
+	定義済みバージョン識別子は、グローバルです。
+	つまり、コンパイルやimportされる全てのモジュールに影響します。
 	)
 
-	$(TABLE2 Predefined Version Identifiers,
-	$(TR $(TH Version Identifier) $(TH Description))
-	$(TR $(TD $(B DigitalMars)) $(TD DMD (Digital Mars D) is the compiler))
-	$(TR $(TD $(B GNU)) $(TD GDC (GNU D Compiler) is the compiler))
-	$(TR $(TD $(B LDC)) $(TD LDC (LLVM D Compiler) is the compiler))
-	$(TR $(TD $(B SDC)) $(TD SDC (Stupid D Compiler) is the compiler))
-	$(TR $(TD $(B D_NET)) $(TD D.NET is the compiler))
-	$(TR $(TD $(B Windows)) $(TD Microsoft Windows systems))
-	$(TR $(TD $(B Win32)) $(TD Microsoft 32-bit Windows systems))
-	$(TR $(TD $(B Win64)) $(TD Microsoft 64-bit Windows systems))
-	$(TR $(TD $(B linux)) $(TD All Linux systems))
+	$(TABLE2 定義済みバージョン識別子,
+	$(TR $(TH バージョン識別子) $(TH 説明))
+	$(TR $(TD $(B DigitalMars)) $(TD コンパイラは DMD (Digital Mars D) である))
+	$(TR $(TD $(B GNU)) $(TD コンパイラは GDC (GNU D Compiler) である))
+	$(TR $(TD $(B LDC)) $(TD コンパイラは LDC (LLVM D Compiler) である))
+	$(TR $(TD $(B SDC)) $(TD コンパイラは SDC (Stupid D Compiler) である))
+	$(TR $(TD $(B D_NET)) $(TD コンパイラは D.NET である))
+	$(TR $(TD $(B Windows)) $(TD Microsoft Windows システム))
+	$(TR $(TD $(B Win32)) $(TD Microsoft 32-bit Windows システム))
+	$(TR $(TD $(B Win64)) $(TD Microsoft 64-bit Windows システム))
+	$(TR $(TD $(B linux)) $(TD Linux システム))
 	$(TR $(TD $(B OSX)) $(TD Mac OS X))
 	$(TR $(TD $(B FreeBSD)) $(TD FreeBSD))
 	$(TR $(TD $(B OpenBSD)) $(TD OpenBSD))
-	$(TR $(TD $(B BSD)) $(TD All other BSDs))
+	$(TR $(TD $(B BSD)) $(TD そのほかの BSDs))
 	$(TR $(TD $(B Solaris)) $(TD Solaris))
-	$(TR $(TD $(B Posix)) $(TD All POSIX systems (includes Linux, FreeBSD, OS X, Solaris, etc.)))
-	$(TR $(TD $(B AIX)) $(TD IBM Advanced Interactive eXecutive OS))
-	$(TR $(TD $(B SkyOS)) $(TD The SkyOS operating system))
+	$(TR $(TD $(B Posix)) $(TD 全ての POSIX システム (Linux, FreeBSD, OS X, Solaris, などを含む)))
+	$(TR $(TD $(B AIX)) $(TD AIX))
+	$(TR $(TD $(B SkyOS)) $(TD SkyOS))
 	$(TR $(TD $(B SysV3)) $(TD System V Release 3))
 	$(TR $(TD $(B SysV4)) $(TD System V Release 4))
 	$(TR $(TD $(B Hurd)) $(TD GNU Hurd))
-	$(TR $(TD $(B Android)) $(TD The Android platform))
-	$(TR $(TD $(B Cygwin)) $(TD The Cygwin environment))
-	$(TR $(TD $(B MinGW)) $(TD The MinGW environment))
-	$(TR $(TD $(B X86)) $(TD Intel and AMD 32-bit processors))
-	$(TR $(TD $(B X86_64)) $(TD AMD and Intel 64-bit processors))
-	$(TR $(TD $(B ARM)) $(TD The Advanced RISC Machine architecture (32-bit)))
-	$(TR $(TD $(B PPC)) $(TD The PowerPC architecture, 32-bit))
-	$(TR $(TD $(B PPC64)) $(TD The PowerPC architecture, 64-bit))
-	$(TR $(TD $(B IA64)) $(TD The Itanium architecture (64-bit)))
-	$(TR $(TD $(B MIPS)) $(TD The MIPS architecture, 32-bit))
-	$(TR $(TD $(B MIPS64)) $(TD The MIPS architecture, 64-bit))
-	$(TR $(TD $(B SPARC)) $(TD The SPARC architecture, 32-bit))
-	$(TR $(TD $(B SPARC64)) $(TD The SPARC architecture, 64-bit))
-	$(TR $(TD $(B S390)) $(TD The System/390 architecture, 32-bit))
-	$(TR $(TD $(B S390X)) $(TD The System/390X architecture, 64-bit))
-	$(TR $(TD $(B HPPA)) $(TD The HP PA-RISC architecture, 32-bit))
-	$(TR $(TD $(B HPPA64)) $(TD The HP PA-RISC architecture, 64-bit))
-	$(TR $(TD $(B SH)) $(TD The SuperH architecture, 32-bit))
-	$(TR $(TD $(B SH64)) $(TD The SuperH architecture, 64-bit))
-	$(TR $(TD $(B Alpha)) $(TD The Alpha architecture))
-	$(TR $(TD $(B LittleEndian)) $(TD Byte order, least significant first))
-	$(TR $(TD $(B BigEndian)) $(TD Byte order, most significant first))
-	$(TR $(TD $(B D_Coverage)) $(TD $(DPLLINK code_coverage.html, Code coverage analysis) instrumentation (command line $(DPLLINK dmd-windows.html#switches, switch) $(B -cov)) is being generated))
-	$(TR $(TD $(B D_Ddoc)) $(TD $(DDLINK ddoc, Embedded Documentation, Ddoc) documentation (command line $(DPLLINK dmd-windows.html#switches, switch) $(B -D)) is being generated))
-	$(TR $(TD $(B D_InlineAsm_X86)) $(TD $(DDLINK iasm, Inline Assembler, Inline assembler) for X86 is implemented))
-	$(TR $(TD $(B D_InlineAsm_X86_64)) $(TD $(DDLINK iasm, Inline Assembler, Inline assembler) for X86-64 is implemented))
-	$(TR $(TD $(B D_LP64)) $(TD Pointers are 64 bits (command line $(DPLLINK dmd-windows.html#switches, switch) $(B -m64))))
-	$(TR $(TD $(B D_PIC)) $(TD Position Independent Code (command line $(DPLLINK dmd-windows.html#switches, switch) $(B -fPIC)) is being generated))
-	$(V2 $(TR $(TD $(B D_SIMD)) $(TD $(DDLINK simd, simd, Vector extensions) (__vector and __simd) are supported)))
-	$(V2 $(TR $(TD $(B D_Version2)) $(TD This is a D version 2 compiler)))
-	$(V2 $(TR $(TD $(B unittest)) $(TD $(DDLINK unittest, Unit Tests, Unit tests) are enabled (command line $(DPLLINK dmd-windows.html#switches, switch) $(B -unittest)))))
-	$(TR $(TD $(B none)) $(TD Never defined; used to just disable a section of code))
-	$(TR $(TD $(B all)) $(TD Always defined; used as the opposite of $(B none)))
+	$(TR $(TD $(B Android)) $(TD Android プラットフォーム))
+	$(TR $(TD $(B Cygwin)) $(TD Cygwin 環境))
+	$(TR $(TD $(B MinGW)) $(TD MinGW 環境))
+	$(TR $(TD $(B X86)) $(TD Intel と AMD の 32-bit プロセッサ))
+	$(TR $(TD $(B X86_64)) $(TD AMD と Intel の 64-bit プロセッサ))
+	$(TR $(TD $(B ARM)) $(TD ARM (32-bit)))
+	$(TR $(TD $(B PPC)) $(TD PowerPC, 32-bit))
+	$(TR $(TD $(B PPC64)) $(TD PowerPC, 64-bit))
+	$(TR $(TD $(B IA64)) $(TD Itanium (64-bit)))
+	$(TR $(TD $(B MIPS)) $(TD MIPS, 32-bit))
+	$(TR $(TD $(B MIPS64)) $(TD MIPS, 64-bit))
+	$(TR $(TD $(B SPARC)) $(TD SPARC, 32-bit))
+	$(TR $(TD $(B SPARC64)) $(TD SPARC, 64-bit))
+	$(TR $(TD $(B S390)) $(TD System/390, 32-bit))
+	$(TR $(TD $(B S390X)) $(TD System/390X, 64-bit))
+	$(TR $(TD $(B HPPA)) $(TD HP PA-RISC, 32-bit))
+	$(TR $(TD $(B HPPA64)) $(TD HP PA-RISC, 64-bit))
+	$(TR $(TD $(B SH)) $(TD SuperH, 32-bit))
+	$(TR $(TD $(B SH64)) $(TD SuperH, 64-bit))
+	$(TR $(TD $(B Alpha)) $(TD Alpha))
+	$(TR $(TD $(B LittleEndian)) $(TD バイト順序が、LSB-First))
+	$(TR $(TD $(B BigEndian)) $(TD バイト順序が、MSB-First))
+	$(TR $(TD $(B D_Coverage)) $(TD $(DPLLINK code_coverage.html, カバレッジ解析) 命令が (コマンドライン$(DPLLINK dmd-windows.html#switches, スイッチ) $(B -cov) により) 生成される))
+	$(TR $(TD $(B D_Ddoc)) $(TD $(DDLINK ddoc, Embedded Documentation, Ddoc) ドキュメント化 (コマンドライン$(DPLLINK dmd-windows.html#switches, スイッチ) $(B -D)) の生成中))
+	$(TR $(TD $(B D_InlineAsm_X86)) $(TD X86 $(DDLINK iasm, Inline Assembler, インラインアセンブラ) が実装されている))
+	$(TR $(TD $(B D_InlineAsm_X86_64)) $(TD X86-64 $(DDLINK iasm, Inline Assembler, インラインアセンブラ) が実装されている))
+	$(TR $(TD $(B D_LP64)) $(TD ポインタが64ビット (コマンドライン$(DPLLINK dmd-windows.html#switches, スイッチ) $(B -m64))))
+	$(TR $(TD $(B D_PIC)) $(TD 位置独立コードが (コマンドライン$(DPLLINK dmd-windows.html#switches, スイッチ) $(B -fPIC) により) 生成される))
+	$(V2 $(TR $(TD $(B D_SIMD)) $(TD $(DDLINK simd, simd, ベクトル演算拡張) (__vector と __simd) 対応)))
+	$(V2 $(TR $(TD $(B D_Version2)) $(TD D バージョン 2 のコンパイラである)))
+	$(V2 $(TR $(TD $(B unittest)) $(TD $(DDLINK unittest, Unit Tests, 単体テスト) が生成される (コマンドライン$(DPLLINK dmd-windows.html#switches, スイッチ) $(B -unittest)))))
+	$(TR $(TD $(B none)) $(TD 決して定義されない。コードの一部を無効にするのに使用される))
+	$(TR $(TD $(B all)) $(TD 常に定義される。$(B none) の反対として使用される))
 	)
 
-	$(P The following identifiers are defined, but are deprecated:
+	$(P 以下の識別子は定義されますが、廃止される予定で非推奨です。
 	)
 
-	$(TABLE2 Predefined Version Identifiers,
-	$(TR $(TH Version Identifier) $(TH Description))
-	$(TR $(TD $(B darwin)) $(TD The Darwin operating system; use $(B OSX) instead))
+	$(TABLE2 定義済みバージョン識別子,
+	$(TR $(TH バージョン識別子) $(TH 説明))
+	$(TR $(TD $(B darwin)) $(TD Darwin OS。代わりに $(B OSX) を使います))
 	)
 
-	$(P Others will be added as they make sense and new implementations appear.
+	$(P 新しい実装が出現した場合、他にも意味のある識別子があれば追加されるでしょう。
 	)
 
-	$(P It is inevitable that the D language will evolve over time.
-	Therefore, the version identifier namespace beginning with "D_"
-	is reserved for identifiers indicating D language specification
-	or new feature conformance.
+	$(P D言語が、年を重ねるに従って発展していくのは不可避です。
+	それゆえ、"D_" で始まるバージョン識別子は、
+	D の新しい機能への対応や、
+	規格への対応を示す識別子として予約されています。
 	)
 
-	$(P Furthermore, predefined version identifiers from this list cannot
-	be set from the command line or from version statements.
-	(This prevents things like both $(B Windows) and $(B linux)
-	being simultaneously set.)
+	$(P ここにあげた定義済みバージョン識別子は、
+	コマンドラインやversion設定文で設定することは禁止されています。
+	（これによって、例えば $(B Windows) と $(B linux)
+	が同時に設定されているような事態を防止します。）
 	)
 
-	$(P Compiler vendor specific versions can be predefined if the
-	trademarked vendor
-	identifier prefixes it, as in:
+	$(P コンパイラベンダ特有のバージョンは、
+	そのベンダを示す識別子を接頭辞として、あらかじめ定義されます。
+	例えば：
 	)
 
 ------
@@ -318,14 +318,14 @@ version(DigitalMars_funky_extension)
 }
 ------
 
-	$(P It is important to use the right version identifier for the right
-	purpose. For example, use the vendor identifier when using a vendor
-	specific feature. Use the operating system identifier when using
-	an operating system specific feature, etc.
+	$(P 適切なバージョン識別子を適切な目的に使うことを心がけてください。
+	例えば、ベンダIDはベンダ特有の機能を使うときに利用し、
+	OSのIDはOS特有の機能を使うときにのみ利用する、
+	などなど。
 	)
 
 
-<h2>$(LNAME2 debug, Debug Condition)</h2>
+<h2>$(LNAME2 debug, debug 条件)</h2>
 
 $(GRAMMAR
 $(GNAME DebugCondition):
@@ -334,27 +334,27 @@ $(GNAME DebugCondition):
     $(B debug $(LPAREN)) $(I Identifier) $(B $(RPAREN))
 )
 
-	$(P Two versions of programs are commonly built,
-	a release build and a debug build.
-	The debug build includes extra error checking code,
-	test harnesses, pretty-printing code, etc.
-	The debug statement conditionally compiles in its
-	statement body.
-	It is D's way of what in C is done
-	with $(CODE #ifdef DEBUG) / $(CODE #endif) pairs.
+	$(P 日常的にビルドされる２つのバージョンがあります。
+	それは、リリースビルドとデバッグビルド。
+	デバッグビルドは普通、
+	余分なエラーチェックコードや、
+	もろもろのテスト、pretty-printing用のコードなどを含んでいます。
+	debug文の内容は、条件コンパイルされます。
+	これは、
+	Cでは $(CODE #ifdef DEBUG) / $(CODE #endif) で書いていたものの D 版です。
 	)
 
-	$(P The $(B debug) condition is satisfied when the $(B -debug) switch is
-	thrown on the compiler.
+	$(P コンパイラに $(B -debug) スイッチが投げられた時に、
+	$(B debug) 条件が満たされます。
 	)
 
-	$(P The $(B debug $(LPAREN)) $(I IntegerLiteral) $(B $(RPAREN)) condition is satisfied
-	when the debug
-	level is &gt;= $(I IntegerLiteral).
+	$(P $(B debug $(LPAREN)) $(I IntegerLiteral) $(B $(RPAREN)) 条件は、デバッグレベル
+	が $(I IntegerLiteral)
+	以上ならば条件が満たされたことになります。
 	)
 
-	$(P The $(B debug $(LPAREN)) $(I Identifier) $(B $(RPAREN)) condition is satisfied
-	when the debug identifier matches $(I Identifier).
+	$(P $(B debug $(LPAREN)) $(I Identifier) $(B $(RPAREN)) 条件は、デバッグ識別子が
+	$(I Identifier) と一致すれば満たされます。
 	)
 
 ------
@@ -366,7 +366,7 @@ class Foo {
 ------
 
 
-<h3>Debug Specification</h3>
+<h3>debug 条件指定</h3>
 
 $(GRAMMAR
 $(GNAME DebugSpecification):
@@ -374,68 +374,68 @@ $(GNAME DebugSpecification):
     $(B debug =) $(GLINK2 lex, IntegerLiteral) $(B ;)
 )
 
-	$(P Debug identifiers and levels are set either by the command line switch
-	$(B -debug) or by a $(I DebugSpecification).
+	$(P デバッグ識別子とデバッグレベルは、
+	$(B -debug) コマンドラインスイッチか、 $(I DebugSpecification) で指定します。
 	)
 
-	$(P Debug specifications only affect the module they appear in, they
-	do not affect any imported modules. Debug identifiers are in their
-	own namespace, independent from version identifiers and other
-	symbols.
+	$(P デバッグ条件指定は、書かれたモジュール内にのみ影響し、
+	importされたモジュールには影響しません。デバッグ識別子は専用の名前空間を持つので、
+	バージョン識別子をはじめとする
+	他の識別子とは衝突しません。
 	)
 
-	$(P It is illegal to forward reference a debug specification:
+	$(P デバッグ条件指定の前方参照は、不正です：
 	)
 
 ------
 debug (foo) writefln("Foo");
-debug = foo;	// error, foo used before set
+debug = foo;	// エラー、fooは設定される前に使用されている
 ------
 
-	$(P $(I DebugSpecification)s may only appear at module scope.)
+	$(P $(I DebugSpecification) はモジュールスコープでのみ記述できます。)
 
-	$(P Various different debug builds can be built with a parameter to
-	debug:
+	$(P debugへのパラメタによって、
+	複数種類のデバッグビルドを生成できます：
 	)
 
 ------
-debug($(GLINK2 lex, IntegerLiteral)) { }    // add in debug code if debug level is &gt;= $(GLINK2 lex, IntegerLiteral)
-debug($(I identifier)) { } // add in debug code if debug keyword is $(I identifier)
+debug($(GLINK2 lex, IntegerLiteral)) { }    // デバッグレベル $(GLINK2 lex, IntegerLiteral) 以上ならコードを追加
+debug($(I identifier)) { } // デバッグ識別子が $(I identifier) ならコードを追加
 ------
 
-	$(P These are presumably set by the command line as
-	$(D -debug=$(I n)) and $(D -debug=$(I identifier)).
+	$(P これらは、あらかじめコマンドラインから
+	$(D -debug=$(I n)) と $(D -debug=$(I identifier)) でも指定できます。
 	)
 
-<h2>$(LNAME2 staticif, Static If Condition)</h2>
+<h2>$(LNAME2 staticif, static if 条件)</h2>
 
 $(GRAMMAR
 $(GNAME StaticIfCondition):
     $(B static if $(LPAREN)) $(ASSIGNEXPRESSION) $(B $(RPAREN))
 )
 
-	$(P $(ASSIGNEXPRESSION) is implicitly converted to a boolean type,
-	and is evaluated at compile time.
-	The condition is satisfied if it evaluates to $(B true).
-	It is not satisfied if it evaluates to $(B false).
+	$(P $(ASSIGNEXPRESSION) はコンパイル時に評価され、
+	暗黙にbool型に変換されます。
+	評価結果が $(B true) なら条件成立で、
+	$(B false) ならば非成立です。
 	)
 
-	$(P It is an error if $(ASSIGNEXPRESSION) cannot be implicitly converted
-	to a boolean type or if it cannot be evaluated at compile time.
+	$(P $(ASSIGNEXPRESSION) がbool型に変換できない型だったり、
+	コンパイル時に値が決定できなかったりするとエラーになります。
 	)
 
-	$(P $(I StaticIfCondition)s
-	can appear in module, class, template, struct, union, or function scope.
-	In function scope, the symbols referred to in the
-	$(ASSIGNEXPRESSION) can be any that can normally be referenced
-	by an expression at that point.
+	$(P $(I StaticIfCondition) は
+	モジュール、クラス、テンプレート、構造体、共用体、関数のスコープで使用できます。
+	関数スコープで使われた場合は、
+	$(ASSIGNEXPRESSION)
+	で参照できるシンボルはその位置で普通に参照できるもの全てです。
 	)
 
 ------
 const int i = 3;
 int j = 4;
 
-$(B static if) (i == 3)	// ok, at module scope
+$(B static if) (i == 3)	// ok, モジュールスコープ
     int x;
 
 class C {
@@ -446,10 +446,10 @@ class C {
   $(B else)
     long x;
 
-  $(B static if) (j == 3) // error, j is not a constant
+  $(B static if) (j == 3) // エラー、j は定数ではない
     int y;
 
-  $(B static if) (k == 5) // ok, k is in current scope
+  $(B static if) (k == 5) // ok, k はカレントスコープの定数
     int z;
 }
 
@@ -459,35 +459,35 @@ template INT(int i) {
   $(B else static if) (i == 16)
     alias short INT;
   $(B else)
-    static assert(0); // not supported
+    static assert(0); // 未サポート
 }
 
-INT!(32) a;  // a is an int
-INT!(16) b;  // b is a short
-INT!(17) c;  // error, static assert trips
+INT!(32) a;  // a は int
+INT!(16) b;  // b は short
+INT!(17) c;  // エラー。static assert で止まる
 ------
 
-	$(P A $(I StaticIfConditional) condition differs from an
-	$(I IfStatement) in the following ways:
+	$(P $(I StaticIfConditional) の
+	$(I IfStatement) との違いは次の通りです：
 	)
 
 	$(OL
-	$(LI It can be used to conditionally compile declarations,
-	not just statements.
+	$(LI 文だけでなく、
+	宣言を条件コンパイルすることも可能です。
 	)
-	$(LI It does not introduce a new scope even if $(B { })
-	are used for conditionally compiled statements.
+	$(LI たとえ $(B { }) が使われていても、
+		新しいスコープは導入しません。
 	)
-	$(LI For unsatisfied conditions, the conditionally compiled code
-	need only be syntactically correct. It does not have to be
-	semantically correct.
+	$(LI 非成立な条件式の中身のコードは、
+		文法的にさえ正しければ、
+		意味論的に正しい必要はありません。
 	)
-	$(LI It must be evaluatable at compile time.
+	$(LI コンパイル時に必ず評価可能です。
 	)
 	)
 
 
-<h2>$(LNAME2 StaticAssert, Static Assert)</h2>
+<h2>$(LNAME2 StaticAssert, static assert)</h2>
 
 $(GRAMMAR
 $(GNAME StaticAssert):
@@ -495,46 +495,46 @@ $(GNAME StaticAssert):
     $(B static assert $(LPAREN)) $(ASSIGNEXPRESSION) $(B ,) $(ASSIGNEXPRESSION) $(B $(RPAREN);)
 )
 
-	$(P $(ASSIGNEXPRESSION) is evaluated at compile time, and converted
-	to a boolean value. If the value is true, the static assert
-	is ignored. If the value is false, an error diagnostic is issued
-	and the compile fails.
+	$(P $(ASSIGNEXPRESSION) はコンパイル時に評価され、ブール値に変換されます。
+	その値がtrueであれば、static assert は無視されます。
+	false な場合、
+	診断メッセージが出力され、コンパイルが失敗します。
 	)
 
-	$(P Unlike $(GLINK2 expression, AssertExpression)s, $(I StaticAssert)s are always
-	checked and evaluted by the compiler unless they appear in an
-	unsatisfied conditional.
+	$(P $(GLINK2 expression, AssertExpression) とは違い、 $(I StaticAssert) は、
+	不成立の条件の中にあるのでなければ常にコンパイラによって評価、
+	テストされます。
 	)
 
 ------
 void foo() {
   if (0)
   {
-    assert(0);  // never trips
-    static assert(0); // always trips
+    assert(0);  // 決して引っ掛からない
+    static assert(0); // 常に引っ掛かる
   }
   version (BAR)
   {
   }
   else
   {
-    static assert(0); // trips when version BAR is not defined
+    static assert(0); // BARが定義されていない限り引っ掛からない
   }
 }
 ------
 
-	$(P $(I StaticAssert) is useful tool for drawing attention to conditional
-	configurations not supported in the code.
+	$(P $(I StaticAssert) は主に、
+	そのコードでサポートされていないコンパイル条件を示すために役に立ちます。
 	)
 
-	$(P The optional second $(ASSIGNEXPRESSION) can be used to supply
-	additional information, such as a text string, that will be
-	printed out along with the error diagnostic.
+	$(P オプションとして、$(ASSIGNEXPRESSION)
+	には第二引数を指定できます。第二引数にはエラーに関する追加情報を文字列で入れるなどしておくと、
+	エラーメッセージとして表示されるようになります。
 	)
 )
 
 Macros:
-	TITLE=Conditional Compilation
+	TITLE=条件コンパイル
 	WIKI=Version
 	CATEGORY_SPEC=$0
 
