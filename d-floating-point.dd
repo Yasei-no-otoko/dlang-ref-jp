@@ -2,17 +2,17 @@ Ddoc
 
 $(D_S $(TITLE),
 
-$(H2 Introduction)
+$(H2 はじめに)
 
 $(P $(I by Don Clugston))
 
-$(P Computers were originally conceived as devices for performing mathematics. The earliest computers spent most of their time solving equations. Although the engineering and scientific community now forms only a miniscule part of the computing world, there is a fantastic legacy from those former times: almost all computers now feature superb hardware for performing mathematical calculations accurately and extremely quickly. Sadly, most programming languages make it difficult for programmers to take full advantage of this hardware. An even bigger problem is the lack of documentation; even for many mathematical programmers, aspects of floating-point arithmetic remain shrouded in mystery.
+$(P コンピュータは元々、数学を扱うために作られた装置でした。最初期のコンピュータはほとんど全ての時間を数式を解くことに費やしています。現在でこそ科学計算はコンピュータの対象分野の小さな一部分に過ぎませんが、ここには過去からの素晴らしい遺産が確かに残っています。現代のほぼ全てのコンピュータは、数学的な計算を正確にそして非常に高速に行うための優れたハードウェアを備えているのです。しかし、残念なことに、ほとんどのプログラミング言語ではプログラマがこのハードウェアの機能をフル活用するのは難しくなっています。そしてさらに大きな問題は、ドキュメントの欠如です。数学的な処理を得意とするプログラマであっても、浮動小数点算術の様々な側面が謎のまま脇に置かれている場合が見受けられます。
 )
 
-$(P As a systems programming language, the D programming language attempts to remove all barriers between the programmer and the compiler, and between the programmer and the machine. This philosophy is particularly evident in support for floating-point arithmetic. A personal anecdote may illustrate the importance of having an accurate understanding of the hardware.
+$(P システムズプログラミング言語として、D言語は、プログラマとコンパイラ、そしてプログラマとマシンの間の障壁を全て取り除くべく試みられています。この哲学は、特に浮動小数点の扱いにおいて顕著です。ここで私の個人的な逸話をお話しすることで、ハードウェアに関する正確な理解がいかに重要であるか、説明できればと思います。
 )
 
-$(P My first floating-point nightmare occurred in a C++ program which hung once in every hundred runs or so. I eventually traced the problem to a while loop which occasionally failed to terminate. The essence of the code is shown in Listing 1.
+$(P 私の最初の「浮動小数点の悪夢」は、100回に1回かそのくらいの実行でだけハングするC++プログラムでした。問題を追いかけたところ、最終的に、ある while が無限ループしていることを突き止めました。そのコードの重要な部分を抜粋すると、次のようになります:
 )
 
 ------
@@ -26,27 +26,27 @@ while (x < 8) {
 return false;
 ------
 
-$(P Initially, I was completely baffled as to how this harmless-looking loop could fail. But eventually, I discovered that q had not been initialized properly; q[7] contained random garbage. Occasionally, that garbage had every bit set, which mean that q[7] was a Not-a-Number (NaN), a special code which indicates that the value of the variable is nonsense. NaNs were not mentioned in the compiler's documentation - the only information I could find about them was in Intel's assembly instruction set documentation! Any comparison involving a NaN is false, so q[7] was neither >= 0, nor < 0, killing my program. Until that unwelcome discovery, I'd been unaware that NaNs even existed. I had lived in a fool's paradise, mistakenly believing that every floating point number was either positive, negative, or zero.
+$(P 初めは、この一見無害そうなループがなぜ失敗するのか、私は本当に戸惑いました。 しかし最終的には、q が適切に初期化されていなかったと分かりました。q[7] の中身はランダムなゴミだったのです。 偶にそのゴミのすべてのビットが立っていて、q[7] の中身が数でないことを示す特別な値 NaN となっていたのです。  NaNはコンパイラの説明書には何も書いてありませんでした――私が見た中で NaN に触れていたのはインテルのアセンブリ命令セット説明書だけでした! 私のプログラムがダメになったのは、NaN を含むどんな比較も偽になるからだったのです。 q[7] &gt;=0 と &lt;0 のどちらでもなくなってしまうのです。 その歓迎されざる発見があるまで、私は NaN が存在することさえ知りませんでした。私は、あらゆる浮動小数点は正か負かゼロの世界、無知の楽園にいたのです。
 )
 
-$(P My experience would have been quite different in D. The "strange" features of floating point have a higher visibility in the language, improving the education of numerical programmers.
-Uninitialized floating point numbers are initialized to NaN by the compiler, so the problematic loop would fail every time, not intermittently.
-Numerical programmers in D will generally execute their programs with the 'invalid' floating point exception enabled. Under those circumstances, as soon as the program accessed the uninitialized variable, a hardware exception would occur, summoning the debugger.
-Easy access to the "strange" features of floating point results in better educated programmers, reduced confusion, faster debugging, better testing, and hopefully, more reliable and correct numerical programs.
-This article will provide a brief overview of the support for floating point in the D programming language.
+$(P 私の経験はDでなら全く違ったものになっていたでしょう。浮動小数点のこの「奇妙な」機能は、言語により高い可視性をもたらし、数値計算プログラマの教育を改良するでしょう。
+初期化処理が書かれていない浮動小数点数はコンパイラによってNaNに初期化されるので、問題のあるループは、時々ではなく毎回失敗します。
+Dを使う数値計算プログラマは、一般に、'無効な浮動小数点の例外'を有効にした上でプログラムを実行します。そのような環境では、プログラムが初期化されていない変数にアクセスすると、すぐにハードウェア例外が起こり、デバッガを呼び出されます。
+よく勉強したプログラマが浮動小数点演算の「奇妙な」機能に簡単にアクセスできることは、混乱を減らし、より早くデバッグし、よりよいテストをし、うまくいけばより信頼の高い数値計算プログラムを作ることができます。
+この記事では、プログラミング言語Dによる浮動小数点サポートの簡潔な概要を示します。
 )
 
-$(H2 Demystifying Floating-Point)
+$(H2 浮動小数点の神秘のベールを剥ぐ)
 
-$(P D guarantees that all built-in floating-point types conform to IEEE 754 arithmetic, making behaviour entirely predictable (note that this is $(I not) the same as producing identical results on all platforms). IEEE 754-2008 is the latest revision of the IEEE 754 Standard for Floating-Point Arithmetic. D is progressing towards full compliance with 754-2008.)
+$(P D はすべての組み込みの浮動小数点型が IEEE 754 計算法に従うことを保証しており、すべての振る舞いが予想できるようになっています（全てのプラットフォームで同一の計算結果が得られることでは<i>ない</i>ことに注意してください）。浮動小数点計算法について IEEE 754-2008 は IEEE 754 標準の最新版です。 D は 754-2008 への完全準拠に向けて作業中を進めています。)
 
-$(P The IEEE standard floating point types currently supported by D are $(D float) and $(D double). Additionally, D supports the $(D real) type, which is either 'IEEE 80-bit extended' if supported by the CPU; otherwise, it is the same as $(D double). In the future, the new types from 754-2008 will be added: $(D quadruple), $(D decimal64), and $(D decimal128).)
+$(P D でサポートされている IEEE 標準浮動小数点型は $(D float) と $(D double) です。　加えて、D は $(D real)型をサポートしており、この型はCPUが 'IEEE 80-bit 拡張' をサポートしていればそれになり、そうでなければ $(D double). と同じになります。将来的には、754-2008 から $(D quadruple), $(D decimal64), $(D decimal128) という新たな型が加わるでしょう。)
 
-$(P The characteristics of these types are easily accessible in the language via $(I properties). For example, $(D float.max) is the maximum value which can be stored in a float; $(D float.mant_dig) is the number of digits (bits) stored in the mantissa.)
+$(P これらの型の特性は言語組み込みの $(I プロパティ) を使って簡単にアクセスできます。例えば、$(D float.max) は float が保持できる最大の数を表します。$(D float.mant_dig) は仮数部に保持できる桁数（ビット数）です。)
 
-$(P To make sense of mathematics in D, it's necessary to have a basic understanding of IEEE floating-point arithmetic. Fundamentally, it is a mapping of the infinitely many real numbers onto a small number of bytes. Only 4000 million distinct numbers are representable as an IEEE 32-bit float. Even with such a pathetically small representation space, IEEE floating point arithmetic does a remarkably good job of maintaining the illusion that mathematical real numbers are being used; but it's important to understand when the illusion breaks down.)
+$(P D での計算を理解するには、IEEE 浮動小数点計算法の基礎を理解する必要があります。根本的な点として、浮動小数点数は、無限個ある実数をわずかなバイト数に落とし込んだものです。 IEEE 32-bit 浮動小数点ではわずか40億の数しか区別できません。そんな痛ましいほど小さな表現空間であっても、IEEE 浮動小数点数は数学的実数を扱えているんだという幻想を維持することに著しい成功を収めています。とはいえ、その幻想が叩き壊された時のことを理解することも重要です。)
 
-$(P Most problems arise from the distribution of these representable numbers. The IEEE number line is quite different to the mathematical number line.)
+$(P ほとんどの問題は、表現可能な数字の分布から引き起こされます。IEEE の数直線は数学的数直線とは全く異なるものです。)
 
 ---
 
@@ -55,45 +55,45 @@ $(P Most problems arise from the distribution of these representable numbers. Th
 
 ---
 
-$(P Notice that half of the IEEE number line lies between -1 and +1. There are 1000 million representable floats between 0 and 0.5, but only 8 million between 0.5 and 1. This has important implications for accuracy: the effective precision is incredibly high near zero. Several examples will be presented where numbers in the range -1 to +1 are treated seperately to take advantage of this.)
+$(P IEEE 数直線の半分が -1 から 1 の間にあることに注目してください。float で表現可能な数のうち10億個が0から0.5の間にある一方、0.5から1の間には800万個しかありません。これは計算の正確さに対する重大な含みを持ちます。ゼロ付近では実効精度は非常に高くなります。このあといくつかの例においてこの優位性を示すために -1 から 1 までの数を別に扱います。)
 
-$(P Notice also the special numbers: $(PLUSMNINF); the so-called "subnormals" between $(PLUSMN)float.min_normal and 0, which are represented at reduced precision; the fact that there are TWO zeros, +0 and -0, and finally "NaN"("Not-a-Number"), the nonsense value, which caused so much grief in Listing 1.)
+$(P 特別な数にも注目してください。&plusmn;&infin; があります。また、&plusmn;float.min_normal と 0 の間の数、いわゆる「非正規化数」は、精度を殺して表現されます。さらに、+0と-0という 2種類の ゼロとして表現されます。そして最後は "NaN" (非数)で、意味をなさない値であり、最初の例にあるような厄介事を起こします。)
 
-$(P Why does NaN exist? It serves a valuable role: it $(I eradicates undefined behaviour) from floating-point arithmetic. This makes floating-point completely predictable. Unlike the $(D int) type, where 3/0 invokes a hardware division by zero trap handler, possibly ending your program, the floating-point division 3.0/0.0 results in $(INFIN). Numeric overflow (eg, $(D real.max*2)) also creates $(INFIN). Depending on the application, $(INFIN) may be a perfectly valid result; more typically, it indicates an error. Nonsensical operations, such as $(D 0.0 / 0.0), result in NaN; but $(I your program does not lose control). At first glance, infinity and NaN may appear unnecessary -- why not just make it an error, just as in the integer case? After all, it is easy to avoid division by zero, simply by checking for a zero denominator before every division. The real difficulty comes from overflow: it is extremely difficult to determine in advance whether an overflow will occur in a multiplication.)
+$(P NaNはなぜ存在するのでしょうか? それは価値のある役割を負っています。浮動小数点演算から $(I 未定義のふるまいを根絶する) のです。 これは浮動小数点を完全に予測可能なものにします。$(D int) 型で 3/0 をしようとすれば、ハードウェアゼロ除算トラップハンドラが呼び出されて、おそらくあなたのプログラムは停止するでしょう。一方、浮動小数点の 3.0/0.0 は $(INFIN) になります。また、数値オーバーフロー (たとえば $(D real.max*2)) も $(INFIN) を生みます。 アプリケーションによりますが、$(INFIN) は完全に正当な結果であるかもしれませんが、より典型的には、それはエラーを示します。$(D 0.0 / 0.0) などの無意味な操作はNaNを生みます。$(しかしあなたのプログラムは制御不能にはなりません。)一見すると、無限とNaNは不要に見えるかもしれません――なぜ整数型のように単にエラー扱いしないのでしょうか？つまるところ、ゼロ除算を避けるのは簡単で、単に除算の前に毎回分母がゼロかチェックするだけです。本当の困難はオーバーフローがもたらすのです。乗算でオーバーフローがで起こるかどうか前もって決定するのは非常に困難でしょう。)
 
-$(P Subnormals are necessary to prevent certain anomalies, and preserve important relationships such as: "x - y == 0 if and only if x == y".)
+$(P 非正規化数は、ある種のずれを防ぎ、"x - y == 0 と x == y は等値である"といった重要な関係を保存するのに必要です。)
 
-$(P Since $(INFIN) can be produced by overflow, both +$(INFIN) and -$(INFIN) are required. Both +0 and -0 are required in order to preserve identities such as: if $(D x>0), then $(D 1/(1/x) > 0). In almost all other cases, however, there is no difference between +0 and -0.)
+$(P $(INFIN) はオーバーフローによって生まれるので、+$(INFIN) と -$(INFIN) の両方が必要です。また、+0 と -0 の両方が、"$(D x>0) のとき $(D 1/(1/x) > 0) である"といった恒等式を守るために必要です。しかしながら、その他ほとんど場合には、+0と-0の間に違いはありません。)
 
-$(P It's worth noting that these $(SINGLEQUOTE special values) are usually not very efficient. On x86 machines, for example, a multiplication involving a NaN, an infinity, or a subnormal can be twenty to fifty times slower than an operation on normal numbers. If your numerical code is unexpectedly slow, it's possible that you are inadvertently creating many of these special values. Enabling floating-point exception trapping, described later, is a quick way to confirm this.)
+$(P これらの $(SINGLEQUOTE 特別な値) は普通それほど効率的でないことには注意すべきです。たとえばx86マシンでは、NaN、無限大、非正規化数を含む乗算は普通の数の演算の20～50倍も遅くなります。もしあなたの数値演算コードが予想外に遅いのであれば、あなたはうっかりこれらの特別な値をたくさん作っている可能性があります。後に述べる浮動小数点例外トラップを有効にしておけば、これを簡単に検証できます。)
 
-$(P One of the biggest factor obscuring what the machine is doing is in the conversion between binary and decimal. You can eliminate this by using the $(D "%a") format when displaying results. This is an invaluable debugging tool, and an enormously helpful aid when developing floating-point algorithms. The $(D 0x1.23Ap+6) hexadecimal floating-point format can also be used in source code for ensuring that your input data is $(I exactly) what you intended.)
+$(P マシンがしていることを覆い隠してしまう最大の要因の1つは、二進数とdecimalの間の変換です。結果表示の際 $(D "%a") フォーマットを使うことでこれを取り除くことができます。これはすこぶる有益なデバッグツールであり、浮動小数点アルゴリズム開発時に飛び切り役に立つ補助になるでしょう。 $(D 0x1.23Ap+6) のような形式の16進浮動小数点フォーマットも、ソースコード中であなたの入力したデータが$(I 正確に)あなたの意図したものであることを保障します。)
 
-$(H2 The Quantized Nature of Floating-Point)
+$(H2 量子化された浮動小数点型の特質)
 
-$(P The fact that the possible values are limited gives access to some operations which are not possible on mathematical real numbers. Given a number x,
-$(D nextUp(x)) gives the next representable number which is greater than x.
-$(D nextDown(x)) gives the next representable number which is less than x.
+$(P 表現可能な値が限られているという事実は、数学的実数ではありえないいくつかの操作を提供することになります。ある数 x が与えられたとき、
+$(D nextUp(x)) は x より大きい次の表現可能な数を与えます。
+$(D nextDown(x)) は x より小さい次の表現可能な数を与えます。
 )
 
-$(P Numerical analysts often describe errors in terms of "units in the last place"(ulp), a surprisingly subtle term which is often used rather carelessly. [footnote:
-The most formal definition is found in [J.-M. Muller, "On the definition of ulp(x)",INRIA Technical Report 5504 (2005).]: If $(D x) is a real number that lies between two finite consecutive floating-point numbers a and b of type F, without being equal to one of them, then ulp(x)=abs(b-a); otherwise ulp(x) = $(D x*F.epsilon). Moreover, ulp(NaN) is NaN, and ulp($(PLUSMN)F.infinity) = $(PLUSMN)$(D F.max*F.epsilon).]
-I prefer a far simpler definition: The difference in ulps between two numbers x and y is is the number of times which you need to call nextUp() or nextDown() to move from x to y. [Footnote: This will not be an integer if either x or y is a real number, rather than a floating point number.]
-The D library function $(D feqrel(x, y)) gives the number of bits which are equal between x and y; it is an easy way to check for loss-of-precision problems.
+$(P 数値解析の専門家は、しばしばある種のエラーを記述するのに「最終計算単位/最小桁の単位 ("units in the last place"; ulp)」という、非常に微妙なニュアンスで、しかしぞんざいに扱われがちな用語を使います。 [注:
+最も形式的な定義は [J.-M. Muller, "On the definition of ulp(x)",INRIA Technical Report 5504 (2005).] にあります: 実数 $(D x) が型 F の隣り合う有限浮動小数点数 a と b の間にあり、かつどちらとも等しくないとき、ulp(x) = abs(b-a) であり、そうでなければ ulp(x) = $(D x*F.epsilon) である。加えて ulp(NaN) は NaN であり、ulp($(PLUSMN)F.infinity) = $(PLUSMN)$(D F.max*F.epsilon) である。]
+私としては、もっとシンプルな定義が好みです: つまり、「二つの数xとyの間のulp単位での差は、xからyに到達するまでに呼び出す必要があるnextUp()やnextDown()の回数である」。 [注: xやyが浮動小数点数ではない実数ならば、この値は整数ではなくなります。]
+Dのライブラリ関数 $(D feqrel(x, y)) は、x と y の間で共通している上位ビットの個数を数えます。これは精度落ち問題をチェックする簡単な方法です。
 )
 
-$(P The quantized nature of floating point has some interesting consequences.)
+$(P 浮動小数点数は量子化された値であるという性質は、次のような興味深い結果をもたらします。)
 
 $(UL
-$(LI ANY mathematical range [a,b$(RPAREN), $(LPAREN)a,b], or (a,b) can be converted into a range
-or the form [a,b]. (The converse does not apply: there is no (a,b)
-equivalent to [-$(INFIN), $(INFIN)]).)
-$(LI A naive binary chop doesn't work correctly. The fact that there are hundreds or thousands of times as many representable numbers between 0 and 1, as there are between 1 and 2, is problematic for divide-and-conquer algorithms. A naive binary chop would divide the interval [0 .. 2] into [0 .. 1] and [1 .. 2]. Unfortunately, this is not a true binary chop, because the interval [0 .. 1] contains more than 99% of the representable numbers from the original interval!)
+$(LI いかなる数学的範囲 [a,b$(RPAREN), $(LPAREN)a,b], (a,b) も、 
+[a,b] という形式ないし範囲に変換可能（ただし逆はできません。
+[-$(INFIN), $(INFIN)] と等価になる (a,b) は存在しません。）)
+$(LI 素朴な二分割法は正しく動作しません。0 から 1 の間と 1 から 2 の間で表現可能な数に数百ないし数千倍もの差があるという事実は、分割統治法アルゴリズムに問題をもたらします。素朴な二分割をすると [0 .. 2] は [0 .. 1] と [1 .. 2] に分かれますが、残念なことに、これは正しい二分割ではないのです。区間 [0 .. 1] には元の区間にある表現可能な数のうち 99% が含まれています！)
 )
 
-$(H2 Condition number)
+$(H2 条件数 (condition number))
 
-$(P Using nextUp, it's easy to approximately calculate the condition number.)
+$(P nextUpを使うことで、簡単に条件数の概算値を計算できます。)
 
 ---
 real x = 0x1.1p13L;
@@ -102,38 +102,37 @@ real u = nextUp(x);
 int bitslost = feqrel(x, u) - feqrel(exp(x), exp(u));
 ---
 
-$(P This shows that at these huge values of x, a one-bit error in x destroys 12 bits of accuracy in exp(x)!
-The error has increased by roughly 6000 units in the last place. The condition number is thus 6000 at this value of x.
+$(P この例が示すのは、非常に大きな数 x での1ビットの誤差は、exp(x)になると12ビットの誤差にまで拡大されてしまうことです！ 誤差は次第に大きくなり、realの最大値付近では約6000倍にまで拡大されます。このことを、そのような値xの条件数は6000である、といいます。
 )
 
-$(H2 The semantics of float, double, and real)
+$(H2 float, double, real の意味論)
 
-$(P For the x86 machines which dominate the market, floating point has traditionally been performed on a descendent of the 8087 math coprocessor. These "x87" floating point units were the first to implement IEEE754 arithmetic. The SSE2 instruction set is an alternative for x86-64 processors, but x87 remains the only portable option for floating point 32-bit x86 machines (no 32-bit AMD processors support SSE2).)
+$(P 市場を席巻しているx86機では、浮動小数点数演算は伝統的に8087コプロセッサの子孫によって実行されてきました。この "x87" 浮動小数ユニットは、IEEE754 算術を実装した最初のプロセッサです。x86-64 プロセッサでは SSE2 命令セットが代替となっていますが、今日でも、x87 は32bit x86マシンでポータブルに浮動小数演算を実現する手段として残っています (AMD の 32bit プロセッサはSSE2に対応していません))
 
-$(P The x87 is unusual compared to most other floating-point units. It _only_ supports 80-bit operands, henceforth termed "real80". All $(D double) and $(D float) operands are first converted to 80-bit, all arithmetic operations are performed at 80-bit precision, and the results are reduced to 64-bit or 32-bit precision if required. This means that the results can be significantly more accurate than on a machine which supports at most 64 bit operations. However, it also poses challenges for writing portable code.
-(Footnote: The x87 allows you to reduce the mantissa length to be the same as '$(D double) or $(D float), but it retains the real80 exponent, which means different results are obtained with subnormal numbers. To precisely emulate $(D double) arithmetic slows down floating point code by an order of magnitude).
+$(P x87 は、他の多くの浮動小数演算ユニットと比べるとかなり変わっています。80-bit 浮動小数点 <i>だけ</i> をサポートするので "real80" と呼ばれています。$(D double) や $(D float) の値は演算の前に必ず 80-bit に変換され、80-bit の精度で全ての演算が実行されます。その後で、必要ならば演算結果を 64-bit や 32-bit 精度に縮小します。この実装の意味するところは、最大64-bitの演算子かサポートしていないようなマシンと比べると、精度がかなり高くなる可能性があると言うことです。一方で、可搬性のあるコードを書こうとしたとき、これは枷ともなっています。
+(注: x87 は仮数部を $(D double) や $(D float) と同じに下げる機能は提供していますが、指数部は real80 のままで、非正規化数に対して異なる計算結果になります。厳密に $(D double) の計算をシミュレートしようとすると、浮動小数点処理のコードが格段に遅くなってしまいます)
 )
 
-$(P Apart from the x87 family, the Motorola 68K (but not ColdFire) and Itanium processors are the only ones which support 80-bit floating point.)
+$(P x87 ファミリの他では、Motorola 68K (ColdFire は違います) と Itanium プロセッサが 80-bit 浮動小数をサポートしています。)
 
-$(P A similar issue relates to the FMA (fused multiply and accumulate) instruction, which is available on an increasing number of processors, including PowerPC, Itanium, Sparc, and Cell. On such processors, when evaluating expressions such as $(D x*y + z), the $(D x*y) is performed at twice the normal precison. Some calculations which would otherwise cause a total loss of precision, are instead calculated exactly.
-The challenge for a high-level systems programming language is to create an abstraction which provides predictable behaviour on all platforms, but which nonetheless makes good use of the available hardware.
+$(P 似たような問題が FMA (fused multiply and accumulate) 命令にも関連してきます。この種の命令をサポートするプロセッサは PowerPC, Itanium, Sparc, Cell, と増えてきています。このようなプロセッサでは、$(D x*y + z) のような式を計算する際には $(D x*y) の部分は通常の倍の精度で計算されます。本来はフルの精度ロスが起きるような計算であっても、正確に計算されることがあります。
+高水準システムズプログラミング言語にとって、全てのプラットフォームで予測可能な動作をするように巧く抽象化しつつ同時にハードウェアの良さを活用するデザイン、というのは大きな挑戦です。
 )
 
-$(P D's approach to this situation arises from the following observations:)
+$(P このテーマに関するD言語のアプローチは、以下の事実を踏まえて考えられています:)
 
 $(OL
-$(LI It is extremely costly performance-wise to ensure identical behaviour on all processors. In particular, it is crippling for the x87.)
-$(LI Very many programs will only run on a particular processor. It would be unfortunate to deny the use of more accurate hardware, for the sake of portability which would never be required.)
-$(LI The requirements for portability and for high precision are never required simultaneously. If $(D double) precision is inadequate, increasing the precision on only some processors doesn't help.)
-$(LI The language should not be tied to particular features of specific processors. )
+$(LI 全てのプロセッサで完全に同じ動作をさせるのはパフォーマンスコストが物凄く高い。特に、x87 を考えた場合。)
+$(LI 非常に多くのプログラムは特定のプロセッサのみで動かされる。実際には必要ない移植性のために、せっかく存在する高精度演算を犠牲にしてしまうとしたら不幸なことでしょう。)
+$(LI 高精度性と移植性が同時に求められることはない。$(D double) の精度では不十分という状況で、特定のプロセッサでだけ精度が増えても仕方が無い。)
+$(LI 言語の機能が特定のプロセッサに強く結びついてしまうのはよくない。)
 )
 
-$(P A key design goal is: it should be possible to write code such that, regardless of the processor which is used, the accuracy is never worse than would be obtained on a system which only supports the $(D double) type.)
+$(P キーとなる設計目標は以下の通りです: 「どんなプロセッサで動かされるとしても、$(D double) 型だけをサポートするシステムで動かした時より精度が落ちることがない、そのようなコードが書けるべきである。」)
 
-$(P (Footnote: $(D real) is close to $(SINGLEQUOTE indigenous) in the Borneo proposal for the Java programming language[Ref Borneo]).)
+$(P (注: $(D real) は、Java言語に対するBorneo提案の $(SINGLEQUOTE indigenous) に似ています [Ref Borneo]))
 
-$(P Consider evaluating $(D x*y + z*w), where $(D x, y, z) and $(D w) are double.)
+$(P $(D x*y + z*w) という式を評価する例を考えてみましょう。 $(D x, y, z, w) は double 型とします。)
 
 $(OL
 $(LI double r1 = x * y + z * w;)
@@ -141,184 +140,184 @@ $(LI double a  = x * y; double r2 = a + z * w;)
 $(LI real   b  = x * y; double r3 = b + z * w;)
 )
 
-$(P Note that during optimisation, (2) and (3) may be transformed into (1), but this is implementation-dependent.
-Case (2) is particularly problematic, because it introduces an additional rounding.
+$(P N最適化によっては (2) と (3) は (1) に変換されてしまうことがありますが、これは実装依存です。
+場合 (2) が、余計な丸め誤差を入れてしまっているという意味で特に問題です。
 )
 
-$(P On a "simple" CPU, r1==r2==r3. We will call this value r0.
-On PowerPC, r2==r3, but r1 may be more accurate than the others, since it enables use of FMA.
-On x86, r1==r3, which may be more accurate than r0, though not as much as for the PowerPC case.
-r2, however, may be LESS accurate than r0.
+$(P "シンプルな" CPU では、r1==r2==r3 となります。この値を r0 と呼ぶことにしましょう。
+PowerPC では、r2==r3 ですが、r1 はFMAを使えるのでそれよりも高精度になることがあります。
+x86 では r1==r3 で、この値は r0 よりも高精度になりますが、PowerPC の時ほどの高精度ではありません。
+一方で、r2 は r0 よりも精度が下がります。
 )
 
-$(P By using $(D real) for intermediate values, we are guaranteed that our results are never worse than for a simple CPU which only supports $(D double).)
+$(P まとめると、$(D real) 型を中間結果の格納に使うことで、$(D double) だけをサポートするシンプルなCPUと比べて精度が下がってしまうことはない、と保証されます。)
 
-$(H2 Properties of the Built-in Types)
+$(H2 組み込み型のプロパティ)
 
-$(P The fundamental floating-point properties are $(D epsilon), $(D min_normal) and $(D max). The six integral properties are simply the log2 or log10 of these three.)
+$(P 浮動小数点数の基本的なプロパティは $(D epsilon), $(D min_normal), $(D max)です。他の6つの整数型プロパティは、単にこれらのlog2とlog10です。)
 
 $(TABLE1
 $(TR $(TH &nbsp;) $(TH float) $(TH double) $(TH real80) $(TH quadruple) $(TH decimal64) $(TH decimal128))
 $(TR $(TD epsilon) $(TD 0x1p-23) $(TD 0x1p-52) $(TD 0x1p-63) $(TD 0x1p-112) $(TD 1e-16 (1p-54)) $(TD 1e-34 (1p-113)))
 $(TR $(TD [min_normal) $(TD 0x1p-126) $(TD 0x1p-1022) $(TD 0x1p-16382) $(TD 0x1p-16382) $(TD 1e-383) $(TD 1e-6143))
 $(TR $(TD ..max$(RPAREN)) $(TD 0x1p+128) $(TD 0x1p+1024) $(TD 0x1p+16384) $(TD 0x1p+16384) $(TD 1e+385) $(TD 1e+6145))
-$(TR <td colspan=7>binary properties</td>)
+$(TR <td colspan=7>二進表現に関するプロパティ</td>)
 $(TR $(TD mant_dig) $(TD 24) $(TD 53) $(TD 64) $(TD 113) $(TD 53) $(TD 112))
 $(TR $(TD min_exp) $(TD -125) $(TD -1021) $(TD -16381) $(TD -16381) $(TD &nbsp;) $(TD &nbsp;))
 $(TR $(TD max_exp) $(TD +128) $(TD +1024) $(TD +16384) $(TD +16384) $(TD &nbsp;) $(TD &nbsp;))
-$(TR <td colspan=7>decimal properties</td>)
+$(TR <td colspan=7>十進表現に関するプロパティ</td>)
 $(TR $(TD dig) $(TD 6) $(TD 15) $(TD 18) $(TD 33) $(TD 16) $(TD 34))
 $(TR $(TD min_10_exp) $(TD -37) $(TD -307) $(TD -4932) $(TD -4932) $(TD -382) $(TD -6142))
 $(TR $(TD max_10_exp) $(TD +38) $(TD +308) $(TD +4932) $(TD +4932) $(TD 385) $(TD +6145))
 )
 
-$(P When writing code which should adapt to different CPUs at compile time, use $(D static if) with the $(D mant_dig) property. For example, $(D static if (real.mant_dig==64)) is true if 80-bit reals are available.
-For binary types, the $(D dig) property gives only the $(I minimum) number of valid decimal digits. To ensure that that every representable number has a unique decimal representation, two additional digits are required. Similarly, for decimal numbers, $(D mant_dig) is a lower bound on the number of valid binary digits.
+$(P コンパイル時に複数のCPUに適合さえるようなコードを書くときには、$(D static if) で $(D mant_dig) プロパティを調べます。例えば、$(D static if (real.mant_dig==64)) は 80-bit real が使える環境で true になります。
+二進型では、$(D dig) は、十進で表したときの $(I 最小の) 有効十進桁数を表します。表現可能な値が全て完全に表現できるような十進桁数が必要な場合は、さらに2桁伸ばす必要があります。同様に、十進型では、$(D mant_dig) 有効な二進桁数の下限を表します。
 )
 
-$(H2 Useful relations for a floating point type $(D F), where $(D x) and $(D y) are of type $(D F))
+$(H2 浮動小数点型 $(D F) の値 $(D x) と $(D y) の有用な関係)
 
 $(UL
-$(LI The smallest representable number is $(D F.min_normal * F.epsilon))
-$(LI Any integer between 0 and $(D (1/F.epsilon)) can be stored in F without loss of precision.
-  $(D 1/F.epsilon) is always a exact power of the base.)
-$(LI If a number $(D x) is subnormal, $(D x*(1/F.epsilon)) is normal, and
-  $(D exponent(x) = exponent(x*(1/F.epsilon)) - (mant_dig-1)).)
-$(LI $(D x>0) if and only if $(D 1/(1/x) > 0); $(D x<0) if and only if $(D 1/(1/x) < 0).)
-$(LI If $(D x-y==0), then $(D x==y  && isFinite(x) && isFinite(y)). Note that if $(D x==y==infinity), then $(D isNaN(x-y)).)
-$(LI $(D F.max * F.min_normal = 4.0) for binary types, $(D 10.0) for decimal types.)
+$(LI 表現可能な最小の値は $(D F.min_normal * F.epsilon))
+$(LI 0 から $(D (1/F.epsilon)) までの整数は全て精度落ちなしで F に格納可能。
+  $(D 1/F.epsilon) は常に底のちょうど累乗の値。)
+$(LI $(D x) が非正規化数のとき、$(D x*(1/F.epsilon)) は正規化数で、
+  $(D exponent(x) = exponent(x*(1/F.epsilon)) - (mant_dig-1)) が成り立つ。)
+$(LI $(D x>0) であるとき、そのときに限り $(D 1/(1/x) > 0)。$(D x<0) であるとき、そのときに限り $(D 1/(1/x) < 0)。)
+$(LI $(D x-y==0) ならば、$(D x==y  && isFinite(x) && isFinite(y))。$(D x==y==infinity) の場合は $(D isNaN(x-y))となることに注意。)
+$(LI 二進型では $(D F.max * F.min_normal = 4.0)。十進型では $(D 10.0)。)
 )
 
-$(H3  Addition and subtraction)
+$(H3 加算と減算)
 
 $(UL  
-$(LI Some loss of precision occurs with x$(PLUSMN)y if exponent(x)!=exponent(y). The number of digits of precision which are lost is abs(exponent(x)-exponent(y)).)
-$(LI x$(PLUSMN)y has total loss of precision, if and only if
-   (1)  $(D abs(x * F.epsilon) > abs(y)), in which case x+y == x, x-y == x
-or (2)  $(D abs(y * F.epsilon) > abs(x)), in which case x+y == y, x-y == -y)
-$(LI Addition is commutative: $(D a + b == b + a).)
-$(LI Subtraction is not quite commutative: $(D a - b == -(b - a)), but produce +0 and -0 if a==b.)
-$(LI Addition is not associative at all.)
+$(LI exponent(x)!=exponent(y) のとき、x$(PLUSMN) で精度落ちが発生する。失われる精度のビット数は abs(exponent(x)-exponent(y)))
+$(LI x$(PLUSMN)y が全精度落ちするケースは以下のどちらか:
+   (1)  $(D abs(x * F.epsilon) > abs(y)); この場合 x+y == x で x-y == x
+   (2)  $(D abs(y * F.epsilon) > abs(x)); この場合 x+y == y で x-y == -y)
+$(LI 加算は可換。つまり $(D a + b == b + a)。)
+$(LI 減算はそこまで可換的ではない。ほとんどの場合 $(D a - b == -(b - a)) ではあるけれど、a==b とき +0 と -0 と異なる結果になる)
+$(LI 加算は全く結合的でない)
 )
 
-$(H3 Multiplication and division)
+$(H3 乗算と除算)
    
 $(UL  
-$(LI Multiplication and division are $(I always) at risk of overflow or underflow.
-  For any $(D abs(x) > F.epsilon), there is at least one finite $(D y) such that $(D x/y) will overflow to $(INFIN).
-  For any $(D abs(x) < F.epsilon), there is at least one finite $(D y) such that $(D x/y) will underflow to zero.
-  For any $(D abs(x) > 1), there is at least one finite $(D y) such that $(D x*y) will overflow to $(INFIN).
-  For any $(D abs(x) < 1), there is at least one finite $(D y) such that $(D x*y) will underflow to zero.
+$(LI 乗算と除算は $(I 常に) オーバーフローとアンダーフローの危険にさらされている。
+  どんな $(D abs(x) > F.epsilon) に対しても、ひとつは $(D x/y) が $(INFIN) にオーバーフローするような有限値 $(D y)。
+  どんな $(D abs(x) < F.epsilon) に対しても、ひとつは $(D x/y) がゼロにアンダーフローするような有限値 $(D y) がある。
+  どんな $(D abs(x) > 1) に対しても、ひとつは $(D x*y) が $(INFIN) にオーバーフローするような有限値 $(D y) がある。
+  どんな $(D abs(x) < 1) に対しても、ひとつは $(D x*y) がゼロにアンダーフローするような有限値 $(D y) がある。
 )
-$(LI $(D x*x) will overflow if $(D abs(x)>sqrt(F.max)), and underflow to zero if $(D abs(x) < sqrt(F.min_normal*F.epsilon))  )
-$(LI Multiplication is commutative. $(D a * b == b * a)).
-$(LI Multiplication is not associative in general: $(D a*(b*c) != (a*b)*c), because (1) there is a risk of overflow or underflow and (2) $(D b*c) may be an exact calculation, so that $(D a*(b*c)) contains only one round-off error, whereas $(D (a*b)*c) contains two. The roundoff errors may therefore accumulate at the rate of just under 1 ulp per multiplication.)
-$(LI However, a limited form of associativity is possible if the type used for intermediate results is larger than any of the operands (which happens on x87 and Itanium machines). If $(D R) is the intermediate type, and $(D F) is the type being multiplied, up to $(D min(R.max_exp/F.max_exp, R.epsilon/F.epsilon)) values of type $(D F) can be multiplied together in any order without influencing the result. For example, if $(D R) is $(D double), multiplication of 8 floats $(D f1*f2*f3*f4*f5*f6*f7*f8) is completely associative. On x87, 130 floats can be safely multiplied together in any order, and 16 doubles can similarly be multiplied together safely.
-Strict distributivity does not hold even under these circumstances, as it may destroy the sign of -0.)
-$(LI The distributive law almost never holds. For example, $(D 4*x + 6*x != 10*x) if $(D x==nextDown(1.5)). $(D a*x + b*x == (a+b)*x) for all $(D x) only if the operations $(D a*x, b*x), and $(D (a+b)) are all exact operations, which is true only if $(D a) and $(D b) are exact powers of 2. Even then, if $(D a==-b) and $(D x==-0), then $(D a*x+b*x==0.0, (a+b)*x==-0.0).)
-$(LI Performing a division by multiplication by the reciprocal returns a result which (in round-to-nearest mode) is at most 1.5 ulps from the correctly rounded result. For almost any denominator, the rounding is incorrect (>0.5ulps) for 27% of numerators. [Ref: N. Brisebarre, J-M Muller, and S.K. Raina, "Accelerating Correctly Rounded Floating-Point Division when the Divisor Is Known in Advance", IEEE Trans. on Computers, Vol 53, pp 1069-1072 (2004)].)
+$(LI $(D x*x) は、$(D abs(x)>sqrt(F.max)) のときオーバーフローし $(D abs(x) < sqrt(F.min_normal*F.epsilon)) のときゼロにアンダーフロー)
+$(LI 乗算は可換: $(D a * b == b * a))
+$(LI 乗算は一般には結合的でない: $(D a*(b*c) != (a*b)*c)。理由は、(1) オーバーフローとアンダーフローの危険性 (2) $(D b*c) が正確な精度で計算できるときは $(D a*(b*c)) は1回の丸め誤差になる一方、$(D (a*b)*c) は2回。この丸め誤差は一回の乗算につき1ulpずつずれを蓄積させるかもしれない。)
+$(LI しかし、計算の途中結果が演算対象より精度の高い型で表される場合 (x87 や Itanium) には、限定された形での結合性は成り立つ。$(D R) が途中結果の型、$(D F) が掛け算される型のとき、$(D min(R.max_exp/F.max_exp, R.epsilon/F.epsilon)) までの大きさの $(D F) 型の値はどの順序で掛け算しても同じ結果になります。例えば、$(D R) が $(D double)　ならば8個のfloatの掛け算 $(D f1*f2*f3*f4*f5*f6*f7*f8) までは完全な結合性があります。x87 では、130 個までの float はどんな順序で掛けても安全で、double は 16 個まで大丈夫です。
+ただしこれらの環境でも、-0 の符号を壊すことがあるため、厳密な意味では結合性は成り立ちません。)
+$(LI 分配法則はほとんど全ての場合で成り立たない。例えば $(D x==nextDown(1.5)) のとき $(D 4*x + 6*x != 10*x)。任意の $(D x) について $(D a*x + b*x == (a+b)*x) が成り立つのは、$(D a*x, b*x, (a+b)) が全て完全に正確に計算可能な時に限られ、これは $(D a) と $(D b) が正確に2の累乗な場合に限ります。その場合ですら、$(D a==-b) で $(D x==-0)ならば、$(D a*x+b*x==0.0, (a+b)*x==-0.0) と、違った結果になります。)
+$(LI 割り算を逆数の掛け算で実装すると、(round-to-nearest モードでは) 最大 1.5ulp、正確な丸め結果からずれることがある。ほとんどの除数で、27%の非除数の丸めが正しくない (&gt;0.5ulp) 結果になります。[Ref: N. Brisebarre, J-M Muller, and S.K. Raina, "Accelerating Correctly Rounded Floating-Point Division when the Divisor Is Known in Advance", IEEE Trans. on Computers, Vol 53, pp 1069-1072 (2004)].)
 )
 
 
-$(H3  Powers and logarithms)
+$(H3 べき乗と対数)
 
 $(UL  
-$(LI $(D F.mant_dig = -log2(F.epsilon)) for binary types;)
-$(LI  $(D F.dig = -log10(F.epsilon)) for decimal types.)
-$(LI $(D F.max =  exp2(F.max_exp*(1-F.epsilon))) for binary types;)
-$(LI $(D F.max = exp10(F.max_10_exp*(1-F.epsilon))) for decimal types.)
-$(LI For any positive finite $(D x), $(D F.min_exp - F.mant_dig <= log2(x) < F.max_exp) for binary types,
-                             $(D F.min_10_exp - F.dig <= log10(x) < F.max_10_exp)  for decimal types)
-$(LI $(D exp2(x) == 0) if $(D x < F.min_exp - F.mant_dig), $(D exp2(x) == infinity) if $(D x >= F.max_exp))
+$(LI 二進型では $(D F.mant_dig = -log2(F.epsilon)))
+$(LI 十進型では $(D F.dig = -log10(F.epsilon)))
+$(LI 二進型では $(D F.max =  exp2(F.max_exp*(1-F.epsilon))))
+$(LI 十進型では $(D F.max = exp10(F.max_10_exp*(1-F.epsilon))))
+$(LI 正の有限値 $(D x) では、二進型で $(D F.min_exp - F.mant_dig <= log2(x) < F.max_exp)、
+                             十進型で $(D F.min_10_exp - F.dig <= log10(x) < F.max_10_exp))
+$(LI $(D x < F.min_exp - F.mant_dig) ならば $(D exp2(x) == 0)、$(D x >= F.max_exp) ならば、$(D exp2(x) == infinity))
 )
 
-$(H2 NaN payloads)
+$(H2 NaN ペイロード（追加情報）)
 
-$(P According to the IEEE 754 standard, a $(SINGLEQUOTE payload) can be stored in the mantissa of a NaN. This payload can contain information about how or why it was generated. Historically, almost no programming languages have ever made use of this potentially powerful feature. In D, this payload consists of a positive integer.)
+$(P IEEE 754 標準によると、NaN の仮数部には $(SINGLEQUOTE ペイロード) と呼ばれる追加情報を格納できます。ここには、NaN が作られた方法や理由などを含めることができます。歴史を振り返ると、ほとんど全てのプログラミング言語はこの潜在的な可能性を秘めた機能を使っていませんでした。Dでは、このペイロードは正の整数として操作できます。)
 
 $(UL  
-$(LI $(D real NaN(ulong payload)) -- create a NaN with a "payload", where the payload is a $(D ulong).)
-$(LI $(D ulong getNaNPayload(real x)) -- returns the integer payload. Note that if narrowing conversions have occured, the high-order bits may have changed.)
+$(LI $(D real NaN(ulong payload)) -- $(D ulong) 型のペイロードを持った NaN を生成)
+$(LI $(D ulong getNaNPayload(real x)) -- 整数でペイロードを取得。格納時にビットが切り捨てられていた場合は、上位ビットが変わっているかもしれません。)
 )
 
-$(P $(I Never) store a pointer as an integer payload inside a NaN. The garbage collector will not be able to find it!)
+$(P $(I 絶対に) NaN の整数ペイロードとしてポインタを格納しては<i>いけません</i>。ガベージコレクタがそのポインタを見つけられなくなってしまいます！)
 
-$(H2 NCEG comparison operations)
+$(H2 NCEG 比較演算)
 
-$(P As well as the usual $(D <), $(D >), $(D <=), and $(D >=) comparison operators, D also supports the "NCEG" operators. Most of them are the direct negation of the ordinary operators. Additionally, $(D <>), $(D <>=), $(D !<>), and $(D !<>=) are provided. These 8 new operators are different from the normal operators only when a NaN is involved, so for the most part they are quite obscure. They are useful mainly in eliminating the possibility of NaN before beginning a calculation.
-The most useful relationships are probably:
+$(P おなじみの $(D <), $(D >), $(D <=), $(D >=) といった比較演算子に加えて、D はさらに "NCEG" 演算子をサポートしています。そのうち４つは普通の比較演算子の否定形を意味しています。他に、$(D <>), $(D <>=), $(D !<>), $(D !<>=) が提供されます。この8つの新しい演算子は、NaN が関わってきたときにのみ、普通の演算子と異なる動きをします。従って、多くの場合これらはあまり目立って使われません。主に、計算を始める前にNaNを除く目的で活用されます。
+もっとも使いやすい関係式は、おそらく以下のものです:
 $(UL
-$(LI $(D x  <>= y)   is the same as $(D !isNaN(x) && !isNaN(y)), (except that signalling NaNs may be triggered by <>=).)
-$(LI $(D x !<>= y)   is the same as $(D isNaN(x) ||  isNaN(y)).)
+$(LI $(D x  <>= y)。これは $(D !isNaN(x) && !isNaN(y)) と同じ意味です (ただし <>= では Signalling NaN が発動するという違いはあります)。)
+$(LI $(D x !<>= y)。これは $(D isNaN(x) ||  isNaN(y)) と同じ意味です。)
 )
-If $(D y) is any compile-time constant (eg 0), these reduce to $(D !isNaN(x) and isNaN(x)).
-Note that $(D x==x) is the same as $(D !isNaN(x)), and $(D x!=x) is the same as $(D isNaN(x)).
-$(D abs(x) !< x.infinity)  is the same as $(D isNaN(x) || isInfinity(x))
-The above relationships are useful primarily because they can be used in compile time functions.
-Very few uses are known for the remaining NCEG operators.
+$(D y) がコンパイル時定数 (たとえば 0) ならば、これは $(D !isNaN(x) や isNaN(x)) と同じ意味になります。
+更に参考までに、$(D x==x) も $(D !isNaN(x)) と同じ意味になり、$(D x!=x) は $(D isNaN(x)) を意味します。
+$(D abs(x) !< x.infinity) は $(D isNaN(x) || isInfinity(x)) です。
+このような関係式は、コンパイル時関数で使えるという点でまず有用です。
+そのほかの NCEG 演算子にはほとんど使い道が知られていません。
 )
 
-$(H2 The IEEE Rounding Modes)
+$(H2 IEEE 丸めモード)
 
-$(P The rounding mode is controlled within a scope. Rounding mode will be restored to its previous state at the end of that scope. 
-Four rounding modes can be set. The default mode, $(I Round to nearest), is the most statistically accurate, but the least intuitive. In the event of tie, the result is rounded to an even number.
+$(P 丸めモードはスコープ単位で制御することが可能です。スコープの終わりでは元の状態が復元されます。
+丸めモードには4種類あります。デフォルトは $(I Round to nearest) で、統計的にはもっとも正確ですが、もっとも直感的な把握が難しくもあります。ちょうど中間の値は、偶数側に丸められます。
 )
 
 $(TABLE1
-$(TR $(TH Rounding mode) $(TH rndint(4.5)) $(TH rndint(5.5)) $(TH rndint(-4.5)) $(TH Notes))
-$(TR $(TD Round to nearest) $(TD 4) $(TD 6) $(TD -4) $(TD Ties round to an even number))
+$(TR $(TH 丸めモード) $(TH rndint(4.5)) $(TH rndint(5.5)) $(TH rndint(-4.5)) $(TH 備考))
+$(TR $(TD Round to nearest) $(TD 4) $(TD 6) $(TD -4) $(TD ちょうど中央値ならば偶数側に丸めます))
 $(TR $(TD Round down) $(TD 4) $(TD 5) $(TD -5) $(TD &nbsp;))
 $(TR $(TD Round up) $(TD 5) $(TD 6) $(TD -4) $(TD &nbsp;))
 $(TR $(TD Round to zero) $(TD 4) $(TD 5) $(TD -4) $(TD &nbsp;))
 )
 
-$(P There are very few reasons for changing the rounding mode.
-The round-up and round-down modes were created specifically to allow fast implementations of interval arithmetic; they are crucial to certain libraries, but rarely used elsewhere.
-The round-to-zero mode is used for casting floating-point numbers to integers. Since mode switching is slow, especially on Intel machines, it may be useful to switch to round-to-zero mode, in order to exactly duplicate the behaviour of $(D cast(int)) in an inner loop.
+$(P 丸めモードをあえて変更する理由はほぼありません。
+round-up と round-down モードは、区間演算を高速に実装する目的のために特別に作られたモードです。ある種のライブラリにはこの機能がたしかに必要ですが、他で使われる機会はあまりありません。
+round-to-zero モードは浮動小数点数を整数にキャストする際に使われます。モード切替は（特にIntelマシンでは）遅いので、最初から round-to-zero モードにしておいて、計算のもっともコアなループで $(D cast(int)) と正確に同じ挙動を高速に使う、という使い道はあるかもしれません。
 )
 
-$(P The only other commonly cited reason for changing the rounding mode is as a simple check for numerical stability: if the calculation produces wildly different results when the rounding mode is changed, it's a clear sign that it is suffering from round-off errors. )
+$(P 他に丸めモードを切り替える理由としてよく挙がるものはもう一つだけあって、それは、数値計算の安定性の簡単なチェック用途です。丸めモードを変えたら結果が大きく変わってしまったような場合、どこかで大きな丸め誤差が発生してしまっていることの明確な印となります。)
 
-$(H2 The IEEE Exception Status Flags)
+$(H2 IEEE 例外ステータスフラグ)
 
-$(P All IEEE-compiliant processors include special status bits that indicate when "weird" things have happened that programs might want to know about. For example, $(D ieeeFlags.divideByZero) tells if any infinities have been created by dividing by zero. They are 'sticky' bits: once they have been set, they remain set until explicitly cleared. By only checking this once at the end of a calculation, it may be possible to avoid comparing thousands of comparisions that are almost never going to fail.)
+$(P IEEE準拠のプロセッサは必ず、プログラムに伝える必要があるかもしれない"マズい"ことが起こったことを示す特別なステータスビットを持っています。例えば、$(D ieeeFlags.divideByZero) はゼロ除算で無限大が作られたことを示します。これらは 'sticky' なフラグです: つまり、一度セットされたら、明示的にクリアされるまでセットされっぱなしになります。言い方を変えると、フラグは計算の最後に一度だけチェックすることで、ほとんどの場合failしないような何千回ものチェックを避けることができます。)
 
-$(P Here's a list of the weird things that can be detected:)
+$(P 以下が、検出できる"マズい"ことの一覧です:)
 
 $(DL
-$(DT invalid) $(DD This is set if any NaN's have been generated. This can happen with $(INFIN) - $(INFIN), $(INFIN) * 0, 0 * $(INFIN), 0/0, $(INFIN)/$(INFIN), $(INFIN)%$(INFIN), or $(D x%0), for any number $(D x). Several other operations, such as sqrt(-1), can also generate a NaN. The $(I invalid) condition is also set when a 'signalling NaN' is accessed, indicating use of an uninitialized variable. This almost always indicates a programming error.)
+$(DT invalid) $(DD これは、NaN が出来た時に常にセットされます。$(INFIN) - $(INFIN), $(INFIN) * 0, 0 * $(INFIN), 0/0, $(INFIN)/$(INFIN), $(INFIN)%$(INFIN), 任意の数$(D x)に対する$(D x%0) を計算したときに発生します。その他の演算、たとえば sqrt(-1) なども NaN を生成します。 $(I invalid) フラグは、未初期化変数へのアクセスを表す 'signalling NaN' へのアクセス時にも発生します。ほぼ全ての場合、これはプログラミングのミスを示しています。)
 
-$(DT overflow) $(DD Set if $(INFIN) was generated by adding or multiplying two numbers that were so large that the sum was greater than $(D real.max). This almost always indicates that the result is incorrect; and corrective action needs to be taken.)
+$(DT overflow) $(DD $(INFIN) が2つの数の加算や乗算の結果生成された場合にセットされます。これは、演算結果が $(D real.max) より大きくなるときに発生し、ほとんどの場合、演算結果が正しくなくなっていることを表します。なにか補正する処理が必要です。)
 
-$(DT divisionByZero) $(DD Set if $(PLUSMNINF) was generated by dividing by zero. This usually indicates a programming error, but not always; some types of calculations return correct results even when division by zero occurs.
-(For example, $(D 1/(1+ 1/x) == 0) if $(D x == 0)). Note that division by a tiny, almost-zero number also produces an infinite result, but sets the overflow flag rather than the divisionByZero flag.
+$(DT divisionByZero) $(DD $(PLUSMNINF) がゼロ除算によって発生したときにセットされます。これは普通プログラミングのミスを示していますが、そうでないこともあります; ある種の計算では、たとえ途中にゼロ除算が発生しても正しく結果を求めることが出来ます。
+(例えば $(D x == 0) のときに $(D 1/(1+ 1/x) == 0) になります)。 注意点として、非常に小さいほとんどゼロの値で割ったときも無限大が結果として返りますが、このときはdivisionByZeroではなくoverflowフラグがセットされます。
 )
 
-$(DT underflow) $(DD This happens if two numbers are subtracted or divided and are so tiny that the result lost precision because it was subnormal. Extreme underflow produces a zero result. Underflow almost never creates problems, and can usually be ignored.)
+$(DT underflow) $(DD 2つの数の減算または除算の結果、結果が非正規化数になって精度が失われたときにセットされます。酷い場合は、結果は完全にゼロになってしまいます。underflow が問題となることは実際にはほとんどなく、単に無視できる場合がほとんどです。)
 
-$(DT inexact) $(DD This indicates that rounding has occurred. Almost all floating point operations set this flag! It was apparently included in the hardware to support some arcane tricks used in the pioneering days of numerical analysis. It can always be ignored.)
+$(DT inexact) $(DD 丸めが発生したことを示します。ほとんど全ての浮動小数点演算がこのフラグをセットします！ どうも、数値解析の初期の頃の超絶トリックをサポートするためにハードウェアに含まれたようですが、今日では常に無視して構いません。)
 )
 
-$(P Floating-point traps can be enabled for any of the categories listed above. When enabled, a hardware exception will be generated.
-This can be an invaluable debugging aid.
-A more advanced usage, not yet supported on any platform(!) is to provide a nested function to be used as a hardware exception handler. This is most useful for the overflow and underflow exceptions.
+$(P 浮動小数点エラーのトラップは、ここに列挙したどのカテゴリについても有効化できます。有効化した場合、ハードウェア例外が生成されるようになります。
+これは計り知れないほどデバッグの助けとなります。
+より発展的な使用法（まだどのプラットフォームでもサポートされていませんが(!)）としては、ネスト関数をハードウェア例外のハンドラとして提供するといった機能が考えられます。これは特に、overflow と underflow 例外に対して役に立つでしょう。
 )
 
 $(H2 Floating point and $(SINGLEQUOTE pure nothrow))
 
-$(P Every floating point operation, even the most trivial, is affected by the floating-point rounding state, and writes to the sticky flags. The status flags and control state are thus 'hidden variables', potentially affecting every $(D pure) function; and if the floating point traps are enabled, any floating point operation can generate a hardware exception.
-D provides a facility for the floating-point control mode and exception flags to be usable in limited circumstances even when $(D pure) and $(D nothrow) functions are called.
+$(P どんな浮動小数点演算も、一番トリビアルなものであっても、演算は丸めモードの状態に影響され、sticky flags への書き込みを行います。状態フラグや制御ステートはつまり '隠された変数' であって、全ての $(D pure) 関数の動作に影響する可能性を含んでいます; さらに、浮動小数点のトラップが有効にされれば、どんな浮動小数点演算も、ハードウェア例外を投げることができるようになります。
+D は、浮動小数点の制御モードや例外フラグを限定された状況で使えるようにする機能を提供しており、これは $(D pure) や $(D nothrow) 関数が呼ばれている時であっても使用できます。
 )
 
-$(P [TODO: I've made two proposals, but I haven't persauded Walter yet!].)
+$(P [TODO: これについて2つ提案を出しましたが、まだWalterを説得できていません！])
 
-$(H2 Conclusion)
+$(H2 まとめ)
 
-$(P Although D is a general-purpose programming language and supports many high-level concepts, it gives direct and convenient access to almost all features of modern floating-point hardware. This makes it an excellent language for development of robust, high-performance numerical code. It is also a language which encourages a deep understanding of the machine, making it fertile ground for innovation and for developing new algorithms.)
+$(P D は汎用プログラミング言語で多くの高水準な機能をサポートしていますが、一方で、モダンな浮動小数点演算ハードウェアのほぼ全機能に対する直接的で便利なアクセスをも可能としています。これによって、Dは、ロバストで高性能な数値演算コードを書くための優れた言語となっています。また同時に、マシンに対する深い理解を促すような言語デザインは、新しいアルゴリズムの発想の元となる豊かな土壌でもあります。)
 
 
 
-$(H2 References and Further Reading)
+$(H2 参考文献)
 
 $(OL
 $(LI
@@ -364,6 +363,6 @@ Macros:
       D = <span class="d_inlinecode">$0</span>
 	H2=<h2>$0</h2>
 	H3=<h3>$0</h3>
-	TITLE=Real Close to the Machine: Floating Point in D
+	TITLE=マシンの中のリアル : Dの浮動小数点数
 	WIKI=FloatingPointInD
 	CATEGORY_ARTICLES=$0
