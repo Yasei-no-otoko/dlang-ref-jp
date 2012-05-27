@@ -1,198 +1,198 @@
 Ddoc
 
-$(D_S dmd - $(WINDOWS Windows)$(LINUX Linux)$(OSX Mac OS X)$(FREEBSD FreeBSD) D Compiler,
+$(D_S DMD コンパイラ - $(WINDOWS Windows)$(LINUX Linux)$(OSX Mac OS X)$(FREEBSD FreeBSD) 版,
 
 	$(UL
-	$(WINDOWS $(LI dmd for $(LINK2 dmd-linux.html,   Linux)))
-	$(WINDOWS $(LI dmd for $(LINK2 dmd-osx.html,     OSX)))
-	$(WINDOWS $(LI dmd for $(LINK2 dmd-freebsd.html, FreeBSD)))
-	$(LINUX   $(LI dmd for $(LINK2 dmd-windows.html, Windows)))
-	$(LINUX   $(LI dmd for $(LINK2 dmd-osx.html,     OSX)))
-	$(LINUX   $(LI dmd for $(LINK2 dmd-freebsd.html, FreeBSD)))
-	$(OSX     $(LI dmd for $(LINK2 dmd-windows.html, Windows)))
-	$(OSX     $(LI dmd for $(LINK2 dmd-linux.html,   Linux)))
-	$(OSX     $(LI dmd for $(LINK2 dmd-freebsd.html, FreeBSD)))
-	$(FREEBSD $(LI dmd for $(LINK2 dmd-windows.html, Windows)))
-	$(FREEBSD $(LI dmd for $(LINK2 dmd-linux.html,   Linux)))
-	$(FREEBSD $(LI dmd for $(LINK2 dmd-osx.html,     OSX)))
-	$(LI $(LINK2 #requirements, Requirements and Downloads))
-	$(LI $(LINK2 #files, Files))
-	$(LI $(LINK2 #installation, Installation))
-	$(WINDOWS $(LI $(LINK2 #example, Example)))
-	$(LI $(LINK2 #switches, Compiler Arguments and Switches))
-	$(LI $(LINK2 #linking, Linking))
-	$(LI $(LINK2 #environment, Environment Variables))
-	$(WINDOWS $(LI $(LINK2 #sc_ini, sc.ini Initialization File)))
-	$(UNIX $(LI $(DMD_CONF) Initialization File))
-	$(WINDOWS $(LI $(LINK2 #problems, Common Installation Problems)))
-	$(LI $(LINK2 #differences, Differences between Windows and Linux versions))
-	$(LI $(LINK2 #interface_files, D Interface Files))
-	$(LI $(LINK2 #library, Building Libraries))
-	$(LI $(LINK2 #compiling_dmd, Compiling dmd))
-	$(LI $(LINK2 #compiling_phobos, Compiling Phobos))
+	$(WINDOWS $(LI dmd $(LINK2 dmd-linux.html,   Linux) 版))
+	$(WINDOWS $(LI dmd $(LINK2 dmd-osx.html,     OSX) 版))
+	$(WINDOWS $(LI dmd $(LINK2 dmd-freebsd.html, FreeBSD) 版))
+	$(LINUX   $(LI dmd $(LINK2 dmd-windows.html, Windows) 版))
+	$(LINUX   $(LI dmd $(LINK2 dmd-osx.html,     OSX) 版))
+	$(LINUX   $(LI dmd $(LINK2 dmd-freebsd.html, FreeBSD) 版))
+	$(OSX     $(LI dmd $(LINK2 dmd-windows.html, Windows) 版))
+	$(OSX     $(LI dmd $(LINK2 dmd-linux.html,   Linux) 版))
+	$(OSX     $(LI dmd $(LINK2 dmd-freebsd.html, FreeBSD) 版))
+	$(FREEBSD $(LI dmd $(LINK2 dmd-windows.html, Windows) 版))
+	$(FREEBSD $(LI dmd $(LINK2 dmd-linux.html,   Linux) 版))
+	$(FREEBSD $(LI dmd $(LINK2 dmd-osx.html,     OSX) 版))
+	$(LI $(LINK2 #requirements, 必要なもの))
+	$(LI $(LINK2 #files, ファイルリスト))
+	$(LI $(LINK2 #installation, インストール))
+	$(WINDOWS $(LI $(LINK2 #example, 例)))
+	$(LI $(LINK2 #switches, コンパイラの引数とスイッチ))
+	$(LI $(LINK2 #linking, リンク))
+	$(LI $(LINK2 #environment, 環境変数))
+	$(WINDOWS $(LI $(LINK2 #sc_ini, sc.ini 初期設定ファイル)))
+	$(UNIX $(LI $(DMD_CONF) 初期設定ファイル))
+	$(WINDOWS $(LI $(LINK2 #problems, 既知のインストール時の問題)))
+	$(LI $(LINK2 #differences, Windows版とLinux版の違い))
+	$(LI $(LINK2 #interface_files, D インターフェースファイル))
+	$(LI $(LINK2 #library, ライブラリのビルド))
+	$(LI $(LINK2 #compiling_dmd, dmd のコンパイル))
+	$(LI $(LINK2 #compiling_phobos, Phobos のコンパイル))
 	)
 
-<h2>$(LNAME2 requirements, Requirements and Downloads)</h2>
+<h2>$(LNAME2 requirements, 必要なもの)</h2>
 
 	$(OL
-	$(LI $(LINK2 http://www.digitalmars.com/d/download.html, Download D Compiler))
+	$(LI $(LINK2 http://www.digitalmars.com/d/download.html, Dコンパイラのダウンロード))
 
     $(WINDOWS
-	$(LI 32 bit Windows (Win32) operating system, such as Windows XP)
+	$(LI 32 bit Windows (Win32) OS (Windows XP など))
 
-	$(LI Download
+	$(LI Win32用
 	 <a href="http://ftp.digitalmars.com/dmc.zip" title="download dmc.zip">
-	 dmc.zip (C and C++ compiler)</a> for Win32
-	 (not required, but it complements dmd for Windows)
+	 dmc.zip (C/C++ コンパイラ)</a> のダウンロード
+		(2.025から必要ではなくなりましたが、いくつかの追加ツールはこちらに含まれています)
 	)
     )
     $(LINUX
-	$(LI 32 bit x86 and 64 bit x86-64 Linux operating system)
+	$(LI 32 bit x86 / 64 bit x86-64 Linux)
 
 	$(LI Gnu C compiler (gcc))
     )
     $(OSX
-	$(LI 32 bit x86 Mac OSX operating system)
+	$(LI 32 bit x86 Mac OSX)
 
 	$(LI Gnu C compiler (gcc))
     )
     $(FREEBSD
-	$(LI 32 bit x86 FreeBSD 7.1 operating system)
+	$(LI 32 bit x86 FreeBSD 7.1)
 
 	$(LI Gnu C compiler (gcc))
     )
 	)
 
-<h2>$(LNAME2 files, Files)</h2>
+<h2>$(LNAME2 files, ファイルリスト)</h2>
 
 	$(DL
 
 	$(DT $(D $(DMDDIR)$(SEP)src$(SEP)phobos$(SEP))
-	$(DD D runtime library source)
+	$(DD D ランタイムライブラリのソース。)
 	)
 
 	$(DT $(D $(DMDDIR)$(SEP)src$(SEP)dmd$(SEP))
-	$(DD D compiler front end source under dual (GPL and Artistic) license)
+	$(DD D コンパイラフロントエンドのソース。GPL もしくは Artistic License のデュアルライセンスです。)
 	)
 
 	$(DT $(D $(DMDDIR)$(SEP)html$(SEP)d$(SEP))
-	$(DD Documentation)
+	$(DD ドキュメント)
 	)
 
 	$(DT $(D $(DMDDIR)$(SEP)samples$(SEP)d$(SEP))
-	$(DD Sample D programs)
+	$(DD サンプル)
 	)
     $(WINDOWS
 	$(DT $(D $(DMDDIR)\windows\bin\dmd.exe)
-	$(DD D compiler executable)
+	$(DD Dコンパイラ実行ファイル)
 	)
 
 	$(DT $(D $(DMDDIR)\windows\bin\$(LINK2 http://www.digitalmars.com/ctg/shell.html, shell.exe))
-	$(DD Simple command line shell)
+	$(DD 簡単なコマンド型シェル)
 	)
 
 	$(DT $(D $(DMDDIR)\windows\bin\sc.ini)
-	$(DD Global compiler settings)
+	$(DD コンパイラの設定ファイル)
 	)
 
 	$(DT $(D $(DMDDIR)\windows\lib\$(LIB))
-	$(DD D runtime library)
+	$(DD Dランタイムライブラリ)
 	)
     )
     $(LINUX
 	$(DT $(D $(DMDDIR)/linux/bin/dmd)
-	$(DD D compiler executable)
+	$(DD Dコンパイラ実行ファイル)
 	)
 
 	$(DT $(D $(DMDDIR)/linux/bin/$(DUMPOBJ))
-	$(DD Elf file dumper)
+	$(DD ELF ダンプツール)
 	)
 
 	$(DT $(D $(DMDDIR)/linux/bin/$(OBJ2ASM))
-	$(DD Elf file disassembler)
+	$(DD ELF ディスアセンブラ)
 	)
 
 	$(DT $(D $(DMDDIR)/linux/bin/$(SHELL))
-	$(DD Simple command line shell)
+	$(DD 簡単なコマンド型シェル)
 	)
 
 	$(DT $(D $(DMDDIR)/linux/bin/$(DMD_CONF))
-	$(DD Global compiler settings (copy to $(D /etc/dmd.conf)))
+	$(DD コンパイラの設定ファイル (copy to $(D /etc/dmd.conf) にコピーして下さい))
 	)
 
 	$(DT $(D $(DMDDIR)/linux/lib/$(LIB))
-	$(DD D runtime library (copy to $(D /usr/lib/$(LIB))))
+	$(DD Dランタイムライブラリ (copy to $(D /usr/lib/$(LIB)) にコピーして下さい))
 	)
     )
     $(FREEBSD
 	$(DT $(D $(DMDDIR)/freebsd/bin/dmd)
-	$(DD D compiler executable)
+	$(DD Dコンパイラ実行ファイル)
 	)
 
 	$(DT $(D $(DMDDIR)/freebsd/bin/$(DUMPOBJ))
-	$(DD Elf file dumper)
+	$(DD ELF ダンプツール)
 	)
 
 	$(DT $(D $(DMDDIR)/freebsd/bin/$(OBJ2ASM))
-	$(DD Elf file disassembler)
+	$(DD ELF ディスアセンブラ)
 	)
 
 	$(DT $(D $(DMDDIR)/freebsd/bin/$(SHELL))
-	$(DD Simple command line shell)
+	$(DD 簡単なコマンド型シェル)
 	)
 
 	$(DT $(D $(DMDDIR)/freebsd/bin/$(DMD_CONF))
-	$(DD Global compiler settings (copy to $(D /etc/dmd.conf)))
+	$(DD コンパイラの設定ファイル ($(D /etc/dmd.conf) にコピーして下さい))
 	)
 
 	$(DT $(D $(DMDDIR)/freebsd/lib/$(LIB))
-	$(DD D runtime library (copy to $(D /usr/lib/$(LIB))))
+	$(DD Dランタイムライブラリ ($(D /usr/lib/$(LIB)) にコピーして下さい))
 	)
     )
     $(OSX
 	$(DT $(D $(DMDDIR)/osx/bin/dmd)
-	$(DD D compiler executable)
+	$(DD Dコンパイラ実行ファイル)
 	)
 
 	$(DT $(D $(DMDDIR)/osx/bin/$(DUMPOBJ))
-	$(DD Mach-O file dumper)
+	$(DD Mach-O ダンプツール)
 	)
 
 	$(DT $(D $(DMDDIR)/osx/bin/$(OBJ2ASM))
-	$(DD Mach-O file disassembler)
+	$(DD Mach-O ディスアセンブラ)
 	)
 
 	$(DT $(D $(DMDDIR)/osx/bin/$(SHELL))
-	$(DD Simple command line shell)
+	$(DD 簡単なコマンド型シェル)
 	)
 
 	$(DT $(D $(DMDDIR)/osx/bin/$(DMD_CONF))
-	$(DD Global compiler settings (copy to $(D /etc/dmd.conf)))
+	$(DD コンパイラの設定ファイル ($(D /etc/dmd.conf) にコピーして下さい))
 	)
 
 	$(DT $(D $(DMDDIR)/osx/lib/$(LIB))
-	$(DD D runtime library (copy to $(D /usr/lib/$(LIB))))
+	$(DD Dランタイムライブラリ ($(D /usr/lib/$(LIB)) にコピーして下さい))
 	)
     )
 
 	)
 
-<h2>$(LNAME2 installation, Installation)</h2>
+<h2>$(LNAME2 installation, インストール)</h2>
 
     $(WINDOWS
-	$(P Open a console window (for Windows XP this is done by
-	clicking on [Start][Command Prompt]).
-	All the tools are command line tools, which means
-	they are run from a console window.
-	Switch to the root directory.
-	Unzip the files in the root directory.
-	$(D dmd.zip) will create
-	a $(D $(DMDDIR)) directory with all the files in it.
-	$(D dmc.zip) will create
-	a $(D \dm) directory with all the files in it.
+	$(P まず、コンソールウインドウを開きます。(Windows XP なら、
+	[スタート][コマンドプロンプト] をクリックしてください)。
+	配布されているツールは全てコマンドラインツールなので、
+	コンソールから操作する必要があります。
+	ルートディレクトリに移動し、
+	ファイルをルートディレクトリにunzipで展開します。
+	$(D dmd.zip) を展開すると、
+	$(D $(DMDDIR)) ディレクトリが作られその中に全てのファイルが含まれています。
+	$(D dmc.zip) を展開すると、
+	$(D \dm) ディレクトリが作られその中に全てのファイルが含まれています。
 	)
 
-	$(P A typical session might look like:)
+	$(P おおよそこんな感じになるでしょう：)
 
 $(CONSOLE
 C:\Documents and Settings\Your Name&gt;cd \
@@ -201,24 +201,24 @@ C:\&gt;unzip dmc.zip
 )
     )
     $(LINUX
-	$(LI Unzip the archive into your home directory.
-	It will create
-	a $(D ~/dmd) directory with all the files in it.
-	All the tools are command line tools, which means
-	they are run from a console window.)
+	$(LI 書庫をホームディレクトリへunzipで展開します。
+		$(D ~/dmd)
+		ディレクトリが作られ、
+		全てのファイルがその中に入っています。
+		ツールは全てコンソールから利用するコマンドライン用ツールです。)
 
-	$(LI Copy $(D $(DMD_CONF)) to $(D /etc):
+	$(LI $(D $(DMD_CONF)) を $(D /etc) へコピーします。
 
 $(CONSOLE
 cp $(DMDDIR)/linux/bin/$(DMD_CONF) /etc
 )
 	)
 
-	$(LI Put $(D $(DMDDIR)/linux/bin) on your $(B PATH),
-	or copy the linux executables
-	to $(D /usr/local/bin))
+	$(LI 環境変数 $(B PATH) に $(D $(DMDDIR)/linux/bin) を追加するか、
+		Linux版の実行ファイルを
+		$(D /usr/local/bin) にコピーします。)
 
-	$(LI Copy the library to $(D /usr/lib):
+	$(LI ライブラリを $(D /usr/lib) へコピーします:
 
 $(CONSOLE
 cp $(DMDDIR)/linux/lib/$(LIB) /usr/lib
@@ -226,24 +226,24 @@ cp $(DMDDIR)/linux/lib/$(LIB) /usr/lib
 	)
     )
     $(FREEBSD
-	$(LI Unzip the archive into your home directory.
-	It will create
-	a $(D ~/dmd) directory with all the files in it.
-	All the tools are command line tools, which means
-	they are run from a console window.)
+	$(LI 書庫をホームディレクトリへunzipで展開します。
+		$(D ~/dmd)
+		ディレクトリが作られ、
+		全てのファイルがその中に入っています。
+		ツールは全てコンソールから利用するコマンドライン用ツールです。)
 
-	$(LI Copy $(D $(DMD_CONF)) to $(D /etc):
+	$(LI $(D $(DMD_CONF)) を $(D /etc) へコピーします。
 
 $(CONSOLE
 cp $(DMDDIR)/freebsd/bin/dmd.conf /etc
 )
 	)
 
-	$(LI Put $(D $(DMDDIR)/freebsd/bin) on your $(B PATH),
-	or copy the FreeBSD executables
-	to $(D /usr/local/bin))
+	$(LI 環境変数 $(B PATH) に $(D $(DMDDIR)/freebsd/bin) を追加するか、
+		FreeBSD版の実行ファイルを
+		$(D /usr/local/bin) にコピーします。)
 
-	$(LI Copy the library to $(D /usr/lib):
+	$(LI ライブラリを $(D /usr/lib) へコピーします:
 
 $(CONSOLE
 cp $(DMDDIR)/freebsd/lib/$(LIB) /usr/lib
@@ -251,22 +251,22 @@ cp $(DMDDIR)/freebsd/lib/$(LIB) /usr/lib
 	)
     )
     $(OSX
-	$(LI Put the dmd zip file into your home directory,
-	and unzip it:
+	$(LI dmd の zip ファイルをホームディレクトリに置いて、
+		unzipで展開します。
 
 $(CONSOLE
 unzip dmd.$(I VERSION).zip
 )
-	where $(I VERSION) is the particular version of the zip file.
+	$(I VERSION) にはそのzipファイルのバージョン番号が入ります。
 	)
 
-	$(LI It will create
-	a $(D ~/$(DMDDIR)) directory with all the files in it.
-	All the tools are command line tools, which means
-	they are run from a console window.)
+	$(LI
+		$(D ~/$(DMDDIR)) ディレクトリが作られ、
+		全てのファイルがその中に入っています。
+		ツールは全てコンソールから利用するコマンドライン用ツールです。)
 
-	$(LI Verify that this works by creating $(D hello.d) in your home directory
-	with these contents:
+	$(LI 動作を確かめるために、以下の内容で $(D hello.d)
+	というファイルをホームディレクトリに作成して下さい:
 ---
 import std.stdio;
 
@@ -274,20 +274,20 @@ void main() {
     writeln("hello world!");
 }
 ---
-	and compile and run it with:
+	これを次のようにコンパイルして実行すると
 $(CONSOLE
 $(DMDDIR)/osx/bin/dmd hello
 ./hello
 )
-	and it should print:
+	以下が表示されれば成功です:
 $(CONSOLE
 hello world!
 )
 	)
 
-	$(LI To install a global copy:)
+	$(LI システム全体で使えるようにインストールするには:)
 
-	$(LI Copy binaries to $(D /usr/local/bin):
+	$(LI 実行ファイルを $(D /usr/local/bin):
 
 $(CONSOLE
 sudo cp $(DMDDIR)/osx/bin/{dmd,$(DUMPOBJ),$(OBJ2ASM),$(SHELL)$(V2 ,rdmd)} /usr/local/bin
@@ -295,7 +295,7 @@ sudo cp $(DMDDIR)/osx/bin/dmdx.conf /usr/local/bin/$(DMD_CONF)
 )
 	)
 
-	$(LI Copy the library to $(D /usr/lib):
+	$(LI 最後に、ライブラリファイルを $(D /usr/lib) へコピーします:
 
 $(CONSOLE
 sudo cp $(DMDDIR)/osx/lib/$(LIB) /usr/lib
@@ -304,19 +304,19 @@ sudo cp $(DMDDIR)/osx/lib/$(LIB) /usr/lib
     )
 
 $(WINDOWS
-<h2><h2>$(LNAME2 example, Example)</h2></h2>
+<h2><h2>$(LNAME2 example, 例)</h2></h2>
 
-	$(P Run:)
+	$(P $(D $(DMDDIR)$(SEP)samples$(SEP)d) ディレクトリで以下を実行して下さい：)
 
 $(CONSOLE
 $(DMDDIR)$(SEP)$(OS)$(SEP)bin$(SEP)$(SHELL) all.sh
 )
 
-	$(P in the $(D $(DMDDIR)$(SEP)samples$(SEP)d) directory for several small examples.)
+	$(P 小さなサンプルが幾つか実行されます。)
 )
 
 
-<h2>$(LNAME2 switches, Compiler Arguments and Switches)</h2>
+<h2>$(LNAME2 switches, コンパイラの引数とスイッチ)</h2>
 
 	$(DL
 	  $(DT $(B dmd) $(I files)... -$(I switches)...
@@ -325,47 +325,47 @@ $(DMDDIR)$(SEP)$(OS)$(SEP)bin$(SEP)$(SHELL) all.sh
 
 	  $(DT $(I files)...
 		$(DD
-		$(TABLE2 File Extensions,
+		$(TABLE2 ファイルの拡張子,
 		$(TR
-		$(TH Extension)
-		$(TH File Type)
+		$(TH 拡張子)
+		$(TH ファイルの種類)
 		)
 		$(TR
-		$(TD $(I none))
-		$(TD D source files)
+		$(TD $(I なし))
+		$(TD D言語のソース)
 		)
 		$(TR
 		$(TD $(B .d))
-		$(TD D source files)
+		$(TD D言語のソース)
 		)
 		$(TR
 		$(TD $(B .dd))
-		$(TD $(LINK2 ddoc.html, Ddoc) source files)
+		$(TD $(LINK2 ddoc.html, Ddoc) のソース)
 		)
 		$(TR
 		$(TD $(B .di))
-		$(TD $(LINK2 #interface_files, D interface files))
+		$(TD $(LINK2 #interface_files, D インターフェイスファイル))
 		)
 		$(TR
 		$(TD $(B .$(OBJEXT)))
-		$(TD Object files to link in)
+		$(TD リンクしたいオブジェクトファイル)
 		)
 		$(TR
 		$(TD $(B .$(LIBEXT)))
-		$(TD Object code libraries to search)
+		$(TD 検索対象にするオブジェクトコードライブラリ)
 		)
 $(WINDOWS
 		$(TR
 		$(TD $(B .exe))
-		$(TD Output executable file)
+		$(TD 出力する実行ファイルの名前)
 		)
 		$(TR
 		$(TD $(B .def))
-		$(TD $(LINK2 http://www.digitalmars.com/ctg/ctgDefFiles.html, module definition file))
+		$(TD $(LINK2 http://www.digitalmars.com/ctg/ctgDefFiles.html, 実行モジュール定義ファイル))
 		)
 		$(TR
 		$(TD $(B .res))
-		$(TD resource file)
+		$(TD リソースファイル)
 		)
 )
 		)
@@ -373,179 +373,179 @@ $(WINDOWS
 	  )
 
 	  $(SWITCH $(B @)$(I cmdfile),
-		If $(I cmdfile) is an environment variable,
-		read the compiler arguments and switches from
-		the value of that variable.
-		Otherwise, read compiler arguments and switches from
-		the text file $(I cmdfile)
+		$(I cmdfile) が環境変数の名前であれば、
+		その環境変数から、
+		コンパイラへの引数とスイッチを読み込みます。
+		それ以外の場合、
+		テキストファイル $(I cmdfile) から引数とスイッチを読み込みます。
 	  )
 
 	  $(SWITCH $(B -c),
-		compile only, do not link
+		コンパイルのみ。リンクはしません
 	  )
 
 	  $(SWITCH $(B -cov),
-		instrument for $(LINK2 code_coverage.html, code coverage analysis)
+		$(LINK2 code_coverage.html, コードカバレッジ解析) を有効にする
 	  )
 
 	  $(SWITCH $(B -D),
-		generate $(LINK2 ddoc.html, documentation) from source
+		ソースから $(LINK2 ddoc.html, ドキュメント) を生成
 	  )
 
 	  $(SWITCH $(B -Dd)$(I docdir),
-		write documentation file to $(I docdir) directory
+		ドキュメントファイルを $(I docdir) ディレクトリに出力
 	  )
 
 	  $(SWITCH $(B -Df)$(I filename),
-		write documentation file to $(I filename)
+		ドキュメントファイルを $(I filename) に出力
 	  )
 
 	  $(SWITCH $(B -d),
-		allow deprecated features
+		非推奨(deprecated)な機能を有効化
 	  )
 	  $(SWITCH $(B -debug),
-		compile in $(LINK2 version.html#debug, debug) code
+		$(LINK2 version.html#debug, デバッグ) 用にコンパイル
 	  )
 	  $(SWITCH $(B -debug=)$(I level),
-		compile in $(LINK2 version.html#debug, debug level) &lt;= $(I level)
+		$(LINK2 version.html#debug, デバッグレベル) &lt;= $(I level) でコンパイル
 	  )
 	  $(SWITCH $(B -debug=)$(I ident),
-		compile in $(LINK2 version.html#debug, debug identifier) $(I ident)
+		$(LINK2 version.html#debug, デバッグ識別子) $(I ident) を有効にしてコンパイル
 	  )
 
 	  $(SWITCH $(B -debuglib=)$(I libname),
-		link in $(I libname) as the default library when
-		compiling for symbolic debugging instead of $(B $(LIB))
+		デバッグ情報つきのコンパイル時に、$(I libname)
+		をデフォルトライブラリとして $(B $(LIB)) の代わりにリンク
 	  )
 	  $(SWITCH $(B -defaultlib=)$(I libname),
-		link in $(I libname) as the default library when
-		not compiling for symbolic debugging instead of $(B $(LIB))
+		デバッグ情報なしのコンパイル時に、$(I libname)
+		をデフォルトライブラリとして $(B $(LIB)) の代わりにリンク
 	  )
 	  $(SWITCH $(B -deps=)$(I filename),
-		write module dependencies as text to $(I filename)
+		モジュールの依存関係をテキストで $(I filename) に書き込み
 	  )
 
     $(UNIX
 	  $(SWITCH $(B -fPIC),
-		generate Position Independent Code (which is used
-		for building shared libraries).
-		$(OSX This is always on for OSX.)
+		位置非依存コード
+		(共有ライブラリのビルドに使われる) を生成。
+		$(OSX OSXではこのフラグは常に有効です。)
 	  )
     )
 
 	  $(SWITCH $(B -g),
     $(WINDOWS
-		add CodeView 4 symbolic debug info with
-		$(LINK2 abi.html#codeview, D extensions)
-		for debuggers such as
 		$(LINK2 http://ddbg.mainia.de/releases.html, Ddbg)
+		等のデバッガ向けに Codeview 4 シンボル情報を
+		$(LINK2 abi.html#codeview, D extensions)
+		として
     )
     $(UNIX
-		add Dwarf symbolic debug info with
 		$(LINK2 abi.html#dwarf, D extensions)
-		for debuggers $(LINUX such as
-		$(LINK2 http://www.zerobugs.org/, ZeroBUGS))
+		として
+		Dwarf シンボル情報を追加 $(LINUX 例えば
+		$(LINK2 http://www.zerobugs.org/, ZeroBUGS) が対応)
     )
 	  )
 
 	  $(SWITCH $(B -gc),
     $(WINDOWS
-		add CodeView 4 symbolic debug info in C format
-		for debuggers such as
 		$(D $(DMDDIR)\bin\windbg)
+		等のデバッガ向けに Codeview 4
+		シンボル情報を追加
     )
     $(UNIX
-		add Dwarf symbolic debug info in C format
-		for debuggers such as
-		$(D gdb)
+		$(D gdb) など向けに
+		C 形式で
+		Dwarf シンボル情報を追加
     )
 	  )
 
 	  $(SWITCH $(B -gs),
-		always generate standard stack frame
+		常に標準的なスタックフレームを生成
 	  )
 
 	  $(SWITCH $(B -H),
-		generate $(LINK2 #interface_files, D interface file)
+		$(LINK2 #interface_files, Dインターフェイスファイル) の生成
 	  )
 
 	  $(SWITCH $(B -Hd)$(I dir),
-		write D interface file to $(I dir) directory
+		Dインターフェイスファイルの出力ディレクトリ $(I dir) の指定
 	  )
 
 	  $(SWITCH $(B -Hf)$(I filename),
-		write D interface file to $(I filename)
+		Dインターフェイスファイルのファイル名 $(I filename) の指定
 	  )
 
 	  $(SWITCH $(B --help),
-		print brief help to console
+		ヘルプメッセージを出力
 	  )
 
 	  $(SWITCH $(B -I)$(I path),
-		where to look for
-		$(LINK2 module.html#ImportDeclaration, imports).
-		$(I path) is a ; separated
-		list of paths. Multiple $(B -I)'s can be used, and the paths
-		are searched in the same order.
+		$(LINK2 module.html#ImportDeclaration, import)
+		されたモジュールを検索するパスの指定。
+		$(I path) は ; で分かち書きしたパスのリストとします。
+		複数回 $(B -I) を使うことも可能で、
+		パスは指定された順番に検索されます。
 	  )
 
 	  $(SWITCH $(B -ignore),
-		ignore unsupported pragmas
+		非対応のpragmaを無視
 	  )
 
 	  $(SWITCH $(B -inline),
-		inline expand functions at the discretion of the compiler.
-		This can improve performance, at the expense of making
-		it more difficult to use a debugger on it.
+		関数のインライン展開を有効にします。
+		これによってパフォーマンスは向上しますが、
+		デバッグが難しくなります。
 	  )
 
 	  $(SWITCH $(B -J)$(I path),
-		where to look for files for
-		$(LINK2 expression.html#ImportExpression, $(I ImportExpression))s.
-		This switch is required in order to use $(I ImportExpression)s.
-		$(I path) is a ; separated
-		list of paths. Multiple $(B -J)'s can be used, and the paths
-		are searched in the same order.
+		$(LINK2 expression.html#ImportExpression, $(I ImportExpression))
+		で指定したファイルを探すパス。このスイッチは
+		$(I ImportExpression) を使う際に必須となります。
+		$(I path) には ; で区切ったパスのリストを指定します。
+		複数の $(B -J) スイッチを指定することも可能で、
+		パスは指定された順番に検索されます。
 	  )
 
 	  $(SWITCH $(B -L)$(I linkerflag),
-		pass $(I linkerflag) to the
-		$(WINDOWS $(LINK2 http://www.digitalmars.com/ctg/optlink.html, linker))
-		$(UNIX linker), for example,
+		$(I linkerflag) を
+		$(WINDOWS $(LINK2 http://www.digitalmars.com/ctg/optlink.html, リンカ))
+		$(UNIX リンカ) へ渡します。例えば
 		$(WINDOWS $(D -L/ma/li))$(UNIX $(D -L-M))
 	  )
 
 	  $(SWITCH $(B -lib),
-		generate library file as output instead of object file(s).
-		All compiled source files, as well as object files and library
-		files specified on the command line, are inserted into
-		the output library.
-		Compiled source modules may be partitioned into several object
-		modules to improve granularity.
-		The name of the library is taken from the name of the first
-		source module to be compiled. This can be overridden with
-		the $(B -of) switch.
+		オブジェクトファイルの代わりにライブラリファイルを出力します。
+		コンパイルされたソースファイルおよび、
+		引数で指定されたオブジェクトファイルやライブラリが、
+		まとめて出力ライブラリに格納されます。
+		粒度を上げるために、コンパイルされたソースモジュールはライブラリ内で
+		別々のオブジェクトへと分割して格納されることがあります。
+		ライブラリの名前は、最初に渡されたソースファイルの名前から取られます。
+		これは、
+		$(B -of) スイッチによる上書きが可能です。
 	  )
 
     $(UNIX
 	  $(SWITCH $(B -m32),
-		compile a 32 bit executable. This is the default for the
-		32 bit dmd.
+		32bit実行ファイルにコンパイルします。
+		これが 32bit dmd ではデフォルトです。
 	  )
 
 	  $(SWITCH $(B -m64),
-		compile a 64 bit executable. This is the default for the 64 bit dmd.
+		32bit実行ファイルにコンパイルします。これが 64bit dmd ではデフォルトです。
 	  )
     )
 
 	  $(SWITCH $(B -man),
     $(WINDOWS
-		open default browser on this page
+		このページをデフォルトのブラウザで開きます。
     )
     $(LINUX
-		open browser specified by the $(B BROWSER)
-		environment variable on this page. If $(B BROWSER) is
-		undefined, $(B x-www-browser) is assumed.
+		このページを $(B BROWSER)
+		環境変数のブラウザで開きます。$(B BROWSER)
+		が未定義なら $(B x-www-browser) を使います。
     )
     $(FREEBSD
 		open browser specified by the $(B BROWSER)
@@ -553,79 +553,79 @@ $(WINDOWS
 		undefined, $(B x-www-browser) is assumed.
     )
     $(OSX
-		open browser specified by the $(B BROWSER)
-		environment variable on this page. If $(B BROWSER) is
-		undefined, $(B Safari) is assumed.
+		このページを $(B BROWSER)
+		環境変数のブラウザで開きます。$(B BROWSER)
+		が未定義なら $(B Safari) を使います。
     )
 	  )
 
 	  $(SWITCH $(B -map),
-		generate a .map file
+		.map ファイルを生成
 	  )
 
 $(V2
 	  $(SWITCH $(B -noboundscheck),
-		turns off all array bounds checking, even for safe functions
+		全ての配列境界チェックを（safe関数の中でさえも）無効にします。
 	  )
 )
     $(WINDOWS
 	  $(SWITCH $(B -nofloat),
-		Prevents emission of $(B __fltused) reference in
-		object files, even if floating point code is present.
-		Useful for library code.
+		浮動小数点演算コードが存在する場合であっても、オブジェクトファイルから
+		 $(B __fltused)
+		への参照を除去します。ライブラリコードに対して有用です。
 	  )
     )
 
 	  $(SWITCH $(B -O),
-		Optimize generated code. For fastest executables, compile
-		with the $(B -O -release -inline) switches together.
+		生成コードを最適化。
+		最高速の出力を得るには、$(B -O -release -inline) を使用してください。
 	  )
 
 	  $(SWITCH $(B -o-),
-		Suppress generation of object file. Useful in
-		conjuction with $(B -D) or $(B -H) flags.
+		オブジェクトファイルを生成させないようにします。
+		$(B -D) や $(B -H) フラグと同時に使うと便利です。
 	  )
 
 	  $(SWITCH $(B -od)$(I objdir),
-		$(DD write object files relative to directory $(I objdir)
-		instead of to the current directory)
+		$(DD オブジェクトファイルをカレントではなく $(I objdir)
+		からの相対で出力)
 	  )
 	  $(SWITCH $(B -of)$(I filename),
-		Set output file name to $(I filename) in the output
-		directory. The output file can be an object file,
-		executable file, or library file depending on the other
-		switches.
+		出力ファイル名を $(I filename)
+		に設定。出力ファイルは、
+		他のスイッチに応じてオブジェクトファイル、実行ファイル、
+		あるはライブラリファイルのいずれかになります。
 	  )
 	  $(SWITCH $(B -op),
-		normally the path for $(B .d) source files is stripped
-		off when generating an object file name. $(B -op) will leave
-		it on.
+		オブジェクトファイルの名前を決める際、通常は
+		ソースファイル名のディレクトリ名部分を削りますが、$(B -op)
+		はこれを残します。
 	  )
 	  $(SWITCH $(B -profile),
-		$(LINK2 http://www.digitalmars.com/ctg/trace.html, profile)
-		the runtime performance
-		of the generated code
+		生成したコードの実行パフォーマンスを測定する
+		$(LINK2 http://www.digitalmars.com/ctg/trace.html, プロファイリング)
+		用の情報を追加
 	  )
 $(V2
 	  $(SWITCH $(B -property),
-		enforce use of @property on property functions
+		プロパティ関数に対して @property の使用を強制
 	  )
 )
 	  $(SWITCH $(B -quiet),
-		suppress non-essential compiler messages
+		重要でないコンパイラのメッセージを抑制
 	  )
 	  $(SWITCH $(B -release),
-		$(V1 compile release version, which means not generating
-		code for contracts, asserts and array bounds checking)
-		$(V2 compile release version, which means not generating
-		code for contracts and asserts. Array bounds checking
-		is not done for system and trusted functions.)
+		$(V1 リース用にコンパイル
+		つまり、契約やassertや配列境界チェックのコードを生成しなくなります。)
+		$(V2 リリース用にコンパイル
+		つまり、契約やassertのコードを生成しなくなります。
+		システム関数と信頼済み関数については配列境界チェックを行わなくなります。)
 	  )
-	  $(SWITCH $(B -run) $(I srcfile args...)
-		compile, link, and run the program $(I srcfile) with the
-		rest of the
-		command line, $(I args...), as the arguments to the program.
-		No .$(OBJEXT) or executable file is left behind.
+	  $(SWITCH $(B -run) $(I srcfile args...),
+		$(I srcfile) のコンパイル、リンクを行い、
+		生成されたプログラムに残りのコマンドライン引数
+		$(I args...) を渡して起動します。
+		.$(OBJEXT) や実行ファイルを後に残すことはありません。
 	  )
 $(COMMENT
 	  $(SWITCH $(B -safe),
@@ -635,173 +635,173 @@ $(COMMENT
 )
     $(UNIX
 	  $(SWITCH $(B -shared),
-		generate shared library
+		共有ライブラリを生成
 	  )
     )
 	  $(SWITCH $(B -unittest),
-		compile in $(LINK2 unittest.html, unittest) code, turns on asserts, and sets the
-		$(D unittest) $(LINK2 version.html#PredefinedVersions, version identifier)
+		$(LINK2 unittest.html, unittest) 用コードをコンパイルし、assertを有効にします。
+		また $(D unittest) $(LINK2 version.html#PredefinedVersions, バージョン識別子) を有効にします。
 	  )
 	  $(SWITCH $(B -v),
-		verbose
+		メッセージを冗長に出力
 	  )
 	  $(SWITCH $(B -version=)$(I level),
-		compile in $(LINK2 version.html#version, version level) >= $(I level)
+		$(LINK2 version.html#version, バージョン番号) が $(I level) 以上のコードを全てコンパイル
 	  )
 	  $(SWITCH $(B -version=)$(I ident),
-		compile in $(LINK2 version.html#version, version identifier) $(I ident)
+		$(LINK2 version.html#version, バージョン識別子) $(I ident) を指定してコンパイル
 	  )
 $(V2
 	  $(SWITCH $(B -vtls),
-		print informational messages identifying variables defaulting
-		to thread local storage. Handy for migrating to shared model.
+		スレッドローカル記憶域に割り当てられた変数名をコンパイル時に表示します。
+		デフォルトsharedへの移行のための利便性のためのスイッチです。
 	  )
 )
 	  $(SWITCH $(B -w),
-		enable $(LINK2 warnings.html, warnings)
+		$(LINK2 warnings.html, 警告) を有効にします
 	  )
 	  $(SWITCH $(B -wi),
-		enable $(LINK2 warnings.html, informational warnings (i.e. compilation
-		still proceeds normally))
+		$(LINK2 warnings.html, 情報表示だけの警告
+		(コンパイルはそのまま続く)) を有効にします
 	  )
 	  $(SWITCH $(B -X),
-		generate JSON file
+		JSON ファイルを生成
 	  )
 	  $(SWITCH $(B -Xf)$(I filename),
-		write JSON file to $(I filename)
+		JSON ファイルの書き込み先ファイル $(I filename) を指定
 	  )
 	)
 
     $(WINDOWS
-	$(P Empty switches, i.e. "", are ignored.)
+	$(P 空のスイッチ、つまり "" は無視されます。)
     )
 
-<h2>$(LNAME2 linking, Linking)</h2>
+<h2>$(LNAME2 linking, リンク)</h2>
 
-	$(P Linking is done directly by the $(B dmd) compiler after a successful
-	compile. To prevent $(B dmd) from running the linker, use the
-	$(B -c) switch.
+	$(P リンク処理は $(B dmd) コンパイラによって、
+	コンパイルが成功した後自動的に実行されます。これを止めるには、
+	$(B -c) スイッチを使用します。
 	)
 
     $(WINDOWS
-	$(P The programs must be linked with the D runtime library $(B phobos.lib),
-	followed by the C runtime library $(B snn.lib).
-	This is done automatically as long as the directories for the
-	libraries are on the LIB environment variable path. A typical
-	way to set LIB would be:
+	$(P プログラムは、Dのランタイムライブラリ $(B phobos.lib) と、
+	それに続けて Cのランタイムライブラリ $(B snn.lib)
+	とリンクしなければなりません。この動作は、ライブラリが環境変数
+	LIB の指すパスに存在すれば自動的に実行されます。LIB
+	を設定する方法は、例えば次のようになります:
 	)
 
 $(CONSOLE
 set LIB=$(DMDDIR)\lib;\dm\lib
 )
 
-	$(P If the $(B dmd) command is used to both compile and link
-	to an executable, it will make certain optimizations that are
-	valid only for Windows executable files. Do not use the resulting
-	.obj files in a DLL.
-	To compile modules into .obj files that can be used in an exe or
-	DLL, compile with $(B -c).
+	$(P If the $(B dmd) コマンドをコンパイルと実行ファイルへのリンクの両方に使う場合、
+	Windows
+	の実行ファイルにのみ有効なある種の最適化が行われます。
+	出力された .obj ファイルを DLL に使うことはできません。
+	exe と DLL の両方で使える .obj ファイルにコンパイルするには、
+	$(B -c) オプションでコンパイルします。
 	)
 
-	$(P Linking is done using the
-	$(LINK2 http://www.digitalmars.com/ctg/optlink.html, optlink) linker.
+	$(P リンクは
+	$(LINK2 http://www.digitalmars.com/ctg/optlink.html, optlink) リンカで行われます。
 	)
      )
      $(UNIX
-	$(P The actual linking is done by running $(B gcc).
-	This ensures compatibility with modules compiled with $(B gcc).
+	$(P リンクは $(B gcc) で行います。
+	これによって $(B gcc) でコンパイルされたモジュールとの互換性が保証されます。
 	)
      )
 
-<h2>$(LNAME2 environment, Environment Variables)</h2>
+<h2>$(LNAME2 environment, 環境変数)</h2>
 
-	$(P The D compiler dmd uses the following environment variables:
+	$(P Dコンパイラ dmd は以下の環境変数を使用します：
 	)
 
 	$(DL
 
     $(WINDOWS
 	<dt>$(B DFLAGS)
-	<dd>The value of $(B DFLAGS) is treated as if it were appended to the
-	command line to $(B dmd.exe).
+	<dd>$(B dmd.exe) は、コマンドラインの最後に $(B DFLAGS)
+		の内容が追加されたかのように動作します。
 
 	<dt>$(B LIB)
-	<dd>The linker uses $(B LIB) to search for library files. For D, it will
-	normally be set to:
+	<dd>リンカが、ライブラリファイルを探すために環境変数 $(B LIB) を用います。
+	Dでは通常は、次のように指定されます：
 
 $(CONSOLE
 set LIB=$(DMDDIR)\lib;\dm\lib
 )
 
 	<dt>$(B LINKCMD)
-	<dd> $(B dmd) normally runs the linker by looking for $(B link.exe)
-	along the $(B PATH). To use a specific linker instead, set the
-	$(B LINKCMD) environment variable to it. For example:
+	<dd> $(B dmd) は、通常はリンカとして $(B PATH) の通ったところにある
+	$(B link.exe) を使おうとします。代わりに特定のリンカを使うためには、
+	$(B LINKCMD) にて指定します。例えば：
 
 $(CONSOLE
 set LINKCMD=\dmd\windows\bin\link
 )
 
 	<dt>$(B PATH)
-	<dd>If the linker is not found in the same directory as $(B dmd.exe)
-	is in, the $(B PATH) is searched for it.
-	$(B Note:) other linkers named
-	$(B link.exe) will likely not work.
-	Make sure the Digital Mars $(B link.exe)
-	is found first in the $(B PATH) before other $(B link.exe)'s,
-	or use $(B LINKCMD) to specifically identify which linker
-	to use.
+	<dd>リンカが $(B dmd.exe) と同じディレクトリに見つからなければ、
+	環境変数 $(B PATH) を探します。
+	$(B 注:) 名前だけ同じ
+	$(B link.exe) のリンカでは大抵動作しません。
+	Digital Mars の $(B link.exe) が他の
+	$(B link.exe) より先に $(B PATH) の中に見つかるように注意してください。
+	明示的にリンカを指定するのに、$(B LINKCMD)
+	を使うことも可能です。
     )
     $(UNIX
 	<dt>$(B CC)
-	<dd> $(B dmd) normally runs the linker by looking for $(B gcc)
-	along the $(B PATH). To use a specific linker instead, set the
-	$(B CC) environment variable to it. For example:
+	<dd> $(B dmd) は、通常はリンカとして $(B gcc)
+	を環境変数 $(B PATH) から探します。特定のリンカを指定したい場合は、
+	$(B CC) 環境変数を設定します。例：
 
 $(CONSOLE
 set CC=gcc
 )
 	$(DT $(B BROWSER)
-	    $(DD This sets the browser used to open the manual page with
-	    the $(B -man) switch. It defaults to $(D x-www-browser).
+	    $(DD $(B -man) スイッチでこのマニュアルページを開く時のブラウザの指定に使用されます。
+	    デフォルトは $(D x-www-browser) です。
 	    )
 	)
 
 	<dt>$(B DFLAGS)
-	<dd>The value of $(B DFLAGS) is treated as if it were appended to the
-	command line to $(B dmd).
+	<dd>$(B dmd) は、コマンドラインの最後に $(B DFLAGS)
+	の内容が追加されたかのように動作します。
     )
 	)
 
 $(WINDOWS
 <h2>$(LNAME2 sc_ini, sc.ini Initialization File)</h2>
 
-	$(P $(B dmd) will look for the initialization file $(B sc.ini) in the
-	following sequence of directories:
+	$(P $(B dmd) は初期設定ファイル $(B sc.ini) を、
+	以下のディレクトリから順番に探します：
 	)
 
 	$(OL
-	$(LI current working directory)
-	$(LI directory specified by the $(B HOME) environment variable)
-	$(LI directory $(B dmd.exe) resides in)
+	$(LI カレントディレクトリ)
+	$(LI $(B HOME) 環境変数で指定されたディレクトリ)
+	$(LI $(B dmd.exe) のあるディレクトリ)
 	)
 
-	$(P If found, environment variable
-	settings in the file will override any existing settings.
-	This is handy to make $(B dmd) independent of programs with
-	conflicting use of environment variables.
+	$(P sc.ini が見つかった場合、
+	このファイルで設定された環境変数が既存の設定を上書きします。
+	他のプログラムの環境変数による設定との衝突を避け、$(B dmd)
+	の設定を独立させる簡単な方法となっています。
 	)
 
-<h3>Initialization File Format</h3>
+<h3>初期設定ファイルのフォーマット</h3>
 
-	$(P Comments are lines that begin with $(D ;) and are ignored.
+	$(P $(D ;) で始まる行はコメントとして無視されます。
 	)
 
-	$(P Environment variables follow the $(D [Environment]) section
-	heading, in $(I NAME)=$(I value) pairs.
-	The $(I NAME)s are treated as upper case.
-	Comments are lines that start with ;.
-	For example:
+	$(P 環境変数は $(D [Environment]) セクションのヘッダの後ろに続けて、
+	$(I NAME)=$(I value) という組の形で記述します。
+	$(I NAME) は常に大文字扱いとなります。
+	という組の形で記述します。コメントは行頭の ;
+	から始める行です。例としては：
 	)
 
 $(SCINI
@@ -817,13 +817,13 @@ LINKCMD="%@P%\..\..\dm\bin"
 DDOCFILE=mysettings.ddoc
 )
 
-<h3>Location Independence of sc.ini</h3>
+<h3>sc.ini の位置非依存性</h3>
 
-	$(P The $(B %@P%) is replaced with the path to $(D sc.ini).
-	Thus, if the fully qualified file name $(D sc.ini) is
-	$(D c:$(DMDDIR)\bin\sc.ini), then $(B %@P%) will be replaced with
-	$(D c:$(DMDDIR)\bin), and the above $(D sc.ini) will be
-	interpreted as:
+	$(P $(B %@P%) は $(D sc.ini) のあるパスに置き換えられます。
+	従って、$(D sc.ini) のフルパスが
+	$(D c:$(DMDDIR)\bin\sc.ini) ならば、$(B %@P%) は
+	$(D c:$(DMDDIR)\bin) になり、上記の $(D sc.ini) will be
+	は以下のように解釈されます:
 	)
 
 $(SCINI
@@ -835,40 +835,40 @@ LINKCMD="c:$(DMDDIR)\bin\..\..\dm\bin"
 DDOCFILE=mysettings.ddoc
 )
 
-	$(P This enables your dmd setup to be moved around without having
-	to re-edit $(D sc.ini).
+	$(P これによって、
+	$(D sc.ini) を毎回編集せずとも dmd の配置を変更することが可能です。
 	)
 
 )
 $(UNIX
-<h2>$(LNAME2 dmd_conf, dmd.conf Initialization File)</h2>
+<h2>$(LNAME2 dmd_conf, dmd.conf 初期設定ファイル)</h2>
 
-	$(P The dmd file $(D dmd.conf) is the same as $(D sc.ini)
-	for Windows, it's just that the file has a different name,
-	enabling a setup common to both Windows and this system to be created
-	without having to re-edit the file.)
+	$(P 設定ファイル $(D dmd.conf) はWindowsでの $(D sc.ini)
+	と同じもので、違うのは名前だけです。
+	WindowsとUnix系システムで同じ設定ファイルを
+	変更なしで共有することが出来ます。)
 
-	$(P $(B dmd) will look for the initialization file $(D dmd.conf) in the
-	following sequence of directories:)
+	$(P $(B dmd) は初期設定ファイル $(D dmd.conf) を、
+	以下のディレクトリから順番に探します:)
 
 	$(OL
-	$(LI current working directory)
-	$(LI directory specified by the $(B HOME) environment variable)
-	$(LI directory $(B dmd) resides in)
+	$(LI カレントディレクトリ)
+	$(LI $(B HOME) 環境変数で指定されたディレクトリ)
+	$(LI $(B dmd) のあるディレクトリ)
 	$(LI $(D /etc/))
 	)
 
-	$(P If found, environment variable
-	settings in the file will override any existing settings.
-	This is handy to make $(B dmd) independent of programs with
-	conflicting use of environment variables.
+	$(P dmd.conf が見つかった場合、
+	このファイルで設定された環境変数が既存の設定を上書きします。
+	他のプログラムの環境変数による設定との衝突を避け、$(B dmd)
+	の設定を独立させる簡単な方法となっています。
 	)
 
-	$(P Environment variables follow the $(D [Environment]) section
-	heading, in $(I NAME)=$(I value) pairs.
-	The $(I NAME)s are treated as upper case.
-	Comments are lines that start with ;.
-	For example:
+	$(P 環境変数は $(D [Environment]) セクションのヘッダの後ろに続けて、
+	$(I NAME)=$(I value) という組の形で記述します。
+	$(I NAME)は常に大文字扱いになります。
+	コメントは行頭の ;
+	から始める行です。例としては：
 	)
 
 $(SCINI
@@ -883,89 +883,89 @@ $(V2 DFLAGS=-I%@P%/../src/phobos -I%@P%/../src/druntime/import)
 )
 
 $(WINDOWS
-<h2>$(LNAME2 problems, Common Installation Problems)</h2>
+<h2>$(LNAME2 problems, 既知のインストール時の問題)</h2>
 
 	$(UL
-	$(LI Using Cygwin's $(B unzip) utility has been known to cause
-	strange problems.
+	$(LI Cygwin の $(B unzip)
+	を使うと問題が発生するようです。
 	)
-	$(LI Running the compiler under Cygwin's command shell has
-	been also known to cause problems. Try getting it to work
-	under the regular Windows shell $(B cmd.exe) before trying Cygwin's.
+	$(LI Cygwin のコマンドシェルからコンパイラを起動する際にも、
+	問題が起きることが報告されています。Cygwinでの動作を試す前に、
+	Windowsの通常のシェル $(B cmd.exe) を試してみてください。
 	)
-	$(LI Installing $(B dmd) and $(B dmc) into directory paths with spaces
-	in them causes problems.
+	$(LI $(B dmd) と $(B dmc) をスペースを含む名前のディレクトリ・パスに置くと、
+	問題が発生します。
 	)
 	)
 )
 
 <hr>
-<h2>$(LNAME2 differences, Differences between Windows and Linux versions)</h2>
+<h2>$(LNAME2 differences, Windows版とLinux版の違い)</h2>
 
 	$(UL
-	$(LI String literals are read-only under Linux.
-	Attempting to write to them
-	will cause a segment violation.)
+	$(LI Linux版では、
+		文字列リテラルは読取専用です。
+		書き込もうとするとセグメント違反が発生します。)
 	)
 <hr>
-<h2>$(LNAME2 interface_files, D Interface Files)</h2>
+<h2>$(LNAME2 interface_files, D インターフェイスファイル)</h2>
 
-	$(P When an import declaration is processed in a D source file,
-	the compiler searches for the D source file corresponding to
-	the import, and processes that source file to extract the
-	information needed from it. Alternatively, the compiler can
-	instead look for a corresponding $(I D interface file).
-	A D interface file contains only what an import of the module
-	needs, rather than the whole implementation of that module.
+	$(P Dのソースコード中の import 宣言が処理される際には、
+	コンパイラは、その import に対応するDのソースファイルを検索し、
+	見つかったファイルから import に必要な情報を取り出します。
+	これとは別に、コンパイラは対応する
+	$(I D インターフェイスファイル) を探して使うこともできます。
+	D インターフェイスファイルはそのモジュールの実装全てではなく、
+	importに必要な情報だけが記述されたファイルです。
 	)
 
-	$(P The advantages of using a D interface file for imports rather
-	than a D source file are:
+	$(P Dのソースファイルではなくインターフェイスファイルを import
+	に使用することの利点は：
 	)
 
 	$(UL
-	$(LI D interface files are often significantly smaller and much
-	faster to process than the corresponding D source file.)
-	$(LI They can be used to hide the source code, for example,
-	one can ship an object code library along with D interface files
-	rather than the complete source code.)
+	$(LI D インターフェイスファイルは多くの場合、対応するD ソースファイルより
+	ずっと小さく、高速に処理できます。)
+	$(LI ソースコードの隠蔽にも使用できます。例えば、
+	ソースコードの代わりに、コンパイル済みのオブジェクトコードと
+	Dインターフェイスファイルをリリースします。)
 	)
 
-	$(P D interface files can be created by the compiler from a
-	D source file by using the $(B -H) switch to the compiler.
-	D interface files have the $(B .di) file extension.
-	When the compiler resolves an import declaration, it first looks
-	for a $(B .di) D interface file, then it looks for a D source
-	file.
+	$(P D インターフェイスファイルは、コンパイラに
+	$(B -H)  スイッチを指定することで、
+	D ソースファイルから生成します。D インターフェイスファイルの拡張子は $(B .di)> です。
+	コンパイラが import 宣言を解決する際には、まず
+	$(B .di) D インターフェイスファイルを検索し、次に
+	D ソースファイルを探します。
 	)
 
-	$(P D interface files bear some analogous similarities to C++
-	header files. But they are not required in the way that C++
-	header files are, and they are not part of the D language.
-	They are a feature of the compiler, and serve only as an optimization
-	of the build process.
+	$(P D インターフェイスファイルは、ある意味で C++ のヘッダファイルによく似ています。
+	しかし、C++のヘッダファイルのような意味で必要になるわけでもなければ、
+	Dという言語の一部でもありません。
+	これは、コンパイラの機能の一つで、
+	ビルド処理の最適化のためだけに使用されます。
 	)
 
-<h2>$(LNAME2 executable, Building Executables)</h2>
+<h2>$(LNAME2 executable, 実行ファイルのビルド)</h2>
 
-	$(P $(B dmd) can build an executable much faster if as many of the
-	source files as possible are put on the command line.)
+	$(P $(B dmd) は、コンパイル対象のソースコードを一度にコマンドラインでまとめて指定する方が、
+	ずっと高速に実行ファイルを生成できます。)
 
-	$(P Another advantage to putting multiple source files on the same
-	invocation of $(B dmd) is that $(B dmd) will be able to do some level
-	of cross-module optimizations, such as function inlining across modules.
+	$(P $(B dmd) の一度の起動に複数のソースファイルをまとめて渡すもう一つの利点は、
+	それによって、モジュールを超えたインライン展開などの最適化を $(B dmd)
+	が行える可能性があることです。
 	)
 
-<h2>$(LNAME2 library, Building Libraries)</h2>
+<h2>$(LNAME2 library, ライブラリのビルド)</h2>
 
-	$(P There are three ways to build a library. For example,
-	given $(D foo.d) and $(D bar.d) which are to be compiled, and existing
-	object file $(D bar.$(OBJEXT)) and existing library
-	$(D def.$(LIBEXT)) which are
-	all to be combined into a library $(D foo.$(LIBEXT)):)
+	$(P ライブラリのビルド方法は３種類あります。例として、
+	コンパイルするソース $(D foo.d) と $(D bar.d)、
+	既存のオブジェクトファイル $(D bar.$(OBJEXT))、そして既存のライブラリ
+	$(D def.$(LIBEXT))を全てまとめて、
+	$(D foo.$(LIBEXT)) というライブラリをビルドする場合を考えてみましょう:)
 
 	$(OL
-	$(LI Compile modules separately and then run the librarian on them:
+	$(LI それぞれを個別にコンパイルし、ライブラリ化コマンドを実行:
 $(WINDOWS
 $(CONSOLE
 dmd -c foo.d
@@ -983,10 +983,10 @@ ar -r foo.a foo.o bar.o abc.o def.a
 rm foo.o bar.o
 )
 )
-	This option is typical when using a makefile to avoid compiling
-	modules that have already been compiled.
+	この方法は、makefile などを使うことで、
+	モジュールの余計な再コンパイルを避ける時などに適しています。
 	)
-	$(LI Compile modules together and then run the librarian on them:
+	$(LI 一括でコンパイルを行い、ライブラリ化コマンドを実行:
 $(WINDOWS
 $(CONSOLE
 dmd -c foo.d bar.d
@@ -1003,22 +1003,22 @@ rm foo.o bar.o
 )
 )
 	)
-	$(LI Use $(B dmd) to compile and build library in one operation:
+	$(LI $(B dmd) で、コンパイルとライブラリ作成を一発で実行:
 $(CONSOLE
 dmd -lib foo.d bar.d abc.$(OBJEXT) def.$(LIBEXT)
 )
-	No object files are written to disk, it's all done in memory.
-	Using $(B -lib) also has the advantage that modules may be compiled
-	into multiple object files rather than exactly one per module.
-	This improves granularity of the library without having to break
-	up the modules.
+	オブジェクトファイルがディスクに書き出されることはなく、全ての中間処理はメモリ上で行われます。
+	$(B -lib) のもう一つの利点としては、一つのモジュールが一つのオブジェクトファイルに対応するのではなく、
+	さらに細かく分割して複数のオブジェクトとして格納されることです。
+	これによって、モジュールを手で分割することなしに
+	粒度を上げることができます。
 	)
 	)
 
-<h2>$(LNAME2 compiling_dmd, Compiling dmd)</h2>
+<h2>$(LNAME2 compiling_dmd, dmd のコンパイル)</h2>
 
-	$(P Complete source code is provided to build the compiler.
-	Follow these steps:)
+	$(P dmd コンパイラのビルドに必要なソースは全て提供されています。
+	以下の手順でビルドが可能です:)
 
 $(WINDOWS
 $(CONSOLE
@@ -1033,10 +1033,10 @@ make -f $(OS).mak
 )
 )
 
-<h2>$(LNAME2 compiling_phobos, Compiling Phobos)</h2>
+<h2>$(LNAME2 compiling_phobos, Phobos のコンパイル)</h2>
 
-	$(P Complete source code is provided to build Phobos, the D runtime library.
-	Follow these steps:)
+	$(P Dのランタイムライブラリである Phobos ビルドに必要なソースは全て提供されています。
+	以下の手順でビルドが可能です:)
 
 $(V1
 $(WINDOWS
@@ -1074,7 +1074,7 @@ make -f $(OS).mak DMD=~/$(DMDDIR)/$(OS)/bin/dmd
 )
 
 Macros:
-	TITLE=DMD Compiler for $(WINDOWS Windows)$(LINUX Linux)$(OSX OSX)$(FREEBSD FreeBSD)
+	TITLE=DMD コンパイラ $(WINDOWS Windows)$(LINUX Linux)$(OSX OSX)$(FREEBSD FreeBSD) 版
 	WIKI=DCompiler
 	LIB=$(WINDOWS phobos.lib)$(UNIX $(V1 libphobos.a)$(V2 libphobos2.a))
 	DMD_CONF=$(LINK2 #dmd_conf, dmd.conf)
