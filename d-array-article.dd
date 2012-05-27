@@ -4,82 +4,82 @@ $(D_S $(TITLE),
 
 $(P $(I by Steven Schveighoffer))
 
-$(P One of the most pleasant features of the D language is its implementation of slices.  Every time I use a programming language that isn't D, I find myself lamenting for D's slice syntax.  Not only is it concise and efficient, but things "just work" when you are dealing with slices.
+$(P D言語で最も嬉しい機能の一つが、スライスの実装です。D以外のプログラミング言語を使うといつでも、自分がDのスライス構文なしではいられなくなっていることに気づきます。スライスは簡潔で効率的なだけではなく、スライスを使っていると全てが思った通りに"ただ動作する"のです。
 )
 
-$(P I'll go over some of the background and internals of D slices and arrays, and hopefully after reading this, you will have a clearer understanding of the proper ways to use D slices, as well as an idea of how fundamentally different they are than normal arrays!
+$(P この記事では、Dのスライスと配列の内部実装と背景について眺めていきます。読み終わった後には、Dのスライスの適切な使い方についての明確な理解と、それがただの配列とどう根本的に！違っているかが把握できることと思います。
 )
 
-$(H2 An Overflowing Problem)
+$(H2 オーバーフローの問題)
 
-$(P In most languages, an array is a built-in type which manages its own data, and is passed around by reference.  One refers to the entire thing as an "Array", and associates all the operations for the array (such as setting values, appending data for dynamic arrays, obtaining the length) to that type.
+$(P ほとんどの言語では、配列は中で自分のデータを管理する組み込みデータ型で、参照で持ち回る形で使われます。そのデータの塊全体が "配列" と呼ばれ、配列に関す連するすべての処理 (値の設定、動的配列へのデータの追記、長さの取得、等々) がその型に対して関連づけられています。
 )
 
-$(P However, D takes its lineage from C, where an array is simply a chunk of contiguous data.  In C, a reference to an array or array segment is as simple as a pointer (an explicit reference).  C's arrays are distinctly unmanaged by the type that refers to them -- the pointer.  The only operations supported are to retrieve and set data using an offset from the pointer.
+$(P しかしながら、C 言語の系譜に連なる D では、配列というのは単に連続領域に並んだデータの連なりです。C では、配列や配列の一部への参照は単なるポインタ（明示的な参照）と同じものでした。Cの配列は、要素を指すデータ型、つまりポインタ、のみを通して個別に扱われます。提供される唯一の操作は、ポインタからのオフセットで指定したデータの読み書きのみです。
 )
 
-$(P For those of you unfamiliar with C, here are some examples of array usage in C (these also work in D):
+$(P Cに慣れていない方のために、いくつかCでの配列操作の例を紹介します（これは D でもそのまま動きます）:
 )
 
 ------
-arr[0] = 4; /* sets the first element of the array 'arr' to 4 */
-x = arr[1]; /* retrieves the second element of the array 'arr' into x */
+arr[0] = 4; /* 配列 'arr' の先頭要素を 4 にする */
+x = arr[1]; /* 配列 'arr' の第二要素を x に取り出す */
 ------
 
-$(P Everything else (length, appending, allocation, destruction) is left up to library functions and assumption/documentation.  So what is so wrong with this concept?  One of the largest problems with C arrays is the ability to access any data via the pointer, even data that doesn't belong to the array.  You can even use negative indexes!  Not to mention that the array uses the exact same type as a pointer to a single item.  When you get a pointer as a parameter to a function, that could be an array, or it could be just a pointer to a single item.  Cue buffer overflow attacks.  You can read more about this in Walter Bright's article, $(LINK2 http://drdobbs.com/blogs/cpp/228701625, "C's biggest mistake")
+$(P そのほかのすべて (長さ取得, 要素追加, 割り当て, 破棄) はライブラリ関数と仮定/ドキュメントに任されています。さて、これの何が問題なのでしょう？ 最大の問題の一つは、C の配列はポインタを通して、どんなデータにもアクセスできてしまうことです、配列に属さないデータに対してさえも。負の添え字ですら使えてしまいます！配列が、単一の値を指すポインタと完全に同じ型を使っていることに触れるまでもないでしょう。関数の引数としてポインタが渡されたとき、それは配列かもしれないし、単に一つの値へのポインタなのかもしれません。バッファオーバーフロー攻撃の出番です。これについてもっと詳しくは、Walter Bright の記事 $(LINK2 http://drdobbs.com/blogs/cpp/228701625, "C's biggest mistake") をどうぞ。
 )
 
-$(H2 Introducing Slices)
+$(H2 スライスの導入)
 
-$(P So how does D improve things?  In many ways, D's arrays are similar to C's arrays.  In fact, D supports C's array syntax using pointers.  However, D provides a new type that builds on C array syntax called a slice.  A slice is a segment of an array (dynamic or otherwise) that tracks both the pointer $(I and) the length of the segment.  With the combined protection of having the length of the data, and the garbage collector to manage the memory backing the data, slices are an extremely powerful, dynamic concept that is safe from most memory corruption issues.  In addition, D slices support extending with simple functions which take a slice as the first parameter.  This allows one to add any functionality you want to a built-in type via properties or methods. With D slices, one can write high-performance code with elegant and concise syntax that is awkward or inefficient in almost any other language.
+$(P では、Dではこれをどう改善したのでしょう？ 多くの側面で、Dの配列はCの配列によく似ています。 実際、DはCのポインタを通じた配列の構文をサポートしています。 しかし、D は C の配列構文の上に、スライスと呼ばれる新しい型を導入しました。 スライスは（動的・静的に限らず）配列の一部分を表していて、ポインタ$(I と)その部分の長さを両方とも保持します。 データの長さを持つことによる保護と、裏でメモリを管理するガベージコレクタを合わせると、スライスは非常に協力でダイナミックな、しかもメモリ破壊からは守られた機能となっています。 加えて、D のスライスは、スライスを第一引数にとる関数で機能を拡張することができます。 これによって、どんな機能でも組み込みのプロパティやメソッドのように追加することが可能です。 D のスライスによって、他の言語ならぎこちなく遅くなっていたかもしれないコードを、高性能でエレガントで簡潔な構文で書くことができます。
 )
 
-$(P Let's see some D slices in action:)
+$(P D のスライスの様子を簡単に見てみましょう:)
 
 ------
 import std.stdio;
 
 void main()
 {
-    int[] a;             // a is a slice
+    int[] a;             // a はスライス
 
-    a = new int[5];      // allocate a dynamic array of integers that has at least 5
-                         // elements, and give me a slice to the first 5.  Note
-                         // that all data in D is default assigned, int's are
-                         // defaulted to 0, so this array contains five 0's
+    a = new int[5];      // 最低 5 要素を持つ、int の動的配列を確保。
+                         // 最初の 5 個へのスライスを手に入れます。
+                         // D のデータはすべて必ずデフォルトで初期化されています。
+                         // int は 0 に初期化されるので、この配列は 5 個の 0 が入っています。
 
-    int[] b = a[0..2];   // This is a 'slicing' operation.  b now refers to the
-                         // first two elements of a.  Note that D uses open interval
-                         // for the upper limit, so a[2] is not included in b.
+    int[] b = a[0..2];   // 'スライス' 演算です。b は a の最初の二つの要素を指します。
+                         // D は区間の終端は開いた形で指定します。
+                         // つまりここでは、a[2] は b には含まれません。
 
-    int[] c = a[$-2..$]; // c refers to the last two elements of a
-                         // ($ stands for length inside a slice or index operation).
+    int[] c = a[$-2..$]; // c は a の最後の二つの要素を指します。
+                         // ($ はスライスや添え字式の中で使うと配列の長さを意味します。)
 
-    c[0] = 4;            // this also assigns a[3]
-    c[1] = 5;            // this also assigns a[4]
+    c[0] = 4;            // a[3] にも値が代入される
+    c[1] = 5;            // a[4] にも値が代入される
 
-    b[] = c[];           // assign the first two elements of a[] to the value from
-                         // the last two elements (4, 5).
+    b[] = c[];           // a[] の最初の二つの要素に、
+                         // 最後の二つの要素 (4, 5) を代入
 
-    writeln(a);          // prints "[4, 5, 0, 4, 5]"
+    writeln(a);          // "[4, 5, 0, 4, 5]" を表示
 
-    int[5] d;            // d is a fixed sized array, allocated on the stack
-    b = d[0..2];         // slices can point at fixed sized arrays too!
+    int[5] d;            // d は固定サイズの配列で、スタックに割り当てられます。
+    b = d[0..2];         // スライスは固定サイズの配列を指すこともできます！
 }
 ------
 
-$(P You may notice something puzzling about the description of the allocation of the array: "allocate a dynamic array of integers that has at least 5 elements, and give me a slice to the first 5."  Why isn't it just "allocate a dynamic array of 5 elements"?  Even experienced D coders have trouble with D's array concepts sometimes, and for quite good reason.  D's slices are $(I not) proper dynamic array types (at least not under the hood) even though they appear to be.  What they do is provide a safe and easy $(I interface) to arrays of any type (dynamic or otherwise).  So let's discuss probably the most common misconception of D slices.
+$(P 配列割り当ての説明がちょっと複雑だな、と思われたことでしょう: "最低 5 要素を持つ、int の動的配列を確保。最初の 5 個へのスライスを手に入れます。" とは？ 単に "5 要素の動的配列を確保" では駄目なのでしょうか。 熟練した D 言語コーダーであっても、ときどき D の配列の概念に混乱することがあって、それには理由があります。 D のスライスは厳密な意味では動的配列型 $(I ではない) のです。たとえそう見えるとしても、少なくとも、動的配列として実態が完全に覆い隠されているとは言えません。 スライスが提供するのは、様々な型（動的, それ以外）の配列への安全で簡単な $(I インターフェイス) です。 以下では、おそらく D のスライスについてもっとも広く見られる誤解について議論します。
 )
 
-$(H2 Who's Responsible?)
+$(H2 責任者は誰だ？)
 
-$(P A slice in D seems like a dynamic array in almost all aspects of the concept -- when passed without adornments, the data referred to is passed by reference, and it supports all the properties and functions one would expect a dynamic array type to support.  But there is one very important difference.  A slice does not $(I own) the array, it $(I references) the array.  That is, the slice is not responsible for allocation or deallocation of its data.  The responsible party for managing a dynamic array's memory is the D runtime.
+$(P D のスライスは、ほとんどの面で、動的配列のように見えます。装飾なしで渡された場合、参照されるデータは参照渡しされ、動的配列型がサポートしていそうなすべてのプロパティと関数はサポートしています。 しかし、一つ、重要な違いがあります。 スライスは配列を $(I 所有) しません。 配列を $(I 参照) しているのです。 つまり、スライスはデータの割り当てや解放に責任を持ちません。動的配列のメモリ管理に責任を持つ主体は、D のランタイムです。
 )
 
-$(P So where is the true dynamic array type in D?  It's hidden by the runtime, and in fact, has no formal type.  Slices are good enough, and as it turns out, the runtime is smart enough about what you want to do with the data, that you almost never notice dynamic arrays are missing as a full-fledged type.  In fact, most D coders consider the D slice to $(I be) the dynamic array type -- it's even listed as a dynamic array type in the spec!  The lack of ownership is very subtle and easy to miss.
+$(P では、本物の動的配列は D のどこにあるのでしょう？ それはランタイムによって秘匿されています。 実は、動的配列を表すフォーマルな型は存在しません。 スライスさえあれば十分で、また見ていくとわかるように、データに対してやりたいことを全て理解してくれるように、ランタイムは賢く作られています。 動的配列という型が完全には存在しないことに、あなたはほぼ全ての瞬間気づくことはないでしょう。実際の所、ほとんどの D コーダーはスライス $(I こそが) 動的配列型であると思っています -- 仕様書にすら動的配列型として並んでいます！ 所有権のなさは非常に微かで、気づきにくい特質です。
 )
 
-$(P Another consequence of this is that the length is not an array property, it's a slice property.  This means the length field is not necessarily the length of the array, it's the length of the slice.  This can be confusing to newcomers to the language.  For instance, this code has a large flaw in it:
+$(P この事実のもう一つの帰結は、長さは配列のプロパティではなく、スライスのプロパティだということです。 つまり、length フィールドは配列の長さではなく、スライスの長さを意味しています。 これは言語に新しく触れる人にとって混乱しやすいところでもあります。 例えば。次のコードには大きな間違いがあります:
 )
 
 ------
@@ -94,59 +94,59 @@ void shrinkTo2(int[] arr)
 void main()
 {
    int[] arr = new int[5];
-   arr.shrinkTo2();     // note the ability to call shrinkTo2 as a method
-   writeln(arr.length); // outputs 5
+   arr.shrinkTo2();     // shrinkTo2 をメソッド風に呼び出せます
+   writeln(arr.length); // 5 を出力
 }
 ------
 
-$(P This might look like you changed the passed $(D arr)'s length to 2, but it actually did not affect anything (as is proven by the output from $(D writeln)).  This is because even though the data is passed by reference, the actual pointer and length are passed by value.  Many languages have an array type whose properties are all passed by reference.  Notably, C# and Java arrays are actually fully referenced Objects.  C++'s vector either passes both its data and properties by reference or by value.)
+$(P これは渡された $(D arr) の長さを 2 に変えたように見えるかもしれません。しかし実際には何の効果も発生していません ($(D writeln) の出力を見るとわかります)。これは、データは参照として渡されていても、実際のポインタと長さは値で渡されているのが理由です。 多くの言語には、すべてのプロパティが参照で渡される配列型があります。 特に、C# と Java の配列は実際には完全に参照としてある Object です。 C++ の vector はデータとプロパティを両方参照渡しするか、両方値渡しするかのいずれかです。)
 
-$(P To fix this problem, you can do one of two things.  Either you explicitly pass the slice by reference via the $(D ref) keyword, or you return the resulting slice to be reassigned.  For example, here is how the signature would look if the slice is passed by reference:)
+$(P この問題を修正するには、次の二つの方法が選べます。スライスを $(D ref) キーワードを明示することで参照渡しするか、結果のスライスを関数から返して再代入するか、です。例えば、参照渡しする場合の関数の型はこうなります:)
 
 ------
 void shrinkTo2(ref int[] arr)
 ------
 
-$(P Let's say you make this change, what happens to the data beyond the second element?  In D, since slices don't own the data, it's still there, managed by the nebulous dynamic array type.  The reason is fundamental: some other slice may still be referencing that data!  The fact that no $(I single) slice is the true owner of the data means no single slice can make any assumptions about what else references the array data.)
+$(P この変更を加えたとすると、第二要素より後ろの要素はどうなるのでしょう？ D では、スライスはデータを所有しません。後ろの要素は依然としてそこにあり、霧の向こうにある動的配列型によって管理されています。その理由は根本的なもので、他のスライスがまだそのデータを参照しているかもしれないからです！ どんな $(I 単一の) スライスもデータを所有しないという事実は、どのスライスも配列のデータに対する他からの参照がないという仮定をできないことを意味しています。)
 
-$(P What happens when no slices reference that data?  Enter D's garbage collector.  The garbage collector is responsible for cleaning up dynamic arrays that no longer are referenced by any slices.  In fact, it is the garbage collector that makes much of D's slice usage possible.  You can slice and serve up segments of dynamic arrays, and never have to worry that you are leaking memory, clobbering other slices, or worry about managing the lifetime of the array.)
+$(P データを参照するスライスが一個もなくなったらどうなるのでしょう？ D のガベージコレクタの出番です。 ガベージコレクタはスライスからまったく参照されなくなった動的配列を片付ける責任を負っています。 ガベージコレクタがあることで初めて、D のスライスの使い方が可能になっています。 スライスをとって動的配列として使ってそのまま終わっても、メモリをリークしたり、他のスライスをめちゃめちゃにしたり、とにかく配列の生存期間を心配したりする必要はありません。)
 
-$(H2 A Slice You Can Append On)
+$(H2 伸ばせるスライス)
 
-$(P D's slices support appending more data to the end of the slice, much like a true dynamic array type.  The language has a specific operator used for concatenation and appending, the tilde ($(D ~)).  Here are some operations that append and concatenate arrays:)
+$(P D のスライスは、スライスの末尾にデータを追加する機能をサポートしています。これは本物の動的配列に非常に近いです。 言語には結合とデータ追加のための特別な演算子、チルダ ($(D ~)) があります。 いくつかの結合と追加の例をどうぞ:)
 
 ------
-int[] a;     // an empty slice references no data, but still can be appended to
-a ~= 1;      // append some integers, this automatically allocates a new
-a ~= 2;      // array to hold the elements.
+int[] a;     // 空スライスは何もデータを指していませんが、追加はできます
+a ~= 1;      // int をいくつか追加すると、
+a ~= 2;      // その要素を保持する配列を自動で割り当てます。
 
-a ~= [3, 4]; // append another array (this time, an array literal)
-a = a ~ a;   // concatenate a with itself, a is now [1, 2, 3, 4, 1, 2, 3, 4]
+a ~= [3, 4]; // 他の配列 (この場合、配列リテラル) を追加
+a = a ~ a;   // 自分自身と結合して、[1, 2, 3, 4, 1, 2, 3, 4] になる
 
-int[5] b;    // a fixed-size array on the stack
-a = b[1..$]; // a is a slice of b
-a ~= 5;      // since a was pointing to stack data, appending always reallocates,
-             // but works!
+int[5] b;    // スタック上の固定サイズ配列
+a = b[1..$]; // a は b のスライス
+a ~= 5;      // a はスタックを指しているので、
+             // 追加は再割り当てを行いますが、動きます！
 ------
 
-$(P Anyone who cares about performance will wonder what happens when you append the four elements.  The slice does not own its data, so how does one avoid reallocating a new array on each append operation?  One of the main requirements of D slices are that they are efficient.  Otherwise, coders would not use them.  D has solved this problem in a way that is virtually transparent to the programmer, and this is one of the reasons slices seem more like true dynamic arrays.)
+$(P パフォーマンスが気になる方は、きっと、4個の要素を足したら何が起こるか気になっていることでしょう。 スライスはデータを所有しないのだから、追加のたびに新しい配列を再割り当てするのは避けられないのでは？ D のスライスに対する主な要求は、効率的であることです。 そうでなければプログラマには使われません。 D はこの問題を、プログラマには実質的に見えないところでこの問題を解決しています。 そしてそれが、スライスが本物の動的配列のように見える理由の一つです。)
 
-$(H2 How it Works)
+$(H2 動作の仕組み)
 
-$(P Remember before when we allocated a new array, I said $(I allocate a dynamic array of $(B at least) n elements and give me a slice)?  Here is where the runtime earns its keep.  The allocator only allocates blocks in powers of 2 up to a page of data (in 32-bit x86, a page of data is 4096 bytes), or in multiples of pages.  So when you allocate an array, you can easily get a block that's larger than requested. For instance, allocating a block of five 32 bit integers (which consumes 20 bytes) provides you a block of 32 bytes.  This leaves space for 3 more integers.)
+$(P 前に配列を新しく割り当てるところで、$($(B 最低) 5 要素を持つ int の動的配列を確保しスライスを手に入れる) と言ったのを覚えていますか？ ここがランタイムが効率を稼ぐポイントです。 アロケータは、ページサイズ以下の範囲では常に 2 の冪乗サイズのブロックだけを割り当て (32-bit x86 ではページは 4096 バイトです)、それ以上ではページサイズの倍数のブロックを割り当てます。 ですから、配列を割り当てるときには、要求したよりも大きなサイズのブロックが手に入っていることになります。 たとえば、5 個の 32 bit 整数 (20 バイトを消費) を要求すると、32 バイトのブロックが帰ってきます。 これによって整数 3 個分の余裕ができます。)
 
-$(P It's clearly possible to append more integers into the array without reallocating, but the trick is to prevent "stomping" on data that is valid and in use.  Remember, the slice doesn't know what other slices refer to that data, or really where it is in the array (it could be a segment at the beginning or the middle).  To make the whole thing work, the runtime stores the number of $(I used) bytes inside the block itself (a minor drawback is that the usable space in the block is not as big as it could be.  In our example, for instance, we can truly only store 7 integers before needing to reallocate into another block).
+$(P この余裕があれば再割り当てなしで整数を追加するのは明らかに可能ですが、問題は、有効でまだ使われているデータを "踏みつぶす" のは防がなければいけないということです。 スライスには同じデータを指す他のスライスの情報や、配列のどこ（先頭なのか中間なのか）を指しているのかの情報は持っていない、ということを覚えているでしょうか。 全てを正しく動作させるために、ランタイムはブロック自身に $(I 使用済み) バイト数を持たせています (この方法の小さな欠点は、ブロック内で使用可能なスペースが少しだけ小さくなることです。 今回の例では、例えば、再割り当てが発生するまでに 7 個の整数しか入れることができません。)
 )
 
-$(P When we request the runtime to append to a slice, it first checks to see that both the block is appendable (which means the $(I used) field is valid), and the slice $(I ends) at the same point valid data ends (it is not important where the slice begins).  The runtime then checks to see if the new data will fit into the unused block space.  If all of these checks pass, the data is written into the array block, and the stored $(I used) field is updated to include the new data.  If any of these checks fail, a new array block is allocated that will hold the existing and new data, which is then populated with all the data.  What happens to the old block?  If there were other slices referencing it, it stays in place without being changed.  If nothing else is referencing it, it becomes garbage and is reclaimed on the next collection cycle.  This allows you to safely reallocate one slice without invalidating any others.  This is a huge departure from C/C++, where reallocating an array, or appending to a vector can invalidate other references to that data (pointers or iterators).)
+$(P スライスに要素を追加するようランタイムに要求すると、ランタイムは、ブロックが追加可能である (つまり $(I 使用済み) フィールドが有効) ことと、スライスが有効データの終わりと同じところで $(I 終わって) いることを確認します（スライスの先頭は重要ではありません）。 その後、新しいデータが余っているスペースに収まるかどうかを確認します。これらのチェックを全て通過すると、データは空きスペースに書き込まれ、$(I 使用済み) フィールドが新しいデータを含むように更新されます。 どれか一つでも失敗すると、新しい配列ブロックが割り当てられ、既存のデータと新しいデータで埋められます。 古いブロックには何が起きるのでしょう？ まだそのブロックを指す他のスライスが存在するなら、何も変わらず同じ場所に残ります。 他に参照がなければ、次のガベージコレクションのサイクルが回収します。 この仕組みによって、他のスライスを無効化せずにスライスの再割り当てが安全に実行できます。 これは C/C++ と比べると大きな進化です。C/C++ では、配列の再割り当てや vector の要素追加をすると、そのデータへの既存の参照（ポインタやイテレータ）は無効になっていました。)
 
-$(P The result is an append operation which is not only efficient, but universally handy.  Whenever you want to append a slice, you can, without worry about performance or corruption issues.  You don't even have to worry about whether a slice's data is heap allocated, stack allocated, in ROM, or even if it's null.  The append operation always succeeds (given you have enough memory), and the runtime takes care of all the dirty work in the background.)
+$(P 結果として、要素追加は効率的であるだけではなく、普遍的に手軽です。 スライスに要素を足したくなったら、効率や他を壊す心配なく、いつでも足すことができます。 スライスのデータがヒープにあるのかスタックにあるのかROMにあるのか、null であるのかすら心配する必要はありません。 追加処理は（メモリが十分にあるという前提の下では）常に成功し、裏方の面倒はランタイムがすべて見てくれます。)
 
-$(H2 Determinism)
+$(H2 決定性)
 
-$(P There is one caveat with slice appending that can bite inexperienced, and even experienced D coders: the apparent non-deterministic behavior of appending.)
+$(P 一つだけ、スライスの要素追加で初心者を、あるいは熟練者でさえも、嵌める落とし穴があります。要素追加の、目に見える非決定的な挙動です。)
 
-$(P Let's say we have a function which is passed a buffer, and writes some number of A's to the buffer (appending if necessary), returning the filled buffer:)
+$(P バッファを渡されて、A をいくつかバッファに書き込んで (必要なら追加して)、埋めたバッファを返す関数を考えましょう:)
 
 ------
 import std.stdio;
@@ -154,88 +154,88 @@ import std.stdio;
 char[] fillAs(char[] buf, size_t num)
 {
    if(buf.length < num)
-      buf.length = num; // increase buffer length to be able to hold the A's
-   buf[0..num] = 'A';   // assign A to all the elements
-   return buf[0..num];  // return the result
+      buf.length = num; // 必要な分 A が入るようにサイズを拡張
+   buf[0..num] = 'A';   // A を全体に代入
+   return buf[0..num];  // 結果を返す。
 }
 ------
 
-$(P What's wrong with the $(D fillAs) function?  Nothing really, but what happens if increasing the length forces the buffer to be reallocated?  In that case, the buffer passed in is $(I not) overwritten with A's, only the reallocated buffer is.  This can be surprising if you were expecting to continue to use the same buffer in further operations, or if you expected the original buffer to be filled with A's.  The end result, depending on whether the block referenced by $(D buf[]) can be appended in place, is the caller's slice might be overwritten with A's, or it might not be.)
+$(P $(D fillAs) の何が悪いのでしょうか？ 何も悪くありませんが、しかし、length の増加が常にバッファを再割り当てさせるとしたらどうでしょう。 その場合は、バッファは渡されますが、それが A で埋められることは $(I なく)、再割り当てされたバッファだけが上書きされます。 これは、同じバッファを使い続けようとしていたり、あるいは元のバッファに値が埋められることを期待していた場合、驚くような結果になってしまいます。 最終結果は、$(D buf[]) が要素追加できるかどうかに依存して、呼び出し側のスライスが 'A' で埋められたり埋められなかったりするのです。)
 
 ------
-// continued example...
+// 例の続き...
 void main()
 {
-   char[] str = new char[10];  // Note, the block capacity allocated for this is
-                               // 15 elements
+   char[] str = new char[10];  // ブロックの容量は
+                               // 15 要素です。
    str[] = 'B';
-   fillAs(str, 20);            // buffer must be reallocated (20 > 15)
+   fillAs(str, 20);            // 再割り当て発生 (20 > 15)
    writeln(str);               // "BBBBBBBBBB"
-   fillAs(str, 12);            // buffer can be extended in place (12 <= 15)!
+   fillAs(str, 12);            // その場でバッファが伸びる (12 <= 15)!
    writeln(str);               // "AAAAAAAAAA";
 }
 ------
 
 
-$(P If you give this some thought, you should come to the conclusion that such a situation is unavoidable without costly copy-on-append semantics -- the system cannot keep track of every slice that references the data, and you have to put the new data somewhere.  However, there are a couple options we have to mitigate the problem:)
+$(P 少し考えてみると、コストのかかる「追加のたびにコピー」セマンティクスを用いない限りはこれは避けられない問題であることに気づきます。 データを参照するすべてのスライスを追跡はできず、どこかにはデータを置かなければならないのです。 しかし、この問題を緩和する方法はいくつかあります:)
 
 $(OL
-$(LI Re-assign the slice to the return value of the function.  Note that the most important result of this function is the return value, not whether the buffer was used or not.)
-$(LI Don't use the passed in buffer again.  If you don't use the source slice again, then you can't experience any issues with it.)
+$(LI 関数の返値をスライスに再代入する。この関数の最重要な結果は返値であり、バッファが使われたか否かではないことに注意して下さい。)
+$(LI 渡したバッファを再度使うことはしない。 元々のスライスを二度と使わないのであれば、それに関して問題を感じることもないでしょう。)
 )
 
-$(P As the function author, there are some things we can do to avoid causing these problems.  It's important to note that the only time this situation can occur is when the function appends to, or increases the length of, a passed in slice $(B and then) writes data to the original portion of the slice.  Avoiding this specific situation where possible can reduce the perception of non-determinism.  Later we will discuss some properties you can use to predict how the runtime will affect your slice.  It is a good idea to note in the documentation how the passed in slice might or might not be overwritten.)
+$(P 関数の作者側としては、この手の問題を回避するためにできることはいくつかあります。 重要なポイントとして、この問題が発生するのは関数が渡されたスライスに要素追加やサイズ増加を行い、$(B そして) スライスの元々の範囲にデータを書き込む場合のみです。 できる限りこのような処理をする状況を避けることで、非決定性が露わになる可能性を減らすことができます。 のちほど、ランタイムがスライスにどう影響するかを予測するためのプロパティについて幾つか議論します。 また、ドキュメントで渡されたスライスがどのように上書きされる/されないかを書き残しておくのは良いアイデアと言えるでしょう。)
 
-$(P A final option is to use $(D ref) to make sure the source slice is updated.  This is sometimes not an option as a slice can easily be an rvalue (input only).  However, this does not fix the problem for any aliases to the same data elsewhere.)
+$(P 最後の選択肢は $(D ref) を使って確実に渡されたスライスを更新することです。 この手は、スライスはしばしば rvalue (入力専用) であることがあるので、使えないこともあります。 また、この方法では他のところにある同じデータを指すスライスに関する問題は解決していません。)
 
-$(H2 Caching)
+$(H2 キャッシュ)
 
-$(P One of the issues with appending to a slice is that the operation is quick, but not quick enough.  Every time we append, we need to fetch the metadata for the block (its starting address, size, and $(I used) data).  Doing this means an O(lg(n)) lookup in the GC's memory pool for every append (not to mention acquiring the global GC lock).  However, what we want is amortized constant appending.  To achieve this lofty goal, we employ a caching technique that is, as far as I know, unique to D.)
+$(P スライスへの追加での問題の一つは、この操作は高速ですが十分に高速ではないことです。 追加のたびにブロックのメタデータ (開始アドレス、サイズ、$(I 使用済み) バイト数) を参照する必要があり、これはガベージコレクタのメモリプールに対して O(lg(n)) 時間かかる参照になります (GCに対するグローバルなロックをとることなどを抜きにしても)。 でも、欲しいのは全体でならして考えると定数時間になる要素追加なのです。 この高いゴールを達成するために、キャッシュを使ったテクニックが導入されており、私の知る限りでは、これは D に独特のものです。)
 
-$(P Since D has the concept of default thread local storage, the type system can tell us whether heap data is local to the thread (and most data is), or shared amongst all threads.  Using this knowledge, we can achieve lock-free caching of this metadata for thread-local appends, with one cache per thread.  The cache stores the most recent $(D N) lookups of metadata, giving us quick access to whether a slice can be appended.)
+$(P D ではデータがデフォルトでスレッドローカル記憶域に置かれるという特徴があるため、型システムによって、データがスレッドローカル（ほとんどのデータはそうです）なのか、全スレッドで共有されているのかがわかります。 この情報を使うと、スレッドローカルな要素追加にはロックなしでこのメタデータをキャッシュできます。 このキャッシュには最大で $(D N) 回の直近のメタデータ検索の結果を保持し、スライス追加のできる可能性の高速判定を可能にしています。)
 
-$(H2 Slice Members and the Appender)
+$(H2 スライスのメンバと Appender)
 
-$(P With D slices having such interesting behavior, there is a need sometimes to be able to predict the behavior of slices and appending.  To that end, several properties and methods have been added to the slice.)
+$(P このように D のスライスは興味深い挙動をしめすため、時には、要素追加の際にどのような挙動をするか予測したいことがあります。 この目的のために、スライスにはいくつかのプロパティとメソッドが用意されています。)
 
-$(P $(OBJREF reserve, size_t reserve(size_t n)): Reserves n elements for appending to a slice.  If a slice can already be appended in place, and there is already space in the array for at least n elements (n represents both existing slice elements and appendable space), nothing is modified.  It returns the resulting capacity.)
+$(P $(OBJREF reserve, size_t reserve(size_t n)): スライスに n 要素格納できるように領域を予約する。 スライスがその場で要素追加可能で、すでに最低 n 要素以上（n には既存の要素と追加の空き容量の両方を含みます）格納できる余地があれば、何も変化はありません。このメソッドは変更後の容量を返します。)
 
 ------
 int[] slice;
 slice.reserve(50);
 foreach(int i; 0..50)
-   slice ~= i;        // does not reallocate
+   slice ~= i;        // 再割り当ては起こらない
 ------
 
-$(P $(OBJREF capacity, size_t capacity): A property which gives you the number of elements the slice can hold via appending.  If the slice cannot be appended in place, this returns 0.  Note that capacity (if non-zero) includes the current slice elements.)
+$(P $(OBJREF capacity, size_t capacity): あと何要素追加できるかを返すプロパティです。 その場で追加ができないスライスであれば、0 を返します。 返す容量は (非ゼロであれば) 現在のスライスの要素数も含むことにご注意下さい。)
 
 ------
 int[] slice = new int[5];
-assert(slice.capacity == 7);  // includes the 5 pre-allocated elements
+assert(slice.capacity == 7);  // 使用済みの 5 要素も含む
 int[] slice2 = slice;
 slice.length = 6;
-assert(slice.capacity == 7);  // appending in place doesn't change the capacity.
-assert(slice2.capacity == 0); // cannot append slice2 because it would stomp on
-                              // slice's 6th element
+assert(slice.capacity == 7);  // 再割り当てなしの要素追加は容量を変えません
+assert(slice2.capacity == 0); // slice2 は slice の第6要素を潰さないために、
+                              // その場で伸ばすことはできなくなっています
 ------
 
-$(P $(OBJREF assumeSafeAppend, assumeSafeAppend()): This method forces the runtime to assume it is safe to append a slice.  Essentially this adjusts the $(I used) field of the array to end at the same spot the slice ends.)
+$(P $(OBJREF assumeSafeAppend, assumeSafeAppend()): ランタイムに、スライスへの追加は可能と強制的に教え込みます。 本質的には、これは配列の $(I 使用済み) フィールドを指定のスライスの終端に合わせる操作です。)
 
 ------
 int[] slice = new int[5];
 slice = slice[0..2];
-assert(slice.capacity == 0); // not safe to append, there is other valid data in the block.
+assert(slice.capacity == 0); // 追加は安全ではない。ブロック内の有効なデータを壊すので
 slice.assumeSafeAppend();
-assert(slice.capacity == 7); // force the used data to 2 elements
+assert(slice.capacity == 7); // 使用済みは 2 要素だけであると強制
 ------
 
-$(P If D slices' append performance just isn't up to snuff for your performance requirements, there is another alternative.  The $(FULL_STDREF array, Appender) type will append data to an array as fast as possible, without any need to look up metadata from the runtime.  $(STDREF array, Appender) also supports the output range idiom via an append operation (normal slices only support the output range by overwriting their own data).)
+$(P D のスライスの要素追加のパフォーマンスがまだどうしても要求するパフォーマンスに届かないときは、さらに別の選択肢があります。 $(FULL_STDREF array, Appender) 型を使うと、ランタイムからのメタデータを参照せずに、配列に最高速でデータを追加できます。 $(STDREF array, Appender) は要素追加操作を使った出力レンジとしても動作します (通常のスライスは自分のデータを上書きする出力レンジとしてしか使うことができません)。)
 
-$(H2 Conclusion)
+$(H2 まとめ)
 
-$(P Whether you are a seasoned programmer or a novice, the array and slice concepts in D provide an extremely rich feature set that allows for almost anything you would want to do with an array type.  With a large focus on performance and usability, the D slice type is one of those things that you don't notice how great it is until you work with another language that doesn't have it.)
+$(P 熟練プログラマにも初心者プログラマにも、Dの配列とスライスの概念は、配列に対して行いたいほとんど全ての操作を可能にする非常に豊富な機能を提供しています。 パフォーマンスと使いやすさの両面に大きく焦点を当てた D のスライス型は、それの無い他の言語を使い始めるまでは、どれほど素晴らしいものであるが気づきにくい機能の一つとなっています。)
 
-$(P $(I Thanks to David Gileadi, Andrej Mitrovic, Jesse Phillips, Alex Dovhal, Johann !MacDonagh, and Jonathan Davis for their reviews and suggestions for this article))
+$(P $(I David Gileadi, Andrej Mitrovic, Jesse Phillips, Alex Dovhal, Johann !MacDonagh, Jonathan Davis の、この記事に対するレビューと提案に感謝します。))
 
 &copy; 2011-2012 by Steven Schveighoffer <br/>
 <a rel="license" href="http://creativecommons.org/licenses/by-nd/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nd/3.0/88x31.png" /></a><br />This <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" rel="dct:type">work</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nd/3.0/">Creative Commons Attribution-NoDerivs 3.0 Unported License</a>.
@@ -247,7 +247,7 @@ Macros:
       D = <span class="d_inlinecode">$0</span>
 	H2=<h2>$0</h2>
 	H3=<h3>$0</h3>
-	TITLE=D Slices
+	TITLE=D言語のスライス機能
 	CATEGORY_ARTICLES=$0
     FULL_STDREF = <a href="phobos/std_$1.html#$2">$(D std.$1.$2)</a>
     STDREF = <a href="phobos/std_$1.html#$2">$(D $2)</a>
