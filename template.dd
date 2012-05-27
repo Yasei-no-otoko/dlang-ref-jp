@@ -1,13 +1,13 @@
 Ddoc
 
-$(SPEC_S Templates,
+$(SPEC_S テンプレート,
 
 $(BLOCKQUOTE
 I think that I can safely say that nobody understands template mechanics. -- Richard Deyman
 )
 
-$(P     Templates are D's approach to generic programming.
-        Templates are defined with a $(I TemplateDeclaration):
+$(P     テンプレートは、D でジェネリックプログラミングを行う方法です。
+        $(I TemplateDeclaration) 宣言で定義します：
 )
 
 $(GRAMMAR
@@ -31,36 +31,36 @@ $(GNAME TemplateParameter):
 $(V2      $(GLINK TemplateThisParameter))
 )
 
-$(P     The body of the $(I TemplateDeclaration) must be syntactically correct
-        even if never instantiated. Semantic analysis is not done until
-        instantiated. A template forms its own scope, and the template
-        body can contain classes, structs, types, enums, variables,
-        functions, and other templates.
+$(P     $(I TemplateDeclaration) のボディ部は、
+	例えインスタンス化されることがなくても
+	文法的に正しいものである必要があります。意味解析はインスタンス化されるまでは
+	行われません。テンプレートは独自のスコープを成し、クラス、構造体、型定義、
+	列挙型、変数、関数、他のテンプレート、を含むことが出来ます。
 )
 $(P
-        Template parameters can be types, values, symbols, or tuples.
-        Types can be any type.
-        Value parameters must be of an integral type, floating point
-        type, or string type and
-        specializations for them must resolve to an integral constant,
-        floating point constant, null, or a string literal.
-        Symbols can be any non-local symbol.
-        Tuples are a sequence of 0 or more types, values or symbols.
+        テンプレートの引数は型,値,シンボル,もしくはタプルです。
+	型はどんな型でも構いません。
+	値パラメタは整数型、
+	浮動小数点型、文字列型のみで、
+	その特殊化版には整数定数、浮動小数定数、null、
+	もしくは文字列リテラルへ評価される式が必要です。
+	シンボルには任意の非ローカルシンボルを利用できます。
+	タプルは、型,値,シンボルの0個以上の組です。
 )
 $(P
-        Template parameter specializations
-        constrain the values or types the $(I TemplateParameter) can
-        accept.
+        テンプレート引数の特殊化は、
+        $(I TemplateParameter)
+        が受け取れる値や型を制限します。
 )
 $(P
-        Template parameter defaults are the value or type to use for the
-        $(I TemplateParameter) in case one is not supplied.
+        テンプレート引数のデフォルトは、値や型が
+        $(I TemplateParameter) に指定されなかったときに使用されます。
 )
 
-<h2>Explicit Template Instantiation</h2>
+<h2>明示的なテンプレートのインスタンス化</h2>
 
 $(P
-        Templates are explicitly instantiated with:
+        テンプレートを明示的にインスタンス化する構文は：
 )
 
 $(GRAMMAR
@@ -105,40 +105,40 @@ $(GNAME TemplateSingleArgument):
 )
 
 $(P
-        Once instantiated, the declarations inside the template, called
-        the template members, are in the scope
-        of the $(I TemplateInstance):
+        一度インスタンス化されると、
+	テンプレート内の宣言（テンプレートメンバ）は、
+        $(I TemplateInstance)  のスコープへ入ります。
 )
 
 ------
 template TFoo(T) { alias T* t; }
 ...
-TFoo!(int).t x; // declare x to be of type int*
+TFoo!(int).t x; // x を型 int* として宣言
 ------
 
 $(V2
-        $(P If the $(GLINK TemplateArgument) is one token long, the parentheses can be omitted:
+        $(P $(GLINK TemplateArgument) の引数が１トークンなら、括弧を省略できます:
         )
 ---
-TFoo!int.t x;   // same as TFoo!(int).t x;
+TFoo!int.t x;   // TFoo!(int).t x; と同じ
 ---
 )
 
 $(P
-        A template instantiation can be aliased:
+        テンプレートのインスタンス化はaliasで別名を付けることができます：
 )
 
 ------
 template TFoo(T) { alias T* t; }
 alias TFoo!(int) abc;
-abc.t x;        // declare x to be of type int*
+abc.t x;        // x を型 int* として宣言
 ------
 
 $(P
-        Multiple instantiations of a $(I TemplateDeclaration) with the same
-        $(I TemplateArgumentList), before implicit conversions,
-        all will refer to the same instantiation.
-        For example:
+        暗黙変換前の値が同じ $(I TemplateArgumentList) で複数回
+        $(I TemplateDeclaration)
+	をインスタンス化すると、同じインスタンスが参照されます。
+	例えば：
 )
 
 ------
@@ -147,31 +147,31 @@ alias TFoo!(int) a;
 alias TFoo!(int) b;
 ...
 a.f = 3;
-assert(b.f == 3);  // a and b refer to the same instance of TFoo
+assert(b.f == 3);  // a と b は TFoo の同じインスタンスを指す
 ------
 
 $(P
-        This is true even if the $(I TemplateInstance)s are done in
-        different modules.
+        これは、
+	テンプレートのインスタンス化が異なるモジュールで為された場合も成り立ちます。
 )
 
 $(P
-        Even if template arguments are implicitly converted to the same
-        template parameter type, they still refer to different instances:
+     	なお、テンプレート引数が暗黙変換の効果で同じテンプレートパラメータ型に
+		結果として落ち着くケースは、別々のインスタンスとなります:
 )
 
 -----
 struct TFoo(int x) { }
-static assert(is(TFoo!(3) == TFoo!(2 + 1))); // 3 and 2+1 are both 3 of type int
-static assert(!is(TFoo!(3) == TFoo!(3u)));   // 3u and 3 are different types
+static assert(is(TFoo!(3) == TFoo!(2 + 1))); // 3 と 2+1 はどちらもint型の 3
+static assert(!is(TFoo!(3) == TFoo!(3u)));   // 3u と 3 は異なる型
 -----
 $(P
-        If multiple templates with the same $(I TemplateIdentifier) are
-        declared, they are distinct if they have a different number of
-        arguments or are differently specialized.
+        複数のテンプレートが同じ $(I TemplateIdentifier) で宣言された場合、
+	パラメタの数が違うか、異なる特殊化がなされていれば、
+	違うテンプレートとして区別されます。
 )
 $(P
-        For example, a simple generic copy template would be:
+        テンプレートの例として、ジェネリックなコピー関数があります：
 )
 
 ------
@@ -183,8 +183,8 @@ template TCopy(T) {
 ------
 
 $(P
-        To use the template, it must first be instantiated with a specific
-        type:
+        このテンプレートを使うには、
+	まず特定の型でインスタンス化します：
 )
 
 ------
@@ -192,15 +192,15 @@ int i;
 TCopy!(int).copy(i, 3);
 ------
 
-<h2>Instantiation Scope</h2>
+<h2>インスタンス化のスコープ</h2>
 
 $(P
-        $(I TemplateInstantance)s are always performed in the scope of where
-        the $(I TemplateDeclaration) is declared, with the addition of the
-        template parameters being declared as aliases for their deduced types.
+        $(I TemplateInstantance) は $(I TemplateDeclaration) の宣言されたスコープに
+	あるものとして常に扱われます。テンプレート仮引数は、
+	パラメタから推論された型へのaliasとしてスコープに追加されます。
 )
 $(P
-        For example:
+        例えば：
 )
 
 $(BR)$(BR)
@@ -214,11 +214,11 @@ $(U module b)
 import a;
 
 void func() { }
-alias TFoo!(int) f; // error: func not defined in module a
+alias TFoo!(int) f; // エラー： func はモジュール a で定義されていない
 ------
 
 $(P
-        and:
+        そして：
 )
 
 $(BR)$(BR)
@@ -235,63 +235,63 @@ import a;
 void func(int i) { }
 alias TFoo!(int) f;
 ...
-f.bar();  // will call a.func(double)
+f.bar();  // a.func(double) を呼び出す
 ------
 
 $(P
-        $(I TemplateParameter) specializations and default
-        values are evaluated in the scope of the $(I TemplateDeclaration).
+        $(I TemplateParameter) の特殊化とデフォルト値は、
+        $(I TemplateDeclaration) のスコープ内で評価されます。
 )
 
-<h2>Argument Deduction</h2>
+<h2>引数推論</h2>
 
-        $(P The types of template parameters are deduced for a particular
-        template instantiation by comparing the template argument with
-        the corresponding template parameter.
+        $(P テンプレートパラメタの型は、
+	インスタンス化時に、
+	対応する引数と比較することで推論されます。
         )
 
-        $(P For each template parameter, the following rules are applied in
-        order until a type is deduced for each parameter:
+        $(P 各々の型パラメータについて、全てのパラメータの型が推論されるまで
+	以下の規則が適用されます：
         )
 
         $(OL
-        $(LI If there is no type specialization for the parameter,
-        the type of the parameter is set to the template argument.)
+        $(LI そのパラメタに対する特殊化版が存在しなければ、
+		パラメタ型はテンプレート引数そのものに設定されます。)
 
-        $(LI If the type specialization is dependent on a type parameter,
-        the type of that parameter is set to be the corresponding part
-        of the type argument.)
+        $(LI 型パラメタに依存した特殊化版があれば、
+		そのパラメタ内の型は、
+		テンプレート引数型の対応する部分へと設定されます。)
 
-        $(LI If after all the type arguments are examined there are any
-        type parameters left with no type assigned, they are assigned
-        types corresponding to the template argument in the same position
-        in the $(I TemplateArgumentList).)
+        $(LI 全ての型引数を調べた後、
+		まだ型の決定されていないパラメタがあれば、
+		そのパラメタは
+        $(I TemplateArgumentList) 中で同じ位置にある引数型へと設定されます。)
 
-        $(LI If applying the above rules does not result in exactly one
-        type for each template parameter, then it is an error.)
+        $(LI 以上のルールで一意に定まらないパラメタがあれば、
+		エラーです。)
         )
 
-        $(P For example:)
+        $(P 例えば：)
 
 ------
 template TFoo(T) { }
-alias TFoo!(int) Foo1;     // (1) T is deduced to be int
-alias TFoo!(char*) Foo2;   // (1) T is deduced to be char*
+alias TFoo!(int) Foo1;     // (1) T は int と推論される
+alias TFoo!(char*) Foo2;   // (1) T は char* と推論される
 
 template TBar(T : T*) { }
-alias TBar!(char*) Foo3;   // (2) T is deduced to be char
+alias TBar!(char*) Foo3;   // (2) T は char と推論される
 
 template TAbc(D, U : D[]) { }
-alias TAbc!(int, int[]) Bar1;  // (2) D is deduced to be int, U is int[]
-alias TAbc!(char, int[]) Bar2; // (4) error, D is both char and int
+alias TAbc!(int, int[]) Bar1;  // (2) D は int と推論される。U は int[]
+alias TAbc!(char, int[]) Bar2; // (4) エラー。D が char でも int でもある
 
 template TDef(D : E*, E) { }
-alias TDef!(int*, int) Bar3; // (1) E is int
-                             // (3) D is int*
+alias TDef!(int*, int) Bar3; // (1) E は int
+                             // (3) D は int*
 ------
 
-        $(P Deduction from a specialization can provide values
-        for more than one parameter:
+        $(P 特殊化時の推論では、
+	二つ以上の型パラメータを決定することも可能です：
         )
 
 ---
@@ -299,11 +299,11 @@ template Foo(T: T[U], U) {
   ...
 }
 
-Foo!(int[long])  // instantiates Foo with T set to int, U set to long
+Foo!(int[long])  // Fooを、TをintにUをlongにしてインスタンス化
 ---
 
-        $(P When considering matches, a class is
-        considered to be a match for any super classes or interfaces:
+        $(P マッチを取る際には、
+	クラスはその基底クラスやインターフェイスにもマッチします：
         )
 
 ------
@@ -311,14 +311,14 @@ class A { }
 class B : A { }
 
 template TFoo(T : A) { }
-alias TFoo!(B) Foo4;    // (3) T is B
+alias TFoo!(B) Foo4;    // (3) T は B
 
 template TBar(T : U*, U : A) { }
-alias TBar!(B*, B) Foo5; // (2) T is B*
-                         // (3) U is B
+alias TBar!(B*, B) Foo5; // (2) T は B*
+                         // (3) U は B
 ------
 
-<h2>Template Type Parameters</h2>
+<h2>型パラメタ</h2>
 
 $(GRAMMAR
 $(GNAME TemplateTypeParameter):
@@ -334,12 +334,12 @@ $(GNAME TemplateTypeParameterDefault):
      $(B =) $(GLINK2 declaration, Type)
 )
 
-<h3>Specialization</h3>
+<h3>特殊化</h3>
 
-        $(P Templates may be specialized for particular types of arguments
-        by following the template parameter identifier with a : and the
-        specialized type.
-        For example:
+        $(P テンプレートは、
+	識別子 : 特殊型 という形式で、
+	特定の型に対して特殊化することができます。
+	例：
         )
 
 ------
@@ -348,31 +348,31 @@ template TFoo(T : T[])  { ... } // #2
 template TFoo(T : char) { ... } // #3
 template TFoo(T,U,V)    { ... } // #4
 
-alias TFoo!(int) foo1;         // instantiates #1
-alias TFoo!(double[]) foo2;    // instantiates #2 with T being double
-alias TFoo!(char) foo3;        // instantiates #3
-alias TFoo!(char, int) fooe;   // error, number of arguments mismatch
-alias TFoo!(char, int, int) foo4; // instantiates #4
+alias TFoo!(int) foo1;         // #1 をインスタンス化
+alias TFoo!(double[]) foo2;    // #2  をインスタンス化。T は double
+alias TFoo!(char) foo3;        // #3 をインスタンス化
+alias TFoo!(char, int) fooe;   // エラー。引数の個数が合わない
+alias TFoo!(char, int, int) foo4; // #4 をインスタンス化
 ------
 
-        $(P The template picked to instantiate is the one that is most specialized
-        that fits the types of the $(I TemplateArgumentList).
-        Determine which is more specialized is done the same way as the
-        C++ partial ordering rules.
-        If the result is ambiguous, it is an error.
+        $(P 選択されるテンプレートは、
+        $(I TemplateArgumentList) の型があって、
+	かつ最も特殊化度が高いものになります。
+	どれが一番特殊化されているかは、
+	C++ の Partial Ordering 規則と同様に決定します。あいまいな場合はエラーです。
         )
 
 
 $(V2
-<h2>Template This Parameters</h2>
+<h2>thisパラメタ</h2>
 
 $(GRAMMAR
 $(GNAME TemplateThisParameter):
     $(B this) $(I TemplateTypeParameter)
 )
 
-        $(P $(I TemplateThisParameter)s are used in member function templates
-        to pick up the type of the $(I this) reference.
+        $(P $(I TemplateThisParameter) はメンバ関数テンプレートで使われ、
+         $(I this) の型を得ることができます。
         )
 ---
 import std.stdio;
@@ -392,7 +392,7 @@ void main() {
   s3.foo(3);
 }
 ---
-        $(P Prints:)
+        $(P 出力は:)
 
 $(CONSOLE
 const(S)
@@ -401,7 +401,7 @@ immutable(S)
 )
 )
 
-<h2>Template Value Parameters</h2>
+<h2>値パラメタ</h2>
 
 $(GRAMMAR
 $(GNAME TemplateValueParameter):
@@ -420,16 +420,16 @@ $(V2     $(B = __FILE__)
 )
 
 $(V2
-        $(P The $(CODE __FILE__) and $(CODE __LINE__) expand to the source
-        file name and line number at the point of instantiation.)
+        $(P $(CODE __FILE__) と $(CODE __LINE__) は、
+	テンプレートがインスタンス化された場所のファイル名と行番号に展開されます。)
 )
 
-        $(P Template value parameter types can be any type which can
-        be statically initialized at compile time.
-	Template value arguments can be integer values, floating point values,
-	nulls, string values, array literals of template value arguments,
-	associative array literals of template value arguments,
-	or struct literals of template value arguments.
+        $(P テンプレートの値引数の型は、
+	コンパイル時に静的初期化可能な任意の型を指定可能です。
+	値引数には、整数、浮動小数点数、
+	null、文字列、テンプレート値引数の配列リテラル、
+	テンプレート値引数の連想配列リテラル、
+	テンプレート値引数の構造体リテラルが使えます。
 	)
 
 -----
@@ -438,12 +438,12 @@ template foo(string s) {
 }
 
 void main() {
-  writefln("%s", foo!("hello").bar()); // prints: hello betty
+  writefln("%s", foo!("hello").bar()); // 表示: hello betty
 }
 -----
 
-        $(P This example of template foo has a value parameter that
-        is specialized for 10:
+        $(P この例は、
+	値パラメタを10に特殊化したテンプレートfooの例です：
         )
 
 ------
@@ -457,7 +457,7 @@ void main() {
 ------
 
 
-<h2>$(LNAME2 aliasparameters, Template Alias Parameters)</h2>
+<h2>$(LNAME2 aliasparameters, aliasパラメタ)</h2>
 
 $(GRAMMAR
 $(GNAME TemplateAliasParameter):
@@ -473,14 +473,14 @@ $(GNAME TemplateAliasParameterDefault):
     $(B =) $(GLINK2 expression, ConditionalExpression)
 )
 
-        $(P Alias parameters enable templates to be parameterized with
-        any type of D symbol, including global names, local names, typedef
-        names, module names, template names, and template instance names.
-        $(V2 Literals can also be used as arguments to alias parameters.)
+        $(P aliasパラメタによって、テンプレートの引数に様々な D
+	のシンボルを受け取るようにできます。alias パラメタに使えるシンボルは
+	グローバル/ローカル名とtypedef名、テンプレート名、テンプレートインスタンスの名前です。
+        $(V2 リテラルをalias引数に渡すことも可能です。)
         )
 
         $(UL
-        $(LI Global names
+        $(LI グローバル名
 
 ------
 int x;
@@ -491,15 +491,15 @@ template Foo(alias X) {
 
 void test() {
   alias Foo!(x) bar;
-  *bar.p = 3;       // set x to 3
+  *bar.p = 3;       // x を 3 に設定
   static int y;
   alias Foo!(y) abc;
-  *abc.p = 3;       // set y to 3
+  *abc.p = 3;       // y を 3 に設定
 }
 ------
         )
 
-        $(LI Type names
+        $(LI 型名
 
 ------
 class Foo {
@@ -512,12 +512,12 @@ template Bar(alias T) {
 
 void test() {
   alias Bar!(Foo) bar;
-  bar.q = 3;  // sets Foo.p to 3
+  bar.q = 3;  // Foo.p を 3 に設定
 }
 ------
         )
 
-        $(LI Module names
+        $(LI モジュール名
 
 ------
 import std.string;
@@ -528,12 +528,12 @@ template Foo(alias X) {
 
 void test() {
   alias Foo!(std.string) bar;
-  bar.y(3);   // calls std.string.toString(3)
+  bar.y(3);   // std.string.toString(3) を呼ぶ
 }
 ------
         )
 
-        $(LI Template names
+        $(LI テンプレート名
 
 ------
 int x;
@@ -548,12 +548,12 @@ template Bar(alias T) {
 
 void test() {
   alias Bar!(Foo) bar;
-  *bar.abc.p = 3;  // sets x to 3
+  *bar.abc.p = 3;  // x を 3 に設定
 }
 ------
         )
 
-        $(LI Template alias names
+        $(LI テンプレートの別名
 
 ------
 int x;
@@ -569,12 +569,12 @@ template Bar(alias T) {
 void test() {
   alias Foo!(x) foo;
   alias Bar!(foo) bar;
-  *bar.q = 3;  // sets x to 3
+  *bar.q = 3;  // x を 3 に設定
 }
 ------
         )
 
-        $(V2 $(LI Literals
+        $(V2 $(LI リテラル
 ------
 
 template Foo(alias X, alias Y) {
@@ -584,35 +584,35 @@ template Foo(alias X, alias Y) {
 
 void test() {
   alias Foo!(3, "bar") foo;
-  writeln(foo.i, foo.s);  // prints 3bar
+  writeln(foo.i, foo.s);  // 3bar と表示
 }
 ------
         ))
         )
 
-<h2>$(LNAME2 variadic-templates, Template Tuple Parameters)</h2>
+<h2>$(LNAME2 variadic-templates, タプルパラメタ)</h2>
 
 $(GRAMMAR
 $(GNAME TemplateTupleParameter):
         $(I Identifier) $(B ...)
 )
 
-        $(P If the last template parameter in the $(I TemplateParameterList)
-        is declared as a $(I TemplateTupleParameter),
-        it is a match with any trailing template arguments.
-        The sequence of arguments form a $(I Tuple).
-        A $(I Tuple) is not a type, an expression, or a symbol.
-        It is a sequence of any mix of types, expressions or symbols.
+        $(P テンプレートの最後の引数が $(I TemplateParameterList)
+        として宣言されていた場合、
+		その引数はテンプレートに渡された引数の末尾の列とマッチし、
+		その列が $(I Tuple) となります。
+        $(I Tuple) は、型でも、式でも、シンボルでもありません。
+		型と式とシンボルの混ざった列が、$(I Tuple) です。
         )
 
-        $(P A $(I Tuple) whose elements consist entirely of types is
-        called a $(I TypeTuple).
-        A $(I Tuple) whose elements consist entirely of expressions is
-        called an $(I ExpressionTuple).
+        $(P $(I Tuple)  の要素が全て型であるようなとき、
+        $(I TypeTuple) と呼びます。
+        $(I Tuple) の要素が全て式であるようなときは、
+        $(I ExpressionTuple) と呼びます。
         )
 
-        $(P A $(I Tuple) can be used as an argument list to instantiate
-        another template, or as the list of parameters for a function.
+        $(P $(I Tuple) は、他のテンプレートをインスタンス化するのに使ったり、
+	関数の引数リストとして使用したりできます。
         )
 
 ---
@@ -623,29 +623,29 @@ template Print(A ...) {
 }
 
 template Write(A ...) {
-  void write(A a) // A is a $(I TypeTuple)
-                  // a is an $(I ExpressionTuple)
+  void write(A a) // A は $(I TypeTuple)
+                  // a は $(I ExpressionTuple)
   {
     writefln("args are ", a);
   }
 }
 
 void main() {
-  Print!(1,'a',6.8).print();                    // prints: args are 1a6.8
-  Write!(int, char, double).write(1, 'a', 6.8); // prints: args are 1a6.8
+  Print!(1,'a',6.8).print();                    // args are 1a6.8 と表示
+  Write!(int, char, double).write(1, 'a', 6.8); // args are 1a6.8 と表示
 }
 ---
 
-        $(P Template tuples can be deduced from the types of
-        the trailing parameters
-        of an implicitly instantiated function template:)
+        $(P タプル引数は、
+	関数テンプレートの暗黙のインスタンス化の際には、
+	末尾の引数の型から決定されます:)
 
 ---
 template Foo(T, R...) {
   void Foo(T t, R r) {
     writefln(t);
-    static if (r.length) // if more arguments
-      Foo(r);            // do the rest of the arguments
+    static if (r.length) // さらに引数があれば、
+      Foo(r);            // 残りについても処理をする
   }
 }
 
@@ -653,22 +653,22 @@ void main() {
   Foo(1, 'a', 6.8);
 }
 ---
-        $(P prints:)
+        $(P 表示は以下のようになります:)
 
 $(CONSOLE
 1
 a
 6.8
 )
-        $(P The tuple can also be deduced from the type of a delegate
-        or function parameter list passed as a function argument:)
+        $(P タプルは、関数の引数として渡された delegate
+	や関数の引数リストから導出することも可能です:)
 
 ----
 import std.stdio;
 
-/* R is return type
- * A is first argument type
- * U is $(I TypeTuple) of rest of argument types
+/* R は返値型
+ * A は先頭の引数型
+ * U は残りの引数の $(I TypeTuple)
  */
 R delegate(U) Curry(R, A, U...)(R delegate(A, U) dg, A arg)
 {
@@ -697,74 +697,74 @@ void main()
   }
 
   auto plus_two = Curry(&plus, 2);
-  writefln("%d", plus_two(6, 8)); // prints 16
+  writefln("%d", plus_two(6, 8)); // 16 と表示
 }
 ----
 
-        $(P The number of elements in a $(I Tuple) can be retrieved with
-        the $(B .length) property. The $(I n)th element can be retrieved
-        by indexing the $(I Tuple) with [$(I n)],
-        and sub tuples can be created
-        with the slicing syntax.
+        $(P $(I Tuple) の要素数は、
+        $(B .length)  プロパティで取得可能です。第 $(I n)番目の要素は
+	添え字アクセス [$(I n)]
+	で取得できますし、
+	部分タプルはスライスによって取り出すことができます。
         )
 
-        $(P $(I Tuple)s are static compile time entities, there is no way
-        to dynamically change, add, or remove elements.)
+        $(P $(I Tuple) は静的な、コンパイル時限定の要素です。
+	動的に要素の変更・追加・削除を行うことはできません。)
 
-        $(P If both a template with a tuple parameter and a template
-        without a tuple parameter exactly match a template instantiation,
-        the template without a $(I TemplateTupleParameter) is selected.)
+        $(P $(I TemplateTupleParameter)
+        なしのテンプレートと有りのテンプレートがどちらもインスタンス化にマッチする場合は、
+        ない方が優先されます。)
 
-<h2>Template Parameter Default Values</h2>
+<h2>テンプレート引数のデフォルト値</h2>
 
-        $(P Trailing template parameters can be given default values:
+        $(P 末尾のテンプレート引数にはデフォルト値を指定できます：
         )
 
 ------
 template Foo(T, U = int) { ... }
-Foo!(uint,long); // instantiate Foo with T as uint, and U as long
-Foo!(uint);      // instantiate Foo with T as uint, and U as int
+Foo!(uint,long); // Fooを、Tをuint, Uをlongとしてインスタンス化
+Foo!(uint);      // Fooを、Tをuint、Uをintとしてインスタンス化
 
 template Foo(T, U = T*) { ... }
-Foo!(uint);      // instantiate Foo with T as uint, and U as uint*
+Foo!(uint);      // Fooを、Tをuint, Uをuint*としてインスタンス化
 ------
 
-<h2>Implicit Template Properties</h2>
+<h2>テンプレートの暗黙プロパティ</h2>
 
-        $(P If a template has exactly one member in it, and the name of that
-        member is the same as the template name, that member is assumed
-        to be referred to in a template instantiation:
+        $(P もしテンプレートが丁度ひとつだけメンバを持ち、
+	しかもその名前がテンプレートの名前と同じであれば、
+	そのメンバはテンプレートのインスタンス化によって参照されることになります：
         )
 
 ------
 template $(B Foo)(T) {
-  T $(B Foo); // declare variable Foo of type T
+  T $(B Foo); // 型Tの変数Fooを宣言
 }
 
 void test() {
-  $(B Foo)!(int) = 6; // instead of Foo!(int).Foo
+  $(B Foo)!(int) = 6; // Foo!(int).Foo の代わりに
 }
 ------
 
-<h2>Template Constructors</h2>
+<h2>コンストラクタテンプレート</h2>
 
 $(GRAMMAR
 $(GNAME TemplatedConstructor):
     $(B this) $(B $(LPAREN)) $(GLINK2 template, TemplateParameterList) $(B $(RPAREN)) $(GLINK2 declaration, Parameters) $(GLINK Constraint)$(OPT) $(GLINK2 function, FunctionBody)
 )
 
-        $(P Templates can be used to form constructors for classes$(V2   and structs).
+        $(P テンプレートはクラス$(V2 や構造体)のコンストラクタを作るのにも使用できます。
         )
 
-<h2>Class Templates</h2>
+<h2>クラステンプレート</h2>
 
 $(GRAMMAR
 $(GNAME ClassTemplateDeclaration):
     $(B class) $(I Identifier) $(B $(LPAREN)) $(GLINK TemplateParameterList) $(B $(RPAREN)) $(GLINK Constraint)$(OPT) $(GLINK2 class, BaseClassList)$(OPT) $(GLINK2 class, ClassBody)
 )
 
-        $(P If a template declares exactly one member, and that member is a class
-        with the same name as the template:
+        $(P もしテンプレートが丁度ひとつのメンバを持ち、
+	そのメンバがテンプレートと同じ名前のクラスであれば：
         )
 
 ------
@@ -775,8 +775,8 @@ template $(B Bar)(T) {
 }
 ------
 
-        $(P then the semantic equivalent, called a $(I ClassTemplateDeclaration)
-        can be written as:
+        $(P その時は、意味的に同等な $(I ClassTemplateDeclaration)
+	で書くことができます：
         )
 
 ------
@@ -785,7 +785,7 @@ class $(B Bar)(T) {
 }
 ------
 
-<h2>Struct, Union, and Interface Templates</h2>
+<h2>構造体、共用体、インターフェイステンプレート</h2>
 
 $(GRAMMAR
 $(GNAME StructTemplateDeclaration):
@@ -798,20 +798,20 @@ $(GNAME InterfaceTemplateDeclaration):
     $(B interface) $(I Identifier) $(B $(LPAREN)) $(GLINK TemplateParameterList) $(B $(RPAREN)) $(V2 $(GLINK Constraint)$(OPT)) $(GLINK2 interface, BaseInterfaceList)$(OPT) $(GLINK2 interface, InterfaceBody)
 )
 
-        $(P Analogously to class templates, struct, union and interfaces
-        can be transformed into templates by supplying a template parameter list.
+        $(P クラステンプレートの場合と同様に、構造体、共用体、
+	インターフェイスもテンプレート引数リストを加えることでテンプレート化することが可能です。
         )
 
-<h2>$(LNAME2 function-templates, Function Templates)</h2>
+<h2>$(LNAME2 function-templates, 関数テンプレート)</h2>
 
-        $(P If a template declares exactly one member, and that member is a function
-        with the same name as the template, it is a function template declaration.
-        Alternatively, a function template declaration is a function declaration
-        with a $(GLINK TemplateParameterList) immediately preceding the
-        $(GLINK2 declaration, Parameters).
+        $(P テンプレートが一つしかメンバを持たず、
+	そのメンバがテンプレートと同じ名前を持つ関数だった場合、関数テンプレート宣言となります。
+	別の手段として、実行時 $(GLINK2 declaration, パラメタ)  の直前に
+         $(GLINK TemplateParameterList)
+        を並べて関数宣言することでも、関数テンプレートを宣言できます。
         )
 
-        $(P A function template to compute the square of type $(I T) is:
+        $(P $(I T) 型の二乗を計算する関数は:
         )
 ------
 T $(B Square)(T)(T t) {
@@ -819,54 +819,54 @@ T $(B Square)(T)(T t) {
 }
 ------
 
-        $(P Function templates can be explicitly instantiated with a
-        !($(I TemplateArgumentList)):
+        $(P 関数テンプレートは、
+        !($(I TemplateArgumentList)) で明示的に特殊化することも可能ですし:
         )
 
 ----
 writefln("The square of %s is %s", 3, Square!(int)(3));
 ----
 
-        $(P or implicitly, where the $(I TemplateArgumentList) is deduced
-        from the types of the function arguments:
+        $(P 暗黙に、実引数の型から $(I TemplateArgumentList)
+		を推論させることも可能です:
         )
 
 ----
-writefln("The square of %s is %s", 3, Square(3));  // T is deduced to be int
+writefln("The square of %s is %s", 3, Square(3));  // T は int と推論される
 ----
 
-        $(P If there are fewer arguments supplied in the $(I TemplateArgumentList)
-        than parameters in the $(I TemplateParameterList), the arguments fulfill
-        parameters from left to right, and the rest of the parameters are then deduced
-        from the function arguments.
+        $(P $(I TemplateArgumentList) として渡された実引数の個数が
+        $(I TemplateParameterList) の仮引数の個数より少ない場合は、
+	仮引数が左から順に埋められて行き、
+	埋まらなかった部分が実引数の型から暗黙推論されます。
         )
 
-        $(P Function template type parameters that are to be implicitly
-        deduced may not have specializations:
+        $(P 暗黙推論したい関数テンプレート引数は、
+	特殊化することはできません：
         )
 
 ------
 void $(B Foo)(T : T*)(T t) { ... }
 
 int x,y;
-Foo!(int*)(x);   // ok, T is not deduced from function argument
-Foo(&y);         // error, T has specialization
+Foo!(int*)(x);   // ok, Tは関数引数から推論されているのではない
+Foo(&y);         // エラー。T は特殊化されている
 ------
 
-        $(P Template arguments not implicitly deduced can have default values:
+        $(P 暗黙推論されるもの以外のテンプレート引数にはデフォルト値を指定できます：
         )
 
 ------
 void $(B Foo)(T, U=T*)(T t) { U p; ... }
 
 int x;
-Foo(&x);    // T is int, U is int*
+Foo(&x);    // T は int, U は int*
 ------
 
-$(V2    $(P Function templates can have their return types deduced based
-        on the first
+$(V2    $(P 関数テンプレートの返値型は、
+	関数内の最初の
         $(GLINK2 statement, ReturnStatement)
-        in the function:
+	の結果から自動的に推論させることができます:
         )
 
 ---
@@ -874,18 +874,18 @@ auto $(B Square)(T)(T t) {
   return t * t;
 }
 ---
-        $(P If there is more than one return statement, then the
-        types of the return statement expressions must match.
-        If there are no return statements, then the return type of the
-        function template is $(CODE void).
+        $(P 複数のreturn文がある場合は、
+	全てのreturn文の式の型が正しく適合している必要があります。
+	return文が存在しない場合は、
+	返値型は $(CODE void) となります。
         )
 )
 
-<h3>$(LNAME2 auto-ref-parameters, Function Templates with Auto Ref Parameters)</h3>
+<h3>$(LNAME2 auto-ref-parameters, auto ref 引数関数テンプレート)</h3>
 
-        $(P An auto ref function template parameter becomes a ref parameter
-        if its corresponding argument is an lvalue, otherwise it becomes
-        a value parameter:
+        $(P 関数テンプレートの引数が auto ref と宣言された場合、
+	lvalue が渡された時は ref となり、
+	そうでないときは値引数となります。
         )
 
 ---
@@ -906,16 +906,16 @@ int foo(T...)(auto ref T x) {
 void main() {
   int y = 10;
   int r;
-  r = foo(8);       // returns 8
-  r = foo(y);       // returns 10
-  r = foo(3, 4, y); // returns 17
-  r = foo(4, 5, y); // returns 19
-  r = foo(y, 6, y); // returns 26
+  r = foo(8);       // 8 を返す
+  r = foo(y);       // 10 を返す
+  r = foo(3, 4, y); // 17 を返す
+  r = foo(4, 5, y); // 19 を返す
+  r = foo(y, 6, y); // 26 を返す
 }
 ---
 
-        $(P Auto ref parameters can be combined with auto ref return
-        attributes:
+        $(P auto ref 引数と
+	 auto ref 返値属性を組み合わせることも可能です:
         )
 
 ---
@@ -929,19 +929,19 @@ void main()
   int x = 7, y = 8;
   int i;
 
-  i = min(4, 3);     // returns 3
-  i = min(x, y);     // returns 7
-  min(x, y) = 10;    // sets x to 10
+  i = min(4, 3);     // 3 を返す
+  i = min(x, y);     // 7 を返す
+  min(x, y) = 10;    // x を 10 に設定
   static assert(!__traits(compiles, min(3, y) = 10));
   static assert(!__traits(compiles, min(y, 3) = 10));
 }
 ---
 
-<h2>Recursive Templates</h2>
+<h2>再帰的テンプレート</h2>
 
-        $(P Template features can be combined to produce some interesting
-        effects, such as compile time evaluation of non-trivial functions.
-        For example, a factorial template can be written:
+        $(P テンプレート機能は組み合わせて使うことで、
+	単純でない関数のコンパイル時評価など、面白い効果を生むことができます。
+	例えば、階乗を計算するテンプレートはこう書かれます：
         )
 
 ------
@@ -954,12 +954,12 @@ template factorial(int n) {
 }
 
 void test() {
-  writefln("%s", factorial!(4)); // prints 24
+  writefln("%s", factorial!(4)); // 24と表示
 }
 ------
 
 $(V2
-<h2>Template Constraints</h2>
+<h2>テンプレート制約</h2>
 
 $(GRAMMAR
 $(GNAME Constraint):
@@ -969,17 +969,17 @@ $(I ConstraintExpression):
     $(I $(GLINK2 expression, Expression))
 )
 
-        $(P $(I Constraint)s are used to impose additional constraints
-        on matching arguments to a template beyond what is possible
-        in the $(GLINK TemplateParameterList).
-        The $(I ConstraintExpression) is computed at compile time
-        and returns a result that is converted to a boolean value.
-        If that value is true, then the template is matched,
-        otherwise the template is not matched.
+        $(P $(I Constraint)は、
+         $(GLINK TemplateParameterList)
+        に追加して引数に制約を課すために使うことができます。
+         $(I ConstraintExpression) には、コンパイル時に計算でき、
+	bool 形に変換可能な式を指定します。
+	その値が true ならばテンプレートがマッチし、
+	そうでなければマッチしません。
         )
 
-        $(P For example, the following function template only
-        matches with odd values of $(CODE N):
+        $(P 例えば、以下の関数テンプレートは
+        $(CODE N) が奇数の場合にのみマッチします:
         )
 
 ---
@@ -989,22 +989,22 @@ void foo(int N)()
   ...
 }
 ...
-foo!(3)();  // ok, matches
-foo!(4)();  // error, no match
+foo!(3)();  // ok、マッチ
+foo!(4)();  // エラー、マッチしない
 ---
 )
 
-<h2>Limitations</h2>
+<h2>制限事項</h2>
 
-        $(P Templates cannot be used to add non-static members or
-        virtual functions to classes.
-        For example:
+        $(P テンプレートは、
+	クラスに非staticメンバや仮想関数を追加するのには使えません。
+	例えば：
         )
 
 ------
 class Foo {
   template TBar(T) {
-    T xx;               // becomes a static member of Foo
+    T xx;               // Foo の static メンバとなる
     int func(T) { ... } // non-virtual
 
     static T yy;                        // Ok
@@ -1013,17 +1013,17 @@ class Foo {
 }
 ------
 
-        $(P Templates cannot be declared inside functions.
+        $(P 関数内ではテンプレートは宣言できません。
         )
 
-        $(P Templates cannot add functions to interfaces:)
+        $(P テンプレートで interface に関数を追加することはできません。)
 ---
-interface TestInterface { void tpl(T)(); }   // error
+interface TestInterface { void tpl(T)(); }   // エラー
 ---
 )
 
 Macros:
-        TITLE=Templates
+        TITLE=テンプレート
         WIKI=Template
         CATEGORY_SPEC=$0
         FOO=
