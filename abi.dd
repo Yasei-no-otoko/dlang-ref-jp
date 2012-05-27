@@ -33,16 +33,16 @@ $(SECTION3 基本型,
 
 	$(TABLE1
 	$(TROW bool, 8 bit byte。0 が false、1 が true を表す)
-	$(TROW byte, 8 bit signed value)
-	$(TROW ubyte, 8 bit unsigned value)
-	$(TROW short, 16 bit signed value)
-	$(TROW ushort, 16 bit unsigned value)
-	$(TROW int, 32 bit signed value)
-	$(TROW uint, 32 bit unsigned value)
-	$(TROW long, 64 bit signed value)
-	$(TROW ulong, 64 bit unsigned value)
-	$(TROW cent, 128 bit signed value)
-	$(TROW ucent, 128 bit unsigned value)
+	$(TROW byte, 8 bit signed)
+	$(TROW ubyte, 8 bit unsigned)
+	$(TROW short, 16 bit signed)
+	$(TROW ushort, 16 bit unsigned)
+	$(TROW int, 32 bit signed)
+	$(TROW uint, 32 bit unsigned)
+	$(TROW long, 64 bit signed)
+	$(TROW ulong, 64 bit unsigned)
+	$(TROW cent, 128 bit signed)
+	$(TROW ucent, 128 bit unsigned)
 	$(TROW float, 32 bit IEEE 754 浮動小数点数)
 	$(TROW double, 64 bit IEEE 754 浮動小数点数)
 	$(TROW real, 実装定義の浮動小数点数。
@@ -76,48 +76,48 @@ $(SECTION3 クラス,
 
 	$(P オブジェクトのメモリ構成は次のようになっています:)
 
-$(TABLE2 Class Object Layout,
-$(TR $(TH size) $(TH property) $(TH contents))
-$(TR $(TD $(I ptrsize)) $(TD $(CODE .__vptr)) $(TD pointer to vtable))
-$(TR $(TD $(I ptrsize)) $(TD $(CODE .__monitor)) $(TD monitor))
-$(TR $(TD ...) $(TD ...) $(TD super's non-static fields and super's interface vptrs, from least to most derived))
-$(TR $(TD ...) $(TD named fields) $(TD non-static fields))
-$(TR $(TD $(I ptrsize)...) $(TD &nbsp;) $(TD vptr's for any interfaces implemented by this class in left to right, most to least derived, order))
+$(TABLE2 クラスオブジェクトのレイアウト,
+$(TR $(TH サイズ) $(TH プロパティ) $(TH 内容))
+$(TR $(TD $(I ptrsize)) $(TD $(CODE .__vptr)) $(TD vtableへのポインタ))
+$(TR $(TD $(I ptrsize)) $(TD $(CODE .__monitor)) $(TD モニタ))
+$(TR $(TD ...) $(TD ...) $(TD 基底クラスの非staticメンバとinterfaceのvtableへのポインタ。継承のルートから順に。))
+$(TR $(TD ...) $(TD named fields) $(TD 非staticメンバ))
+$(TR $(TD $(I ptrsize)...) $(TD &nbsp;) $(TD このクラスの実装するinterfaceのvtableへのポインタ。左から右、直近の派生元から遠くの派生元、の順で。))
 )
 
-	$(P The vtable consists of:)
+	$(P vtableの構成は次の通り：)
 
-$(TABLE2 Virtual Function Pointer Table Layout,
-$(TR $(TH size)		$(TH contents))
-$(TR $(TD $(I ptrsize)) $(TD pointer to instance of $(V1 ClassInfo)$(V2 TypeInfo)))
-$(TR $(TD $(I ptrsize)...) $(TD pointers to virtual member functions))
+$(TABLE2 仮想関数ポインタテーブルのレイアウト,
+$(TR $(TH サイズ)		$(TH 内容))
+$(TR $(TD $(I ptrsize)) $(TD $(V1 ClassInfo)$(V2 TypeInfo) のインスタンスへのポインタ))
+$(TR $(TD $(I ptrsize)...) $(TD 仮想メンバ関数へのポインタ))
 )
 
-	$(P Casting a class object to an interface consists of adding the offset of
-	the interface's corresponding vptr to the address of the base of the object.
-	Casting an interface ptr back to the class type it came from involves getting
-	the correct offset to subtract from it from the object.Interface entry at vtbl[0].
-	Adjustor thunks are created and pointers to them stored in the method entries in the vtbl[]
-	in order to set the this pointer to the start of the object instance corresponding
-	to the implementing method.
+	$(P クラスオブジェクトのインターフェイスへのキャストは、
+	オブジェクトのベースアドレスに、インターフェイスのvptrへのオフセットを加算することで行われます。
+	インターフェイスをクラス型へキャストし直すには、
+	引き算する正しいオフセットを求めるために、vtbl[0] の object.Interface エントリを参照します。
+	vtbl[] の中には、
+	thisポインタが正しくオブジェクトのインスタンスを参照するように調整するための
+	サンク が生成され格納されます。
 	)
 
-	$(P An adjustor thunk looks like:)
+	$(P サンクは以下のようなコードになります:)
 
 $(CCODE
   ADD EAX,offset
   JMP method
 )
 
-	$(P The leftmost side of the inheritance graph of the interfaces all share
-	their vptrs, this is the single inheritance model.
-	Every time the inheritance graph forks (for multiple inheritance) a new vptr is created
-	and stored in the class' instance.
-	Every time a virtual method is overridden, a new vtbl[] must be created with
-	the updated method pointers in it.
+	$(P 継承関係グラフの左端は、全てのインターフェイスが vptr を共有する、
+	単一継承モデルです。
+	（インターフェイスの多重継承によって）継承グラフが分岐する度に、
+	新し vptr が作られクラスのインスタンスに格納されます。
+	また、virtual メソッドがオーバーライドされるたびに、新しく vtbl[]
+	が作られ新しいメソッドポインタをそこに格納する必要があります。
 	)
 
-	$(P The class definition:)
+	$(P クラス定義：)
 
 ---------
 class XXXX {
@@ -125,110 +125,110 @@ class XXXX {
 };
 ---------
 
-	$(P Generates the following:)
+	$(P は、以下のコードを生成します：)
 
 	$(UL
-	$(LI An instance of Class called ClassXXXX.)
+	$(LI ClassXXXX という名前の、Class クラスのインスタンス)
 
-	$(LI A type called StaticClassXXXX which defines all the static members.)
+	$(LI StaticClassXXXX という名前の、全ての静的メンバを定義する型)
 
-	$(LI An instance of StaticClassXXXX called StaticXXXX for the static members.)
+	$(LI StaticXXXX という名前の、静的メンバを保持する StaticClassXXXX のインスタンス)
 	)
 )
 
-$(SECTION3 Interfaces,
+$(SECTION3 インターフェイス,
 
-	$(P An interface is a pointer to a pointer to a vtbl[].
-	The vtbl[0] entry is a pointer to the corresponding
-	instance of the object.Interface class.
-	The rest of the vtbl[1..$] entries are pointers to the
-	virtual functions implemented by that interface, in the
-	order that they were declared.
+	$(P インターフェイスは vtbl[] へのポインタです。
+	vtbl[0] は、object.Interface
+	クラスの対応するインスタンスへのポインタです。
+	残りのエントリ vtbl[1..$] は、
+	そのインターフェイスで実装される仮想関数へのポインタが、
+	宣言された順番に入ります。
 	)
 
-	$(P A COM interface differs from a regular interface in that
-	there is no object.Interface entry in vtbl[0]; the entries
-	vtbl[0..$] are all the virtual function pointers, in the order
-	that they were declared.
-	This matches the COM object layout used by Windows.
+	$(P COM インターフェイスは、通常のインターフェイスと異なり、
+	vtbl[0] に object.Interface は入りません。
+	vtbl[0..$] のエントリ全てが仮想関数ポインタで、
+	宣言された順番に格納されます。
+	これは Windows の COM オブジェクトのレイアウトに合わせています。
 	)
     $(V2
-	$(P A C++ interface differs from a regular interface in that
-	it matches the layout of a C++ class using single inheritance
-	on the target machine.
+	$(P C++ インターフェイスは通常のインターフェイスと異なり、
+	ターゲット環境での C++
+	の単一継承のクラスレイアウトと同じ形式に合わせた実装になります。
 	)
     )
 )
 
-$(SECTION3 Arrays,
+$(SECTION3 配列,
 
-	$(P A dynamic array consists of:)
+	$(P 動的な配列の構成は：)
 
-$(TABLE2 Dynamic Array Layout,
-$(TR $(TH offset) $(TH property) $(TH contents))
-$(TR $(TD  0) $(TD $(CODE .length)) $(TD  array dimension))
-$(TR $(TD  $(I size_t)) $(TD $(CODE .ptr)) $(TD  pointer to array data))
+$(TABLE2 動的配列のレイアウト,
+$(TR $(TH オフセット) $(TH プロパティ) $(TH 内容))
+$(TR $(TD  0) $(TD $(CODE .length)) $(TD  配列のサイズ))
+$(TR $(TD  $(I size_t)) $(TD $(CODE .ptr)) $(TD  配列データへのポインタ))
 )
 
-	$(P A dynamic array is declared as:)
+	$(P 動的な配列は次のように宣言され：)
 
 ---------
 type[] array;
 ---------
 
-	$(P whereas a static array is declared as:)
+	$(P 静的な配列の宣言は次のようになります：)
 
 ---------
 type[dimension] array;
 ---------
 
-	$(P Thus, a static array always has the dimension statically available as part of the type, and
-	so it is implemented like in C. Static array's and Dynamic arrays can be easily converted back
-	and forth to each other.
+	$(P 従って、静的な配列のサイズは常に型の一部として静的に得ることが出来ます。
+	このため、静的な配列についてはC言語と同様に実装されています。
+	静的な配列と動的な配列は簡単に相互変換が可能です。
 	)
 )
 
-$(SECTION3 Associative Arrays,
+$(SECTION3 連想配列,
 
-	$(P Associative arrays consist of a pointer to an opaque, implementation
-	defined type.
-	$(V1 The current implementation is contained in and defined by
-	 $(PHOBOSSRC internal/aaA.d).)
-	$(V2 The current implementation is contained in and defined by
-	 $(DRUNTIMESRC rt/aaA.d).)
+	$(P 連想配列は、
+	実装ごとに定義される実体へのポインタ一つで構成されます。
+	$(V1 現在の実装は
+	 $(PHOBOSSRC internal/aaA.d) から参照できます。)
+	$(V2 現在の実装は
+	 $(DRUNTIMESRC rt/aaA.d) から参照できます。)
 	)
 )
 
-$(SECTION3 Reference Types,
+$(SECTION3 参照型,
 
-	$(P D has reference types, but they are implicit. For example, classes are always
-	referred to by reference; this means that class instances can never reside on the stack
-	or be passed as function parameters.
+	$(P Dには参照型がありますが、明示的に表には出てきません。例えば、クラスは常に
+	参照によってアクセスされます。これはすなわち、クラスのインスタンスそのものは決して
+	スタックに置かれたり関数のパラメタとして渡したりできないことを意味します。
 	)
 
-	$(P When passing a static array to a function, the result, although declared as a static array, will
-	actually be a reference to a static array. For example:
+	$(P 静的な配列を関数へ渡すと、例え静的な配列として宣言されていても、
+	結果は実際には静的配列への参照となります。例をあげると：
 	)
 
 ---------
 int[3] abc;
 ---------
 
-	$(P Passing abc to functions results in these implicit conversions:)
+	$(P 関数へ abc を渡す際には、次のような暗黙の変換が引き起こされます：)
 
 ---------
-void func(int[3] array); // actually <reference to><array[3] of><int>
-void func(int* p);       // abc is converted to a pointer
-                         // to the first element
-void func(int[] array);	 // abc is converted to a dynamic array
+void func(int[3] array); // 実際には <intの><サイズ3配列><への参照>
+void func(int* p);       // abc は
+                         // 先頭要素へのポインタへ変換される
+void func(int[] array);	 // abc は動的配列へ変換される
 ---------
 )
 
 
-$(SECTION3 Name Mangling,
+$(SECTION3 名前マングリング,
 
-	$(P D accomplishes typesafe linking by $(I mangling) a D identifier
-	to include scope and type information.
+	$(P Dでは、型安全なリンクを実現するために、Dの識別子名を $(I mangling)
+	してスコープと型の情報を埋め込んでいます。
 	)
 
 $(GRAMMAR
@@ -245,11 +245,11 @@ $(I SymbolName):
     $(I TemplateInstanceName)
 )
 
-	$(P The $(B M) means that the symbol is a function that requires
-	a $(D this) pointer.)
+	$(P $(B M) は、そのシンボルが
+	$(D this) ポインタを必要とする関数であることを表しています。)
 
-	$(P Template Instance Names have the types and values of its parameters
-	encoded into it:
+	$(P テンプレートのインスタンス名は、
+	そのパラメタ型と値をエンコードして保持します：
 	)
 
 $(GRAMMAR
@@ -302,37 +302,37 @@ $(I HexDigit):
 
 $(DL
 	$(DT $(B n))
-	$(DD is for $(B null) arguments.)
+	$(DD は $(B null) 引数を表します)
 
 	$(DT $(I Number))
-	$(DD is for positive numeric literals (including
-	character literals).)
+	$(DD は正の数値リテラルです
+	(文字リテラルを含みます))
 
 	$(DT $(B N) $(I Number))
-	$(DD is for negative numeric literals.)
+	$(DD は負の数値リテラルです)
 
 	$(DT $(B e) $(I HexFloat))
-	$(DD is for real and imaginary floating point literals.)
+	$(DD は実数および虚数の浮動小数点数リテラルです。)
 
 	$(DT $(B c) $(I HexFloat) $(B c) $(I HexFloat))
-	$(DD is for complex floating point literals.)
+	$(DD は複素数の浮動小数点数リテラルです。)
 
 	$(DT $(I Width) $(I Number) $(B _) $(I HexDigits))
-	$(DD $(I Width) is whether the characters
-	are 1 byte ($(B a)), 2 bytes ($(B w)) or 4 bytes ($(B d)) in size.
-	$(I Number) is the number of characters in the string.
-	The $(I HexDigits) are the hex data for the string.
+	$(DD $(I Width) は文字列中の文字が
+	1 byte ($(B a)), 2 bytes ($(B w)), 4 bytes ($(B d)) のいずれであるかを示します。
+	$(I Number)  は文字列中の文字の数です。
+	$(I HexDigits) は文字列データの16進表現です。
 	)
 
 	$(DT $(B A) $(I Number) $(I Value)...)
-	$(DD An array or asssociative array literal.
-	$(I Number) is the length of the array.
-	$(I Value) is repeated $(I Number) times for a normal array,
-	and 2 * $(I Number) times for an associative array.
+	$(DD 配列リテラル。
+	$(I Number) が配列の長さを表します。
+	通常の配列では $(I Value) が $(I Number) 回繰り返し、
+	連想配列では 2 * $(I Number) 回並びます。
 	)
 
 	$(DT $(B S) $(I Number) $(I Value)...)
-	$(DD A struct literal. $(I Value) is repeated $(I Number) times.
+	$(DD 構造体リテラル。$(I Value) が $(I Number) 個並びます。
 	)
 
 )
@@ -355,7 +355,7 @@ $(I Namechars):
     $(I Namechar) $(I Namechars)
 )
 
-	$(P A $(I Name) is a standard D identifier.)
+	$(P $(I Name) は標準的なDの識別子です。)
 
 $(GRAMMAR
 $(I LName):
@@ -378,14 +378,14 @@ $(I Digit):
     $(B 9)
 )
 
-	$(P An $(I LName) is a name preceded by a $(I Number) giving
-	the number of characters in the $(I Name).
+	$(P $(I LName) は、先頭に文字数を表す $(I Number)
+	のついた $(I Name) です。
 	)
 )
 
-$(SECTION3 Type Mangling,
+$(SECTION3 型名のマングリング,
 
-	$(P Types are mangled using a simple linear scheme:)
+	$(P 型の名前は以下のように単純な一列の文字列になります:)
 
 $(GRAMMAR
 $(I Type):
@@ -515,9 +515,9 @@ $(I Argument2:)
     $(B L) $(I Type)     $(GREEN // lazy)
 
 $(I ArgClose)
-    $(B X)     $(GREEN // variadic T t...$(RPAREN) style)
-    $(B Y)     $(GREEN // variadic T t,...$(RPAREN) style)
-    $(B Z)     $(GREEN // not variadic)
+    $(B X)     $(GREEN // 可変長引数 (T t,...) 形式)
+    $(B Y)     $(GREEN // 可変長引数 (T t...) 形式)
+    $(B Z)     $(GREEN // 可変長引数でない)
 
 $(I TypeIdent):
     $(B I) $(I LName)
@@ -611,87 +611,87 @@ $(I TypeTuple):
 )
 )
 
-$(SECTION3 Function Calling Conventions,
+$(SECTION3 関数呼び出し規約,
 
-	$(P The $(D extern (C)) and $(D extern (D)) calling convention matches the C
-	calling convention
-	used by the supported C compiler on the host system.
-	Except that the extern (D) calling convention for Windows x86 is described here.
+	$(P $(D extern (C)) と $(D extern (D))
+	と宣言された関数の呼び出し規約は、
+	基本的に、ホスト環境で対応するCコンパイラの関数呼び出し規約と一致します。
+	例外として、Windows x86 では extern (D) の呼び出し規約は以下のようになっています。
 	)
 
-$(SECTION4 Register Conventions,
+$(SECTION4 レジスター使用規約,
 
 	$(UL
 
-	$(LI EAX, ECX, EDX are scratch registers and can be destroyed
-	by a function.)
+	$(LI EAX, ECX, EDX は作業用レジスタで、
+	関数の中で破壊してかまいません)
 
-	$(LI EBX, ESI, EDI, EBP must be preserved across function calls.)
+	$(LI EBX, ESI, EDI, EBP は関数呼び出し前後で保存されなければなりません)
 
-	$(LI EFLAGS is assumed destroyed across function calls, except
-	for the direction flag which must be forward.)
+	$(LI EFLAGS は、方向フラグが前方方向でなければならないことを除いて、
+	関数呼び出しの間で破壊されると仮定します)
 
-	$(LI The FPU stack must be empty when calling a function.)
+	$(LI 関数呼び出し時には FPU スタックは空になっていること)
 
-	$(LI The FPU control word must be preserved across function calls.)
+	$(LI FPU の制御ワードは関数呼び出し前後で保存されなければなりません)
 
-	$(LI Floating point return values are returned on the FPU stack.
-	These must be cleaned off by the caller, even if they are not used.)
+	$(LI 浮動小数点数の返値は FPU スタックで返却される。
+	使わない場合も呼び出し側でスタックをクリアしなければなりません)
 
 	)
 )
 
-$(SECTION4 Return Value,
+$(SECTION4 返値,
 
 	$(UL
 
-	$(LI The types bool, byte, ubyte, short, ushort, int, uint,
-	pointer, Object, and interfaces
-	are returned in EAX.)
+	$(LI bool, byte, ubyte, short, ushort, int, uint,
+	ポインタ, Object, インターフェイス型の返値は、
+	EAX レジスタで返されます)
 
-	$(LI long and ulong
-	are returned in EDX,EAX, where EDX gets the most significant
-	half.)
+	$(LI long, ulong
+	型の引数は EDX,EAX レジスタで返されます。EDX
+	に上位ワードが入ります。)
 
-	$(LI float, double, real, ifloat, idouble, ireal are returned
-	in ST0.)
+	$(LI float, double, real, ifloat, idouble, ireal
+	型の返値は ST0 に返されます)
 
-	$(LI cfloat, cdouble, creal are returned in ST1,ST0 where ST1
-	is the real part and ST0 is the imaginary part.)
+	$(LI cfloat, cdouble, creal は ST1,ST0 で返されます。ST1
+	に実部、ST0 に虚部が入ります。)
 
-	$(LI Dynamic arrays are returned with the pointer in EDX
-	and the length in EAX.)
+	$(LI 動的配列の返値では、ポインタが EDX、
+	長さが EAX に入ります。)
 
-	$(LI Associative arrays are returned in EAX.)
+	$(LI 連想配列は EAX で返されます。)
 
-	$(V2 $(LI References are returned as pointers in EAX.))
+	$(V2 $(LI 参照は、ポインタを EAX に入れて返されます))
 
-	$(LI Delegates are returned with the pointer to the function
-	in EDX and the context pointer in EAX.)
+	$(LI デリゲートは、関数ポインタをEDXに、
+	コンテキストポインタをEAXに入れて返されます。)
 
-	$(LI 1, 2 and 4 byte structs are returned in EAX.)
+	$(LI 1, 2, 4 バイトの構造体は EAX で返されます。)
 
-	$(LI 8 byte structs are returned in EDX,EAX, where
-	EDX gets the most significant half.)
+	$(LI 8 バイトの構造体は EDX,EAX レジスタで返されます。
+	EDXに上位ワードが入ります。)
 
-	$(LI For other struct sizes,
-	the return value is stored through a hidden pointer passed as
-	an argument to the function.)
+	$(LI そのほかのサイズの構造体は、
+	関数の隠れ引数として渡されたポインタの指す先に
+	返されます。)
 
-	$(LI Constructors return the this pointer in EAX.)
+	$(LI コンストラクタはthisポインタをEAXに返します。)
 
 	)
 )
 
-$(SECTION4 Parameters,
+$(SECTION4 引数,
 
-	$(P The parameters to the non-variadic function:)
+	$(P 可変個引数でない関数の引数:)
 
 ---
 	foo(a1, a2, ..., an);
 ---
 
-	$(P are passed as follows:)
+	$(P は、以下のように渡されます:)
 
 	$(TABLE
 	$(TR $(TD a1))
@@ -702,43 +702,43 @@ $(SECTION4 Parameters,
 	$(TR $(TD this))
 	)
 
-	$(P where $(I hidden) is present if needed to return a struct
-	value, and $(I this) is present if needed as the this pointer
-	for a member function or the context pointer for a nested
-	function.)
+	$(P $(I hidden) は、構造体を返す必要があるときに現れます。
+	$(I this) は、
+	メンバ関数に使うthisポインタや、
+	ネストした関数で使うコンテキストポインタを渡すときに現れます。)
 
-	$(P The last parameter is passed in EAX rather than being pushed
-	on the stack if the following conditions are met:)
+	$(P 次の条件が満たされているときには、最後の引数は、
+	スタックではなくEAXレジスタで渡されます:)
 
 	$(UL
-	$(LI It fits in EAX.)
-	$(LI It is not a 3 byte struct.)
-	$(LI It is not a floating point type.)
+	$(LI EAX に収まるサイズである)
+	$(LI 3バイト構造体ではない)
+	$(LI 浮動小数点型でもない)
 	)
 
-	$(P Parameters are always pushed as multiples of 4 bytes,
-	rounding upwards,
-	so the stack is always aligned on 4 byte boundaries.
-	They are pushed most significant first.
-	$(B out) and $(B ref) are passed as pointers.
-	Static arrays are passed as pointers to their first element.
-	On Windows, a real is pushed as a 10 byte quantity,
-	a creal is pushed as a 20 byte quantity.
-	On Linux, a real is pushed as a 12 byte quantity,
-	a creal is pushed as two 12 byte quantities.
-	The extra two bytes of pad occupy the $(SINGLEQUOTE most significant) position.
+	$(P 引数は、
+	常に４バイト境界に切り上げてスタックに
+	push されます。
+	上位ワードが先にpushされます。
+	$(B out) 引数と $(B ref) 引数はポインタが渡されます。
+	静的配列は先頭へのポインタが渡されます。
+	Windowsでは、real型は10バイトの量として、
+	creal型は20バイトの量としてpushされます。
+	Linuxでは、realは12バイト、
+	crealは二つの12バイトの量としてpushされます。
+	パディングの2バイトは $(SINGLEQUOTE most significant) 側に埋められます。
 	)
 
-	$(P The callee cleans the stack.)
+	$(P 呼び出された関数側が、スタックを復元します。)
 
-	$(P The parameters to the variadic function:)
+	$(P 以下の形式の可変個引数関数の場合は、)
 
 ---
 	void foo(int p1, int p2, int[] p3...)
 	foo(a1, a2, ..., an);
 ---
 
-	$(P are passed as follows:)
+	$(P このように引数が渡されます:)
 
 	$(TABLE
 	$(TR $(TD p1))
@@ -748,17 +748,17 @@ $(SECTION4 Parameters,
 	$(TR $(TD this))
 	)
 
-	$(P The variadic part is converted to a dynamic array and the
-	rest is the same as for non-variadic functions.)
+	$(P 可変個部分は動的配列に変換され、
+	あとは通常の関数と全く同様です。)
 
-	$(P The parameters to the variadic function:)
+	$(P 以下の形式の可変個引数関数の場合は、)
 
 ---
 	void foo(int p1, int p2, ...)
 	foo(a1, a2, a3, ..., an);
 ---
 
-	$(P are passed as follows:)
+	$(P このように引数が渡されます:)
 
 	$(TABLE
 	$(TR $(TD an))
@@ -771,48 +771,48 @@ $(SECTION4 Parameters,
 	$(TR $(TD this))
 	)
 
-	$(P The caller is expected to clean the stack.
-	$(B _argptr) is not
-	passed, it is computed by the callee.)
+	$(P 呼び出し側がスタックを復元します。
+	$(B _argptr) は直接は渡されません。
+	呼び出された関数側が計算します。)
 )
 
 )
 
-$(SECTION3 Exception Handling,
+$(SECTION3 例外処理,
 
     $(SECTION4 Windows,
 
-	$(P Conforms to the Microsoft Windows Structured Exception Handling
-	conventions.
+	$(P Microsoft Windows
+	の構造化例外処理の規約に従います。
 	)
     )
 
-    $(SECTION4 Linux, FreeBSD and OS X,
+    $(SECTION4 Linux$(COMMA) FreeBSD$(COMMA) OS X,
 
-	$(P Uses static address range/handler tables.
-	It is not compatible with the ELF/Mach-O exception handling tables.
-	The stack is walked assuming it uses the EBP/RBP stack frame
-	convention. The EBP/RBP convention must be used for every
-	function that has an associated EH (Exception Handler) table.
+	$(P 静的な範囲/ハンドラ対応表を用います。
+	これはELFの例外ハンドラテーブルとは互換性がありません。
+	EBP/RBPでスタックフレームを保持しているとの仮定の下で、
+	スタックをたどります。例外ハンドラテーブル(EHテーブル)を持つ全ての関数で、
+	このEBP/RBPの規約が満たされている必要があります。
 	)
 
-	$(P For each function that has exception handlers,
-	an EH table entry is generated.
+	$(P 例外ハンドラのあるそれぞれの関数に対して、
+	EHテーブルのエントリが生成されます。
 	)
 
-	$(TABLE2 EH Table Entry,
-	$(TR $(TH field) $(TH description))
-	$(TR $(TD void*) $(TD pointer to start of function))
-	$(TR $(TD DHandlerTable*) $(TD pointer to corresponding EH data))
-	$(TR $(TD uint) $(TD size in bytes of the function))
+	$(TABLE2 EHテーブルエントリ,
+	$(TR $(TH フィールド) $(TH 説明))
+	$(TR $(TD void*) $(TD 関数の開始アドレス))
+	$(TR $(TD DHandlerTable*) $(TD 対応するEHデータへのポインタ))
+	$(TR $(TD uint) $(TD 関数のサイズ。バイト単位))
 	)
 
-	$(P The EH table entries are placed into the following special
-	segments, which are concatenated by the linker.
+	$(P EHテーブルは、以下の特別なセグメントに配置され、
+	リンカによって一つに結合されます。
 	)
 
-	$(TABLE2 EH Table Segment,
-	$(TR $(TH Operating System) $(TH Segment Name))
+	$(TABLE2 EHテーブルセグメント,
+	$(TR $(TH OS) $(TH セグメント名))
 	$(TR $(TD Windows) $(TD FI))
 	$(TR $(TD Linux) $(TD .deh_eh))
 	$(TROW FreeBSD, .deh_eh)
@@ -820,103 +820,103 @@ $(SECTION3 Exception Handling,
 	)
 	$(BR)
 
-	$(P The rest of the EH data can be placed anywhere,
-	it is immutable.)
+	$(P 例外ハンドラのそのほかのデータは任意の箇所に配置されます。
+	書き換えは不可能です。)
 
 	$(TABLE2 DHandlerTable,
-	$(TR $(TH field) $(TH description))
-	$(TR $(TD void*) $(TD pointer to start of function))
-	$(TR $(TD uint) $(TD offset of ESP/RSP from EBP/RBP))
-	$(TR $(TD uint) $(TD offset from start of function to return code))
-	$(TR $(TD uint) $(TD number of entries in DHandlerInfo[]))
-	$(TR $(TD DHandlerInfo[]) $(TD array of handler information))
+	$(TR $(TH フィールド) $(TH 説明))
+	$(TR $(TD void*) $(TD 関数の開始アドレス))
+	$(TR $(TD uint) $(TD ESP/RSPのEBP/RBPからのオフセット))
+	$(TR $(TD uint) $(TD 関数の開始アドレスからreturn codeまでのオフセット))
+	$(TR $(TD uint) $(TD DHandlerInfo[] の要素数))
+	$(TR $(TD DHandlerInfo[]) $(TD ハンドラ情報の配列))
 	)
 	$(BR)
 
 	$(TABLE2 DHandlerInfo,
-	$(TR $(TH field) $(TH description))
-	$(TR $(TD uint) $(TD offset from function address to start of guarded section))
-	$(TR $(TD uint) $(TD offset of end of guarded section))
-	$(TR $(TD int) $(TD previous table index))
-	$(TR $(TD uint) $(TD if != 0 offset to DCatchInfo data from start of table))
-	$(TR $(TD void*) $(TD if not null, pointer to finally code to execute))
+	$(TR $(TH フィールド) $(TH 説明))
+	$(TR $(TD uint) $(TD 関数の開始アドレスからtry区間の先頭までのオフセット))
+	$(TR $(TD uint) $(TD 同、tryの終端までのオフセット))
+	$(TR $(TD int) $(TD 一つ前のテーブルのインデックス))
+	$(TR $(TD uint) $(TD 0でない場合、テーブルの先頭から DCatchInfo までのオフセット))
+	$(TR $(TD void*) $(TD nullでない場合、finallyのコード))
 	)
 	$(BR)
 
 	$(TABLE2 DCatchInfo,
-	$(TR $(TH field) $(TH description))
-	$(TR $(TD uint) $(TD number of entries in DCatchBlock[]))
-	$(TR $(TD DCatchBlock[]) $(TD array of catch information))
+	$(TR $(TH フィールド) $(TH 説明))
+	$(TR $(TD uint) $(TD DCatchBlock[] の要素数<))
+	$(TR $(TD DCatchBlock[]) $(TD catch 情報の配列))
 	)
 	$(BR)
 
 	$(TABLE2 DCatchBlock,
-	$(TR $(TH field) $(TH description))
-	$(TR $(TD ClassInfo) $(TD catch type))
-	$(TR $(TD uint) $(TD offset from EBP/RBP to catch variable))
-	$(TR $(TD void*) $(TD catch handler code))
+	$(TR $(TH フィールド) $(TH 説明))
+	$(TR $(TD ClassInfo) $(TD catchする例外の型))
+	$(TR $(TD uint) $(TD catch変数の EBP/RBP からのオフセット))
+	$(TR $(TD void*) $(TD catch ハンドラのコード))
 	)
     )
 )
 
-$(SECTION3 Garbage Collection,
+$(SECTION3 ガベージコレクション,
 
-	$(P The interface to this is found in $(D phobos/internal/gc).)
+	$(P インターフェイスが $(D phobos/internal/gc) に存在します)
 )
 
-$(SECTION3 Runtime Helper Functions,
+$(SECTION3 実行時補助関数,
 
-	$(P These are found in $(D phobos/internal).)
+	$(P $(D phobos/internal) に存在します)
 )
 
-$(SECTION3 Module Initialization and Termination,
+$(SECTION3 モジュール初期化と終了,
 
-	$(P All the static constructors for a module are aggregated into a
-	single function, and a pointer to that function is inserted
-	into the ctor member of the ModuleInfo instance for that
-	module.
+	$(P モジュール内の静的コンストラクタは１つの関数へとまとめられます。
+	その関数へのポインタが、そのモジュールの
+	ModuleInfo インスタンスの
+	ctor メンバに格納されます。
 	)
 
-	$(P All the static denstructors for a module are aggregated into a
-	single function, and a pointer to that function is inserted
-	into the dtor member of the ModuleInfo instance for that
-	module.
-	)
-)
-
-$(SECTION3 Unit Testing,
-
-	$(P All the unit tests for a module are aggregated into a
-	single function, and a pointer to that function is inserted
-	into the unitTest member of the ModuleInfo instance for that
-	module.
+	$(P モジュール内の静的コンストラクタは１つの関数へとまとめられます。
+	その関数へのポインタが、そのモジュールの
+	ModuleInfo インスタンスの
+	dtor メンバに格納されます。
 	)
 )
 
-$(SECTION2 Symbolic Debugging,
+$(SECTION3 単体テスト,
 
-	$(P D has types that are not represented in existing C or C++ debuggers.
-	These are dynamic arrays, associative arrays, and delegates.
-	Representing these types as structs causes problems because function
-	calling conventions for structs are often different than that for
-	these types, which causes C/C++ debuggers to misrepresent things.
-	For these debuggers, they are represented as a C type which
-	does match the calling conventions for the type.
-	The $(B dmd) compiler will generate only C symbolic type info with the
-	$(B -gc) compiler switch.
+	$(P モジュール内の静的コンストラクタは１つの関数へとまとめられます。
+	その関数へのポインタが、そのモジュールの
+	ModuleInfo インスタンスの
+	unitTest メンバに格納されます。
+	)
+)
+
+$(SECTION2 シンボリック・デバッグ,
+
+	$(P D には、既存のC/C++用デバッガでは表現できない型があります。
+	動的配列、連想配列、delegate がそれにあたります。
+	しかし、一般には関数呼び出し規約が構造体とは異なるために、
+	これらを構造体として表現すると
+	C/C++ デバッガの動作ミスを引き起こしてしまいます。
+	これらデバッガへの対策として、現状では、
+	呼び出し規約がマッチするような型を選んでそれで置き換えて表現するようになっています。
+	$(B -gc) スイッチを指定した場合、
+	$(B dmd) コンパイラはこのような C 形式シンボル情報のみを出力します。
 	)
 
-	$(TABLE2 Types for C Debuggers,
+	$(TABLE2 Cデバッガ向け型情報,
 	$(TR
-	$(TH D type)
-	$(TH C representation)
+	$(TH D の型)
+	$(TH C 表現)
 	)
 	$(TR
-	$(TD dynamic array)
+	$(TD 動的配列)
 	$(TD unsigned long long)
 	)
 	$(TR
-	$(TD associative array)
+	$(TD 連想配列)
 	$(TD void*)
 	)
 	$(TR
@@ -929,21 +929,21 @@ $(SECTION2 Symbolic Debugging,
 	)
 	)
 
-	$(P For debuggers that can be modified to accept new types, the
-	following extensions help them fully support the types.
+	$(P 新しい型を追加できるようなタイプのデバッガでは、
+	Dの型を完全サポートするために以下の情報を利用してください。
 	)
 
-$(SECTION3 <a name="codeview">Codeview Debugger Extensions</a>,
+$(SECTION3 <a name="codeview">Codeview デバッガ拡張</a>,
 
-	$(P The D $(B dchar) type is represented by the special
-	primitive type 0x78.)
+	$(P D の $(B dchar) 型は
+	特別な組み込み型 0x78 として表現されます。)
 
-	$(P D makes use of the Codeview OEM generic type record
-	indicated by $(B LF_OEM) (0x0015). The format is:)
+	$(P D は、$(B LF_OEM) (0x0015) で示される Codeview OEM 汎用型情報レコードを使います。
+	形式は以下の通りです：)
 
-	$(TABLE2 Codeview OEM Extensions for D,
+	$(TABLE2 D の Codeview OEM 拡張,
 	$(TR
-	$(TD field size)
+	$(TD フィールドサイズ)
 	$(TD 2)
 	$(TD 2)
 	$(TD 2)
@@ -952,7 +952,7 @@ $(SECTION3 <a name="codeview">Codeview Debugger Extensions</a>,
 	$(TD 2)
 	)
 	$(TR
-	$(TH D Type)
+	$(TH D の型)
 	$(TH Leaf Index)
 	$(TH OEM Identifier)
 	$(TH recOEM)
@@ -961,7 +961,7 @@ $(SECTION3 <a name="codeview">Codeview Debugger Extensions</a>,
 	$(TH type index)
 	)
 	$(TR
-	$(TD dynamic array)
+	$(TD 動的配列)
 	$(TD LF_OEM)
 	$(TD $(I OEM))
 	$(TD 1)
@@ -970,7 +970,7 @@ $(SECTION3 <a name="codeview">Codeview Debugger Extensions</a>,
 	$(TD @$(I element))
 	)
 	$(TR
-	$(TD associative array)
+	$(TD 連想配列)
 	$(TD LF_OEM)
 	$(TD $(I OEM))
 	$(TD 2)
@@ -989,7 +989,7 @@ $(SECTION3 <a name="codeview">Codeview Debugger Extensions</a>,
 	)
 	)
 
-	$(P Where:)
+	$(P )
 
 	$(TABLE
 	$(TR
@@ -998,73 +998,73 @@ $(SECTION3 <a name="codeview">Codeview Debugger Extensions</a>,
 	)
 	$(TR
 	$(TD $(I index))
-	$(TD type index of array index)
+	$(TD 配列の添え字のtype index)
 	)
 	$(TR
 	$(TD $(I key))
-	$(TD type index of key)
+	$(TD 連想配列のkeyのtype index)
 	)
 	$(TR
 	$(TD $(I element))
-	$(TD type index of array element)
+	$(TD 連想配列のelementのtype index)
 	)
 	$(TR
 	$(TD $(I this))
-	$(TD type index of context pointer)
+	$(TD コンテキストポインタのtype index)
 	)
 	$(TR
 	$(TD $(I function))
-	$(TD type index of function)
+	$(TD 関数のtype index)
 	)
 	)
 
-	$(P These extensions can be pretty-printed
-	by $(LINK2 http://www.digitalmars.com/ctg/obj2asm.html, obj2asm).
+	$(P Tこれらの拡張は
+	$(LINK2 http://www.digitalmars.com/ctg/obj2asm.html, obj2asm) を使うと綺麗に表示できます。
 
-	$(P The $(LINK2 http://ddbg.mainia.de/releases.html, Ddbg) debugger
-	supports them.)
+	$(P $(LINK2 http://ddbg.mainia.de/releases.html, Ddbg)
+	デバッガがこの拡張に対応しています。)
 	)
 )
 
-$(SECTION3 $(LNAME2 dwarf, Dwarf Debugger Extensions),
-	$(P The following leaf types are added:)
+$(SECTION3 $(LNAME2 dwarf, Dwarf デバッガ拡張),
+	$(P 以下のleaf typeが追加されます：)
 
-	$(TABLE2 Dwarf Extensions for D,
+	$(TABLE2 D の Dwarf 拡張,
 	$(TR
-	$(TH D type)
+	$(TH D の型)
 	$(TH Identifier)
 	$(TH Value)
 	$(TH Format)
 	)
 	$(TR
-	$(TD dynamic array)
+	$(TD 動的配列)
 	$(TD DW_TAG_darray_type)
 	$(TD 0x41)
-	$(TD DW_AT_type is element type)
+	$(TD DW_AT_type が要素の型)
 	)
 	$(TR
 	$(TD associative array)
 	$(TD DW_TAG_aarray_type)
 	$(TD 0x42)
-	$(TD DW_AT_type, is element type, DW_AT_containing_type key type)
+	$(TD DW_AT_type が要素の型, DW_AT_containing_type が key の型)
 	)
 	$(TR
 	$(TD delegate)
 	$(TD DW_TAG_delegate_type)
 	$(TD 0x43)
-	$(TD DW_AT_type, is function type, DW_AT_containing_type is $(SINGLEQUOTE this) type)
+	$(TD DW_AT_type が関数の型, DW_AT_containing_type が $(SINGLEQUOTE this) の型)
 	)
 	)
 
-	$(P These extensions can be pretty-printed
-	by $(LINK2 http://www.digitalmars.com/ctg/dumpobj.html, dumpobj).
+	$(P これらの拡張は
+	$(LINK2 http://www.digitalmars.com/ctg/dumpobj.html, dumpobj) を使うと綺麗に表示できます。
 
-	$(P The $(LINK2 http://www.zerobugs.org/, ZeroBUGS)
-	debugger supports them.)
+	$(P $(LINK2 http://www.zerobugs.org/, ZeroBUGS)
+	デバッガがこの拡張に対応しています。)
 	)
 
-	$(P Note that these Dwarf extensions have been removed as they conflict with
-	recent gcc additions.
+	$(P これらの Dwarf
+	拡張は最近の gcc の追加機能と衝突するため取り除かれています。
 	)
 )
 
