@@ -1,29 +1,36 @@
-Written by Kazuhiro Inaba (www.kmonos.net)
-
 * What is this?
 
-Japanese translation of D Programming Language
-  http://www.kmonos.net/alang/d/
-was suspended from spring 2011.
-Now I am rebooting it and catching up the latest version (dmd v2.059).
-
-Changes from the old workflow is:
- - Translate .dd files, not .html files.
- - Move repository to public github.
- - D1 refernce will not be updated any more.
- - (For now) Phobos reference is not maintained.
-   I will think about Phobos after catching up D 2.059.
+Japanese translation of D Programming Language spec (dlang.org).
+The running website is at: http://www.kmonos.net/alang/d/.
 
 * Milestone
 
-For each release of dmd, I'd like to sync up to the version.
+For each release of dmd, I target to sync to the version.
 Current milestone is dmd v2.059, the following revision:
 https://github.com/D-Programming-Language/d-programming-language.org/tree/948c9b0856ba072d3b25e72c4f7191657cbf0eee
 
 * Contributions
 
-I welcome any help!
-If you were interested in translation, just do it and please send a pull request.
-  (One request: please do not change the line numbers while translation.
-   It makes merging of the updates in original English version much easier.)
-Or ask me @kinaba at Twitter.
+Any help is welcome!
+- For minor typo or mistranslation, just ping me @kinaba on Twitter,
+  or log in to github and use the "Improve this site" button on the translated pages.
+- For a new/revised/improved translation of a full document,
+  please send a pull request. There's one request for the translation:
+  "align the line number with the original English document". Line numbers
+  are used as meta data to sync English and Japanese texts.
+- If you are interested in continuously volunteering in the translation,
+  again, please ping me @kinaba at Twitter.
+
+* TODO
+
+- Translate intro-to-datetime.dd.
+- Translate changelog.dd (= migrate the old translation to .dd based workflow).
+- Translate druntime (= migrate the old translation to .dd based workflow).
+- Translate phobos (= migrate the old translation to .dd based workflow).
+- Come up with a good methodology to merge the changes in English document.
+- Generate in other formats (chm, pdf, ebook, ...).
+- Move the site to more github friendly, community maintainable place.
+
+* People
+
+Kazuhiro Inaba (Twitter: twitter.com/kinaba, Web: www.kmonos.net).
