@@ -1,151 +1,151 @@
 Ddoc
 
-$(SPEC_S Arrays,
+$(SPEC_S 配列,
 
-        $(P There are four kinds of arrays:)
+        $(P 配列には四種類あります：)
 
-    $(TABLE2 Kinds of Arrays,
-        $(TR $(TH Syntax)       $(TH Description))
-        $(TR $(TD $(I type)*)   $(TD $(LINK2 #pointers, Pointers to data)))
+    $(TABLE2 配列の種類,
+        $(TR $(TH 構文)       $(TH 説明))
+        $(TR $(TD $(I type)*)   $(TD $(LINK2 #pointers, データへのポインタ)))
 
-        $(TR $(TD $(I type)[$(I integer)])      $(TD $(LINK2 #static-arrays, Static arrays)))
+        $(TR $(TD $(I type)[$(I integer)])      $(TD $(LINK2 #static-arrays, 静的配列)))
 
-        $(TR $(TD $(I type)[])  $(TD $(LINK2 #dynamic-arrays, Dynamic arrays)))
+        $(TR $(TD $(I type)[])  $(TD $(LINK2 #dynamic-arrays, 動的配列)))
 
-        $(TR $(TD $(I type)[$(I type)]) $(TD $(DDLINK hash-map, Associative Arrays, Associative arrays)))
+        $(TR $(TD $(I type)[$(I type)]) $(TD $(DDLINK hash-map, Associative Arrays, 連想配列)))
     )
 
-<h3>$(LNAME2 pointers, Pointers)</h3>
+<h3>$(LNAME2 pointers, ポインタ)</h3>
 
 ---------
 int* p;
 ---------
 
-        $(P These are simple pointers to data, analogous to C pointers.
-        Pointers are provided for interfacing with C and for
-        specialized systems work.
-        There
-        is no length associated with it, and so there is no way for the
-        compiler or runtime to do bounds checking, etc., on it.
-        Most conventional uses for pointers can be replaced with
-        dynamic arrays, $(D out) and $(D ref) parameters,
-        and reference types.
+        $(P Cのポインタと類似の、
+	データへの単純なポインタがあります。
+	ポインタは、Cへのインターフェイスと、特定のシステム処理の
+	用途のために残されています。
+	ポインタには長さの情報が付随していないため、
+	コンパイラやランタイムで境界チェックなどをすることができません。
+	大抵の場合、ポインタは、
+        動的配列や $(D out) と $(D ref)
+        パラメタや、参照型で置き換えることが出来ます。
         )
 
-<h3>$(LNAME2 static-arrays, Static Arrays)</h3>
+<h3>$(LNAME2 static-arrays, 静的配列)</h3>
 
 ---------
 int[3] s;
 ---------
 
-        $(P These are analogous to C arrays. Static arrays are distinguished
-        by having a length fixed at compile time.
+        $(P Cの配列に似たものもあります。
+	静的配列はコンパイル時に決まる固定サイズを持ちます。
         )
 
-        $(P The total size of a static array cannot exceed 16Mb.
-        A dynamic array should be used instead for such large arrays.
+        $(P 静的配列の総サイズが16Mbを越えることは出来ません。
+	そのような巨大配列には、動的配列を使ってください。
         )
 
-        $(P A static array with a dimension of 0 is allowed, but no
-        space is allocated for it. It's useful as the last member
-        of a variable length struct, or as the degenerate case of
-        a template expansion.
+        $(P サイズ0の静的配列を作ることも可能ですが、
+	そこにはメモリは割り当てられません。
+	これは主に可変長構造体の最後のメンバとしてや、
+	テンプレート展開の末端のケースに利用されます。
         )
 
 $(V1
-        $(P Static arrays are value types, but as in C
-        static arrays are passed to functions by reference
-        and cannot be returned from functions.
+        $(P 静的配列は値型ですが、C
+        と同様に、静的配列は関数には参照で渡され、
+        関数から返すことはできません。
         )
 )
 $(V2
-        $(P Static arrays are value types. Unlike in C and D version 1,
-        static arrays are passed to functions by value.
-        Static arrays can also be returned by functions.
+        $(P 静的配列は値型です。CやD1の静的配列とは異なり、
+	関数引数としても静的配列は値渡しされます。
+	また、関数の返値とすることも可能です。
         )
 )
 
-<h3>$(LNAME2 dynamic-arrays, Dynamic Arrays)</h3>
+<h3>$(LNAME2 dynamic-arrays, 動的配列)</h3>
 
 ---------
 int[] a;
 ---------
 
-        $(P Dynamic arrays consist of a length and a pointer to the array data.
-        Multiple dynamic arrays can share all or parts of the array data.
+        $(P 動的配列は、サイズ情報と配列データへのポインタを保持しています。
+	複数の動的配列がデータの一部または全部を共有することも可能です。
         )
 
-<h2>Array Declarations</h2>
+<h2>配列の宣言</h2>
 
-        $(P There are two ways to declare arrays, prefix and postfix.
-        The prefix form is the preferred method, especially for
-        non-trivial types.
+        $(P 配列の宣言には、
+	前置と後置の二種類あります。
+	前置形式が、推奨される方式です。
         )
 
-<h4>Prefix Array Declarations</h4>
+<h4>前置配列宣言</h4>
 
-        $(P Prefix declarations appear before the identifier being
-        declared and read right to left, so:
-        )
-
----------
-int[] a;      // dynamic array of ints
-int[4][3] b;  // array of 3 arrays of 4 ints each
-int[][5] c;   // array of 5 dynamic arrays of ints.
-int*[]*[3] d; // array of 3 pointers to dynamic arrays of pointers to ints
-int[]* e;     // pointer to dynamic array of ints
----------
-
-
-<h4>Postfix Array Declarations</h4>
-
-        $(P Postfix declarations appear after the identifier being
-        declared and read left to right.
-        Each group lists equivalent declarations:
+        $(P 識別子の前に書く前置形式では、配列宣言は
+	左から右へと読むことができます。従って：
         )
 
 ---------
-// dynamic array of ints
+int[] a;      // int の動的配列
+int[4][3] b;  // int の4要素配列 の3要素配列
+int[][5] c;   // int の動的配列 の5要素配列
+int*[]*[3] d; // int へのポインタ の動的配列 へのポインタ の3要素配列
+int[]* e;     // int の動的配列 へのポインタ
+---------
+
+
+<h4>後置配列宣言</h4>
+
+        $(P 識別子の後ろに書く後置形式では、
+	配列宣言は右から左へと読みます。
+	それぞれのグループは等価な宣言です：
+        )
+
+---------
+// int 動的配列
 int[] a;
 int a[];
 
-// array of 3 arrays of 4 ints each
+// int の4要素配列 の3要素配列
 int[4][3] b;
 int[4] b[3];
 int b[3][4];
 
-// array of 5 dynamic arrays of ints.
+// int の動的配列 の5要素配列
 int[][5] c;
 int[] c[5];
 int c[5][];
 
-// array of 3 pointers to dynamic arrays of pointers to ints
+// int へのポインタ の動的配列 へのポインタ の3要素配列
 int*[]*[3] d;
 int*[]* d[3];
 int* (*d[3])[];
 
-// pointer to dynamic array of ints
+// int の動的配列 へのポインタ
 int[]* e;
 int (*e)[];
 ---------
 
-        $(P $(B Rationale:) The postfix form matches the way arrays are
-        declared in C and C++, and supporting this form provides an
-        easy migration path for programmers used to it.
+        $(P $(B 理由:) 後置形式は、
+	CとC++での配列宣言の形式と一致しています。
+	このため、この形式をサポートすることでプログラマのDへの移行が簡単になるでしょう。
         )
 
-<h2>$(LNAME2 usage, Usage)</h2>
+<h2>$(LNAME2 usage, 使い方)</h2>
 
-        $(P There are two broad kinds of operations to do on an array -
-        affecting
-        the handle to the array,
-        and affecting the contents of the array.
-        C only has
-        operators to affect the handle. In D, both are accessible.
+        $(P 配列への操作は広範囲にわたりますが、
+	大きく二種類に分けることができます。
+	一つは配列のハンドルへの操作、
+	一つは配列の内容への操作です。
+	Cでは配列のハンドルへの操作しかありませんでしたが、
+	Dでは双方が使用可能です。
         )
 
-        $(P The handle to an array is specified by naming the array, as
-        in p, s or a:
+        $(P 配列へのハンドルは、
+	配列の名前によって指定します：
         )
 
 ---------
@@ -157,40 +157,40 @@ int* q;
 int[3] t;
 int[] b;
 
-p = q;     // p points to the same thing q does.
-p = s.ptr; // p points to the first element of the array s.
-p = a.ptr; // p points to the first element of the array a.
+p = q;     // p は q と同じものを指す
+p = s.ptr; // p は 配列s の先頭要素を指す
+p = a.ptr; // p は 配列a の先頭要素を指す
 
-s = ...;   // error, since s is a compiled in static
-           // reference to an array.
+s = ...;   // エラー
+           // s は配列への静的な参照としてコンパイルされている
 
-a = p;     // error, since the length of the array pointed
-           // to by p is unknown
-a = s;     // a is initialized to point to the s array
-a = b;     // a points to the same array as b does
+a = p;     // エラー
+           // pによって指されている配列のサイズが不明
+a = s;     // a は配列s を指すように初期化
+a = b;     // a は配列b と同じものを指す
 ---------
 
-<h2>$(LNAME2 slicing, Slicing)</h2>
+<h2>$(LNAME2 slicing, スライス)</h2>
 
-        $(P $(I Slicing) an array means to specify a subarray of it.
-        An array slice does not copy the data, it is only another
-        reference to it.
-        For example:
+        $(P 配列を $(I スライス) するとは、配列の一部分を取り出すことを言います。
+	配列のスライスは元のデータのコピーではなく、
+	単なる別の参照になります。
+	例えば：
         )
 
 ---------
-int[10] a;   // declare array of 10 ints
+int[10] a;   // intの10要素配列の宣言
 int[] b;
 
-b = a[1..3]; // a[1..3] is a 2 element array consisting of
-             // a[1] and a[2]
-foo(b[1]);   // equivalent to foo(0)
+b = a[1..3]; // a[1..3] は、
+             // a[1] と a[2] からなる2要素配列
+foo(b[1]);   // foo(0) と同じ
 a[2] = 3;
-foo(b[1]);   // equivalent to foo(3)
+foo(b[1]);   // foo(3) と同じ
 ---------
 
-        $(P The [] is shorthand for a slice of the entire array.
-        For example, the assignments to b:
+        $(P 単に [] と書くと、配列全体のスライスを表します。
+	例えば配列bへの代入は：
         )
 
 ---------
@@ -202,12 +202,12 @@ b = a[];
 b = a[0 .. a.length];
 ---------
 
-        $(P are all semantically equivalent.
+        $(P 全て同じ意味となります。
         )
 
-        $(P Slicing
-        is not only handy for referring to parts of other arrays,
-        but for converting pointers into bounds-checked arrays:
+        $(P スライス
+	は他の配列の一部分を参照するのに便利なだけでなく、
+	ポインタを境界チェック付きの配列に変換するのにも使えます。
         )
 
 ---------
@@ -215,59 +215,59 @@ int* p;
 int[] b = p[0..8];
 ---------
 
-<h2>$(LNAME2 array-copying, Array Copying)</h2>
+<h2>$(LNAME2 array-copying, 配列のコピー)</h2>
 
-        $(P When the slice operator appears as the lvalue of an assignment
-        expression, it means that the contents of the array are the
-        target of the assignment rather than a reference to the array.
-        Array copying happens when the lvalue is a slice, and the rvalue
-        is an array of or pointer to the same type.
+        $(P スライス演算子が代入式の左辺に現れると、
+	配列への参照ではなく、
+	配列の内容がコピーの対象となることを示します。
+	配列内容のコピーは、
+	左辺がスライスで右辺が同じ型の配列かポインタの時に発生します。
         )
 
 ---------
 int[3] s;
 int[3] t;
 
-s[] = t;           // the 3 elements of t[3] are copied into s[3]
-s[] = t[];         // the 3 elements of t[3] are copied into s[3]
-s[1..2] = t[0..1]; // same as s[1] = t[0]
-s[0..2] = t[1..3]; // same as s[0] = t[1], s[1] = t[2]
-s[0..4] = t[0..4]; // error, only 3 elements in s
-s[0..2] = t;       // error, different lengths for lvalue and rvalue
+s[] = t;           // t[3] の３つの要素が s[3] へコピーされる
+s[] = t[];         // t[3] の３つの要素が s[3] へコピーされる
+s[1..2] = t[0..1]; // s[1] = t[0] と同じ意味
+s[0..2] = t[1..3]; // s[0] = t[1], s[1] = t[2] と同じ意味
+s[0..4] = t[0..4]; // エラー。s には 3要素しかない
+s[0..2] = t;       // エラー。左辺と右辺で要素数が違う
 ---------
 
-        $(P Overlapping copies are an error:)
+        $(P 範囲の重なるコピーはエラーです：)
 
 ---------
-s[0..2] = s[1..3]; // error, overlapping copy
-s[1..3] = s[0..2]; // error, overlapping copy
+s[0..2] = s[1..3]; // エラー,範囲重複
+s[1..3] = s[0..2]; // エラー,範囲重複
 ---------
 
-        $(P Disallowing overlapping makes it possible for more aggressive
-        parallel code optimizations than possible with the serial
-        semantics of C.
+        $(P 範囲の重なるコピーを禁止することで、
+	Cの逐次のセマンティクスを越えた、
+	より強力なコードの並列最適化が可能になります。
         )
 
-<h2>$(LNAME2 array-setting, Array Setting)</h2>
+<h2>$(LNAME2 array-setting, 配列へのデータセット)</h2>
 
-        $(P If a slice operator appears as the lvalue of an assignment
-        expression, and the type of the rvalue is the same as the element
-        type of the lvalue, then the lvalue's array contents
-        are set to the rvalue.
+        $(P 代入式の左辺にスライス、
+	右辺に要素型と同じ型の値が来ると、
+	左辺の配列の内容が全て
+	右辺の値にセットされます。
         )
 
 ---------
 int[3] s;
 int* p;
 
-s[] = 3;     // same as s[0] = 3, s[1] = 3, s[2] = 3
-p[0..2] = 3; // same as p[0] = 3, p[1] = 3
+s[] = 3;     // s[0] = 3, s[1] = 3, s[2] = 3 と同じ意味
+p[0..2] = 3; // p[0] = 3, p[1] = 3 と同じ意味
 ---------
 
-<h2>$(LNAME2 array-concatenation, Array Concatenation)</h2>
+<h2>$(LNAME2 array-concatenation, 配列の結合)</h2>
 
-        $(P The binary operator ~ is the $(I cat) operator. It is used
-        to concatenate arrays:
+        $(P 二項演算子 ~ は、$(I 連結)演算子です。
+	配列をつなげるのに使います：
         )
 
 ---------
@@ -275,51 +275,51 @@ int[] a;
 int[] b;
 int[] c;
 
-a = b ~ c; // Create an array from the concatenation
-           // of the b and c arrays
+a = b ~ c; // bとcをつなげて
+           // 新しい配列を作る
 ---------
 
-        $(P Many languages overload the + operator to mean concatenation.
-        This confusingly leads to, does:
+        $(P 多くの言語は + 演算子を連結の意味でオーバーロードしていますが、
+	これは次の式の出力結果に混乱をもたらします：
         )
 
 ---------
 "10" + 3 + 4
 ---------
 
-        $(P produce the number 17, the string "1034" or the string "107" as the
-        result? It isn't obvious, and the language designers wind up carefully
-        writing rules to disambiguate it - rules that get incorrectly
-        implemented, overlooked, forgotten, and ignored. It's much better to
-        have + mean addition, and a separate operator to be array
-        concatenation.
+        $(P この式は 整数 17 を作るのか、それとも文字列 "1034" あるいは "107" を結果とするのでしょうか？
+	言語の設計者は、これをあいまいにしないように注意深く規則 -
+	間違って実装されたり,見過ごされたり忘れられたりする規則 -
+	を定めなくてはなりません。
+	それよりは、 + は加算の意味、
+	と決めてしまって連結には別の演算子を定義する方がベターです。
         )
 
-        $(P Similarly, the ~= operator means append, as in:
-        )
-
----------
-a ~= b; // a becomes the concatenation of a and b
----------
-
-        $(P Concatenation always creates a copy of its operands, even
-        if one of the operands is a 0 length array, so:
+        $(P 同様に、~= 演算子は末尾への追加の意味になります：
         )
 
 ---------
-a = b;           // a refers to b
-a = b ~ c[0..0]; // a refers to a copy of b
+a ~= b; // a は a と b の連結
 ---------
 
-        $(P Appending does not always create a copy, see $(LINK2 #resize,
-        setting dynamic array length) for details.
+        $(P 配列の連結は、
+	片方が長さ 0 の配列であっても必ずコピーを伴います：
         )
 
-<h2>$(LNAME2 array-operations, Array Operations)</h2>
+---------
+a = b;           // a は b を指す
+a = b ~ c[0..0]; // a は b のコピーを指す
+---------
 
-        $(P Many array operations, also known as vector operations,
-        can be expressed at a high level rather than as a loop.
-        For example, the loop:
+        $(P 配列への追加は必ずコピーを行うとは限りません。詳しくは $(LINK2 #resize,
+        配列サイズの動的変更) をご覧下さい。
+        )
+
+<h2>$(LNAME2 array-operations, 配列演算)</h2>
+
+        $(P 多くの配列演算（ベクトル演算）を、
+	ループではなくより高レベルに表現することが可能です。
+	例えば、以下のループ
         )
 
 ---
@@ -329,9 +329,9 @@ for (size_t i = 0; i < a.length; i++)
   a[i] = b[i] + 4;
 ---
 
-        $(P assigns to the elements of $(CODE a) the elements of $(CODE b)
-        with $(CODE 4) added to each. This can also be expressed in
-        vector notation as:
+        $(P は $(CODE a) の各要素に $(CODE b)
+        $(CODE 4) を足した値を代入するものですが、
+	これは配列演算で以下のように記述できます:
         )
 
 ---
@@ -340,98 +340,98 @@ T[] a, b;
 a[] = b[] + 4;
 ---
 
-        $(P A vector operation is indicated by the slice operator appearing
-        as the lvalue of an =, +=, -=, *=, /=, %=, ^=, &amp;= or |= operator.
-        The rvalue can be an expression consisting either of an array
-        slice of the same length and type as the lvalue or an expression
-        of the element type of the lvalue, in any combination.
-        The operators supported for vector operations are the binary
-        operators +, -, *, /, %, ^, &amp; and |, and the unary operators
-        - and ~.
+        $(P ベクトル演算は、スライス演算子が
+	=, +=, -=, *=, /=, %=, ^=, &amp;=, |= 演算子の左辺に来たときに行われます。
+	その場合の右辺式には、同じ長さと型の配列スライスか、
+	要素型の値を返す式の、
+	任意の組み合わせが使用できます。
+	ベクトル演算に対応している演算子は、
+	二項演算子 +, -, *, /, %, ^, &amp;, |, と、
+	単項演算子 -, ~ です。
         )
 
-        $(P The lvalue slice and any rvalue slices must not overlap.
-        The vector assignment operators are evaluated right to left,
-        and the other binary operators are evaluated left to right.
-        All operands are evaluated exactly once, even if the array slice
-        has zero elements in it.
+        $(P 左辺のスライスと右辺のスライスには重なりがないものとします。
+	ベクトル代入演算は右から左の順番で評価され、
+	その他の二項演算子は左から右へ評価されます。
+	全てのオペランドはちょうど１回ずつ評価されます。
+	これは長さゼロの配列スライスを扱う場合も同様です。
         )
 
-        $(P The order in which the array elements are computed
-        is implementation defined, and may even occur in parallel.
-        An application must not depend on this order.
+        $(P 配列の各要素が計算される順序は実装依存の定義で、
+	並列実行される可能性もあります。
+	アプリケーションは演算の順序に依存してはなりません。
         )
 
-        $(P Implementation note: many of the more common vector
-        operations are expected to take advantage of any vector
-        math instructions available on the target computer.
+        $(P 実装ノート:
+	典型的なベクトル演算の多くは、
+	ターゲットマシンのベクトル演算命令を活用することが期待されます。
         )
 
-<h2>$(LNAME2 pointer-arithmetic, Pointer Arithmetic)</h2>
+<h2>$(LNAME2 pointer-arithmetic, ポインタ演算)</h2>
 
 ---------
-int[3] abc;              // static array of 3 ints
-int[] def = [ 1, 2, 3 ]; // dynamic array of 3 ints
+int[3] abc;              // intの3要素静的配列
+int[] def = [ 1, 2, 3 ]; // intの3要素動的配列
 
 void dibb(int* array) {
-  array[2];     // means same thing as *(array + 2)
-  *(array + 2); // get 3rd element
+  array[2];     // *(array + 2) と同義
+  *(array + 2); // 3番目の要素を得る
 }
 
 void diss(int[] array) {
   array[2];     // ok
-  *(array + 2); // error, array is not a pointer
+  *(array + 2); // エラー。配列はポインタではない
 }
 
 void ditt(int[3] array) {
   array[2];     // ok
-  *(array + 2); // error, array is not a pointer
+  *(array + 2); // エラー。配列はポインタではない
 }
 ---------
 
-<h2>$(LNAME2 rectangular-arrays, Rectangular Arrays)</h2>
+<h2>$(LNAME2 rectangular-arrays, "rectangular" 配列)</h2>
 
-        $(P Experienced FORTRAN numerics programmers know that multidimensional
-        "rectangular" arrays for things like matrix operations are much faster than trying to
-        access them via pointers to pointers resulting from "array of pointers to array" semantics.
-        For example, the D syntax:
+        $(P 熟練したFORTRANの数値プログラマは、多次元の"長方形型"配列が、
+	行列演算のようなものを実装するのに、"配列へのポインタの配列"
+	を使うよりずっと高速なことをご存じでしょう。
+	例えば D の構文：
         )
 
 ---------
 double[][] matrix;
 ---------
 
-        $(P declares matrix as an array of pointers to arrays. (Dynamic arrays are implemented as
-        pointers to the array data.) Since the arrays can have varying sizes (being dynamically
-        sized), this is sometimes called "jagged" arrays. Even worse for optimizing the code, the
-        array rows can sometimes point to each other! Fortunately, D static arrays, while using
-        the same syntax, are implemented as a fixed rectangular layout:
+        $(P は、配列へのポインタの配列を宣言します。（動的配列は、配列データへのポインタとして
+	実装されています。）これは配列のサイズが変わる可能性がある（動的配列なので）ためで、
+	このような実装はよく "ぎざぎざ" 配列と呼ばれています。最適化を考えるとさらに悪いことに、
+	しばしば違う行が同じ要素を指すなんてこともあるのです！ 幸い、D の静的配列は、
+	同じ構文でも固定の長方形型のメモリレイアウトを持っています：
         )
 
 ---------
 double[3][3] matrix;
 ---------
 
-        $(P declares a rectangular matrix with 3 rows and 3 columns, all contiguously in memory. In
-        other languages, this would be called a multidimensional array and be declared as:
+        $(P これは3行3列の配列の宣言で、全ての要素がメモリ上に連続に配置されます。
+	他の言語でいうと、これは多次元配列と呼ばれ、次のように宣言するようです：
         )
 ---------
 double matrix[3,3];
 ---------
 
-<h2>$(LNAME2 array-length, Array Length)</h2>
+<h2>$(LNAME2 array-length, 配列の長さ)</h2>
 
 $(V1
-        $(P Within the [ ] of a static or a dynamic array,
-        the variable $(B length)
-        is implicitly declared and set to the length of the array.
-        The symbol $(B $) can also be so used.
+        $(P 静的/動的を問わず、配列の [ ] の中では、
+        変数 $(B length)
+        が暗黙に宣言され、その配列の長さを持っています。
+        $(B $) 記号も同じ用途で使えます。
         )
 )
 $(V2
-        $(P Within the [ ] of a static or a dynamic array,
-        the symbol $(B $)
-        represents the length of the array.
+        $(P 静的/動的を問わず、配列の [ ] の中では、
+         $(B $)
+        という記号でその配列の長さを取得できます。
         )
 )
 
@@ -440,225 +440,225 @@ int[4] foo;
 int[]  bar = foo;
 int*   p = &foo[0];
 
-// These expressions are equivalent:
+// 以下の式は全て同じ意味：
 bar[]
 bar[0 .. 4]
 $(V1 bar[0 .. $(B length)]
 )bar[0 .. $(B $)]
 bar[0 .. bar.length]
 
-$(V1 p[0 .. length]         // 'length' is not defined, since p is not an array
-bar[0]+length       // 'length' is not defined, out of scope of [ ]
+$(V1 p[0 .. length]         // 'length' は未定義。pは配列ではない
+bar[0]+length       // 'length' は未定義。[ ] の外
 
-bar[$(B length)-1]  // retrieves last element of the array
+bar[$(B length)-1]  // 配列の最後の要素を取得
 )
-$(V2 p[0 .. $(DOLLAR)]      // '$' is not defined, since p is not an array
-bar[0]+$(DOLLAR)            // '$' is not defined, out of scope of [ ]
+$(V2 p[0 .. $(DOLLAR)]      // '$' は未定義。pは配列ではない
+bar[0]+$(DOLLAR)            // '$' は未定義。[ ] の外
 
-bar[$(B $(DOLLAR))-1] // retrieves last element of the array
+bar[$(B $(DOLLAR))-1] // 配列の最後の要素を取得
 )
 ---------
 
-<h2>$(LNAME2 array-properties, Array Properties)</h2>
+<h2>$(LNAME2 array-properties, 配列のプロパティ)</h2>
 
-        $(P Static array properties are:)
+        $(P 静的配列のプロパティは：)
 
-    $(TABLE2 Static Array Properties,
-        $(TR $(TH Property) $(TH Description))
+    $(TABLE2 Static 静的配列のプロパティ,
+        $(TR $(TH プロパティ) $(TH 説明))
 
         $(TR
         $(TD $(B .init))
-$(V1    $(TD returns the default initializer for the element type.)
+$(V1    $(TD 要素型のデフォルト初期化子)
 )
-$(V2    $(TD Returns an array literal with each element of the literal being the $(B .init)
-        property of the array element type.
+$(V2    $(TD 各要素に要素型の $(B .init)
+        が入った配列リテラル
 )
         )
         )
 
         $(TR
         $(TD $(B .sizeof))
-        $(TD Returns the array length multiplied by the number of
-        bytes per array element.
+        $(TD 配列の長さと
+		一要素ごとのバイト数をかけた値
         )
         )
 
         $(TR
         $(TD $(B .length))
-        $(TD Returns the number of elements in the array.
-        This is a fixed quantity for static arrays.
-        It is of type $(B size_t).
+        $(TD 配列の要素数。
+		静的配列では、定数。
+        型は $(B size_t) となる。
         )
         )
 
         $(TR
         $(TD $(B .ptr))
-        $(TD Returns a pointer to the first element of the array.
+        $(TD 配列の先頭要素を指すポインタを返す。
         )
         )
 
         $(TR
         $(TD $(B .dup))
-        $(TD Create a dynamic array of the same size
-        and copy the contents of the array into it.
+        $(TD 同じサイズの動的配列を作り、
+		そこに要素をコピーして返す。
         )
         )
 
         $(TR
         $(TD $(B .idup))
-        $(TD Create a dynamic array of the same size
-        and copy the contents of the array into it.
-        The copy is typed as being immutable.
-        $(I D 2.0 only)
+        $(TD 同じサイズの動的配列を作り、
+		そこに要素をコピーして返す。
+		コピーの型はimmutableとなる。
+        $(I D 2.0 のみ)
         )
         )
 
         $(TR
         $(TD $(B .reverse))
-        $(TD Reverses in place the order of the elements in the array.
-        Returns the array.
+        $(TD 配列中の要素をin-placeで逆順に並べる。
+		配列自身を返す。
         )
         )
 
         $(TR
         $(TD $(B .sort))
-        $(TD Sorts in place the order of the elements in the array.
-        Returns the array.
+        $(TD 配列中の要素をin-placeでソートする。
+		配列自身を返す。
         )
         )
 
     )
 
-        $(P Dynamic array properties are:)
+        $(P 動的配列のプロパティは：)
 
-    $(TABLE2 Dynamic Array Properties,
-        $(TR $(TH Property) $(TH Description))
+    $(TABLE2 動的配列のプロパティ,
+        $(TR $(TH プロパティ) $(TH 説明))
 
         $(TR
         $(TD $(B .init))
-        $(TD Returns null.)
+        $(TD null)
         )
 
         $(TR
         $(TD $(B .sizeof))
-        $(TD Returns the size of the dynamic array reference,
-        which is 8 in 32-bit builds and 16 on 64-bit builds.
+        $(TD 動的配列の参照のサイズを返す。
+		32bitマシンでは 8、64bitマシンでは16。
         )
         )
 
         $(TR
         $(TD $(B .length))
-        $(TD Get/set number of elements in the array.
-        It is of type $(B size_t).
+        $(TD 動的配列の長さを取得/設定。
+        型は $(B size_t) となる。
         )
         )
 
         $(TR
         $(TD $(B .ptr))
-        $(TD Returns a pointer to the first element of the array.
+        $(TD 配列の先頭要素を指すポインタを返す。
         )
         )
 
         $(TR
         $(TD $(B .dup))
-        $(TD Create a dynamic array of the same size
-        and copy the contents of the array into it.
+        $(TD 同じサイズの動的配列を作り、
+		そこに要素をコピーして返す。
         )
         )
 
         $(TR
         $(TD $(B .idup))
-        $(TD Create a dynamic array of the same size
-        and copy the contents of the array into it.
-        The copy is typed as being immutable.
-        $(I D 2.0 only)
+        $(TD 同じサイズの動的配列を作り、
+		そこに要素をコピーして返す。
+		コピーの型はimmutableとなる。
+        $(I D 2.0 のみ)
         )
         )
 
         $(TR
         $(TD $(B .reverse))
-        $(TD Reverses in place the order of the elements in the array.
-        Returns the array.
+        $(TD 配列中の要素をin-placeで逆順に並べる。
+		配列自身を返す。
         )
         )
 
         $(TR
         $(TD $(B .sort))
-        $(TD Sorts in place the order of the elements in the array.
-        Returns the array.
+        $(TD 配列中の要素をin-placeでソートする。
+		配列自身を返す。
         )
         )
 
     )
 
-        $(P For the $(B .sort) property to work on arrays of class
-        objects, the class definition must define the function:
-        $(D int opCmp(Object)). This is used to determine the
-        ordering of the class objects. Note that the parameter
-        is of type $(D Object), not the type of the class.)
+        $(P クラスオブジェクトの配列に対して $(B .sort) プロパティを使うには、
+	そのクラスに関数
+        $(D int opCmp(Object)) が定義されている必要があります。この関数は、
+	並べ替えの順序を決定します。引数の型は
+        $(D Object) であって、そのクラス自身の型ではないことに注意してください。)
 
-        $(P For the $(B .sort) property to work on arrays of
-        structs or unions, the struct or union definition must
-        define the function:
+        $(P 構造体や共用体の配列に対して  $(B .sort)
+		プロパティを使うには、
+		その構造体/共用体に関数
 $(V1
-        $(D int opCmp(S)) or
+        $(D int opCmp(S)) または
         $(D int opCmp(S*)).
 )
 $(V2
         $(D int opCmp(ref const S) const).
 )
-        The type $(D S) is the type of the struct or union.
-        This function will determine the sort ordering.
+        が定義されている必要があります。 $(D S) はその構造体や共用体自身の型です。
+	この関数は、並べ替えの順序を決定します。
         )
 
-    $(P Examples:)
+    $(P 例:)
 
 ---------
 int* p;
 int[3] s;
 int[] a;
 
-p.length; // error, length not known for pointer
-s.length; // compile time constant 3
-a.length; // runtime value
+p.length; // エラー、ポインタからは長さはわからない
+s.length; // cコンパイル時定数、3
+a.length; // 実行時の値
 
-p.dup;    // error, length not known
-s.dup;    // creates an array of 3 elements, copies
-          // elements s into it
-a.dup;    // creates an array of a.length elements, copies
-          // elements of a into it
+p.dup;    // エラー、長さ不明
+s.dup;    // 3要素の配列を作り、
+          // そこにsの要素をコピー
+a.dup;    // a.length要素の配列を作り、
+          // そこにaの要素をコピー
 ---------
 
-<h3>$(LNAME2 resize, Setting Dynamic Array Length)</h3>
+<h3>$(LNAME2 resize, 動的配列のサイズ設定)</h3>
 
-        $(P The $(B $(D .length)) property of a dynamic array can be set
-        as the lvalue of an = operator:
+        $(P $(B $(D .length)) プロパティは、= 演算子の左辺値にして、
+	値を設定することが出来ます：
         )
 
 ---------
 array.length = 7;
 ---------
 
-        $(P This causes the array to be reallocated in place, and the existing
-        contents copied over to the new array. If the new array length is
-        shorter, the array is not reallocated, and no data is copied.  It is
-        equivalent to slicing the array:)
+        $(P これによって、配列用のメモリが再確保され、
+	既存の内容がコピーされます。
+	新しい長さの方が短ければ、メモリの再確保は行われず、コピーも発生しません。
+	以下のスライシングと同じ意味となります:)
 
 ---------
 array = array[0..7];
 ---------
 
-        $(P If the new array length is longer, the remainder is filled out with the
-        default initializer.
+        $(P 新しい長さの方が長けれれば、
+	残りはデフォルト初期化されます。
         )
 
-        $(P To maximize efficiency, the runtime always tries to resize the
-        array in place to avoid extra copying.
-        $(V1 It will always do a copy if the new size is larger and the array
-        was not allocated via the new operator or a previous resize operation.)
-        $(V2 It will always do a copy if the new size is larger and the array
-        was not allocated via the new operator or resizing in place would
-        overwrite valid data in the array.)
+        $(P 実行効率を重視して、ランタイムは、
+		できる限りその場でバッファをリサイズすることで余計なコピーを避けようとします。
+        $(V1 サイズの大きくなるケースでは、new演算子や前のリサイズ以外で割り当てられた配列である場合には、
+        かならずコピーされます。)
+        $(V2 サイズの大きくなるケースでは、new演算子以外で割り当てられた配列である場合と、
+        再割り当て無しの拡大が別の有効な配列データを書き潰してしまう場合は、
+        かならずコピーされます。)
         )
 
 $(V1    $(P This means that if there is an array slice immediately following the
@@ -688,7 +688,7 @@ a[3] = 'z';    // may or may not affect b[3] which still overlaps
 )
 
 $(V2
-        For example:
+        例えば:
 
 ---------
 char[] a = new char[20];
@@ -696,40 +696,40 @@ char[] b = a[0..10];
 char[] c = a[10..20];
 char[] d = a;
 
-b.length = 15; // always reallocates because extending in place would
-               // overwrite other data in a.
-b[11] = 'x';   // a[11] and c[1] are not affected
+b.length = 15; // a[]からのスライスで上書きの危険があるため、
+               // 常に再割り当てを行う
+b[11] = 'x';   // a[11] と c[1] には影響しない
 
 d.length = 1;
-d.length = 20; // also reallocates, because doing this will overwrite a and
-               // c
+d.length = 20; // これも a と c を上書きする危険があるため、
+               // 再割り当て
 
-c.length = 12; // may reallocate in place if space allows, because nothing
-               // was allocated after c.
-c[5] = 'y';    // may affect contents of a, but not b or d because those
-               // were reallocated.
+c.length = 12; // その場でバッファ拡大を行うかもしれない
+               // （c の後に割り当てられているものがないので）
+c[5] = 'y';    // aの内容には影響するかもしれないが、
+               // bやdは再割り当て済みなので影響しない
 
-a.length = 25; // This always reallocates because if c extended in place,
-               // then extending a would overwrite c.  If c didn't
-               // reallocate in place, it means there was not enough space,
-               // which will still be true for a.
-a[15] = 'z';   // does not affect c, because either a or c has reallocated.
+a.length = 25; // c がその場で拡大した場合必ず再割り当て。
+               // さもないとcを上書きしてしまうため。c
+               // がその場での再割り当てができなかった場合、
+               // スペース不足だったということなので、a も結局再割り当てされる。
+a[15] = 'z';   // a か c のどちらかは再割り当てされているので c には影響しない。
 ---------
 )
 
-        $(P To guarantee copying behavior, use the .dup property to ensure
-        a unique array that can be resized. $(V2 Also, one may use the phobos
-        $(D .capacity) property to determine how many elements can be appended
-        to the array without reallocating.)
+        $(P 確実にコピーさせるには、.dup プロパティを使ってリサイズ可能で
+	ユニークな配列を取得します。 $(V2 さらに、Phobos の 
+        $(D .capacity) pプロパティを使って、
+	再割り当てなしで後いくつの要素を追加できるか判断することもできます。)
         )
 
-        $(P These issues also apply to appending arrays with the ~= operator.
-        Concatenation using the ~ operator is not affected since it always
-        reallocates.
+        $(P この問題は、~= 演算子による連結時にも生じます。
+	~ 演算子による連結ならば必ずコピーされるので、
+	この問題はありません。
         )
 
-        $(P Resizing a dynamic array is a relatively expensive operation.
-        So, while the following method of filling an array:
+        $(P 動的配列をリサイズするのは、比較的コストの高い操作です。そこで、
+	配列を値で埋める方法は：
         )
 
 ---------
@@ -743,13 +743,13 @@ while (1) {
 }
 ---------
 
-        $(P will work, it will be inefficient. A more practical
-        approach would be to minimize the number of resizes:
+        $(P これでも動作しますが、非効率的です。
+	リサイズ回数を最小にするもっと実際的なアプローチは次の通りです：
         )
 
 ---------
 int[] array;
-array.length = 100;        // guess
+array.length = 100;        // 初期推測値
 for (i = 0; ; i++) {
   c = getinput();
   if (!c)
@@ -761,19 +761,19 @@ for (i = 0; ; i++) {
 array.length = i;
 ---------
 
-        $(P Picking a good initial guess is an art, but you usually can
-        pick a value covering 99% of the cases.
-        For example, when gathering user
-        input from the console - it's unlikely to be longer than 80.
+        $(P うまい初期推測値を与えるのはある種のテクニックですが、
+	たいていの場合は99%の場合をカバーできる上手い値を見つけられます。
+	例えば、コンソールからのユーザー入力を受け取るには …
+	普通は80文字を越えないでしょう。
         )
 
-        $(V2 $(P Also, you may wish to utilize the phobos $(D reserve)
-        function to pre-allocate array data to use with the append operator.))
+        $(V2 $(P Phobos のユーティリティ関数 $(D reserve)
+        を使うと、append のためのメモリをあらかじめ割り当てておくことが可能です。))
 
-<h3>$(LNAME2 func-as-property, Functions as Array Properties)</h3>
+<h3>$(LNAME2 func-as-property, 配列のプロパティとしての関数)</h3>
 
-        $(P If the first parameter to a function is an array, the
-        function can be called as if it were a property of the array:
+        $(P 関数の第一引数が配列だった場合、
+	その関数はあたかも配列のプロパティであるかのように呼び出せます：
         )
 
 ---
@@ -781,17 +781,17 @@ int[] array;
 void foo(int[] a, int x);
 
 foo(array, 3);
-array.foo(3);   // means the same thing
+array.foo(3);   // 同じ意味
 ---
 
-<h2>$(LNAME2 bounds, Array Bounds Checking)</h2>
+<h2>$(LNAME2 bounds, 配列の境界チェック)</h2>
 
-        $(P It is an error to index an array with an index that is less than
-        0 or greater than or equal to the array length. If an index is
-        out of bounds, $(V1 an ArrayBoundsError)$(V2 a RangeError) exception is
-        raised if detected at runtime, and an error if detected at compile
-        time.  A program may not rely on array bounds checking happening, for
-        example, the following program is incorrect:
+        $(P 0より小さい値や配列の長さ以上の値をindexとして配列に与えるのは誤りです。
+	この種のエラーがコンパイル時に見つかればコンパイルエラーになり、
+	実行時ならば $(V1 an ArrayBoundsError)$(V2 a RangeError) 例外が発生します。
+	しかし、
+	境界チェックに頼ったプログラムを書くべきではありません。
+	例えば次のプログラムは間違っています：
         )
 
 ---------
@@ -801,11 +801,11 @@ try {
   }
 }
 catch (RangeError) {
-  // terminate loop
+  // ループ終了
 }
 ---------
 
-        The loop is correctly written:
+	このループを正しく書くと：
 
 ---------
 for (i = 0; i < array.length; i++) {
@@ -813,56 +813,56 @@ for (i = 0; i < array.length; i++) {
 }
 ---------
 
-        $(P $(B Implementation Note:) Compilers should attempt to detect
-        array bounds errors at compile time, for example:
+        $(P $(B 実装ノート:) コンパイラは、コンパイル時にも境界エラーを
+	検出できるようにすべきです。例えば：
         )
 
 ---------
 int[3] foo;
-int x = foo[3]; // error, out of bounds
+int x = foo[3]; // エラー、indexの範囲外
 ---------
 
-        $(P Insertion of array bounds checking code at runtime should be
-        turned on and off
-        with a compile time switch.
+        $(P また、コンパイル時のスイッチによって、
+	実行時の境界チェックを
+	ON/OFF できるのが望ましいです。
         )
 
-<h2>$(LNAME2 array-initialization, Array Initialization)</h2>
+<h2>$(LNAME2 array-initialization, 配列の初期化)</h2>
 
-<h3>$(LNAME2 default-initialization, Default Initialization)</h3>
+<h3>$(LNAME2 default-initialization, デフォルトの初期化)</h3>
 
         $(UL
-        $(LI Pointers are initialized to $(B null).)
-        $(LI Static array contents are initialized to the default
-        initializer for the array element type.)
-        $(LI Dynamic arrays are initialized to having 0 elements.)
-        $(LI Associative arrays are initialized to having 0 elements.)
+        $(LI ポインタは $(B null) で初期化されます)
+        $(LI 静的配列の各要素は、
+		要素型のデフォルト初期化で初期化されます)
+        $(LI 動的配列は要素数0に初期化されます)
+        $(LI 連想配列は要素数0に初期化されます)
         )
 
-<h3>$(LNAME2 void-initialization, Void Initialization)</h3>
+<h3>$(LNAME2 void-initialization, void 初期化)</h3>
 
-        $(P Void initialization happens when the $(I Initializer) for
-        an array is $(B void). What it means is that no initialization
-        is done, i.e. the contents of the array will be undefined.
-        This is most useful as an efficiency optimization.
-        Void initializations are an advanced technique and should only be used
-        when profiling indicates that it matters.
+        $(P void 初期化は、配列の $(I Initializer) が
+        $(B void) の時の処理です。これは、何も初期化が行われない - 
+	つまり、配列の内容が未定義になるという動作です。
+	これは、実行効率の最適化にもっとも役立ちます。
+	void初期化は熟練者向けの技術で、
+	プロファイルによって配列初期化がネックと判明した時にのみ使用すべきです。
         )
 
-<h3>$(LNAME2 static-init-static, Static Initialization of Statically Allocated Arrays)</h3>
+<h3>$(LNAME2 static-init-static, 静的配列の静的初期化)</h3>
 
-        $(P Static initalizations are supplied by a list of array
-        element values enclosed in [ ]. The values can be optionally
-        preceded by an index and a :.
-        If an index is not supplied, it is set to the previous index
-        plus 1, or 0 if it is the first value.
+        $(P 静的初期化は、配列要素を
+	[ ] で囲って指定します。値は、
+	インデックスと : を前につけることもできます。
+	インデックスが指定されなかった場合は、
+	先頭要素なら 0、それ以外なら直前プラス1 となります。
         )
 
 ---------
 int[3] a = [ 1:2, 3 ]; // a[0] = 0, a[1] = 2, a[2] = 3
 ---------
 
-        $(P This is most handy when the array indices are given by enums:)
+        $(P 配列のindexをenumで与えたいとき、この書き方が一番簡単です：)
 
 ---------
 enum Color { red, blue, green };
@@ -873,30 +873,30 @@ int value[Color.max + 1] =
     Color.red  :5 ];
 ---------
 
-        $(P These arrays are statically allocated when they appear in global scope.
-        Otherwise, they need to be marked with $(B const) or $(B static)
-        storage classes to make them statically allocated arrays.)
+        $(P これらの配列は、グローバルスコープに現れたときのみstaticです。
+	そうでない場合は、static配列とするには、 $(B const) か $(B static)
+        と宣言してください。)
 
 
-<h2>$(LNAME2 special-array, Special Array Types)</h2>
+<h2>$(LNAME2 special-array, 特別な配列型)</h2>
 
-<h3>$(LNAME2 strings, Strings)</h3>
+<h3>$(LNAME2 strings, 文字列)</h3>
 
-        $(P A string is
-        an array of characters. String literals are just
-        an easy way to write character arrays.
-        String literals are immutable (read only).
+        $(P 文字列とは、
+	文字の配列です。文字列リテラルは、
+	文字の配列を簡単に記述する単なる手段に過ぎません。
+	文字列リテラルは immutable （読み取り専用）です。
         )
 
 $(V1
 ---------
 char[] str;
 char[] str1 = "abc";
-str[0] = 'b';  // error, "abc" is read only, may crash
+str[0] = 'b';  // エラー。"abc" は読み取り専用。クラッシュの危険
 ---------
 
-        $(P The name $(CODE string) is aliased to $(CODE char[]),
-        so the above declarations could be equivalently written as:
+        $(P 名前 $(CODE string) が $(CODE char[]),
+	従って、上の宣言は以下のように書き換えることが出来ます：
         )
 
 ---------
@@ -906,30 +906,30 @@ string str1 = "abc";
 )
 $(V2
 ---------
-char[] str1 = "abc";                // error, "abc" is not mutable
-char[] str2 = "abc".dup;            // ok, make mutable copy
+char[] str1 = "abc";                // エラー。"abc" は mutable でない
+char[] str2 = "abc".dup;            // ok。mutableなコピーを作成
 immutable(char)[] str3 = "abc";     // ok
-immutable(char)[] str4 = str1;      // error, str4 is not mutable
-immutable(char)[] str5 = str1.idup; // ok, make immutable copy
+immutable(char)[] str4 = str1;      // エラー。str4 は mutable でない
+immutable(char)[] str5 = str1.idup; // ok。immutable なコピー
 ---------
 
-        $(P The name $(CODE string) is aliased to $(CODE immutable(char)[]),
-        so the above declarations could be equivalently written as:
+        $(P 名前 $(CODE string) が $(CODE immutable(char)[]) の別名として定義されています。
+	従って、上の宣言は以下のように書き換えることが出来ます：
         )
 ---------
-char[] str1 = "abc";     // error, "abc" is not mutable
-char[] str2 = "abc".dup; // ok, make mutable copy
+char[] str1 = "abc";     // エラー。"abc" は mutable でない
+char[] str2 = "abc".dup; // ok。mutableなコピーを作成
 string str3 = "abc";     // ok
-string str4 = str1;      // error, str4 is not mutable
-string str5 = str1.idup; // ok, make immutable copy
+string str4 = str1;      // エラー。str4 は mutable でない
+string str5 = str1.idup; // ok。immutable なコピー
 ---------
 )
-        $(P $(CODE char[]) strings are in UTF-8 format.
-        $(CODE wchar[]) strings are in UTF-16 format.
-        $(CODE dchar[]) strings are in UTF-32 format.
+        $(P $(CODE char[]) 文字列は UTF-8 形式です。
+        $(CODE wchar[]) 文字列は in UTF-16 形式です。
+        $(CODE dchar[]) 文字列は in UTF-32 形式です。
         )
 
-        $(P Strings can be copied, compared, concatenated, and appended:)
+        $(P 文字列は、コピー、比較、結合などの操作が可能です：)
 
 ---------
 str1 = str2;
@@ -938,55 +938,55 @@ func(str3 ~ str4);
 str4 ~= str1;
 ---------
 
-        $(P with the obvious semantics. Any generated temporaries get cleaned up
-        by the garbage collector (or by using $(CODE alloca())).
-        Not only that, this works with any
-        array not just a special String array.
+        $(P どれもご覧の通りの意味を持っています。途中で生じた一時オブジェクトは、
+	ガベージコレクタ（あるいは、$(CODE alloca())）が回収します。
+	それだけでなく、これらの操作は特別な文字列配列だけでなく、
+	どんな配列に対しても可能です。
         )
 
-        $(P A pointer to a char can be generated:
+        $(P charへのポインタも作れます：
         )
 
 ---------
-char* p = &str[3]; // pointer to 4th element
-char* p = str;     // pointer to 1st element
+char* p = &str[3]; // 第4要素へのポインタ
+char* p = str;     // 先頭要素へのポインタ
 ---------
 
-        $(P Since strings, however, are not 0 terminated in D,
-        when transferring a pointer
-        to a string to C, add a terminating 0:
+        $(P しかし、Dの文字列は0終端ではないので、
+	Cの文字列へ変換するには
+	末尾に0を追加する必要があります：
         )
 
 ---------
 str ~= "\0";
 ---------
 
-        $(P or use the function $(D std.string.toStringz).)
+        $(P あるいは $(D std.string.toStringz) 関数を使います)
 
-        $(P The type of a string is determined by the semantic phase of
-        compilation. The type is
-        one of: char[], wchar[], dchar[], and is determined by
-        implicit conversion rules.
-        If there are two equally applicable implicit conversions,
-        the result is an error. To
-        disambiguate these cases, a cast or a postfix of $(B c),
-        $(B w) or $(B d) can be used:
+        $(P 文字列の型は、
+	コンパイル時の意味解析の段階で決定します。
+	型は、char[], wchar[], dchar[] のいずれかで、
+	暗黙の変換規則によって一つに決定します。
+	二種類の変換が同じくらい適切であった場合はエラーになります。
+	この曖昧さをなくすには、
+	キャストを使うか、接尾辞 $(B c),
+        $(B w), $(B d) を使うと良いでしょう:
         )
 
 ---------
 $(V1
-cast(wchar [])"abc" // this is an array of wchar characters
-"abc"w              // so is this
+cast(wchar [])"abc" // これはwchar文字の配列
+"abc"w              // これも
 )
 $(V2
-cast(immutable(wchar) [])"abc" // this is an array of wchar characters
-"abc"w                         // so is this
+cast(immutable(wchar) [])"abc" // これはwchar文字の配列
+"abc"w                         // これも
 )
 ---------
 
-        $(P String literals that do not have a postfix character and that
-        have not been cast can be implicitly converted between
-	string, wstring, and dstring as necessary.
+        $(P 接尾辞なしで、キャストもされていない文字列リテラルは、
+	必要に応じて暗黙に
+	string, wstring, dstring に変換されます。
         )
 
 ---------
@@ -994,20 +994,20 @@ char c;
 wchar w;
 dchar d;
 
-c = 'b';     // c is assigned the character 'b'
-w = 'b';     // w is assigned the wchar character 'b'
-w = 'bc';    // error - only one wchar character at a time
-w = "b"[0];  // w is assigned the wchar character 'b'
-w = "\r"[0]; // w is assigned the carriage return wchar character
-d = 'd';     // d is assigned the character 'd'
+c = 'b';     // c には 'b' が入る
+w = 'b';     // w には wchar文字 'b' が入る
+w = 'bc';    // エラー - 1度に1文字ずつ
+w = "b"[0];  // w にはwchar文字'b'が入る
+w = "\r"[0]; // w にはwcharの復帰文字が入る
+d = 'd';     // d には文字 'd' が入る
 ---------
 
-<h4>$(LNAME2 printf, C's printf() and Strings)</h4>
+<h4>$(LNAME2 printf, C の printf() と文字列)</h4>
 
-        $(P $(B printf()) is a C function and is not part of D. $(B printf())
-        will print C strings, which are 0 terminated. There are two ways
-        to use $(B printf()) with D strings. The first is to add a
-        terminating 0, and cast the result to a char*:
+        $(P $(B printf()) はCの関数で、Dの一部ではありません。 $(B printf())
+        は0終端の、C形式の文字列をプリントしようとします。そこで、
+        $(B printf()) で D形式の文字列を扱うには二つの方法があります。一つは、終端0 を補ってから、
+		(char*) へ変換する方法:
         )
 
 ---------
@@ -1015,55 +1015,55 @@ str ~= "\0";
 printf("the string is '%s'\n", cast(char*)str);
 ---------
 
-        $(P or:)
+        $(P あるいは:)
 
 ---------
 import std.string;
 printf("the string is '%s'\n", std.string.toStringz(str));
 ---------
 
-        $(P String literals already have a 0 appended to them, so
-        can be used directly:)
+        $(P 文字列リテラルだけは、後ろに 0 が必ず入るようになっていて、
+	直接Cの関数に渡すこともできます:)
 
 -----------
 printf("the string is '%s'\n", cast(char*)"string literal");
 -----------
 
-        $(P So, why does the first string literal to printf not need
-        the cast? The first parameter is prototyped as a const(char)*, and
-        a string literal can be implicitly cast to a const(char)*.
-        The rest of the arguments to printf, however, are variadic
-        (specified by ...),
-        and a string literal is passed as a (length,pointer) combination
-        to variadic parameters.)
+        $(P さて、printfの第一引数の文字列リテラルにキャストが要らないのはなぜでしょうか？
+	それは、第一引数は char* 型とプロトタイプ宣言されていて、
+	文字列リテラルは char* に暗黙変換可能だからです。
+	これに対して、printf の残りの引数は ...
+	で指定する可変長部分です。
+	文字列リテラルをそのまま与えると、可変長引数には (length,pointer)
+	の組として渡ることになってしまいます。)
 
-        $(P The second way is to use the precision specifier.
-        The length comes first, followed by the pointer:)
+        $(P 2番目の方法は、精度指定を使うことです。Dの配列のメモリレイアウトは、
+	最初に長さが来るようになっていますので、次のコードはうまく行きます:)
 
 ---------
 printf("the string is '%.*s'\n", str.length, str.ptr);
 ---------
 
-        $(P The best way is to use std.stdio.writefln, which can handle
-        D strings:)
+        $(P でも一番良いのは、Dの文字列を扱える
+	std.stdio.writefln を使うことです:)
 
 ---------
 import std.stdio;
 writefln("the string is '%s'", str);
 ---------
 
-<h3>$(LNAME2 implicit-conversions, Implicit Conversions)</h3>
+<h3>$(LNAME2 implicit-conversions, 暗黙の変換)</h3>
 
-        $(P A pointer $(D $(I T)*) can be implicitly converted to
-        one of the following:)
+        $(P ポインタ $(D $(I T)*) は、
+	暗黙に以下の型へ変換できます。)
 
         $(UL
         $(LI $(D void*))
         )
 
-        $(P A static array $(D $(I T)[$(I dim)]) can be implicitly
-        converted to
-        one of the following:
+        $(P 静的配列 $(D $(I T)[$(I dim)])
+        は、
+	暗黙に以下のいずれかへと変換できます:
         )
 
         $(UL
@@ -1073,8 +1073,8 @@ writefln("the string is '%s'", str);
         $(LI $(D void[]))
         )
 
-        $(P A dynamic array $(D $(I T)[]) can be implicitly converted to
-        one of the following:
+        $(P 動的配列 $(D $(I T)[]) は、
+	暗黙に以下のいずれかへと変換できます:
         )
 
         $(UL
@@ -1083,11 +1083,11 @@ writefln("the string is '%s'", str);
         $(LI $(D void[]))
         )
 
-        $(P Where $(I U) is a base class of $(I T).)
+        $(P ただし $(I U) は $(I T) の基底クラスとします)
 )
 
 Macros:
-        TITLE=Arrays
+        TITLE=配列
         WIKI=Arrays
         CATEGORY_SPEC=$0
         STD_UNI=<a href="phobos/std_uni.html">std.uni</a>
