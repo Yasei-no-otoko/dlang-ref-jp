@@ -1,189 +1,189 @@
 Ddoc
 
-$(SPEC_S Embedded Documentation,
+$(SPEC_S 埋め込みドキュメント,
 
 $(P
-The D programming language enables embedding both contracts and test
-code along side the actual code, which helps to keep them all
-consistent with each other. One thing lacking is the documentation,
-as ordinary comments are usually unsuitable for automated extraction
-and formatting into manual pages.
-Embedding the user documentation into the source code has important
-advantages, such as not having to write the documentation twice, and
-the likelihood of the documentation staying consistent with the code.
+D言語は既に、"契約" や "単体テスト" のコードを実際のコードに埋め込んで、
+それら全ての一貫性を常に保ちやすいような設計になっていました。
+ここで欠けていたのは、埋め込みドキュメントです。
+普通のコメントは自動抽出してマニュアルへと整形するのには
+あまり向いていませんでした。
+ドキュメントをソースコードの中に埋め込むことには、重要な利点があります。
+ドキュメントを２度書く必要がなくなることや、
+コードとドキュメントを無矛盾に保ちやすくなることが主な利点です。
 )
 
 $(P
-Some existing approaches to this are:
+これに関する既存のアプローチとしては：
 )
 
 $(UL
-$(LI <a href="http://www.stack.nl/~dimitri/doxygen/">Doxygen</a> which already has some support for D)
+$(LI <a href="http://www.stack.nl/~dimitri/doxygen/">Doxygen</a> は既にD言語対応です)
 $(LI Java's <a href="http://java.sun.com/j2se/javadoc/">Javadoc</a>,
- probably the most well-known)
+ は最もよく知られた例でしょう)
 $(LI C#'s <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/csref/html/vcoriXMLDocumentation.asp">embedded XML</a>)
-$(LI Other <a href="http://www.python.org/sigs/doc-sig/otherlangs.html">documentation tools</a>)
+$(LI その他の <a href="http://www.python.org/sigs/doc-sig/otherlangs.html">ドキュメント化ツール</a>)
 )
 
 $(P
-D's goals for embedded documentation are:
+Dでの埋め込みドキュメントの目標は：
 )
 
 $(OL
-	$(LI It looks good as embedded documentation, not just after it
-	is extracted and processed.)
-	$(LI It's easy and natural to write,
-	i.e. minimal reliance on &lt;tags&gt; and other clumsy forms one
-	would never see in a finished document.)
-	$(LI It does not repeat information that the compiler already
-	knows from parsing the code.)
-	$(LI It doesn't rely on embedded HTML, as such will impede
-	extraction and formatting for other purposes.)
-	$(LI It's based on existing D comment forms, so it
-	is completely independent of parsers only interested in D code.)
-	$(LI It should look and feel different from code, so it won't
-	be visually confused with code.)
-	$(LI It should be possible for the user to use Doxygen or other
-	documentation extractor if desired.)
+	$(LI 抽出して変換処理せずとも、
+	埋め込みドキュメントとしても綺麗に読めること)
+	$(LI 自然にそして簡単に書けること。
+	&lt;タグ&gt; やその他生成後のドキュメントには現れないようなごちゃごちゃした
+	要素への依存は最小にする。)
+	$(LI コンパイラが構文解析によって把握できる情報を
+	繰り返し書く必要をなくすこと)
+	$(LI 他の目的の情報抽出の邪魔にならないよう、
+	HTML埋め込みには頼らないこと)
+	$(LI 既存のDのコメント形式に基づいて、
+	Dのコードだけを使う他のパーザは完全に独立に実装できるようにすること)
+	$(LI コードと混同されることのないよう、
+	見た目はコード部分とは異なって見えるようにすること)
+	$(LI もし必要なら、ユーザーが Doxygen
+	やその他のドキュメント抽出ツールも使えるようにすること)
 )
 
-<h2>Specification</h2>
+<h2>仕様</h2>
 
 $(P
-The specification for the form of embedded documentation comments only
-specifies how information is to be presented to the compiler.
-It is implementation-defined how that information is used and the form
-of the final presentation. Whether the final presentation form is an
-HTML web page, a man page, a PDF file, etc. is not specified as part of the
-D Programming Language.
+埋め込みドキュメントコメントの形式に関する以下の仕様は、
+コンパイラに対してどのように情報が伝わるのか、のみを定めています。
+その情報が最終的にどのように使われるのかは実装毎に定義されます。
+最終的な出力がHTMLウェブページなのか、manページなのか、あるいは
+PDFファイルなのか、などは
+プログラミング言語Dの規格としては定義されません。
 )
 
-<h3>Phases of Processing</h3>
+<h3>処理フェーズ</h3>
 
 $(P
-Embedded documentation comments are processed in a series of phases:
+埋め込みドキュメントコメントは、以下の一連のフェーズに沿って処理されます：
 )
 
 $(OL
-	$(LI Lexical - documentation comments are identified and attached
-	to tokens.)
-	$(LI Parsing - documentation comments are associated with
-	specific declarations and combined.)
-	$(LI Sections - each documentation comment is divided up into
-	a sequence of sections.)
-	$(LI Special sections are processed.)
-	$(LI Highlighting of non-special sections is done.)
-	$(LI All sections for the module are combined.)
-	$(LI Macro text substitution is performed to produce the final result.)
+	$(LI Lexical -
+	コード中のドキュメントコメント部分が認識されます。)
+	$(LI Parsing - ドキュメントコメントが、特定の宣言に関連付けられ、
+	結合されます。)
+	$(LI Sections - それぞれのドキュメントコメントを、
+	幾つかのセクションに分解します。)
+	$(LI 特殊セクションが処理されます。)
+	$(LI 非特殊セクションのHighlightingが実行されます。)
+	$(LI モジュール用の全てのセクションが結合されます。)
+	$(LI マクロ置換が実行され、最終結果が生成されます。)
 )
 
 <h3>Lexical</h3>
 
 $(P
-Embedded documentation comments are one of the following forms:
+埋め込みドキュメントコメントは、以下のうちいずれかの形式で書かれます：
 )
 
 $(OL
-	$(LI $(D_COMMENT /** ... */) The two *'s after the opening /)
-	$(LI $(D_COMMENT /++ ... +/) The two +'s after the opening /)
-	$(LI $(D_COMMENT ///) The three slashes)
+	$(LI $(D_COMMENT /** ... */) 先頭スラッシュの後に２つの *)
+	$(LI $(D_COMMENT /++ ... +/) 先頭スラッシュの後に２つの +)
+	$(LI $(D_COMMENT ///) ３つのスラッシュ)
 )
 
-$(P The following are all embedded documentation comments:)
+$(P 以下の例は全て埋め込みドキュメントコメントです：)
 
 ---------------------------
-/// This is a one line documentation comment.
+/// これは一行ドキュメントコメントです。
 
-/** So is this. */
+/** これも同じく。 */
 
-/++ And this. +/
+/++ これも。 +/
 
 /**
-   This is a brief documentation comment.
+   これは短いドキュメントコメントです。
  */
 
 /**
- * The leading * on this line is not part of the documentation comment.
+ * この行の先頭の * はドキュメントコメントの一部としては扱われません。
  */
 
 /*********************************
-   The extra *'s immediately following the /** are not
-   part of the documentation comment.
+   /**の後に続いている余分な*は、
+   ドキュメントコメントの一部ではありません。
  */
 
 /++
-   This is a brief documentation comment.
+   これは短いドキュメントコメントです。
  +/
 
 /++
- + The leading + on this line is not part of the documentation comment.
+ + この行の先頭の + はドキュメントコメントの一部としては扱われません。
  +/
 
 /+++++++++++++++++++++++++++++++++
-   The extra +'s immediately following the / ++ are not
-   part of the documentation comment.
+   余分な+は、
+   ドキュメントコメントの一部ではありません。
  +/
 
-/**************** Closing *'s are not part *****************/
+/**************** 閉じ*も一部ではありません *****************/
 ---------------------------
 
 $(P
-The extra *'s and +'s on the comment opening, closing and left margin are
-ignored and are not part
-of the embedded documentation.
-Comments not following one of those forms are not documentation comments.
+コメント開始部、終了部及び左マージンの余分な * や + は、
+無視され、
+埋め込みドキュメントとしては処理されません。
+以上の形式のどれにも沿っていないコメントは、ドキュメントコメントではありません。
 )
 
 <h3>Parsing</h3>
 
 $(P
-Each documentation comment is associated with a declaration.
-If the documentation comment is on a line by itself or with only whitespace
-to the left, it refers to the next
-declaration.
-Multiple documentation comments applying to the same declaration
-are concatenated.
-Documentation comments not associated with a declaration are ignored.
-Documentation comments preceding the $(I ModuleDeclaration) apply to the
-entire module.
-If the documentation comment appears on the same line to the right of a
-declaration, it applies to that.
+ドキュメントコメントはそれぞれ、宣言へと関連付けられます。
+ドキュメントコメントと同じ行に空白文字しか残っていない場合、
+次に出現する
+宣言を参照するものとします。
+同じ宣言に適用されるドキュメントコメントが複数あるときは、
+それらは結合されます。
+宣言に関連付いていないドキュメントコメントは無視されます。
+$(I ModuleDeclaration) の前にあるドキュメントコメントは、
+モジュール全体に適用されます。
+ドキュメントコメントが宣言と同じ行でその右側に出現するときは、
+その宣言に適用されます。
 )
 
 $(P
-If a documentation comment for a declaration consists only of the
-identifier $(D ditto)
-then the documentation comment for the previous declaration at the same
-declaration scope is applied to this declaration as well.
+宣言に対するドキュメントコメントが
+$(D ditto) という識別子のみからなる場合、
+同じスコープにある直前のドキュメントコメントが、
+その宣言に対しても同様に適用されます。
 )
 
 $(P
-If there is no documentation comment for a declaration, that declaration
-may not appear in the output. To ensure it does appear in the output,
-put an empty declaration comment for it.
+宣言に関連するドキュメントコメントがひとつも無い場合、
+その宣言はドキュメントに出力されない可能性があります。確実に出力したい場合、
+空のドキュメントコメントを付けておく必要があります。
 )
 
 ------------------------------------
-int a;  /// documentation for a; b has no documentation
+int a;  /// aに関するドキュメント; bはドキュメントなし
 int b;
 
-/** documentation for c and d */
-/** more documentation for c and d */
+/** cとdに関するドキュメント */
+/** さらにcとdに関するドキュメント */
 int c;
 /** ditto */
 int d;
 
-/** documentation for e and f */ int e;
+/** eとfに関するドキュメント */ int e;
 int f;	/// ditto
 
-/** documentation for g */
-int g; /// more documentation for g
+/** gに関するドキュメント */
+int g; /// さらにgに関するドキュメント
 
-/// documentation for C and D
+/// C と D に関するドキュメント
 class C {
-  int x; /// documentation for C.x
+  int x; /// C.x に関するドキュメント
 
-  /** documentation for C.y and C.z */
+  /** C.y と C.z に関するドキュメント */
   int y;
   int z; /// ditto
 }
@@ -195,63 +195,63 @@ class D { }
 <h3>Sections</h3>
 
 $(P
-The document comment is a series of $(I Section)s.
-A $(I Section) is a name that is the first non-blank character on
-a line immediately followed by a ':'. This name forms the section name.
-The section name is not case sensitive.
+ドキュメントコメントは、一連の $(I Section) で構成されています。
+$(I Section) とは、行の最初の非空白文字であって、直後に
+':' が続いている名前のことを言います。この名前がセクション名です。
+セクション名については、大文字小文字が区別されません。
 )
 
 <h4>Summary</h4>
 
 $(P
-The first section is the $(I Summary), and does not have a section name.
-It is first paragraph, up to a blank line or a section name.
-While the summary can be any length, try to keep it to one line.
-The $(I Summary) section is optional.
+最初のセクションは $(I Summary) です。セクション名はありません。
+空行かセクション名が現れるまでの最初の段落です。
+Summaryがどれだけ長くても仕様上は問題ありませんが、出来る限り一行に収めるべきです。
+$(I Summary) セクションは省略可能です。
 )
 
 <h4>Description</h4>
 
 $(P
-The next unnamed section is the $(I Description).
-It consists of all the paragraphs following the $(I Summary) until
-a section name is encountered or the end of the comment.
+次の無名のセクションが、$(I Description) です。
+$(I Summary) の後、セクション名かコメント終端が現れるまでの
+全ての段落がこのセクションに含まれます。
 )
 
 $(P
-While the $(I Description) section is optional,
-there cannot be a $(I Description) without a $(I Summary) section.
+$(I Description) セクションは省略可能ですが、
+$(I Summary) セクションなしに $(I Description) を書くことはできません。
 )
 
 ------------------------------------
 /***********************************
- * Brief summary of what
- * myfunc does, forming the summary section.
+ * myfunc 関数の短い要旨で、
+ * ここがsummaryセクションになります。
  *
- * First paragraph of synopsis description.
+ * 概要の説明の第一段落です。
  *
- * Second paragraph of
- * synopsis description.
+ * 概要の説明の
+ * 第二段落です。ここまでdescriptionセクション。
  */
 
 void myfunc() { }
 ------------------------------------
 
 $(P
-Named sections follow the $(I Summary) and $(I Description) unnamed sections.
+無名セクション $(I Summary) と $(I Description) の後に、名前つきセクションが続きます。
 )
 
-<h3>Standard Sections</h3>
+<h3>標準セクション</h3>
 
 $(P
-For consistency and predictability, there are several standard sections.
-None of these are required to be present.
+一貫性やわかりやすさのために、幾つか標準的なセクションが規定されています。
+どれも、必須の要素ではありません。
 )
 
 <dl>
 
 <dt> $(B Authors:)
-<dd> Lists the author(s) of the declaration.
+<dd> コードを書いた人のリスト
 ------------------------------------
 /**
  * Authors: Melvin D. Nerd, melvin@mailinator.com
@@ -259,16 +259,16 @@ None of these are required to be present.
 ------------------------------------
 
 <dt> $(B Bugs:)
-<dd> Lists any known bugs.
+<dd> 既知のバグのリスト
 ------------------------------------
 /**
- * Bugs: Doesn't work for negative values.
+ * Bugs: 負の数では動作しない
  */
 ------------------------------------
 
 <dt> $(B Date:)
-<dd> Specifies the date of the current revision. The date should be in a form
-     parseable by std.date.
+<dd> 現在のバージョンの更新日時。
+     std.date で解析可能な形式で記述する
 
 ------------------------------------
 /**
@@ -277,63 +277,63 @@ None of these are required to be present.
 ------------------------------------
 
 <dt> $(B Deprecated:)
-<dd> Provides an explanation for and corrective action to take if the associated
-     declaration is marked as deprecated.
+<dd> 非推奨な宣言について、
+    代替手段についてなどの説明
 
 ------------------------------------
 /**
- * Deprecated: superseded by function bar().
+ * Deprecated: 関数 bar() に置き換えられました
  */
 
 deprecated void foo() { ... }
 ------------------------------------
 
 <dt> $(B Examples:)
-<dd> Any usage examples
+<dd> 使い方の例
 ------------------------------------
 /**
  * Examples:
  * --------------------
- * writefln("3"); // writes '3' to stdout
+ * writefln("3"); // 標準出力に '3' を表示
  * --------------------
  */
 ------------------------------------
 
 <dt> $(B History:)
-<dd> Revision history.
+<dd> 更新履歴
 ------------------------------------
 /**
  * History:
- *	V1 is initial version
+ *	V1 最初のバージョン
  *
- *	V2 added feature X
+ *	V2 機能Xを追加
  */
 ------------------------------------
 
 <dt> $(B License:)
-<dd> Any license information for copyrighted code.
+<dd> 著作権のあるコードに関して、ライセンスの情報
 ------------------------------------
 /**
- * License: use freely for any purpose
+ * License: どんな用途にもご自由にお使いください
  */
 
 void bar() { ... }
 ------------------------------------
 
 <dt> $(B Returns:)
-<dd> Explains the return value of the function.
-     If the function returns $(B void), don't redundantly document it.
+<dd> 関数の返値に関する説明。
+     $(B void) を返す場合、無駄にそうドキュメントを書かないこと
 ------------------------------------
 /**
- * Read the file.
- * Returns: The contents of the file.
+ * ファイルを読み込みます
+ * Returns: ファイルの内容
  */
 
 void[] readFile(char[] filename) { ... }
 ------------------------------------
 
 <dt> $(B See_Also:)
-<dd> List of other symbols and URL's to related items.
+<dd> 関連する識別子や、URLのリスト
 ------------------------------------
 /**
  * See_Also:
@@ -342,27 +342,27 @@ void[] readFile(char[] filename) { ... }
 ------------------------------------
 
 <dt> $(B Standards:)
-<dd> If this declaration is compliant with any particular standard,
-the description of it goes here.
+<dd> 何らかの標準規格に準拠した宣言の場合、
+そのことに関する説明はここに
 ------------------------------------
 /**
- * Standards: Conforms to DSPEC-1234
+ * Standards: DSPEC-1234 準拠
  */
 ------------------------------------
 
 <dt> $(B Throws:)
-<dd> Lists exceptions thrown and under what circumstances they are thrown.
+<dd> 送出される可能性のある例外と、例外が起きる場合のリスト
 ------------------------------------
 /**
- * Write the file.
- * Throws: WriteException on failure.
+ * ファイルに書き込みます
+ * Throws: 失敗時, WriteException
  */
 
 void writeFile(char[] filename) { ... }
 ------------------------------------
 
 <dt> $(B Version:)
-<dd> Specifies the current version of the declaration.
+<dd> 現在のバージョン番号を記述します
 ------------------------------------
 /**
  * Version: 1.6a
@@ -370,19 +370,19 @@ void writeFile(char[] filename) { ... }
 ------------------------------------
 </dl>
 
-<h3>Special Sections</h3>
+<h3>特殊セクション</h3>
 
 $(P
-Some sections have specialized meanings and syntax.
+幾つかのセクションには、特別な意味と構文が定義されています。
 )
 
 <dl>
 
 <dt> $(B Copyright:)
-<dd> This contains the copyright notice. The macro COPYRIGHT is set to
-     the contents of the section when it documents the module declaration.
-     The copyright section only gets this special treatment when it
-     is for the module declaration.
+<dd> 著作権表示のセクションです。モジュール宣言のドキュメントとして使われると、
+	このセクションの内容が COPYRIGHT マクロにセットされます。
+	Copyrightセクションは、
+	モジュール宣言に対して使われたときのみ特別な動作になります。
 
 ------------------------------------
 /** Copyright: Public Domain */
@@ -391,18 +391,18 @@ module foo;
 ------------------------------------
 
 <dt> $(B Params:)
-<dd> Function parameters can be documented by listing them in a params
-     section. Each line that starts with an identifier followed by
-     an '=' starts a new parameter description. A description can
-     span multiple lines.
+<dd> 関数の引数は、Params セクションにリストアップすることでドキュメント化します。
+     変数名、そして '=' と続く行が、新しい引数の説明の開始となります。
+     説明は
+     複数行にまたがっても構いません。
 
 ------------------------
 /***********************************
- * foo does this.
+ * foo はこれこれの動作をします。
  * Params:
- *	x =	is for this
- *		and not for that
- *	y =	is for that
+ *	x =	は、これに使われます。
+ *		あれではありません。
+ *	y =	は、あれに使われます。
  */
 
 void foo(int x, int y)
@@ -411,15 +411,15 @@ void foo(int x, int y)
 -------------------------
 
 <dt> $(B Macros:) </dt>
-<dd> The macros section follows the same syntax as the $(B Params:) section.
-     It's a series of $(I NAME)=$(I value) pairs.
-     The $(I NAME) is the macro name, and $(I value) is the replacement
-     text.
+<dd> マクロセクションは、$(B Params:) セクションと同じ構文で書かれます。
+     つまり、$(I NAME)=$(I value) の組が複数並ぶことになります。
+     $(I NAME) がマクロ名で、$(I value)
+     が置換先の文字列です。
 ------------------------------------
 /**
  * Macros:
- *	FOO =	now is the time for
- *		all good men
+ *	FOO =	本日は
+ *		晴天なり
  *	BAR =	bar
  *	MAGENTA =   &lt;font color=magenta&gt;$0&lt;/font&gt;
  */
@@ -428,24 +428,24 @@ void foo(int x, int y)
 
 <h2>Highlighting</h2>
 
-<h4>Embedded Comments</h4>
+<h4>埋め込みコメント</h4>
 
 $(P
-	The documentation comments can themselves be commented using
-	the &#36;(DDOC_COMMENT comment text) syntax. These comments do not
-	nest.
+	ドキュメントコメントの中に、
+	&#36;(DDOC_COMMENT comment text) 構文でコメントを入れることができます。
+	このコメントをネストすることはできません。
 )
 
-<h4>Embedded Code</h4>
+<h4>埋め込みコード</h4>
 
 $(P
-	D code can be embedded using lines beginning with at least three
-	hyphens (ignoring whitespace) to delineate the code section:
+	D のコードは、コードセクションを区切る
+	三個以上のハイフンを含む行によって埋め込むことができます。
 )
 
 ------------------------------------
 /++
- + Our function.
+ + 我々の関数
  +
  + Example:
  + ---
@@ -453,31 +453,31 @@ $(P
  +
  + void foo()
  + {
- +     writefln("foo!");  /* print the string */
+ +     writefln("foo!");  /* 文字列を表示 */
  + }
  + ---
  +/
 ------------------------------------
 
 $(P
-	Note that the documentation comment uses the $(D_COMMENT /++ ... +/)
-	form
-	so that $(D_COMMENT /* ... */) can be used inside the code section.
+	コードセクションの中で $(D_COMMENT /++ ... +/)
+	を使えるようにするため、ここではドキュメント化コメントとして
+	$(D_COMMENT /* ... */) 形式を使いました。
 )
 
-<h4>Embedded HTML</h4>
+<h4>埋め込みHTML</h4>
 
 $(P
-HTML can be embedded into the documentation comments, and it will
-be passed through to the HTML output unchanged.
-However, since it is not necessarily true that HTML will be the desired
-output format of the embedded documentation comment extractor, it is
-best to avoid using it where practical.
+ドキュメント化コメントの中にHTMLを埋め込むことも可能で、
+HTML出力の際には変更されずそのまま出力されます。
+しかし、必ずしも出力形式がHTMLであるとは限らないため、
+実際には
+これは使わないでおくべきでしょう。
 )
 
 ------------------------------------
 /**
- * Example of embedded HTML:
+ * HTML 埋め込みの例:
  *
  * <ol>
  *   <li><a href="http://www.digitalmars.com">Digital Mars</a></li>
@@ -486,120 +486,120 @@ best to avoid using it where practical.
  */
 ------------------------------------
 
-<h4>Emphasis</h4>
+<h4>強調</h4>
 
 $(P
-Identifiers in documentation comments that are function parameters or are
-names that are in scope at the associated declaration are emphasized in
-the output.
-This emphasis can take the form of italics, boldface, a hyperlink, etc.
-How it is emphasized depends on what it is - a function parameter, type,
-D keyword, etc.
-To prevent unintended emphasis of an identifier, it can be preceded by
-an underscore (_). The underscore will be stripped from the output.
+ドキュメントコメント内の識別子で、関数の引数や、
+その他関連する宣言のスコープで定義されている名前となっているものは
+出力中で強調表示されます。
+強調は、斜体や太字、ハイパーリンクなどで表現されます。
+どのように強調されるかは、それが関数引数なのか、型なのか、
+あるいはDの予約語なのか、などに依存します。
+意図しない強調表示を避けるためには、単語の直前に下線 (_) をつけます。
+この下線は出力時に自動的に除去されます。
 )
 
-<h4>Character Entities</h4>
+<h4>文字実体</h4>
 
 $(P
-	Some characters have special meaning
-	to the documentation processor, to avoid confusion it can be best
-	to replace them with their corresponding character entities:
+	ドキュメントプロセッサにとって特別な意味を持つ文字が幾つか存在します。
+	混乱を避けるには、
+	それらの文字を対応するエンティティに置き換えるのがベストでしょう：
 )
 
-	$(TABLE2 Characters and Entities,
-	$(TR $(TH Character) $(TH Entity))
+	$(TABLE2 文字とエンティティ,
+	$(TR $(TH 文字) $(TH エンティティ))
 	$(TR $(TD &lt;  )$(TD &amp;lt; ))
 	$(TR $(TD &gt;  )$(TD &amp;gt; ))
 	$(TR $(TD &amp; )$(TD &amp;amp; ))
 	)
 
 $(P
-	It is not necessary to do this inside a code section, or if the
-	special character is not immediately followed by a # or a letter.
+	コードセクションの中でこの置換をしておく必要はありません。
+	あるいは特殊文字の直後に#や英数字が来ない場合も不要です。
 )
 
-<h4>No Documentation</h4>
+<h4>ドキュメント生成されない場合<h4>
 
 $(P
-	No documentation is generated for the following constructs,
-	even if they have a documentation comment:
+	たとえドキュメントコメントがあったとしても、
+	以下の要素についてはドキュメントは生成されません。
 )
 
 	$(UL
-	$(LI Invariants)
+	$(LI invariant 不変条件)
 $(V2	$(LI Postblits))
-	$(LI Destructors)
-	$(LI Static constructors and static destructors)
-	$(LI Class info, type info, and module info)
+	$(LI デストラクタ)
+	$(LI 静的コンストラクタと静的デストラクタ)
+	$(LI Class info, type info, module info)
 	)
 
-<h2>Macros</h2>
+<h2>マクロ</h2>
 
 $(P
-	The documentation comment processor includes a simple macro
-	text preprocessor.
-	When a &#36;($(I NAME)) appears
-	in section text it is replaced with $(I NAME)'s corresponding
-	replacement text.
-	The replacement text is then recursively scanned for more macros.
-	If a macro is recursively encountered, with no argument or with
-	the same argument text as the enclosing macro, it is replaced
-	with no text.
-	Macro invocations that cut across replacement text boundaries are
-	not expanded.
-	If the macro name is undefined, the replacement text has no characters
-	in it.
-	If a &#36;(NAME) is desired to exist in the output without being
-	macro expanded, the $ should be replaced with &amp;#36;.
+	ドキュメント化コメントの処理系は、
+	単純なマクロテキストのプリプロセッサを備えています。
+	&#36;($(I NAME)) という形がセクションの文章に現れると、
+	対応するマクロ $(I NAME)
+	の指す文字列へと置換されます。
+	置換後の文字列は再帰的に、さらなるマクロ展開のために走査されます。
+	再帰的に
+	同じマクロが同じ引数で出現した場合は、
+	空のテキストへと置換されます。
+	置換テキストの境界をまたぐようなマクロ起動は、
+	展開されません。
+	マクロ名が未定義の時は、
+	空文字列へと置換されます。
+	マクロ展開されずに &#36;(NAME) という文字列そのものを出力したい場合は、
+	$ の代わりに &amp;#36; と記述してください。
 )
 
 $(P
-	Macros can have arguments. Any text from the end of the identifier
-	to the closing $(SINGLEQUOTE $(RPAREN)) is the &#36;0 argument.
-	A &#36;0 in the replacement text is
-	replaced with the argument text.
-	If there are commas in the argument text, &#36;1 will represent the
-	argument text up to the first comma, &#36;2 from the first comma to
-	the second comma, etc., up to &#36;9.
-	&#36;+ represents the text from the first comma to the closing $(SINGLEQUOTE $(RPAREN)).
-	The argument text can contain nested parentheses, "" or '' strings,
-	<!-- ... --> comments, or tags.
-	If stray, unnested parentheses are used, they can be replaced with
-	the entity &amp;#40; for ( and &amp;#41; for ).
+	マクロは引数を取ることもできます。マクロ名の後ろから
+	閉じ括弧 $(SINGLEQUOTE $(RPAREN)) までの全ての文字列が &#36;0 引数です。
+	置換文字列の中の &#36;0 が、
+	引数文字列に置き換えられます。
+	引数の中にカンマがあると、&#36;1 が最初のカンマまでの文字列を表し、
+	&#36;2 が最初のカンマから２番目のカンマまでを表し…、
+	と &#36;9 まで用意されています。
+	&#36;+ は、最初のカンマから閉じ $(SINGLEQUOTE $(RPAREN)) までの文字列です。
+	引数文字列内にはネストした括弧や、"" や '' による文字列、
+	&lt;!-- ... --&gt; コメントやタグも含むことができます。
+	対応していない括弧が必要な場合は、
+	( の代わりに文字実体 &amp;#40;、) の代わりに &amp;#41; を使用します。
 )
 
 $(P
-	Macro definitions come from the following sources,
-	in the specified order:
+	マクロ定義は、
+	以下の位置から以下の順番で取得されます：
 )
 
 	$(OL
-	$(LI Predefined macros.)
-	$(LI Definitions from file specified by $(DPLLINK dmd-windows.html#sc_ini, sc.ini)'s
-	or $(DPLLINK dmd-linux.html#dmd_conf, dmd.conf) DDOCFILE setting.)
-	$(LI Definitions from *.ddoc files specified on the command line.)
-	$(LI Runtime definitions generated by Ddoc.)
-	$(LI Definitions from any Macros: sections.)
+	$(LI 定義済みマクロ)
+	$(LI $(DPLLINK dmd-windows.html#sc_ini, sc.ini) や
+	$(DPLLINK dmd-linux.html#dmd_conf, dmd.conf) の DDOCFILE 設定での定義)
+	$(LI コマンドラインで指定された *.ddoc ファイルでの定義)
+	$(LI Ddoc によって生成される実行時定義)
+	$(LI Macros: セクションでの定義)
 	)
 
 $(P
-	Macro redefinitions replace previous definitions of the same name.
-	This means that the sequence of macro definitions from the various
-	sources forms a hierarchy.
+	マクロの再定義によって、前に定義された同名のマクロを置き換えることができます。
+	つまり、様々な定義元から取得された一連のマクロ定義は階層構造を
+	なすことになります。
 )
 
 $(P
-	Macro names beginning with "D_" and "DDOC_" are reserved.
+	"D_" や "DDOC_" で始まるマクロ名は予約されています。
 )
 
-<h3>Predefined Macros</h3>
+<h3>定義済みマクロ</h3>
 
 $(P
-	These are hardwired into Ddoc, and represent the
-	minimal definitions needed by Ddoc to format and highlight
-	the presentation.
-	The definitions are for simple HTML.
+	これらは、Ddoc内部に組み込まれ、
+	Ddocが整形とハイライト処理を行うために必要な最小の定義セット
+	となっているものです。
+	定義は、簡単なHTMLを出力するものとなっています。
 )
 
 $(DDOCCODE
@@ -700,48 +700,48 @@ DDOC_PARAM   = &#36;(I &#36;0)
 )
 
 $(P
-	Ddoc does not generate HTML code. It formats into the basic
-	formatting macros, which (in their predefined form)
-	are then expanded into HTML.
-	If output other than HTML is desired, then these macros
-	need to be redefined.
+	Ddoc は HTML コードを生成するわけではありません。Ddoc
+	は基本書式化マクロを生成し、(その定義済み形式に従って)
+	HTMLへの展開を行います。
+	HTML以外の形式での出力が必要な場合、
+	以下のマクロを再定義する必要があります。
 )
 
-	$(TABLE2 Basic Formatting Macros,
-	$(TR $(TD $(B B)) $(TD boldface the argument))
-	$(TR $(TD $(B I)) $(TD italicize the argument))
-	$(TR $(TD $(B U)) $(TD underline the argument))
-	$(TR $(TD $(B P)) $(TD argument is a paragraph))
-	$(TR $(TD $(B DL)) $(TD argument is a definition list))
-	$(TR $(TD $(B DT)) $(TD argument is a definition in a definition list))
-	$(TR $(TD $(B DD)) $(TD argument is a description of a definition))
-	$(TR $(TD $(B TABLE)) $(TD argument is a table))
-	$(TR $(TD $(B TR)) $(TD argument is a row in a table))
-	$(TR $(TD $(B TH)) $(TD argument is a header entry in a row))
-	$(TR $(TD $(B TD)) $(TD argument is a data entry in a row))
-	$(TR $(TD $(B OL)) $(TD argument is an ordered list))
-	$(TR $(TD $(B UL)) $(TD argument is an unordered list))
-	$(TR $(TD $(B LI)) $(TD argument is an item in a list))
-	$(TR $(TD $(B BIG)) $(TD argument is one font size bigger))
-	$(TR $(TD $(B SMALL)) $(TD argument is one font size smaller))
-	$(TR $(TD $(B BR)) $(TD start new line))
-	$(TR $(TD $(B LINK)) $(TD generate clickable link on argument))
-	$(TR $(TD $(B LINK2)) $(TD generate clickable link, first arg is address))
-	$(TR $(TD $(B RED)) $(TD argument is set to be red))
-	$(TR $(TD $(B BLUE)) $(TD argument is set to be blue))
-	$(TR $(TD $(B GREEN)) $(TD argument is set to be green))
-	$(TR $(TD $(B YELLOW)) $(TD argument is set to be yellow))
-	$(TR $(TD $(B BLACK)) $(TD argument is set to be black))
-	$(TR $(TD $(B WHITE)) $(TD argument is set to be white))
-	$(TR $(TD $(B D_CODE)) $(TD argument is D code))
-	$(TR $(TD $(B DDOC)) $(TD overall template for output))
+	$(TABLE2 基本書式化マクロ,
+	$(TR $(TD $(B B)) $(TD 引数を太字にする))
+	$(TR $(TD $(B I)) $(TD 引数を斜体にする))
+	$(TR $(TD $(B U)) $(TD 引数に下線をひく))
+	$(TR $(TD $(B P)) $(TD 引数をひとつの段落とする))
+	$(TR $(TD $(B DL)) $(TD 引数は定義リスト))
+	$(TR $(TD $(B DT)) $(TD 引数は定義リスト内の定義名))
+	$(TR $(TD $(B DD)) $(TD 引数は定義リスト内の定義説明部分))
+	$(TR $(TD $(B TABLE)) $(TD 引数は表))
+	$(TR $(TD $(B TR)) $(TD 引数は表の列))
+	$(TR $(TD $(B TH)) $(TD 引数は表の列のヘッダ項目))
+	$(TR $(TD $(B TD)) $(TD 引数は表の列のデータ項目))
+	$(TR $(TD $(B OL)) $(TD 引数は順序つきリスト))
+	$(TR $(TD $(B UL)) $(TD 引数は順序なしリスト))
+	$(TR $(TD $(B LI)) $(TD 引数はリストの要素))
+	$(TR $(TD $(B BIG)) $(TD 引数を一回り大きく表示))
+	$(TR $(TD $(B SMALL)) $(TD 引数を一回り小さく表示))
+	$(TR $(TD $(B BR)) $(TD 改行))
+	$(TR $(TD $(B LINK)) $(TD 引数をクリック可能なリンクとする))
+	$(TR $(TD $(B LINK2)) $(TD 引数をクリック可能なリンクとする。第一引数がアドレス))
+	$(TR $(TD $(B RED)) $(TD 引数を赤く表示))
+	$(TR $(TD $(B BLUE)) $(TD 引数を青く表示))
+	$(TR $(TD $(B GREEN)) $(TD 引数を緑に表示))
+	$(TR $(TD $(B YELLOW)) $(TD 引数を黄色く表示))
+	$(TR $(TD $(B BLACK)) $(TD 引数を黒く表示))
+	$(TR $(TD $(B WHITE)) $(TD 引数を白く表示))
+	$(TR $(TD $(B D_CODE)) $(TD 引数をDソースコードとして処理))
+	$(TR $(TD $(B DDOC)) $(TD 出力全体のテンプレート))
 	)
 
 $(P
-	$(B DDOC) is special in that it specifies the boilerplate into
-	which the entire generated text is inserted (represented by the
-	Ddoc generated macro $(B BODY)). For example, in order
-	to use a style sheet, $(B DDOC) would be redefined as:
+	$(B DDOC) は、生成されたテキスト全体（Ddocの生成するマクロ $(B BODY)
+	で参照できます）が挿入される雛形になるという意味で、特殊なマクロです。
+	例えばスタイルシートを使うには、
+	$(B DDOC) を次のように再定義します:
 )
 
 $(DDOCCODE
@@ -757,55 +757,55 @@ DDOC =	&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/T
 )
 
 $(P
-	$(B DDOC_COMMENT) is used to insert comments into the output
-	file.
+	$(B DDOC_COMMENT)
+	は出力ファイルにコメントを挿入するのに使えます。
 )
 
 $(P
-	Highlighting of D code is performed by the following macros:
+	Dのソースコードのハイライト表示は以下のマクロで行われます：
 )
 
-	$(TABLE2 D Code Formatting Macros,
-	$(TR $(TD $(B D_COMMENT)) $(TD Highlighting of comments))
-	$(TR $(TD $(B D_STRING)) $(TD Highlighting of string literals))
-	$(TR $(TD $(B D_KEYWORD)) $(TD Highlighting of D keywords))
-	$(TR $(TD $(B D_PSYMBOL)) $(TD Highlighting of current declaration name))
-	$(TR $(TD $(B D_PARAM)) $(TD Highlighting of current function declaration parameters))
+	$(TABLE2 D ソースコード整形マクロ,
+	$(TR $(TD $(B D_COMMENT)) $(TD コメントのハイライト))
+	$(TR $(TD $(B D_STRING)) $(TD 文字列リテラルのハイライト))
+	$(TR $(TD $(B D_KEYWORD)) $(TD 予約語のハイライト))
+	$(TR $(TD $(B D_PSYMBOL)) $(TD 現在の宣言名のハイライト))
+	$(TR $(TD $(B D_PARAM)) $(TD 現在の関数引数のハイライト))
 	)
 
 $(P
-	The highlighting macros start with $(B DDOC_).
-	They control the formatting of individual parts of the presentation.
+	ハイライト表示マクロは $(B DDOC_) で始まります。
+	これらによって表示の個々のパートの整形を制御します。
 )
 
-	$(TABLE2 Ddoc Section Formatting Macros,
-	$(TR $(TD $(B DDOC_DECL)) $(TD Highlighting of the declaration.))
-	$(TR $(TD $(B DDOC_DECL_DD)) $(TD Highlighting of the description of a declaration.))
-	$(TR $(TD $(B DDOC_DITTO)) $(TD Highlighting of ditto declarations.))
-	$(TR $(TD $(B DDOC_SECTIONS)) $(TD Highlighting of all the sections.))
-	$(TR $(TD $(B DDOC_SUMMARY)) $(TD Highlighting of the summary section.))
-	$(TR $(TD $(B DDOC_DESCRIPTION)) $(TD Highlighting of the description section.))
-	$(TR $(TD $(B DDOC_AUTHORS .. DDOC_VERSION)) $(TD Highlighting of the corresponding standard section.))
-	$(TR $(TD $(B DDOC_SECTION_H)) $(TD Highlighting of the section name of a non-standard section.))
-	$(TR $(TD $(B DDOC_SECTION)) $(TD Highlighting of the contents of a non-standard section.))
-	$(TR $(TD $(B DDOC_MEMBERS)) $(TD Default highlighting of all the members of a class, struct, etc.))
-	$(TR $(TD $(B DDOC_MODULE_MEMBERS)) $(TD Highlighting of all the members of a module.))
-	$(TR $(TD $(B DDOC_CLASS_MEMBERS)) $(TD Highlighting of all the members of a class.))
-	$(TR $(TD $(B DDOC_STRUCT_MEMBERS)) $(TD Highlighting of all the members of a struct.))
-	$(TR $(TD $(B DDOC_ENUM_MEMBERS)) $(TD Highlighting of all the members of an enum.))
-	$(TR $(TD $(B DDOC_TEMPLATE_MEMBERS)) $(TD Highlighting of all the members of a template.))
-	$(TR $(TD $(B DDOC_PARAMS)) $(TD Highlighting of a function parameter section.))
-	$(TR $(TD $(B DDOC_PARAM_ROW)) $(TD Highlighting of a name=value function parameter.))
-	$(TR $(TD $(B DDOC_PARAM_ID)) $(TD Highlighting of the parameter name.))
-	$(TR $(TD $(B DDOC_PARAM_DESC)) $(TD Highlighting of the parameter value.))
-	$(TR $(TD $(B DDOC_PSYMBOL)) $(TD Highlighting of declaration name to which a particular section is referring.))
-	$(TR $(TD $(B DDOC_KEYWORD)) $(TD Highlighting of D keywords.))
-	$(TR $(TD $(B DDOC_PARAM)) $(TD Highlighting of function parameters.))
-	$(TR $(TD $(B DDOC_BLANKLINE)) $(TD Inserts a blank line.))
+	$(TABLE2 Ddoc セクション整形マクロ,
+	$(TR $(TD $(B DDOC_DECL)) $(TD 宣言のハイライト))
+	$(TR $(TD $(B DDOC_DECL_DD)) $(TD 宣言の説明部のハイライト))
+	$(TR $(TD $(B DDOC_DITTO)) $(TD ditto 宣言のハイライト))
+	$(TR $(TD $(B DDOC_SECTIONS)) $(TD 全セクションのハイライト))
+	$(TR $(TD $(B DDOC_SUMMARY)) $(TD Summaryセクションのハイライト))
+	$(TR $(TD $(B DDOC_DESCRIPTION)) $(TD Descriptionセクションのハイライト))
+	$(TR $(TD $(B DDOC_AUTHORS .. DDOC_VERSION)) $(TD それぞれ対応する標準セクションのハイライト))
+	$(TR $(TD $(B DDOC_SECTION_H)) $(TD 非標準セクションのセクション名のハイライト))
+	$(TR $(TD $(B DDOC_SECTION)) $(TD 非標準セクションの内容のハイライト))
+	$(TR $(TD $(B DDOC_MEMBERS)) $(TD クラスや構造体などのメンバのデフォルトのハイライト))
+	$(TR $(TD $(B DDOC_MODULE_MEMBERS)) $(TD モジュールメンバのハイライト))
+	$(TR $(TD $(B DDOC_CLASS_MEMBERS)) $(TD クラスメンバのハイライト))
+	$(TR $(TD $(B DDOC_STRUCT_MEMBERS)) $(TD 構造体メンバのハイライト))
+	$(TR $(TD $(B DDOC_ENUM_MEMBERS)) $(TD 列挙体メンバのハイライト))
+	$(TR $(TD $(B DDOC_TEMPLATE_MEMBERS)) $(TD テンプレートメンバのハイライト))
+	$(TR $(TD $(B DDOC_PARAMS)) $(TD 関数引数セクションのハイライト))
+	$(TR $(TD $(B DDOC_PARAM_ROW)) $(TD name=value 関数引数のハイライト))
+	$(TR $(TD $(B DDOC_PARAM_ID)) $(TD 引数名 name のハイライト))
+	$(TR $(TD $(B DDOC_PARAM_DESC)) $(TD 引数説明 value のハイライト))
+	$(TR $(TD $(B DDOC_PSYMBOL)) $(TD 特定のセクションから参照されている宣言名のハイライト))
+	$(TR $(TD $(B DDOC_KEYWORD)) $(TD D予約語のハイライト))
+	$(TR $(TD $(B DDOC_PARAM)) $(TD 関数引数のハイライト))
+	$(TR $(TD $(B DDOC_BLANKLINE)) $(TD 空行の挿入))
 	)
 
 $(P
-	For example, one could redefine $(B DDOC_SUMMARY):
+	例えば、$(B DDOC_SUMMARY) を次のように再定義できます:
 )
 
 $(DDOCCODE
@@ -813,107 +813,107 @@ DDOC_SUMMARY = &#36;(GREEN &#36;0)
 )
 
 $(P
-	And all the summary sections will now be green.
+	これで、Summaryセクションが全て緑色になります。
 )
 
-<h3>Macro Definitions from $(DPLLINK dmd-windows.html#sc_ini, $(D sc.ini))'s DDOCFILE</h3>
+<h3>$(DPLLINK dmd-windows.html#sc_ini, $(D sc.ini))/$(DPLLINK dmd-linux.html#dmd_conf, $(D dmd.conf)) の DDOCFILE によるマクロ定義</h3>
 
 $(P
-	A text file of macro definitions can be created,
-	and specified in $(D sc.ini):
+	マクロ定義のテキストファイルを作っておくことができ、
+	$(D sc.ini) や $(D dmd.conf) で指定可能です：
 )
 
 $(DDOCCODE
 DDOCFILE=myproject.ddoc
 )
 
-<h3>Macro Definitions from .ddoc Files on the Command Line</h3>
+<h3>コマンドライン指定による .ddoc ファイルからのマクロ定義</h3>
 
 $(P
-	File names on the DMD command line with the extension
-	.ddoc are text files that are read and processed in order.
+	拡張子 .ddoc を持つファイルが DMD のコマンドラインに渡ると、
+	順番に読み込まれ処理されます。
 )
 
-<h3>Macro Definitions Generated by Ddoc</h3>
+<h3>Ddoc の生成するマクロ定義</h3>
 
-	$(TABLE2 Generated Macro Definitions,
+	$(TABLE2 生成されるマクロ定義,
 	$(TR
-	$(TH Macro Name)
-	$(TH Contents)
+	$(TH マクロ名)
+	$(TH 内容)
 	)
 	$(TR
 	$(TD $(B BODY))
-	$(TD Set to the generated document text.)
+	$(TD ドキュメントテキスト本文が入ります)
 	)
 	$(TR
 	$(TD $(B TITLE))
-	$(TD Set to the module name.)
+	$(TD モジュール名が入ります)
 	)
 	$(TR
 	$(TD $(B DATETIME))
-	$(TD Set to the current date and time.)
+	$(TD 現在の日時が入ります)
 	)
 	$(TR
 	$(TD $(B YEAR))
-	$(TD Set to the current year.)
+	$(TD 現在の年が入ります)
 	)
 	$(TR
 	$(TD $(B COPYRIGHT))
-	$(TD Set to the contents of any $(B Copyright:) section that is part
-	of the module comment.)
+	$(TD モジュールコメントの $(B Copyright:)
+	セクションの内容が入ります)
 	)
 	$(TR
 	$(TD $(B DOCFILENAME))
-	$(TD Set to the name of the generated output file.)
+	$(TD 生成されるファイルの名前が入ります)
 	)
 	$(TR
 	$(TD $(B SRCFILENAME))
-	$(TD Set to the name of the source file the documentation is being
-	generated from.)
+	$(TD ドキュメント生成の元となった
+	ソースファイルの名前が入ります。)
 	)
 	)
 
-<h2>Using Ddoc for other Documentation</h2>
+<h2>他のドキュメント生成に Ddoc を使う</h2>
 
 $(P
-	Ddoc is primarily designed for use in producing documentation
-	from embedded comments. It can also, however, be used for
-	processing other general documentation.
-	The reason for doing this would be to take advantage of the
-	macro capability of Ddoc and the D code syntax highlighting
-	capability.
+	当初は Ddoc は、埋め込みコメントからのドキュメント生成用に作られました。
+	しかしながら、
+	その他の一般的なドキュメントの処理にも使用できます。
+	埋め込みコメント以外でも利用する利点としては、
+	Ddoc のマクロ機能や、
+	ソースコードの構文ハイライト機能があります。
 )
 
 $(P
-	If the .d source file starts with the string "Ddoc" then it
-	is treated as general purpose documentation, not as a D
-	code source file. From immediately after the "Ddoc" string
-	to the end of the file or any "Macros:" section forms
-	the document. No automatic highlighting is done to that text,
-	other than highlighting of D code embedded between lines
-	delineated with --- lines. Only macro processing is done.
+	.d ソースファイルが Ddoc という文字列で開始している場合、
+	Dのソースコードではなく一般的なドキュメントファイルとして扱われます。
+	"Ddoc" 文字列の直後から、ファイル終端か "Macros:"
+	セクションまでがドキュメントとなります。
+	テキストには、---行 で囲まれた埋め込みソースコード部分以外は、
+	自動的構文ハイライト処理は行われません。
+	マクロ処理だけが実行されます。
 )
 
 $(P
-	Much of the D documentation itself is generated this way,
-	including this page.
-	Such documentation is marked at the bottom as being
-	generated by Ddoc.
+	このページを含め、
+	Dのドキュメントそのものも、多くはこのようにして生成されています。
+	そのようなドキュメントには、一番下に Ddoc
+	で生成された旨を表示してあります。
 )
 
-<h2>References</h2>
+<h2>参考文献</h2>
 
 $(P
 	$(LINK2 http://www.dsource.org/projects/helix/wiki/CandyDoc, CandyDoc)
-	is a very nice example of how
-	one can customize the Ddoc results with macros
-	and style sheets.
+	は、マクロとスタイルシートによって
+	Ddoc
+	の出力をカスタマイズする非常に良い例です。
 )
 
 )
 
 Macros:
-	TITLE=Documentation Generator
+	TITLE=埋め込みドキュメント
 	WIKI=Ddoc
 	CATEGORY_SPEC=$0
 	RPAREN=)
