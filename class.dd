@@ -1,26 +1,26 @@
 Ddoc
 
-$(SPEC_S Classes,
+$(SPEC_S クラス,
 
-        $(P The object-oriented features of D all come from classes. The class
-        hierarchy
-        has as its root the class Object. Object defines a minimum level of functionality
-        that each derived class has, and a default implementation for that functionality.
+        $(P D のオブジェクト指向的な機能は、
+	全てクラスで実現されています。
+	クラス階層のルートにはObjectクラスがあります。Objectは、
+	それぞれの派生クラスが最低限持つ機能と、そのデフォルト実装を定義しています。
         )
 
-        $(P Classes are programmer defined types. Support for classes are what
-        make D an object oriented language, giving it encapsulation, inheritance,
-        and polymorphism. D classes support the single inheritance paradigm, extended
-        by adding support for interfaces. Class objects are instantiated by reference
-        only.
+        $(P クラスは、プログラマ定義の型です。
+	クラスのサポートが、
+	カプセル化、継承、多態など、D をオブジェクト指向言語たらしめています。
+	D のクラスは、単一継承と、それに加えてインターフェイス継承が可能です。
+	クラスオブジェクトは参照によってのみインスタンス化されます。
         )
 
-        $(P A class can be exported, which means its name and all its
-        non-private
-        members are exposed externally to the DLL or EXE.
+        $(P クラスはexportできます。
+	つまり、DLLやEXEから外部に、
+	クラス名やその非privateメンバを公開することができます。
         )
 
-        $(P A class declaration is defined:
+        $(P クラス宣言の定義：
         )
 
 $(GRAMMAR
@@ -58,104 +58,104 @@ $(GNAME ClassBodyDeclaration):
     $(GLINK ClassDeallocator)
 )
 
-Classes consist of:
+クラスは、以下の構成要素からなります：
 
 $(UL
-        $(LI a super class)
-        $(LI interfaces)
-        $(LI dynamic fields)
-        $(LI static fields)
-        $(LI types)
-        $(LI $(LINK2 #member-functions, member functions)
+        $(LI 基底クラス)
+        $(LI インターフェイス)
+        $(LI 動的フィールド)
+        $(LI 静的フィールド)
+        $(LI 型)
+        $(LI $(LINK2 #member-functions, メンバ関数)
         $(UL
             $(LI static member functions)
-            $(LI $(DDSUBLINK function, virtual-functions, Virtual Functions))
-            $(LI $(LINK2 #synchronized-functions, Synchronized Functions))
-            $(LI $(LINK2 #constructors, Constructors))
-            $(LI $(LINK2 #destructors, Destructors))
-            $(LI $(LINK2 #StaticConstructor, Static Constructors))
-            $(LI $(LINK2 #StaticDestructor, Static Destructors))
-            $(LI $(GLINK SharedStaticConstructor)s)
-            $(LI $(GLINK SharedStaticDestructor)s)
-            $(LI $(LINK2 #invariants, Class Invariants))
-            $(LI $(DDSUBLINK unittest, unittest, Unit Tests))
-            $(LI $(LINK2 #allocators, Class Allocators))
-            $(LI $(LINK2 #deallocators, Class Deallocators))
+            $(LI $(DDSUBLINK function, virtual-functions, 仮想関数))
+            $(LI $(LINK2 #synchronized-functions, 同期関数))
+            $(LI $(LINK2 #constructors, コンストラクタ))
+            $(LI $(LINK2 #destructors, デストラクタ))
+            $(LI $(LINK2 #StaticConstructor, 静的コンストラクタ))
+            $(LI $(LINK2 #StaticDestructor, 静的デストラクタ))
+            $(LI $(GLINK shared静的コンストラクタ))
+            $(LI $(GLINK shared静的デストラクタ))
+            $(LI $(LINK2 #invariants, 不変条件))
+            $(LI $(DDSUBLINK unittest, unittest, 単体テスト))
+            $(LI $(LINK2 #allocators, クラスアロケータ))
+            $(LI $(LINK2 #deallocators, クラスデアロケータ))
 $(V2
-            $(LI $(LINK2 #AliasThis, Alias This)))
+            $(LI $(LINK2 #AliasThis, alias this)))
         )
         )
 )
 
-        A class is defined:
+クラスは次のように定義されます：
 
 ------
 class Foo {
-  ... members ...
+  ... メンバ ...
 }
 ------
 
-        Note that there is no trailing ; after the closing } of the class
-        definition.
-        It is also not possible to declare a variable var like:
+クラス定義の閉じ括弧 } の後ろに ; 
+が無いことにご注意下さい。
+また、変数を次のように宣言することもできません：
 
 ------
 class Foo { } var;
 ------
 
-        Instead:
+代わりにこう書きます：
 
 ------
 class Foo { }
 Foo var;
 ------
 
-<h3>Access Control</h3>
+<h3>アクセス制御</h3>
 
-	$(P Access to class members is controlled using $(GLINK2 attribute, ProtectionAttribute)s.
-	The default protection attribute is $(D public).
-	Access control does not affect visibility.
+	$(P クラスメンバへのアクセスは $(GLINK2 attribute, ProtectionAttribute) によって制御します。
+	デフォルトの保護属性は $(D public) です。
+	アクセス制御は可視性には影響しません。
 	) 
 
-<h3>Fields</h3>
+<h3>フィールド</h3>
 
-        $(P Class members are always accessed with the . operator.
+        $(P クラスのメンバには常に . 演算子でアクセスします。
         )
 
-	$(P Members of a base class can be accessed by prepending the name of
-	the base class followed by a dot:)
+	$(P 基底クラスのメンバは、
+	メンバ名の前に基底クラス名とドットを書くと参照できます:)
 
 ---
 class A { int a; }
 class B : A { int a; }
 
 void foo(B b) {
-  b.a = 3;   // accesses field B.a
-  b.A.a = 4; // accesses field A.a
+  b.a = 3;   // B.a にアクセス
+  b.A.a = 4; // A.a にアクセス
 ---
 
-        $(P The D compiler is free to rearrange the order of fields in a class to
-        optimally pack them in an implementation-defined manner.
-        Consider the fields much like the local
-        variables in a function -
-        the compiler assigns some to registers and shuffles others around all to
-        get the optimal
-        stack frame layout. This frees the code designer to organize the fields
-        in a manner that
-        makes the code more readable rather than being forced to organize it
-        according to
-        machine optimization rules. Explicit control of field layout is provided
-        by struct/union
-        types, not classes.
+        $(P D コンパイラは、
+	クラスのフィールドの順序を自由に並び替えて、
+	実装定義の方法で最適なメモリ配置とすることができます。
+	フィールドは、
+	関数におけるローカル変数のようなものと考えて下さい。
+	ローカル変数は、
+	最適なフレームレイアウトのために、
+	コンパイラが自由に並び替えてスタックやレジスタを割り当てます。
+	これによってコードの設計者は、
+	マシンに最適な順に従うのではなく、
+	読みやすさを重視してフィールドを並べることができます。
+	明示的なメモリレイアウトの制御は、
+	クラスではなく構造体/共用体で行います。
         )
 
-<h3>Field Properties</h3>
+<h3>フィールドのプロパティ</h3>
 
-        $(P The $(B .offsetof) property gives the offset in bytes of the field
-        from the beginning of the class instantiation.
-        $(B .offsetof) can only be applied to
-        expressions which produce the type of
-        the field itself, not the class type:
+        $(P $(B .offsetof)プロパティは、フィールドの、
+	クラスの実体の先頭から数えたバイト数を返します。
+        $(B .offsetof)
+	はフィールドそのものを表す式に対してのみ適用できます。
+	クラスの型で修飾されたフィールドには使えません：
         )
 
 ------
@@ -166,73 +166,73 @@ class Foo {
 void test(Foo foo) {
   size_t o;
 
-  o = Foo.x$(B .offsetof); // error, Foo.x needs a 'this' reference
+  o = Foo.x$(B .offsetof); // エラー。Foo.x には 'this' が必要
   o = foo.x$(B .offsetof); // ok
 }
 ------
 
-<h3>Class Properties</h3>
+<h3>クラスのプロパティ</h3>
 
-        $(P The $(B .tupleof) property returns an $(I ExpressionTuple)
-        of all the fields
-        in the class, excluding the hidden fields and the fields in the
-        base class.
+        $(P $(B .tupleof)
+	プロパティは、
+	隠しフィールドおよび基底クラスのフィールドを除く、
+	全てのフィールドからなる $(I ExpressionTuple) を返します。
         )
 ---
 class Foo { int x; long y; }
 void test(Foo foo) {
-  foo.tupleof[0] = 1; // set foo.x to 1
-  foo.tupleof[1] = 2; // set foo.y to 2
+  foo.tupleof[0] = 1; // foo.x を 1 に
+  foo.tupleof[1] = 2; // foo.y を 1 に
   foreach (x; foo.tupleof)
-    writef(x);        // prints 12
+    writef(x);        // 12 と表示
 }
 ---
 
-        $(P The properties $(B .__vptr) and $(B .__monitor) give access
-        to the class object's vtbl[] and monitor, respectively, but
-        should not be used in user code.
+        $(P プロパティ $(B .__vptr) と $(B .__monitor) は、それぞれ、
+	クラスオブジェクトの vtbl[] とモニタを指しています。
+	ただし、これらはユーザーコードで使用すべきではありません。
         )
 
-<h3>Super Class</h3>
+<h3>基底クラス</h3>
 
-        All classes inherit from a super class. If one is not specified,
-        it inherits from Object. Object forms the root of the D class
-        inheritance hierarchy.
+	全てのクラスは、１つの基底クラスを継承します。特に指定がなければ
+	Object クラスからの継承になります。Object は、
+	Dのクラス継承階層のルートです。
 
-<h3>$(LNAME2 member-functions, Member Functions)</h3>
+<h3>$(LNAME2 member-functions, メンバ関数)</h3>
 
-        $(P Non-static member functions have an extra hidden parameter
-        called $(I this) through which the class object's other members
-        can be accessed.
+        $(P staticでないメンバ関数は、
+	隠し引数 $(I this) をもち、
+	この引数を通して他のクラスメンバにアクセスできます。
         )
 
 $(V2
-	$(P Non-static member functions can have, in addition to the usual
-	$(GLINK2 declaration, FunctionAttribute)s, the attributes
-	$(D const), $(D immutable), $(D shared), or $(D inout).
-	These attributes apply to the hidden $(I this) parameter.
+	$(P staticでないメンバ関数には、通常の
+	$(GLINK2 declaration, FunctionAttribute) に加えて、
+	$(D const), $(D immutable), $(D shared), $(D inout) という属性を付与できます。
+	これらは隠し引数 $(I this) に対して適用されます。
 	)
 ---
 class C {
   int a;
   const void foo() {
-    a = 3; // error, 'this' is const
+    a = 3; // エラー。 'this' は const
   }
   void foo() immutable {
-    a = 3; // error, 'this' is immutable
+    a = 3; // エラー。 'this' は immutable
   }
 ---
 )
 
-<h3>$(LNAME2 synchronized-functions, Synchronized Functions)</h3>
+<h3>$(LNAME2 synchronized-functions, 同期関数)</h3>
 
-        $(P Synchronized class member functions have the storage class
-        $(CODE synchronized).
-        A static member function is synchronized on the $(I classinfo)
-        object for the class, which means that one monitor is used
-        for all static synchronized member functions for that class.
-        For non-static synchronized functions, the monitor used is
-        part of the class object. For example:
+        $(P 同期クラスメンバ関数は、記憶域クラス
+        $(CODE synchronized) で宣言されます。
+	静的メンバ関数の場合、そのクラスの $(I classinfo)
+	オブジェクトによって同期が行われます。つまり、
+	そのクラスの全ての静的メンバ関数はすべておなじ一つのモニタを使用します。
+	非静的メンバ関数の場合、
+	使用されるモニタはオブジェクトごとに用意されます。例えば:
         )
 
 ---
@@ -241,7 +241,7 @@ class Foo {
 }
 ---
 
-        $(P is equivalent to (as far as the monitors go):
+        $(P は、（モニタに関しては）以下と同等です:
         )
 
 ---
@@ -252,9 +252,9 @@ class Foo {
 }
 ---
 
-        $(P Structs do not have synchronized member functions.)
+        $(P 構造体には同期メンバ関数はありません。)
 
-<h3>$(LNAME2 constructors, Constructors)</h3>
+<h3>$(LNAME2 constructors, コンストラクタ)</h3>
 
 $(GRAMMAR
 $(GNAME Constructor):
@@ -262,35 +262,35 @@ $(GNAME Constructor):
 $(V2          $(GLINK2 template, TemplatedConstructor))
 )
 
-        $(P Members are always initialized to the
-        $(LNAME2 class-default-initializer, default initializer)
-        for their type, which is usually 0 for integer types and
-        NAN for floating point types.
-        This eliminates an entire
-        class of obscure problems that come from
-        neglecting to initialize a member in one of the constructors.
-        In the class definition,
-        there can be a static initializer to be
-        used instead of the default:
+        $(P メンバは、
+	常にその型の $(LNAME2 class-default-initializer, デフォルト初期化子)
+	で初期化されます。
+	整数型なら 0、浮動小数点数型なら NaN、
+	といった具合です。
+	これによって、
+	あるコンストラクタでメンバの初期化を忘れたために
+	隠れた問題が生じる、という事態を避けることができます。
+	クラスの定義では、
+	デフォルトを置き換える静的初期化子を指定できます：
         )
 ------
 class Abc {
-  int a;      // default initializer for a is 0
-  long b = 7; // default initializer for b is 7
-  float f;    // default initializer for f is NAN
+  int a;      // デフォルトの初期化子は 0
+  long b = 7; // デフォルトの初期化子は 7
+  float f;    // デフォルトの初期化子は NaN
 }
 ------
 
-        This static initialization is done before any constructors are
-        called.
+	静的な初期化は、
+	コンストラクタ呼び出しより前に実行されます。
         <p>
 
-        Constructors are defined with a function name of $(B this)
-        and having no return value:
+        コンストラクタは返値を持たない、$(B this)
+        という名前の関数です：
 
 ------
 class Foo {
-  $(B this)(int x)  // declare constructor for Foo
+  $(B this)(int x)  // Foo のコンストラクタを宣言
   {   ...
   }
   $(B this)()
@@ -299,8 +299,8 @@ class Foo {
 }
 ------
 
-        Base class construction is done by calling the base class
-        constructor by the name $(B super):
+        基底クラスの構築は、基底のコンストラクタを 
+        $(B super) という名前で呼び出して行います：
 
 ------
 class A { this(int y) { } }
@@ -309,15 +309,15 @@ class B : A {
   int j;
   this() {
     ...
-    $(B super)(3);  // call base constructor A.this(3)
+    $(B super)(3);  // 基底クラスのコンストラクタ A.this(3) を呼び出し
     ...
   }
 }
 ------
 
-        $(P Constructors can also call other constructors for the same class
-        in order to share common initializations
-        $(LNAME2 delegating-constructors, (this is called delegating constructors)):
+        $(P コンストラクタは、同じクラスの他のコンストラクタを呼ぶことで
+	初期化処理を共有できます。
+        $(LNAME2 delegating-constructors, （移譲コンストラクタ (delegating constructor) と呼びます）):
         )
 
 ------
@@ -333,156 +333,156 @@ class C {
 }
 ------
 
-        If no call to constructors via $(B this) or $(B super) appear
-        in a constructor, and the base class has a constructor, a call
-        to $(B super)() is inserted at the beginning of the constructor.
+        もし $(B this) や $(B super)による他のコンストラクタの呼び出しが
+	コンストラクタ中に存在せず、基底クラスがコンストラクタを持っていれば、
+	コンストラクタの先頭に $(B super)() の呼び出しが自動で挿入されます。
         <p>
 
-        If there is no constructor for a class, but there is a constructor
-        for the base class, a default constructor of the form:
+	クラスにコンストラクタが定義されていないが、基底クラスにはある、
+	という場合は、次の形式のデフォルトコンストラクタ：
 
 ------
 this() { }
 ------
 
-        $(P is implicitly generated.)
+        $(P が暗黙のうちに生成されます。)
 
-        $(P Class object construction is very flexible, but some restrictions
-        apply:)
+        $(P クラスオブジェクトの構築は非常に柔軟性がありますが、
+	いくつかの制限も加わります：)
 
         $(OL
-        $(LI It is illegal for constructors to mutually call each other,
-	although the compiler is not required to detect it. It will result
-	in undefined behavior.
+        $(LI お互いを呼び出し合うコンストラクタは不正です。
+	ただし、コンパイラがこれを検出することは要求されません。
+	相互呼び出しは未定義動作となります。
 
 ------
 this() { this(1); }
-this(int i) { this(); } // illegal, cyclic constructor calls
+this(int i) { this(); } // 不正, コンストラクタの循環呼び出し
 ------
         )
 
-        $(LI If any constructor call appears inside a constructor, any
-        path through the constructor must make exactly one constructor
-        call:
+        $(LI コンストラクタ内に別のコンストラクタ呼び出しがあるときは、
+		どの実行パスを通ってもちょうど１つだけコンストラクタが呼ばれるように
+		なっていなければなりません：
 
 ------
-this()  { a || super(); }       // illegal
+this()  { a || super(); }       // 不正
 
 this() { (a) ? this(1) : super(); }     // ok
 
 this() {
   for (...) {
-    super();  // illegal, inside loop
+    super();  // 不正, ループの内側
   }
 }
 ------
         )
 
-        $(LI It is illegal to refer to $(B this) implicitly or explicitly
-        prior to making a constructor call.)
+        $(LI コンストラクタ呼び出しより前に、暗黙にも明示的にも $(B this)
+        を参照することはできません。)
 
-        $(LI Constructor calls cannot appear after labels (in order to make
-        it easy to check for the previous conditions in the presence of goto's).)
+        $(LI コンストラクタ呼び出しはラベルの後に置くことはできません。
+		（gotoが存在するときに、上に書いた条件のチェックを簡単にするためです。）)
 
         )
 
-        $(P Instances of class objects are created with $(I NewExpression)s:)
+        $(P クラスオブジェクトのインスタンスは、$(I NewExpression) で生成します。)
 
 ------
 A a = new A(3);
 ------
 
-        $(P The following steps happen:)
+        $(P 以下のステップが実行されます：)
 
 $(OL
-        $(LI Storage is allocated for the object.
-        If this fails, rather than return $(B null), an
-        $(B OutOfMemoryError) is thrown.
-        Thus, tedious checks for null references are unnecessary.
+        $(LI オブジェクト用のメモリ領域を割り当てます。
+		失敗すると、$(B null) を返すのではなく
+        $(B OutOfMemoryError) 例外が投げられます。
+		従って、面倒なnullチェックは不要です。
         )
 
-        $(LI The raw data is statically initialized using the values provided
-        in the class definition.
-        The pointer to the vtbl[] (the array of pointers to virtual functions)
-        is assigned.
-        This ensures that constructors are
-        passed fully formed objects for which virtual functions can be called.
-        This operation is equivalent to doing a memory copy of a static
-        version of the object onto the newly allocated one,
-        although more advanced compilers
-        may be able to optimize much of this away.
+        $(LI クラス定義で与えられた値で、
+		データを静的に初期化します。
+		ここでvtbl[]
+		（仮想関数へのポインタのテーブル）へのポインタが設定されます。
+		これによって、
+		コンストラクタの時点で、
+		完全に構築されて仮想関数も呼び出せるオブジェクトが渡されることを保証します。
+		これは静的な初期オブジェクトを新しいメモリ領域へ
+		memcpy する操作と同等ですので、
+		高性能なコンパイラはそのような最適化を行うかもしれません。
         )
 
-        $(LI If there is a constructor defined for the class,
-        the constructor matching the
-        argument list is called.
+        $(LI  
+		もしクラスにコンストラクタが定義されていれば、
+		引数リストに合うコンストラクタが呼び出されます。
         )
 
-        $(LI If class invariant checking is turned on, the class invariant
-        is called at the end of the constructor.
+        $(LI クラス不変条件チェックがONなら、
+		コンストラクタの後に invariant() が呼び出されます。
         )
 )
 
-<h3>$(LNAME2 destructors, Destructors)</h3>
+<h3>$(LNAME2 destructors, デストラクタ)</h3>
 
 $(GRAMMAR
 $(GNAME Destructor):
     $(B ~ this ( )) $(GLINK2 function, FunctionBody)
 )
 
-        The garbage collector calls the destructor function when the object
-        is deleted. The syntax
-        is:
+	オブジェクトが削除される際に、
+	ガベージコレクタがデストラクタ関数を呼び出します。
+	構文は：
 
 ------
 class Foo {
-  ~this() // destructor for Foo
+  ~this() // Foo のデストラクタ
   {
   }
 }
 ------
 
-        $(P There can be only one destructor per class, the destructor
-        does not have any parameters,
-        and has no attributes. It is always virtual.
+        $(P 一つのクラスにつき高々一つのデストラクタしか存在できません。
+	デストラクタは引数を取らず、属性を何も持ちません。
+	常に仮想関数です。
         )
 
-        $(P The destructor is expected to release any resources held by the
-        object.
+        $(P デストラクタは、
+	オブジェクトの保持するリソースを解放する役割を担います。
         )
 
-        $(P The  program can explicitly inform the garbage collector that an
-        object is no longer referred to (with the delete expression), and
-        then the garbage collector calls the destructor
-        immediately, and adds the object's memory to the free storage.
-        The destructor is guaranteed to never be called twice.
+        $(P プログラムは、オブジェクトがもはや参照されないことを（delete式によって）
+	ガベージコレクタへ明示的に伝えることもできます。
+	この場合はGCはすぐに
+	デストラクタを呼び出し、オブジェクトのメモリを自由領域へ戻します。
+	デストラクタが２回以上呼ばれないことは保証されています。
         )
 
-        $(P The destructor for the super class automatically gets called when
-        the destructor ends. There is no way to call the super destructor
-        explicitly.
+        $(P デストラクタの終了後には、
+	自動的に基底クラスのデストラクタが呼び出されます。
+	基底クラスのデストラクタを明示的に呼ぶ方法は存在しません。
         )
 
-        $(P The garbage collector is not guaranteed to run the destructor
-        for all unreferenced objects. Furthermore, the order in which the
-        garbage collector calls destructors for unreference objects
-        is not specified.
-        This means that
-        when the garbage collector calls a destructor for an object of a class
-        that has
-        members that are references to garbage collected objects, those
-        references may no longer be valid. This means that destructors
-        cannot reference sub objects.
-        This rule does not apply to auto objects or objects deleted
-        with the $(I DeleteExpression), as the destructor is not being run
-        by the garbage collector, meaning all references are valid.
+        $(P GC
+	が参照されなくなったオブジェクトを必ず解放するという保証はありません。
+	さらに、
+	GC がデストラクタを呼び出す順番も保証されません。
+	これはつまり、
+	GC管理下にあるオブジェクトへの参照をメンバとして持つオブジェクトのデストラクタを
+	ガベージコレクタが呼び出すときには、それらの参照は既に無効となっている可能性があるということです。
+	従って、
+	デストラクタからはメンバオブジェクトを参照できません。
+	この規則は、
+	auto
+	オブジェクトや $(I DeleteExpression) で削除されるオブジェクト
+	(GCからのデストラクタ呼び出しではないので、参照は必ず有効)には当てはまりません。
         )
 
-        $(P Objects referenced from the data segment never get collected
-        by the gc.
+        $(P データセグメントから参照されているオブジェクトは、
+	決してGCに回収されることはありません。
         )
 
-<h3>Static Constructors</h3>
+<h3>静的コンストラクタ</h3>
 
 $(GRAMMAR
 $(GNAME StaticConstructor):
@@ -490,23 +490,23 @@ $(GNAME StaticConstructor):
 )
 
 	$(P
-        $(V1 A static constructor is a function that performs
-        initializations before the $(D main()) function gets control.)
+        $(V1 静的コンストラクタは、
+        $(D main()) に制御が移る前に初期化を実行する関数です。)
 
-        $(V2 A static constructor is a function that performs
-        initializations of thread local data before the $(D main()) function gets control for
-	the main thread, and upon thread startup.)
+        $(V2 静的コンストラクタは、
+        メインスレッドで $(D main()) 関数に制御が移る前と、各スレッドの起動時に、
+		スレッドローカル記憶域の初期化作業を行うための関数です。)
 
-	Static constructors are used to initialize
-        static class members
-        with values that cannot be computed at compile time.
+静的コンストラクタは、
+	クラスの静的メンバを、
+	コンパイル時には計算できない値で初期化する際に使用します。
         )
 
-        $(P Static constructors in other languages are built implicitly by using
-        member
-        initializers that can't be computed at compile time. The trouble with
-        this stems from not
-        having good control over exactly when the code is executed, for example:
+        $(P 他の言語では、
+	コンパイル時に計算できない値をメンバの初期化子として使うことで、
+	暗黙の内に組み込まれます。この方法に関する問題は、
+	いつコードが実行されるのか正確な制御ができないことです。
+	例えば：
 	)
 
 ------
@@ -516,160 +516,160 @@ class Foo {
 }
 ------
 
-        What values do a and b end up with, what order are the initializations
-        executed in, what
-        are the values of a and b before the initializations are run, is this a
-        compile error, or is this
-        a runtime error? Additional confusion comes from it not being obvious if
-        an initializer is
-        static or dynamic.
+	aとbは結局どの値になるのか？
+	初期化が実行される順序は？
+	初期化が始まる前のaとbの値は何なのか、
+	これはコンパイルエラーになるのか、
+	それとも
+	実行時エラーになるのか？
+	様々な混乱は、初期化子が静的なのか動的なのか明確でないことが原因となっています。
         <p>
 
-        D makes this simple. All member initializations must be determinable by
-        the compiler at
-        compile time, hence there is no order-of-evaluation dependency for
-        member
-        initializations, and it is not possible to read a value that has not
-        been initialized. Dynamic
-        initialization is performed by a static constructor, defined with
-        a special syntax $(D static this()).
+        DD はこれを単純にします。
+	全てのメンバ初期化は、
+	コンパイラによってコンパイル時に決定されなくてはなりません。
+	従って、
+	メンバの初期化には評価順序の依存関係はなく、
+	初期化されていない値を読みとることはできなくなっています。
+	動的な初期化は、特別な構文 $(D static this()) で定義される
+	静的コンストラクタによって行われます。
 
 ------
 class Foo {
-  static int a;         // default initialized to 0
+  static int a;         // デフォルトの 0 に初期化される
   static int b = 1;
-  static int c = b + a; // error, not a constant initializer
+  static int c = b + a; // エラー, 初期化子が定数でない
 
-  $(B static this)()    // static constructor
+  $(B static this)()    // 静的コンストラクタ
   {
-    a = b + 1;          // a is set to 2
-    b = a * 2;          // b is set to 4
+    a = b + 1;          // a を 2 に設定
+    b = a * 2;          // b を 4 に設定
   }
 }
 ------
 
 	$(P
 	$(V1
-	If $(D main()) returns normally
-        (does not throw an exception), the static destructor is added
-        to the list of functions to be
-        called on program termination.
+	 $(D main())
+		が例外を投げず正常終了した場合、
+        静的デストラクタが、
+        プログラム終了時に実行される関数のリストに追加されます。
 	)
 	$(V2
-	If $(D main()) or the thread returns normally,
-        (does not throw an exception), the static destructor is added
-        to the list of functions to be
-        called on thread termination.
+	If $(D main())
+		やスレッドが例外を投げず正常終了した場合、
+        静的デストラクタが、
+        スレッド終了時に実行される関数のリストに追加されます。
 	)
-        Static constructors have empty parameter lists.
+	静的コンストラクタは空の引数リストを持ちます。
         )
 
 	$(P
-        Static constructors within a module are executed in the lexical
-        order in which they appear.
-        All the static constructors for modules that are directly or
-        indirectly imported
-        are executed before the static constructors for the importer.
+	同一モジュール内の複数の静的コンストラクタは、
+	ソース中に登場する順に上から実行されます。
+	他のモジュールからimportされているモジュールの静的コンストラクタは、
+	全て、
+	importする側の静的コンストラクタよりも前に実行されます。
         )
 
 	$(P
-        The $(B static) in the static constructor declaration is not
-        an attribute, it must appear immediately before the $(B this):
+        静的コンストラクタ宣言の $(B static) は、属性ではありません。
+	必ず $(B this) の直前に書く必要があります：
 	)
 
 ------
 class Foo {
-  static this() { ... } // a static constructor
-  static private this() { ... } // not a static constructor
+  static this() { ... } // 静的コンストラクタ
+  static private this() { ... } // 静的コンストラクタではない
   static {
-    this() { ... }      // not a static constructor
+    this() { ... }      // 静的コンストラクタではない
   }
   static:
-    this() { ... }      // not a static constructor
+    this() { ... }      // 静的コンストラクタではない
 }
 ------
 
-<h3>Static Destructors</h3>
+<h3>静的デストラクタ</h3>
 
 $(GRAMMAR
 $(GNAME StaticDestructor):
     $(B static ~ this ( )) $(GLINK2 function, FunctionBody)
 )
 
-        A static destructor is defined as a special static function with the
-        syntax $(D static ~this()).
+        静的デストラクタは、$(D static ~this())
+		という構文で定義される特別な関数です。
 
 ------
 class Foo {
-  static ~this() // static destructor
+  static ~this() // 静的デストラクタ
   {
   }
 }
 ------
 
 	$(P
-        A static destructor gets called on $(V1 program)$(V2 thread) termination,
-	but only if the static constructor
-        completed successfully.
-        Static destructors have empty parameter lists.
-        Static destructors get called in the reverse order that the static
-        constructors were called in.
+        静的デストラクタは、
+	対応する静的コンストラクタが正常に実行完了しているときのみ、
+    $(V1 プログラム)$(V2 スレッド)の終了時に呼び出されます。
+	静的デストラクタは空の引数リストを持ちます。
+	静的デストラクタは、
+	静的コンストラクタの呼び出しと逆順で実行されます。
         )
 
 	$(P
-        The $(B static) in the static destructor declaration is not
-        an attribute, it must appear immediately before the $(B ~this):
+        静的デストラクタの宣言の $(B static) は、属性ではありません。
+	必ず $(B ~this) の直前に書く必要があります：
 	)
 
 ------
 class Foo {
-  static ~this() { ... }  // a static destructor
-  static private ~this() { ... } // not a static destructor
+  static ~this() { ... }  //  静的デストラクタ
+  static private ~this() { ... } //  静的デストラクタではない
   static
   {
-    ~this() { ... }  // not a static destructor
+    ~this() { ... }  //  静的デストラクタではない
   }
   static:
-    ~this() { ... }  // not a static destructor
+    ~this() { ... }  //  静的デストラクタではない
 }
 ------
 
 $(V2
-<h3>Shared Static Constructors</h3>
+<h3>shared 静的コンストラクタ</h3>
 
 $(GRAMMAR
 $(GNAME SharedStaticConstructor):
     $(B shared static this ( )) $(GLINK2 function, FunctionBody)
 )
 
-        $(P Shared static constructors are executed before any $(GLINK StaticConstructor)s,
-        and are intended for initializing any shared global data.
+        $(P shared 静的コンストラクタは、全ての $(GLINK StaticConstructor)
+        の前に実行されます。sharedなグローバルデータの初期化のための使用が意図されています。
         )
 
-<h3>Shared Static Destructors</h3>
+<h3>shared 静的デストラクタ</h3>
 
 $(GRAMMAR
 $(GNAME SharedStaticDestructor):
     $(B shared static ~ this ( )) $(GLINK2 function, FunctionBody)
 )
 
-        $(P Shared static destructors are executed at program termination
-        in the reverse order that
-        $(GLINK SharedStaticConstructor)s were executed.
+        $(P shared 静的デストラクタはプログラムの終了時に、
+        $(GLINK SharedStaticConstructor)
+		の逆の順番で実行されます。
         )
 )
 
-<h3>$(LNAME2 invariants, Class Invariants)</h3>
+<h3>$(LNAME2 invariants, クラス不変条件)</h3>
 
 $(GRAMMAR
 $(GNAME Invariant):
     $(B invariant ( )) $(GLINK2 statement, BlockStatement)
 )
 
-    Class invariants are used to specify characteristics of a class that always
-    must be true (except while executing a member function). For example, a
-    class representing a date might have an invariant that the day must be 1..31
-    and the hour must be 0..23:
+クラス不変条件は、
+（メンバ関数の実行途中以外は）常に真でなければならない
+クラスの性質を記述するために使われます。例えば、
+日時を表現するクラスは、"日"が1..31で"時"が0..23である、という不変条件を持ちます：
 
 ------
 class Date {
@@ -683,33 +683,33 @@ class Date {
 }
 ------
 
-        $(P The class invariant is a contract saying that the asserts must hold
-        true.
-        The invariant is checked when a class constructor completes,
-        at the start of the class destructor. For public or exported functions,
-	the order of execution is:
+        $(P クラス不変条件は、
+assertがtrueでなければならない、という契約です。
+不変条件は、コンストラクタ完了直後、
+デストラクタ実行直前に実行されます。
+そして、public/export メンバ関数の実行前後の順番は以下の通りです。
         )
 
 	$(OL
-	$(LI preconditions)
-	$(LI invariant)
-	$(LI body)
-	$(LI invariant)
-	$(LI postconditions)
+	$(LI 事前条件)
+	$(LI 不変条件)
+	$(LI 本体)
+	$(LI 不変条件)
+	$(LI 事後条件)
 	)
 
-        $(P The code in the invariant may not call any public non-static members
-        of the
-        class, either directly or indirectly.
-        Doing so will result in a stack overflow, as the invariant will wind
-        up being called in an infinitely recursive manner.
+        $(P invariant内では、直接間接を問わず、
+そのクラスのstaticでないpublicメンバを
+呼び出すことができません。
+そのような呼び出し方をすると
+再帰的に invariant のチェックが入ってしまい、スタックオーバーフローが発生します。
         )
 
-	$(V2 $(P Invariants are implicitly const.))
+	$(V2 $(P invariant は暗黙に const 扱いになります。))
 
-        $(P Since the invariant is called at the start of public or
-        exported members, such members should not be called from
-        constructors.
+        $(P invariant は public や export メンバの開始時に呼び出されるため、
+そのようなメンバ関数は
+コンストラクタからは呼び出すべきではありません。
         )
 
 ------
@@ -718,43 +718,43 @@ class Foo {
   private void g() { }
 
   $(B invariant()) {
-    f();  // error, cannot call public member function from invariant
-    g();  // ok, g() is not public
+    f();  // エラー。invariantの中でpublicメンバ関数は呼べない
+    g();  // OK。 g() はpublicではない。
   }
 }
 ------
 
-        The invariant
-        can be checked when a class object is the argument to an
-        <code>assert()</code> expression, as:
+        $(D assert())
+		式の引数にクラスオブジェクトを渡したときも、
+		不変条件がチェックできます：
 
 ------
 Date mydate;
 ...
-assert(mydate);         // check that class Date invariant holds
+assert(mydate);         // Dateクラスの不変条件が成立していることのチェック
 ------
 
-        Invariants contain assert expressions, and so when they fail,
-        they throw a $(D AssertError)s.
-        Class invariants are inherited, that is,
-        any class invariant is implicitly anded with the invariants of its base
-        classes.
+        不変条件が破れていた場合、
+        $(D AssertError) 例外が投げられます。
+	不変条件は継承されます。
+	つまり、全てのクラスの不変条件には、
+	暗黙の内に基底クラスの不変条件が追加されます。
         <p>
 
-        There can be only one $(I Invariant) per class.
+        クラス１つにつき、$(I invariant) は最大一つしか定義できません。
         <p>
 
-        When compiling for release, the invariant code is not generated, and the compiled program
-        runs at maximum speed.
+	リリース用にコンパイルする際には不変条件のコードは生成されず、
+	プログラムは最高速で動作します。
 
-<h3>$(LNAME2 allocators, Class Allocators)</h3>
-$(B Note): Class allocators are deprecated in D2.
+<h3>$(LNAME2 allocators, クラス・アロケータ)</h3>
+$(B 注): クラスアロケータは D2 では非推奨です。
 $(GRAMMAR
 $(GNAME ClassAllocator):
     $(B new) $(GLINK2 declaration, Parameters) $(GLINK2 function, FunctionBody)
 )
 
-        A class member function of the form:
+        次の形をしたメンバ関数：
 
 ------
 new(uint size) {
@@ -762,28 +762,28 @@ new(uint size) {
 }
 ------
 
-        is called a class allocator.
-        The class allocator can have any number of parameters, provided
-        the first one is of type uint.
-        Any number can be defined for a class, the correct one is
-        determined by the usual function overloading rules.
-        When a new expression:
+	は、クラス・アロケータと呼ばれます。
+	クラスアロケータは、第一引数の型がuintでさえあれば、
+	任意個数の引数を取ることができます。
+	１つのクラスに幾つでも定義することができ、
+	通常の関数オーバーロードの規則に従って正しいものが呼び出されます。
+	new式：
 
 ------
 new Foo;
 ------
 
-        is executed, and Foo is a class that has
-        an allocator, the allocator is called with the first argument
-        set to the size in bytes of the memory to be allocated for the
-        instance.
-        The allocator must allocate the memory and return it as a
+	が実行されて、
+	Fooがアロケータを持つクラスであれば、
+	インスタンスがメモリ上で占めるサイズを第一引数として、
+	アロケータが呼び出されます。
+	アロケータはメモリを割り当て、
         $(D void*).
-        If the allocator fails, it must not return a $(B null), but
-        must throw an exception.
-        If there is more than one parameter to the allocator, the
-        additional arguments are specified within parentheses after
-        the $(B new) in the $(I NewExpression):
+        で返さなくてはなりません。
+	もしアロケータが失敗したら、 $(B null) を返すのではなく例外を投げるようします。
+	アロケータが２個以上の引数を取るのであれば、
+     $(I NewExpression) の
+        $(B new) の後に、括弧で追加の引数を指定できます：
 
 ------
 class Foo {
@@ -796,32 +796,32 @@ class Foo {
 
 ...
 
-new(1,2) Foo(a);        // calls new(Foo.sizeof,1,2)
+new(1,2) Foo(a);        // new(Foo.sizeof,1,2)の呼び出し
 ------
 
-        $(P Derived classes inherit any allocator from their base class,
-        if one is not specified.
+        $(P 派生クラスは、
+	特に指定が無ければ親クラスからアロケータを継承します。
         )
 
-        $(P The class allocator is not called if the instance is created
-        on the stack.
+        $(P インスタンスがスタック上に割り当てられるときには、
+	アロケータは呼ばれません。
         )
 
-        $(P See also
-        $(DPLLINK memory.html#newdelete, Explicit Class Instance Allocation).
+        $(P 参照:
+        $(DPLLINK memory.html#newdelete, 明示的なクラスインスタンス割り当て)
         )
 
-<h3>$(LNAME2 deallocators, Class Deallocators)</h3>
-$(B Note): Class deallocators and the delete operator are deprecated in D2. 
-Use the $(B clear) function to finalize an object by calling its destructor. 
-The memory of the object is $(B not) immediately deallocated, instead the GC 
-will collect the memory of the object at an undetermined point after finalization:
+<h3>$(LNAME2 deallocators, クラス・デアロケータ)</h3>
+$(B 注): クラス・デアロケータと delete 演算子はD2では非推奨です。
+デストラクタを呼び出してオブジェクトを終了させるには $(B clear) 関数を使います。
+そのオブジェクトのメモリはすぐには解放され$(B ません)。代わりに、GC
+がその後の任意の時点でメモリを回収します:
     
 ------
 class Foo { int x; this() { x = 1; } }
 Foo foo = new Foo;
 clear(foo);
-assert(foo.x == int.init);  // object is still accessible
+assert(foo.x == int.init);  // まだアクセス可能
 ------
     
 $(GRAMMAR
@@ -829,7 +829,7 @@ $(GNAME ClassDeallocator):
     $(B delete) $(GLINK2 declaration, Parameters) $(GLINK2 function, FunctionBody)
 )
 
-        A class member function of the form:
+	次の形をしたメンバ関数：
 
 ------
 delete(void *p) {
@@ -837,48 +837,48 @@ delete(void *p) {
 }
 ------
 
-        is called a class deallocator.
-        The deallocator must have exactly one parameter of type $(D void*).
-        Only one can be specified for a class.
-        When a delete expression:
+	は、クラス・デアロケータと呼ばれます。
+	デアロケータは $(D void*) 型の引数を唯一つ取ります。
+	１クラスにつき１つだけ指定できます。
+	delete式：
 
 ------
 delete f;
 ------
 
-        $(P is executed, and f is a reference to a class instance that has
-        a deallocator, the deallocator is called with a pointer to the
-        class instance after the destructor (if any) for the class is
-        called. It is the responsibility of the deallocator to free
-        the memory.
+        $(P 実行されて、
+	fがデアロケータを持つクラスのインスタンスへの参照であれば、
+	（存在すれば）デストラクタが呼ばれた後、
+	インスタンスへのポインタを引数に、
+	デアロケータが呼ばれます。メモリを解放するのは、デアロケータの責任です。
         )
 
-        $(P Derived classes inherit any deallocator from their base class,
-        if one is not specified.
+        $(P 派生クラスは、
+	特に指定が無ければ親クラスからデアロケータを継承します。
         )
 
-        $(P The class allocator is not called if the instance is created
-        on the stack.
+        $(P インスタンスがスタック上に割り当てられているときには、
+	アロケータは呼ばれません。
         )
 
-        $(P See also
-        $(DPLLINK memory.html#newdelete, Explicit Class Instance Allocation).
+        $(P 参照:
+        $(DPLLINK memory.html#newdelete, 明示的なクラスインスタンス割り当て)
         )
 
 $(V2
-<h3>$(LNAME2 AliasThis, Alias This)</h3>
+<h3>$(LNAME2 AliasThis, alias this)</h3>
 
 $(GRAMMAR
 $(GNAME AliasThis):
     $(B alias) $(I Identifier) $(B this;)
 )
 
-        $(P An $(I AliasThis) declaration names a member to subtype.
-        The $(I Identifier) names that member.
+        $(P $(I AliasThis) 宣言は、
+	未定義のメンバ探索を転送する先のメンバを宣言します。$(I Identifier) で指定されたメンバが転送先になります。
         )
 
-        $(P A class or struct can be implicitly converted to the $(I AliasThis)
-        member.
+        $(P クラスや構造体は$(I AliasThis)
+	されたメンバに暗黙変換されます。
         )
 
 ---
@@ -896,12 +896,12 @@ void test() {
   i = s + 8;   // i == 15
   i = s + s;   // i == 14
   i = 9 + s;   // i == 16
-  i = foo(s);  // implicit conversion to int
+  i = foo(s);  // int への暗黙変換
 }
 ---
 
-        $(P If the member is a class or struct, undefined lookups will
-        be forwarded to the $(I AliasThis) member.
+        $(P 転送先がクラスや構造体であった場合、
+        見つからなかったメンバアクセスは $(I AliasThis) に転送されます
         )
 
 ---
@@ -924,9 +924,9 @@ void test() {
 }
 ---
 
-        $(P If the $(I Identifier) refers to a property member
-        function with no parameters, conversions and undefined
-        lookups are forwarded to the return value of the function.
+        $(P $(I Identifier)
+		が引数なしのプロパティメンバ関数を指していた場合、
+        転送はその関数の返値に向けて行われます。
         )
 
 ---
@@ -946,56 +946,56 @@ void test() {
 }
 ---
 
-        $(P Multiple $(I AliasThis) are allowed. For implicit conversions
-        and forwarded lookups, all $(I AliasThis) declarations are attempted;
-        if more than one $(I AliasThis) is eligible, the ambiguity is
-        disallowed by raising an error.
+        $(P 複数の $(I AliasThis) を書くことが出来ます。
+        暗黙変換と転送先を探す際には、すべての $(I AliasThis)
+        を試します。複数の $(I AliasThis) 候補がマッチした場合は、
+        あいまいなためエラーとなります。
         )
 )
 
-<h3>$(LNAME2 auto, Scope Classes)</h3>
+<h3>$(LNAME2 auto, scope クラス)</h3>
 
-        A scope class is a class with the $(B scope) attribute, as in:
+        次のように $(B scope) 属性の付いたクラスが、scopeクラスです：
 
 ------
 scope class Foo { ... }
 ------
 
-        The scope characteristic is inherited, so if any classes derived
-        from a scope class are also scope.
+	scope性は継承され、
+	scopeクラスから派生したクラスは皆scopeになります。
         <p>
 
-        An scope class reference can only appear as a function local variable.
-        It must be declared as being $(B scope):
+        scopeクラスの参照は、関数のローカル変数としてのみ存在できます。
+	その変数は $(B scope) と宣言されていなくてはいけません：
 
 ------
 scope class Foo { ... }
 
 void func() {
-  Foo f;    // error, reference to scope class must be scope
-  scope Foo g = new Foo(); // correct
+  Foo f;    // エラー、scopeクラスの参照はscopeでなくてはダメ
+  scope Foo g = new Foo(); // 正しい
 }
 ------
 
-        When an scope class reference goes out of scope, the destructor
-        (if any) for it is automatically called. This holds true even if
-        the scope was exited via a thrown exception.
+	scopeクラスの参照がスコープから抜けると、（もし存在すれば）
+	デストラクタが自動的に呼ばれます。これは、
+	例外によってスコープを抜けた時であっても成り立ちます。
 
-<h3>$(LNAME2 final, Final Classes)</h3>
+<h3>$(LNAME2 final, final クラス)</h3>
 
-        $(P Final classes cannot be subclassed:)
+        $(P final と宣言されたクラスは継承できません：)
 
 ---
 final class A { }
-class B : A { }  // error, class A is final
+class B : A { }  // エラー。クラス A は final
 ---
 
-<h2>$(LNAME2 nested, Nested Classes)</h2>
+<h2>$(LNAME2 nested, ネストクラス)</h2>
 
-        A $(I nested class) is a class that is declared inside the scope
-        of a function or another class.
-        A nested class has access to the variables and other symbols
-        of the classes and functions it is nested inside:
+        A $(I ネストクラス)  とは、
+	関数や他のクラスのスコープ内で定義されるクラスのことをいいます。
+	ネストクラスからは、すぐ外側のクラスと関数内で定義された変数や
+	その他のシンボルにアクセスすることができます：
 
 ------
 class Outer {
@@ -1003,7 +1003,7 @@ class Outer {
 
   class Inner {
     int foo() {
-      return m;   // Ok to access member of Outer
+      return m;   // Outerのメンバへアクセスできる
     }
   }
 }
@@ -1013,15 +1013,15 @@ void func() {
 
   class Inner {
     int foo() {
-      return m; // Ok to access local variable m of func()
+      return m; // func() のローカル変数にアクセスできる
     }
   }
 }
 ------
 
-        If a nested class has the $(B static) attribute, then it can
-        not access variables of the enclosing scope that are local to the
-        stack or need a $(B this):
+        $(B static) 属性付きで宣言されていた場合、
+	スタックローカルの変数や $(B this):
+の必要なシンボルなどの周囲のスコープにはアクセスできなくなります：
 
 ------
 class Outer {
@@ -1030,8 +1030,8 @@ class Outer {
 
   static class Inner {
     int foo() {
-      return m;   // Error, Inner is static and m needs a $(B this)
-      return n;   // Ok, n is static
+      return m;   // エラー。Innerはstaticでmには $(B this)
+      return n;   // OK。n は static
     }
   }
 }
@@ -1042,25 +1042,25 @@ void func() {
 
   static class Inner {
     int foo() {
-      return m;   // Error, Inner is static and m is local to the stack
-      return n;   // Ok, n is static
+      return m;   // エラー。Innerはstaticでmはスタックローカル
+      return n;   // OK。n は static
     }
   }
 }
 ------
 
-        Non-static nested classes work by containing an extra hidden member
-        (called the context pointer)
-        that is the frame pointer of the enclosing function if it is nested
-        inside a function, or the $(B this) of the enclosing class's instance
-        if it is nested inside a class.
+	非staticネストクラスは、隠しメンバ（コンテクスト・ポインタと呼びます）
+	を一つ加えることで実現されています。
+	関数内にあるときは周囲の関数のフレームポインタが、
+	クラス内にあるときは周囲のクラスの $(B this)
+	ポインタが、隠しメンバに格納されています。
         <p>
 
-        When a non-static nested class is instantiated, the context pointer
-        is assigned before the class's constructor is called, therefore
-        the constructor has full access to the enclosing variables.
-        A non-static nested class can only be instantiated when the necessary
-        context pointer information is available:
+	非staticネストクラスがインスタンス化される際には、
+	コンストラクタの呼び出し前にコンテキスト・ポインタが設定されるので、
+	コンストラクタからは周辺の変数へと完全にアクセス可能です。
+	非staticネストクラスは、
+	必要なコンテキスト・ポインタ情報が入手可能な時のみインスタンス化できます：
 
 ------
 class Outer {
@@ -1073,7 +1073,7 @@ void func() {
   class Nested { }
 
   Outer o = new Outer;        // Ok
-  Outer.Inner oi = new Outer.Inner;   // Error, no 'this' for Outer
+  Outer.Inner oi = new Outer.Inner;   // エラー。Outerに'this'がない
   Outer.SInner os = new Outer.SInner; // Ok
 
   Nested n = new Nested;      // Ok
@@ -1081,9 +1081,9 @@ void func() {
 ------
 
 $(V1
-        While a non-static nested class can access the stack variables
-        of its enclosing function, that access becomes invalid once
-        the enclosing function exits:
+	非staticなネストクラスは周囲の関数のスタック変数へとアクセスできるのですが、
+	その関数が終了した後は、
+	アクセスは不正となります：
 
 ------
 class Base {
@@ -1099,19 +1099,19 @@ Base func() {
 
   Base b = new Nested;
 
-  assert(b.foo() == 3);       // Ok, func() is still active
+  assert(b.foo() == 3);       // Ok, func() はまだ実行中
   return b;
 }
 
 int test() {
   Base b = func();
-  return b.foo();             // Error, func().m is undefined
+  return b.foo();             // Error, func().m は未定義
 }
 ------
 
-        If this kind of functionality is needed, the way to make it work
-        is to make copies of the needed variables within the nested class's
-        constructor:
+	このような機能が必要な場合は、
+	ネストクラスのコンストラクタ内で、
+	必要な変数のコピーを作成します：
 
 ------
 class Base {
@@ -1130,19 +1130,19 @@ Base func() {
 
   Base b = new Nested;
 
-  assert(b.foo() == 3);       // Ok, func() is still active
+  assert(b.foo() == 3);       // Ok, func() はまだ実行中
   return b;
 }
 
 int test() {
   Base b = func();
-  return b.foo();             // Ok, using cached copy of func().m
+  return b.foo();             // Ok, func().m のキャッシュされたコピーを使用
 }
 ------
 )
 
-        $(P A $(I this) can be supplied to the creation of an
-        inner class instance by prefixing it to the $(I NewExpression):
+        $(P $(I NewExpression) の頭にくっつけることで、
+	内部クラスの生成時に $(I this を指定することができます:
         )
 
 ---------
@@ -1160,18 +1160,18 @@ int bar() {
   Outer o = new Outer;
   o.a = 3;
   Outer.Inner oi = $(B o).new Inner;
-  return oi.foo();    // returns 3
+  return oi.foo();    // 3を返す
 }
 ---------
 
-        $(P Here $(B o) supplies the $(I this) to the outer class
-        instance of $(B Outer).
+        $(P この例では $(B o) が外部クラス $(I Outer)
+        のインスタンスを指す $(B this) として機能しています。
         )
 
-        $(P The property $(B .outer) used in a nested class gives the
-        $(B this) pointer to its enclosing class. If the enclosing
-        context is not a class, the $(B .outer) will give the pointer
-        to it as a $(B void*) type.
+        $(P 内部クラスのインスタンスのプロパティ $(B .outer) は、
+        外部クラスの $(B this) ポインタを返します。外部コンテキストがクラスでない場合
+        $(B .outer) は
+        $(B void*) 型でコンテキストへのポインタを返します。
         )
 
 ----
@@ -1194,10 +1194,10 @@ void test() {
 }
 ----
 
-<h3>$(LNAME2 anonymous, Anonymous Nested Classes)</h3>
+<h3>$(LNAME2 anonymous, 無名ネストクラス)</h3>
 
-        $(P An anonymous nested class is both defined and instantiated with
-        a $(I NewAnonClassExpression):
+        $(P 無名ネストクラスは、
+        $(I NewAnonClassExpression)  で定義とインスタンス化が同時に行われます：
         )
 
 $(GRAMMAR
@@ -1208,7 +1208,7 @@ $(GNAME ClassArguments):
 	$(B $(LPAREN)) $(GLINK2 expression, ArgumentList)$(OPT) $(B $(RPAREN))
 )
 
-        $(P which is equivalent to:
+        $(P これは次と同等です：
         )
 
 ------
@@ -1218,17 +1218,17 @@ class $(I Identifier) : $(I SuperClass) $(I Interfaces)
 new ($(I ArgumentList)) $(I Identifier) ($(I ArgumentList));
 ------
 
-        $(P where $(I Identifier) is the name generated for the anonymous
-        nested class.
+        $(P $(I Identifier)
+        は無名ネストクラス用に生成されたクラス名とします。
         )
 
 $(V2
-$(SECTION3 $(LNAME2 ConstClass, Const, Immutable and Shared Classes))
-        $(P If a $(I ClassDeclaration) has a $(CODE const), $(CODE immutable)
-        or $(CODE shared) storage class, then it is as if each member of the class
-        was declared with that storage class.
-        If a base class is const, immutable or shared, then all classes derived
-        from it are also const, immutable or shared.
+$(SECTION3 $(LNAME2 ConstClass, const/immutable/shared クラス))
+        $(P $(I ClassDeclaration) が記憶域クラス $(CODE const) か $(CODE immutable)
+        か $(CODE shared) で修飾されていた場合、
+	そのクラスのすべてのメンバが同じ記憶域クラスで修飾されます。
+	基底クラスがconst/immutable/sharedなら、
+	その派生クラスも全てconst/immutable/sharedになります。
         )
 )
 
@@ -1236,7 +1236,7 @@ $(SECTION3 $(LNAME2 ConstClass, Const, Immutable and Shared Classes))
 )
 
 Macros:
-        TITLE=Classes
+        TITLE=クラス
         WIKI=Class
         CATEGORY_SPEC=$0
         FOO=

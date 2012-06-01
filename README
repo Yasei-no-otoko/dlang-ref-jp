@@ -27,6 +27,7 @@ Any help is welcome!
 - Translate changelog.dd (= migrate the old translation to .dd based workflow).
 - Translate druntime (= migrate the old translation to .dd based workflow).
 - Translate phobos (= migrate the old translation to .dd based workflow).
+- Add $(GLINK3 ...) macro to translate gramatical notions.
 - Come up with a good methodology to merge the changes in English document.
 - Generate in other formats (chm, pdf, ebook, ...).
 - Move the site to more github friendly, community maintainable place.
