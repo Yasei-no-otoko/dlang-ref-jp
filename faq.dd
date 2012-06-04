@@ -2,8 +2,8 @@ Ddoc
 
 $(D_S $(TITLE),
 
-	$(P The same questions keep cropping up, so the obvious thing to do is
-	prepare a FAQ.)
+	$(P 何度も訊かれる質問が増えてきので、
+	FAQ を用意しました。)
 
 	$(P $(LINK2 http://www.digitalmars.com/d/1.0/faq.html, D 1.0 FAQ))
 	$(P $(LINK2 http://www.digitalmars.com/faq.html, C++ FAQ))
@@ -11,369 +11,369 @@ $(D_S $(TITLE),
 <h2>D 2.0 FAQ</h2>
 
 	$(UL
-	$(LI $(LINK2 features2.html, What's the difference between D 2.0 and D 1.0?))
+	$(LI $(LINK2 features2.html, D 2.0 と D 1.0 の違いは？))
 
-	$(LI Where is my simple language?)
+	$(LI 「シンプルな言語」はどこに行っちゃったの)
 
-	$(REDO $(LI $(LINK2 cpp0x.html, What's D 2.0's answer to C++0x's proposed new features?)))
+	$(REDO $(LI $(LINK2 cpp0x.html, C++0x に提案された機能に対する D 2.0 での対応は？)))
 
-	$(LI What other cool features are in the plans for D 2.0?)
+	$(LI 他にどんなクールな機能が D 2.0 には予定されてるんだい？)
 
-	$(LI I suggested a great feature. Why was the suggestion ignored?)
+	$(LI 僕が提案した最高の機能が無視されているのはなぜですか！)
 
-	$(LI Why const and immutable?)
+	$(LI なぜ const や immutable なんてものが必要？)
 
-	$(LI Why the $(I names) const and immutable?)
+	$(LI なぜ const や immutable なんていう $(I 名前) なの？)
 
-	$(LI How exactly is immutable related to multicores?)
+	$(LI immutable と マルチコア の関係を正確に述べてください)
 
-	$(LI Ok, I'm fine with immutable for safe data sharing among threads. But why do we need the uninformative const?)
+	$(LI OK、スレッド間の安全なデータ共有におけるimmutableの利点はわかった。でもそういう意味での情報量のないconstがなんで必要なの？)
 
-	$(LI Why are immutable strings favored in D 2.0?)
+	$(LI なぜ D 2.0 では immutable 文字列が好まれるのか？)
 
-	$(LI I want to contribute to D 2.0. How can I effect that?)
+	$(LI D 2.0 に貢献したいです。どうすればいいでしょうか？)
 
-	$(ITEMR case_range, Why doesn't the case range statement
-	 use the $(D case X..Y:) syntax?)
+	$(ITEMR case_range, なぜ case range 式は
+	  $(D case X..Y:) という構文にしないの？)
 
-	$(ITEMR shared_guarantees, What guarantees is shared supposed to provide?)
+	$(ITEMR shared_guarantees, shared が提供する保証は？)
 
-	$(ITEMR shared_synchronized, What does shared have to do with synchronization?)
+	$(ITEMR shared_synchronized, shared と同期の関係は？)
 
-	$(ITEMR shared_memory_barriers, What does shared have to do with memory barriers?)
+	$(ITEMR shared_memory_barriers, shared とメモリバリアの関係は？)
 
-	$(ITEMR casting_to_shared, What are the semantics of casting FROM unshared TO shared?)
+	$(ITEMR casting_to_shared, unshared から shared へのキャストはどういう意味論になる？)
 
-	$(ITEMR casting_from_shared, What are the semantics of casting FROM shared TO unshared?)
+	$(ITEMR casting_from_shared, shared から unshared へのキャストはどういう意味論になる？)
 
-	$(ITEMR bss, Why does a large static array bloat my executable file size?)
+	$(ITEMR bss, なぜ大きな静的配列を使うとexeのファイルが増えるの？)
 	)
 
-<h2>General D FAQ</h2>
+<h2>D 全般の FAQ</h2>
 
 	$(UL
 
 	$(LI $(LINK2 http://www.prowiki.org/wiki4d/wiki.cgi?FaqRoadmap, The D wiki FAQ page)
-	with many more questions answered)
-	$(LI $(LINK2 comparison.html, What does D have that C++ doesn't?))
-	$(ITEMR q1, Why the name D?)
-	$(ITEMR q1_1, Could you change the name? D is kind of hard to search for on search engines.)
-	$(LI $(LINK2 http://www.digitalmars.com/d/download.html, Where can I get a D compiler?))
-	$(ITEMR q1_2, Is there linux port of D?)
-	$(ITEMR gdc, Is there a GNU version of D?)
-	$(ITEMR backend, How do I write my own D compiler for CPU X?)
-	$(ITEMR gui, Where can I get a GUI library for D?)
-	$(ITEMR ide, Where can I get an IDE for D?)
-	$(ITEMR q4, Why is [expletive deleted] printf left in?)
-	$(ITEMR q5, Is D open source?)
-	$(ITEMR q5_2, Why does the standard library use the boost license? Why not public domain?)
-	$(ITEMR q6, Why $(I no) fall through on switch statements?)
-	$(ITEMR q7, Why should I use D instead of Java?)
-	$(ITEMR q7_2, Doesn't C++ support strings, etc. with STL?)
-	$(ITEMR q7_3, Can't garbage collection be done in C++ with an add-on library?)
-	$(ITEMR q7_4, Can't unit testing be done in C++ with an add-on library?)
-	$(ITEMR q8, Why have an asm statement in a portable language?)
-	$(ITEMR real, What is the point of 80 bit reals?)
-	$(ITEMR anonymous, How do I do anonymous struct/unions in D?)
-	$(ITEMR printf, How do I get printf() to work with strings?)
-	$(ITEMR nan, Why are floating point values default initialized to NaN rather than 0?)
-	$(ITEMR assignmentoverloading, Why is overloading of the assignment operator not supported?)
-	$(ITEMR keys, The $(SINGLEQUOTE ~) is not on my keyboard?)
+	でもっと多くの質問への回答があります。)
+	$(LI $(LINK2 comparison.html, C++ に無くて D にあるものは？))
+	$(ITEMR q1, なぜ D という名前なのですか？)
+	$(ITEMR q1_1, D という名前は変えられないの？検索エンジンで探しにくい。)
+	$(LI $(LINK2 http://www.digitalmars.com/d/download.html, Dコンパイラはどこで手に入りますか？))
+	$(ITEMR q1_2, DはLinuxへ移植されていますか？)
+	$(ITEMR gdc, GNU版のDはありますか？)
+	$(ITEMR backend, ××というCPU向けの自作のDコンパイラを書くにはどうしたらよいですか？)
+	$(ITEMR gui, DのGUIライブラリはどこで入手できますか？)
+	$(ITEMR ide, DのIDEはどこで入手できますか？)
+	$(ITEMR q4, printf という [-放送禁止-] なものを残したのは何故ですか？)
+	$(ITEMR q5, D はオープンソースですか？)
+	$(ITEMR q5_2, 標準ライブラリが Boost ライセンスなのは何故？パブリックドメインにしないのですか？)
+	$(ITEMR q6, switch文がfall throughなのは何故ですか？)
+	$(ITEMR q7, JavaではなくDを選ぶ理由としては何があるでしょう？)
+	$(ITEMR q7_2, C++でも、文字列はSTLでサポートされているのですが…)
+	$(ITEMR q7_3, C++でも、ガベージコレクションはライブラリを使えば可能なのではないでしょうか？)
+	$(ITEMR q7_4, C++でも、単体テストはライブラリを使えば可能なのではないでしょうか？)
+	$(ITEMR q8, 移植性を重視した言語なのにasm文があるのは何故ですか？)
+	$(ITEMR real, 80bit実数型の利点は？)
+	$(ITEMR anonymous, D で無名構造体/共用体を使うには？)
+	$(ITEMR printf, 文字列に対して printf() を動作させるには？)
+	$(ITEMR nan, なぜ浮動小数点数は0ではなくNaNに初期化されるのですか？)
+	$(ITEMR assignmentoverloading, なぜ代入演算子のオーバーロードに対応していないのですか？)
+	$(ITEMR keys, $(SINGLEQUOTE ~) は私のキーボードにないのですが…)
 	$(ITEMR omf, Can I link in C object files created with another compiler?)
-	$(ITEMR regexp_literals, Why not support regular expression literals
-		with the /foo/g syntax?)
-	$(ITEMR dogfood, Why is the D front end written in C++ rather than D?)
-	$(ITEMR cpp_to_D, Why aren't all Digital Mars programs translated to D?)
-	$(ITEMR foreach, When should I use a foreach loop rather than a for?)
-	$(ITEMR cpp_interface, Why doesn't D have an interface to C++ as well as C?)
-	$(ITEMR reference-counting, Why doesn't D use reference counting for garbage collection?)
-	$(ITEMR gc_1, Isn't garbage collection slow and non-deterministic?)
-	$(ITEMR pure, Can't a sufficiently smart compiler figure out that a function is pure automatically?)
-	$(ITEMR minimum precision, Why allow $(D cast(float)) if it isn't supposed to work?)
+	$(ITEMR regexp_literals, 正規表現リテラルを
+		/foo/g のような構文でサポートしないのはなぜですか？)
+	$(ITEMR dogfood, なぜDのフロントエンドはDではなくC++で書かれているのですか？)
+	$(ITEMR cpp_to_D, Digital Mars のプログラムを全てDで書き直したらどうでしょう？)
+	$(ITEMR foreach, どのような時にforよりもforeachループを使うとよいですか？)
+	$(ITEMR cpp_interface, Dに、CとのインターフェイスはあってもC++とのは無いのは何故？)
+	$(ITEMR reference-counting, なぜDはガベージコレクションに参照カウント方式を使わないのですか？)
+	$(ITEMR gc_1, ガベージコレクションは遅くて予測不能なんでしょ？)
+	$(ITEMR pure, 十分に賢いコンパイラなら、関数がpureかどうか自動的に判別できるんじゃないの？)
+	$(ITEMR minimum precision, $(D cast(float)) がその通りに動かないなら何故サポートしているの？)
 	)
 
-$(ITEM case_range, Why doesn't the case range statement
-	 use the $(D case X..Y:) syntax?)
+$(ITEM case_range, なぜ case range 式は
+	 $(D case X..Y:) という構文にしないの？)
 
-	$(P See the $(LINK2 statement.html#CaseRangeStatement, case range statement).)
+	$(P $(LINK2 statement.html#CaseRangeStatement, case range statement) を参照して下さい。)
 
-	$(P The usages of .. would then be:
+	$(P この構文にすると、.. の使い道は以下の3つになります:
 	$(OL
 	$(LI $(D case X..Y:))
 	$(LI $(D foreach(e; X..Y)))
 	$(LI $(D array[X..Y]))
 	)
-	Case (1) has a VERY DIFFERENT meaning from (2) and (3).
-	(1) is inclusive of Y, and (2) and (3) are exclusive of Y.
-	Having a very different meaning means it should have a distinctly different syntax.
+	最初のケース (1) だけが、(2) や (3) と $(B 非常に異なった) 意味を持っています。
+	(1) は区間に Y を含みますが、(2) と (3) は Y を含みません。
+	非常に異なった意味を持つということは、区別できる異なった構文を持つべきであるということを意味します。
 	)
 
-$(ITEM shared_guarantees, What guarantees is shared supposed to provide?)
+$(ITEM shared_guarantees, shared が提供する保証は？)
 
-	$(P Shared means that multiple threads can access the data. The guarantee is that if it is
-	not shared, and not immutable, that only the current thread can see it.
+	$(P shared は、複数のスレッドがそのデータにアクセスしうることを意味します。
+	保証されるのは、sharedでなく、immutableでもないデータは、カレントスレッドからしか見えない、ということです。
 	)
 
-$(ITEM shared_synchronized, What does shared have to do with synchronization?)
+$(ITEM shared_synchronized, shared と同期の関係は？)
 
-	$(P Only shared data can be synchronized. It makes no sense to synchronize thread local
-	data.
+	$(P shared データのみが同期できます。
+	他の、スレッドローカルデータを同期する意味はありません。
 	)
 
-$(ITEM shared_memory_barriers, What does shared have to do with memory barriers?)
+$(ITEM shared_memory_barriers, shared とメモリバリアの関係は？)
 
-	$(P Reading/writing shared data emits memory barriers to ensure sequential consistency (not
-	implemented).
+	$(P sharedデータへの読み書きの際には、逐次一貫性を保証するメモリバリアが生成されます
+	（未実装です）。
 	)
 
-$(ITEM casting_to_shared, What are the semantics of casting FROM unshared TO shared?)
+$(ITEM casting_to_shared, unshared から shared へのキャストはどういう意味論になる？)
 
-	$(P Make sure there are no other unshared references to that same data.
+	$(P そのデータへの他のunshared参照がないことが確実な場合のみ意味のある操作になります。
 	)
 
-$(ITEM casting_from_shared, What are the semantics of casting FROM shared TO unshared?)
+$(ITEM casting_from_shared, shared から unshared へのキャストはどういう意味論になる？)
 
-	$(P Make sure there are no other shared references to that same data.
+	$(P そのデータへの他のshared参照がないことが確実な場合のみ意味のある操作になります。
 	)
 
-$(ITEM bss, Why does a large static array bloat my executable file size?)
+$(ITEM bss, なぜ大きな静的配列を使うとexeのファイルが増えるの？)
 
-	$(P Given the declaration:)
+	$(P このような宣言があると:)
 ---
 char[1024 * 1024] arr;
 ---
-	$(P the executable size increases by a megabyte in size. In C, this would not
-	as $(CODE arr) would be stored in the BSS segment.
-	In D, $(CODE arr) is not stored in the BSS segment because:
+	$(P 実行ファイルのサイズは1MB増えます。
+	Cでは、$(CODE arr) がBSSセグメントに格納されるのでこれは起こりませんでした。
+	Dが $(CODE arr) BSSセグメントに格納しない理由は:
 	)
 
 	$(UL
-	$(LI The $(CODE char) type is initialized to 0xFF, not 0. Non-zero data
-	cannot be placed in BSS.)
-	$(LI Statically allocated data is placed in thread local storage. The BSS
-	segment is not thread local, and there is no thread local equivalent of BSS.)
+	$(LI $(CODE char) 型が、0 ではなく、0xFF に初期化されるため。
+	非ゼロのデータはBSSに配置することはできません。)
+	$(LI 静的に割り当てたデータはスレッドローカル記憶域に配置されるため。
+	BSSはスレッドローカルでは無く、BSSに相当するスレッドローカル領域はありません。)
 	)
 
-	$(P The following will be placed in BSS:)
+	$(P 以下のように書くとBSSに配置されます:)
 
 ---
 __gshared byte[1024 * 1024] arr;
 ---
 
-	$(P as $(CODE byte)s are 0 initialized and $(CODE __gshared) puts it in the
-	global data.)
+	$(P $(CODE byte) の初期値は 0 で、$(CODE __gshared)
+	はデータをグローバルに割り当てるためです。)
 
-	$(P There are similiar issues for $(CODE float), $(CODE double), and $(CODE real)
-	static arrays. They are initialized to NaN (Not A Number) values, not 0.
+	$(P $(CODE float), $(CODE double), $(CODE real)
+	の静的配列にも同様の問題があります。これらの型も、0 ではなく NaN (Not A Number) 値に初期化されるためです。
 	)
 
-	$(P The easiest way to deal with this issue is to allocate the array dynamically
-	at run time rather than statically allocate it.
+	$(P この問題に対処する一番簡単な方法は、
+	配列を静的にではなく実行時に動的に割り当てることです。
 	)
 
-$(ITEM q1, Why the name D?)
+$(ITEM q1, なぜ D という名前なのですか？)
 
-	$(P The original name was the Mars Programming Language. But my friends
-	kept calling it D, and I found myself starting to call it D.
-	The idea of D being a successor to C goes back at least as far as 1988,
-	as in this
-	$(LINK2 http://groups.google.com/group/comp.lang.c/browse_thread/thread/cb4b868fab477b61/d4b5407644d16806, thread).
+	$(P 元々は プログラミング言語 Mars という名前でした。けれど友人が
+	D と呼び続けたので、私も影響されて D と呼ぶようになったのです。
+	C の後継の D言語、という案は、
+	少なくとも1988年のこの
+	$(LINK2 http://groups.google.com/group/comp.lang.c/browse_thread/thread/cb4b868fab477b61/d4b5407644d16806, スレッド) までさかのぼります。
 	)
 
-$(ITEM q1_1, Could you change the name? D is kind of hard to search for on search engines.)
+$(ITEM q1_1, D という名前は変えられないの？検索エンジンで探しにくい。)
 
-	$(P No. We understand it can be frustrating but it's far too late for a
-	name change at this point. We recommend using "dlang", "d programming",
-	"d language", or "d programming language" in your search terms.  Doing so
-	should yield substantially better search results.
+	$(P 返られません。検索しにくくてストレスが溜まる、という点は承知していますが、
+	もう現時点となっては名前を変えるには遅すぎるところまで来てしまいました。検索語としては "dlang", "d programming",
+	"d language", "d programming language" などを使うことをお勧めします。
+	こうすることでずっと良い検索結果が得られます。
 	)
 
-	$(P Most publically available D code has "// Written in the D programming
-	language" as its first comment.
+	$(P 公開されている D のコードの多くは "// Written in the D programming
+	language" をコメントの最初に含んでいます。
 	)
 
-$(ITEM q1_2, Is there a linux port of D?)
+$(ITEM q1_2, DはLinuxへ移植されていますか？)
 
-	$(P Yes, the D compiler includes a $(LINK2 dmd-linux.html, linux version).
+	$(P はい。DigitalMarsのDコンパイラには $(LINK2 dmd-linux.html, Linux版) があります。
 	)
 
-$(ITEM gdc, Is there a GNU version of D?)
+$(ITEM gdc, GNU版のDはありますか？)
 
-	$(P Yes,
-	$(LINK2 http://bitbucket.org/goshawk/gdc/wiki/Home, gdc - the D frontend with GCC).
+	$(P はい、
+	$(LINK2 http://bitbucket.org/goshawk/gdc/wiki/Home, gdc - the D frontend with GCC) です。
 	)
 
-$(ITEM backend, How do I write my own D compiler for CPU X?)
+$(ITEM backend, ××というCPU向けの自作のDコンパイラを書くにはどうしたらよいですか？)
 
-	$(P Burton Radons has written a
-	$(LINK2 http://www.opend.org/dli/DLinux.html, back end).
-	You can use as a guide.
+	$(P Burton Radons が
+	$(LINK2 http://www.opend.org/dli/DLinux.html, バックエンド)
+	を公開しています。参考となるでしょう。
 	)
 
-$(ITEM gui, Where can I get a GUI library for D?)
+$(ITEM gui, DのGUIライブラリはどこで入手できますか？)
 
-	$(P Since D can call C functions, any GUI library with a C interface is
-	accessible from D. Various D GUI libraries and ports can be found at
-	$(LINK2 http://www.prowiki.org/wiki4d/wiki.cgi?GuiLibraries, the D wiki).
+	$(P D からは C の関数を呼び出せますので、Cのインターフェイスをもった
+	GUI ライブラリなら、全てDからも使えます。D言語用の様々なGUIライブラリや移植版が、
+	$(LINK2 http://www.prowiki.org/wiki4d/wiki.cgi?GuiLibraries, the D wiki) で紹介されています。
 	)
 
-$(ITEM ide, Where can I get an IDE for D?)
+$(ITEM ide, DのIDEはどこで入手できますか？)
 
-	$(P A list of IDEs and editors that support D can be found on
-    $(LINK2 http://prowiki.org/wiki4d/wiki.cgi?EditorSupport, the D wiki).
+	$(P D 対応のIDEの一覧が
+    $(LINK2 http://prowiki.org/wiki4d/wiki.cgi?EditorSupport, the D wiki) にあります。
 	)
 
-$(ITEM q4, Why is printf in D?)
+$(ITEM q4, D になぜ printf が残っているのですか？)
 
 	$(P $(LINK2 http://www.digitalmars.com/rtl/stdio.html#printf, printf)
-	is not part of D, it is part of C's standard
-	runtime library which is accessible from D.
-	D's standard runtime library has
+	は実際はDの一部ではなく、
+	しかしDからアクセスできるCの標準ライブラリです。
+	D の標準ライブラリは
 	$(LINK2 http://dlang.org/phobos/std_stdio.html#writefln, std.stdio.writefln),
-	which is as powerful as $(LINK2 http://www.digitalmars.com/rtl/stdio.html#printf, printf)
-	but is much easier to use.
+	を含んでいて、これは $(LINK2 http://www.digitalmars.com/rtl/stdio.html#printf, printf)
+	並に強力でしかも使いやすくなっています。
 	)
 
 
-$(ITEM q5, Is D open source?)
+$(ITEM q5, D はオープンソースですか？)
 
-    $(P The front end for the $(B dmd) D compiler is open source.
-    The back end for dmd is licensed from Symantec,
-    and is not compatible with open-source licenses such as the GPL.
-    Nonetheless, the complete source comes with the
-    $(LINK2 http://www.digitalmars.com/d/download.html, compiler),
-    and all development takes place publically on
-    $(LINK2 https://github.com/D-Programming-Language/dmd, github).
-    Compilers using the DMD front end and the GCC and LLVM open source
-    backends are also available.
+    $(P D の $(B dmd) コンパイラのフロントエンドはオープンソースです。
+    dmd のバックエンドは Symantec からライセンスされていて、
+    GPL 等のオープンソースライセンスとは互換性がありません。
+    しかしながら、完全なソースコードが
+    $(LINK2 http://www.digitalmars.com/d/download.html, コンパイラ)
+    に附属し、開発は全て公開されて
+    $(LINK2 https://github.com/D-Programming-Language/dmd, github) で行われています。
+    DMD のフロントエンドに GCC や LLVM
+	のオープンソースのバックエンドを合わせたコンパイラもあります。
 
-	The runtime library is completely open source using the
-	$(LINK2 http://boost.org/LICENSE_1_0.txt, Boost License 1.0).
-	The $(B gdc) and $(B ldc) D compilers are completely open sourced.
+	ランタイムライブラリは完全にオープンソースで、
+	$(LINK2 http://boost.org/LICENSE_1_0.txt, Boost License 1.0) でライセンスされています。
+	$(B gdc) と $(B ldc) は完全にオープンソースな D コンパイラです。
 	)
 
-$(ITEM q5_2, Why does the standard library use the boost license? Why not public domain?)
+$(ITEM q5_2, 標準ライブラリが Boost ライセンスなのは何故？パブリックドメインにしないのですか？)
 
-    $(P Although most jurisdictions use the concept of Public Domain, some
-    (eg, Japan) do not.
-    The $(LINK2 http://boost.org/LICENSE_1_0.txt, Boost License)
-    avoids this problem. It was chosen because, unlike almost all other open
-    source licenses, it does not demand that the license text be included on
-    distributions in binary form.
+    $(P ほとんどの地域の司法にはパブリックドメインという概念がありますが、
+    そうでない国 (例えば日本) もあります。
+    $(LINK2 http://boost.org/LICENSE_1_0.txt, Boost License)
+    はこの問題を回避しています。 このライセンスが選ばれた理由は、
+    多くのオープンソースライセンスと違って、
+    バイナリ形式の配布にライセンス文を含めることを要求していないからです。
     )
 
-$(ITEM q6, Why $(I no) fall through on switch statements?)
+$(ITEM q6, switch文がfall throughなのは何故ですか？)
 
-	$(P Many people have asked for a requirement that there be a break between
-	cases in a switch statement, that C's behavior of silently falling through
-	is the cause of many bugs.
+	$(P 沢山の人に、switch 文のcaseとcaseの間には必ずbreakが入る、
+	という仕様にならないかと要求されました。C の、いわゆる
+	"fall through" は沢山のバグの原因となってきたからです。
 	)
 
-    $(P In D2, implicit fall through is disallowed. You have to add a
-    $(LINK2 statement.html#GotoStatement, goto case;) statement to explicitly
-    state the intention of falling through.
+    $(P D2 では、暗黙の fall throught は禁止されました。fall throught したいときは
+    $(LINK2 statement.html#GotoStatement, goto case;) を挿入して、
+    その意思を明示する必要があります。
     )
 
-	$(P There was further request that the $(B break) statement be made
-    implicit.
-    The reason D doesn't change this is for the same reason that integral
-	promotion rules and operator precedence rules were kept the same - to
-	make code that looks the same as in C operate the same. If it had subtly
-	different semantics, it will cause frustratingly subtle bugs.
+	$(P これに加えてさらに $(B break)
+    文が暗黙の動作になるべきという提案もありました。
+    Dでこれを変えなかった理由は、整数の昇格や演算子の優先順位を同じにしたのと、
+	同様の理由 - Cとして読めるコードはCと同様に振る舞うべき - です。
+	潜在的に違う意味をもっていたりしたら、
+	余計わかりにくいバグを生むでしょうから。
 	)
 
 
-$(ITEM q7, Why should I use D instead of Java?)
+$(ITEM q7, JavaではなくDを選ぶ理由としては何があるでしょう？)
 
-	$(P D is distinct from Java in purpose, philosophy and reality.
-	See this $(LINK2 comparison.html, comparison).
+	$(P D と Java では、目的も哲学も実現も異なっています。この
+	$(LINK2 comparison.html, 比較) をご覧下さい。
 	)
 
-	$(P Java is designed to be write once, run everywhere. D is designed for writing
-	efficient native system apps. Although D and Java share the notion that
-	garbage collection is good and multiple inheritance is bad, their
-	different design goals mean the languages have very different feels.
+	$(P Java は 'write once, run everywhere' を目的に設計されました。対して D は、
+	効率的なネイティブアプリを書くために設計されています。DもJavaも
+	ガベージコレクションは善で多重継承は悪で… というあたりで共通点はありますが、
+	目的の違いから、言語自体の感じも大きく違うものになっています。
 	)
 
-$(ITEM q7_2, Doesn't C++ support strings, etc. with STL?)
+$(ITEM q7_2, C++では、文字列はSTLでサポートされているんですが…)
 
-	$(P In the C++ standard library are mechanisms for doing strings,
-	dynamic arrays, associative arrays, and bounds-checked
-	arrays.
+	$(P C++の標準ライブラリには、
+	文字列や動的配列に連想配列、
+	境界チェック付き配列や複素数などが存在します。
 	)
 
-	$(P Sure, all this stuff can be done with libraries,
-	following certain coding disciplines, etc. But
-	object oriented programming can also be done in C (it's been done).
-	Isn't it incongruous that something like strings,
-	supported by the simplest BASIC interpreter, requires a very
-	large and complicated infrastructure to support?
-	Just the implementation of a string type in STL is over two
-	thousand lines of code, using every advanced feature of templates.
-	How much confidence can you have that this is all working
-	correctly, how do you fix it if it is not, what do you do with the
-	notoriously inscrutable error messages when there's an error
-	using it, how can you be sure you are using it correctly
-	(so there are no memory leaks, etc.)?
+	$(P もちろん、これらの機能は全てライブラリや、
+	何らかのコーディング方針を守ることなので実現できます。
+	しかしそれを言ったら、Cでオブジェクト指向だってできるのです
+	（実際に目にしたことがあります）。どんな簡単な BASIC
+	インタプリタでもサポートしている文字列というものために、
+	巨大で複雑な機構が必要というのはどうも不釣り合いです。
+	STLの文字列型は、実装に二千行以上のコードが費やされ、
+	高度なtemplateの機能を縦横に使っています。
+	これら全てが正しく動いているということをどれほど確信できるでしょう？
+	もしまずい点があったらどうやってそれを直すのでしょう。
+	使っていてコンパイルエラーが出たときの猛烈に読みにくいエラーメッセージは
+	どうすればよいのでしょう？自分の使い方が正しい（メモリリークが起きないとか…）
+	ことをどうやって確かめればよいでしょうか？
 	)
 
-	$(P D's implementation of strings is simple and straightforward.
-	There's little doubt about how to use it, no worries about memory leaks,
-	error messages are to the point, and it isn't hard to see if it
-	is working as expected or not.
+	$(P Dの文字列実装は簡単で、直接的です。どう使えばいいか迷うようなことは
+	ほとんどありませんし、メモリリークの心配もありません。
+	エラーメッセージは的を射ていて、期待通りに動作しているかどうかは
+	見ればすぐにわかります。
 	)
 
-$(ITEM q7_3, Can't garbage collection be done in C++ with an add-on library?)
+$(ITEM q7_3, C++でも、ガベージコレクションはライブラリを使えば可能なのではないでしょうか？)
 
-	Yes, I use one myself. It isn't part of the language, though, and
-	requires some subverting of the language to make it work.
-	Using gc with C++ isn't for the standard or casual C++ programmer.
-	Building it into the
-	language, like in D, makes it practical for everyday programming chores.
+	はい、私も使っています。しかし、言語の一部でないという特性上、
+	これを使うにはいくつか制約が生じます。また一般のC++プログラマにとっては、
+	C++でgcを使うという選択肢はないようです。
+	Dのように言語内にGCを組み込むのは、
+	日々のプログラミングにとってとても実用的です。
 	<p>
 
-	GC isn't that hard to implement, either, unless you're building one
-	of the more advanced ones. But a more advanced one is like building
-	a better optimizer - the language still works 100% correctly even
-	with a simple, basic one. The programming community is better served
-	by multiple implementations competing on quality of code generated
-	rather than by which corners of the spec are implemented at all.
+	あまり先進的なことをしなければ、GCの実装は難しくありません。
+	簡単なものでも言語は100%動くという点で、より高度なGCを書くというのは、
+	より高度な最適化ルーチンを書く、ということに似ています。
+	規格をどの程度実装しているかというような点ではなく、
+	どの程度良いコードを生成するか、という点で複数の実装を比べられる方が、
+	プログラミングコミュニティにとってより良い状態です。
 
-$(ITEM q7_4, Can't unit testing be done in C++ with an add-on library?)
+$(ITEM q7_4, C++でも、単体テストはライブラリを使えば可能なのではないでしょうか？)
 
-	Sure. Try one out and then compare it with how D does it.
-	It'll be quickly obvious what an improvement building it into
-	the language is.
+	もちろん。そのライブラリを使ってみて、Dと比べてみてください。
+	言語に組み込まれているというのがどんなに便利か、
+	すぐに明らかに感じるでしょう。
 
-$(ITEM q8, Why have an asm statement in a portable language?)
+$(ITEM q8, 移植性を重視した言語なのにasm文があるのは何故ですか？)
 
-	An asm statement allows assembly code to be inserted directly into a D
-	function. Assembler code will obviously be inherently non-portable. D is
-	intended, however, to be a useful language for developing systems apps.
-	Systems apps almost invariably wind up with system dependent code in them
-	anyway, inline asm isn't much different. Inline asm will be useful for
-	things like accessing special CPU instructions, accessing flag bits, special
-	computational situations, and super optimizing a piece of code.
+	asm文は、Dの関数内に直接アセンブリのコードを書き込むことを可能にします。
+	アセンブラのコードは自明に移植性のないものとなりますが、しかし、
+	システムアプリの開発には非常に便利なものです。システムアプリは
+	大なり小なりシステム依存のコードを含むことになるので、インラインアセンブラは
+	大した問題にはなりません。インラインアセンブラは、CPUの特殊命令や
+	フラグビットへのアクセスによって、特別な処理の場合や、
+	限界までコードを最適化したいときに役立ちます。
 	<p>
 
-	Before the C compiler had an inline assembler, I used external assemblers.
-	There was constant grief because many, many different versions of the
-	assembler were out there, the vendors kept changing the syntax of the
-	assemblers, there were many different bugs in different versions, and even
-	the command line syntax kept changing. What it all meant was that users
-	could not reliably rebuild any code that needed assembler. An inline
-	assembler provided reliability and consistency.
+	Cコンパイラがインラインアセンブラ機能を持つ前は、
+	私は外部のアセンブラを使っていました。アセンブラは
+	沢山の、本当に沢山のバージョンがあって、各バージョン毎に微妙に
+	構文が違っていたりバグがあったりコマンドラインの文法まで
+	変わっていたりして、非常に残念な思いをしました。
+	つまり、アセンブラの必要なコードは、ユーザーには安心してビルドはできなかったのです。
+	インラインアセンブラができてからは、そんなことはなくなりました。
 
-$(ITEM real, What is the point of 80 bit reals?)
+$(ITEM real, 80bit実数型の利点は？)
 
-	More precision enables more accurate floating point computations
-	to be done, especially when adding together large numbers of small
-	real numbers. Prof. Kahan, who designed the Intel floating point
-	unit, has an eloquent
-	<a href="http://http.cs.berkeley.edu/~wkahan/JAVAhurt.pdf">paper</a>
-	on the subject.
+	有効桁数を増やせば増やすだけ、
+	正確に浮動小数点数の計算ができます。
+	これは特に大きな数と小さな数を足すときに顕著です。この話題については、
+	Intel の FPU をデザインした Kahan博士による、説得力のある
+	<a href="http://http.cs.berkeley.edu/~wkahan/JAVAhurt.pdf">論文</a>
+	があります。
 
-$(ITEM anonymous, How do I do anonymous struct/unions in D?)
+$(ITEM anonymous, D で無名構造体/共用体を使うには？)
 
 -----------------------
 import std.stdio;
@@ -396,10 +396,10 @@ void main()
 }
 -----------------------
 
-$(ITEM printf, How do I get printf() to work with strings?)
+$(ITEM printf, 文字列に対して printf() を動作させるには？)
 
-	In C, the normal way to printf a string is to use the $(B %s)
-	format:
+	Cでは、文字列をprintfするには通常、書式 $(B %s)
+	を使います：
 
 $(CCODE
 char s[8];
@@ -407,7 +407,7 @@ strcpy(s, "foo");
 printf("string = '$(B %s)'\n", s);
 )
 
-	Attempting this in D, as in:
+	D で次のようにこれを実行してみると：
 
 ---------------------------------
 char[] s;
@@ -415,12 +415,12 @@ s = "foo";
 printf("string = '$(B %s)'\n", s);
 ---------------------------------
 
-	usually results in garbage being printed, or an access violation.
-	The cause is that in C, strings are terminated by a 0 character.
-	The $(B %s) format prints until a 0 is encountered.
-	In D, strings are not 0 terminated, the size is determined
-	by a separate length value. So, strings are printf'd using the
-	$(B %.*s) format:
+	大抵の場合、ゴミが表示されるかアクセス違反になります。
+	原因は、Cでは文字列は0終端であるためです。
+	$(B %s) fは 0 が現れるまで文字を出力しようとします。
+	Dでは、文字列は0終端ではなく、長さは別に保持された値で決定されます。
+	そこで、printfを文字列に使うには
+	書式 $(B %.*s) を使うことになります：
 
 ---------------------------------
 char[] s;
@@ -428,190 +428,190 @@ s = "foo";
 printf("string = '$(B %.*s)'\n", s);
 ---------------------------------
 
-	$(P which will behave as expected.
-	Remember, though, that printf's $(B %.*s) will print until the length
-	is reached or a 0 is encountered, so D strings with embedded 0's
-	will only print up to the first 0.
+	$(P 今度は期待したとおりに動作するでしょう。
+	しかし注意が必要なのは、printf の $(B %.*s) は、長さ分もしくは 0 が現れるまで
+	出力する、ということです。このため、中に0を含むDの文字列は、
+	最初の0までしか出力されません。
 	)
 
-	$(P Of course, the easier solution is just use $(B std.stdio.writefln)
-	which works correctly with D strings.
+	$(P もちろん、もっと簡単な解決策は D の文字列に対して正しく動作する $(B std.stdio.writefln)
+	を使うことです。
 	)
 
-$(ITEM nan, Why are floating point values default initialized to NaN rather than 0?)
+$(ITEM nan, なぜ浮動小数点数は0ではなくNaNに初期化されるのですか)
 
-	A floating point value, if no explicit initializer is given,
-	is initialized to NaN (Not A Number):
+	浮動小数点数は、明示的に初期化子が指定されていない限り、
+	NaN (Not A Number) へと初期化されます：
 
 ---------------------------------
-double d;	// d is set to double.nan
+double d;	// d は double.nan に設定される
 ---------------------------------
 
-	NaNs have the interesting property in that whenever a NaN is
-	used as an operand in a computation, the result is a NaN. Therefore,
-	NaNs will propagate and appear in the output whenever a computation
-	made use of one. This implies that a NaN appearing in the output
-	is an unambiguous indication of the use of an uninitialized
-	variable.
+	NaNは、演算のオペランドに使われると常に結果もNaNになるという、
+	素晴らしい特徴を備えています。従って、
+	NaNが計算課程にひとたび現れると、
+	これは伝搬し、出力としてNaNが得られることになります。
+	このことは、出力でのNaNの出現は、
+	どこかで未初期化変数が使われていることの証拠となることを示しています。
 	<p>
 
-	If 0.0 was used as the default initializer for floating point
-	values, its effect could easily be unnoticed in the output, and so
-	if the default initializer was unintended, the bug may go
-	unrecognized.
+	仮に 0.0 が浮動小数点数のデフォルト初期化子であったならば、
+	その結果は出力からは簡単には気づけなくなり、
+	そのデフォルト初期化値が意図したものではなかったときでも、
+	そのバグが見過ごされてしまうかもしれません。
 	<p>
 
-	The default initializer value is not meant to be a useful value,
-	it is meant to expose bugs. Nan fills that role well.
+	デフォルト初期化値は、有用な値であることは意図されていません。
+	バグの発見がその用途です。そして、NaNはこの役割を適切に果たしています。
 	<p>
 
-	But surely the compiler can detect and issue an error message
-	for variables used that are not initialized? Most of the time,
-	it can, but not always, and what it can do is dependent on the
-	sophistication of the compiler's internal data flow analysis.
-	Hence, relying on such is unportable and unreliable.
+	しかし、初期化されていない変数は当然コンパイラが見つけて、
+	エラーメッセージを出せるのではないでしょうか？
+	ほとんどの場合確かにそれは可能ですが、常にではありません。この可能性は、
+	コンパイラ内部のデータフロー解析がどれだけ洗練されているかにかかっています。
+	それゆえ、そんな機能に頼るのは可搬性・信頼性に欠けます。
 	<p>
 
-	Because of the way CPUs are designed, there is no NaN value for
-	integers, so D uses 0 instead. It doesn't have the advantages of
-	error detection that NaN has, but at least errors resulting from
-	unintended default initializations will be consistent and therefore more
-	debuggable.
+	CPUがそう設計されたため、整数にはNaN値がありません。
+	そこで D では代わりに 0 を使います。
+	これは NaN のようなエラー検知には役立ちませんが、
+	少なくとも、意図しないデフォルト初期化に起因する結果は常に一定になり、
+	デバッグがより楽になります。
 
-$(ITEM assignmentoverloading, Why is overloading of the assignment operator not supported?)
+$(ITEM assignmentoverloading, なぜ代入演算子のオーバーロードに対応していないのですか？)
 
-	$(P Overloading of the assignment operator for structs is supported
-	in D 2.0.)
+	$(P 構造体に対する代入演算子のオーバーロードは
+	 D 2.0 でサポートされました。)
 
-$(ITEM keys, The $(SINGLEQUOTE ~) is not on my keyboard?)
+$(ITEM keys, $(SINGLEQUOTE ~) は私のキーボードにないのですが…)
 
-	$(P On PC keyboards, hold down the [Alt] key and press the 1, 2, and 6
-	keys in sequence on the numeric pad. That will generate a $(SINGLEQUOTE ~)
-	character.
+	$(P PCのキーボードでは、[Alt]を押しながらテンキーの 1, 2, 6
+	を順に押してAltを離すと、
+	 $(SINGLEQUOTE ~) が入力されます。
 	)
 
-$(ITEM omf, Can I link in C object files created with another compiler?)
+$(ITEM omf, 他のコンパイラで作ったCのオブジェクトファイルをリンクできますか？)
 
 
-	DMD produces OMF (Microsoft Object Module Format) object
-	files while other compilers such as VC++ produce COFF object
-	files.
-	DMD's output is designed to work with DMC, the Digital Mars C
-	compiler, which also produces object files in OMF format.
+	DMDはOMF形式 (Microsoft Object Module Format)
+	のオブジェクトファイルを生成しますが、他のコンパイラ、例えば VC++
+	はCOFF形式のオブジェクトファイルを生成します。
+	DMD の出力は、同じくOMF形式のオブジェクトファイルを生成する
+	DMC (Digital Mars C コンパイラ) と共に動作するように設計されています。
 	<p>
 
-	The OMF format that DMD uses is a Microsoft defined format based on an
-	earlier Intel designed one. Microsoft at one point decided to abandon it
-	in favor of a Microsoft defined variant on COFF.
+	DMDの使うOMF形式は、かつてIntelが設計した形式に基づいて、Microsoft
+	が定義したものに基づいています。Microsoftはある時から、
+	OMFの使用をやめて新しく定義したCOFFのMicrosoft版を使うようになりましたが。
 	<p>
 
-	Using the same object format doesn't mean that any C library in that
-	format will successfully link and run. There is a lot more compatibility
-	required - such as calling conventions, name mangling, compiler helper
-	functions, and hidden assumptions about the way things work. If DMD
-	produced Microsoft COFF output files, there is still little chance that
-	they would work successfully with object files designed and tested for
-	use with VC. There were a lot of problems with this back when
-	Microsoft's compilers did generate OMF.
+	同じオブジェクトファイル形式を採用しているからと言って、その形式のCライブラリが
+	正しくリンクできて実行できるとは限りません。実際にはもっと様々な互換性が必要です -
+	例えば、呼び出し規約や、名前マングリング、コンパイラの補助関数、
+	細かい動作に関する暗黙の仮定など -。例えDMDがMicrosoftのCOFFを出力できたとしても、
+	VCで使うために作られテストされたオブジェクトファイルを、
+	そのまま正しくリンクして実行できる可能性はほとんどありません。
+	Microsoftのコンパイラが実際にOMFを出力していた頃から、
+	この手の問題は多数存在していました。
 	<p>
 
-	Having a different object file format makes it helpful in identifying
-	library files that were not tested to work with DMD. If they are not,
-	weird problems would result even if they successfully managed to link
-	them together. It really takes an expert to get a binary built with a
-	compiler from one vendor to work with the output of another vendor's
-	compiler.
+	相異なるオブジェクトファイル形式の存在は、DMD
+	での動作がチェックされていないライブラリであることを示す役目を果たしています。
+	もしこうなっていなければ、リンクはどうにかできても、もっと見つけにくい問題の
+	素になってしまいます。あるコンパイラでビルドされたバイナリを、
+	別のベンダのコンパイラの出力と合わせて使えるようにするのは、
+	エキスパートの技が必要な作業なのです。
 	<p>
 
-	That said, the linux version of DMD produces object files in the ELF
-	format which is standard on linux, and it is specifically designed to
-	work with the standard linux C compiler, gcc.
+	とは言えLinux版のDMDは、Linuxでの標準形式である ELF
+	形式のオブジェクトファイルを生成しますから、LinuxのCコンパイラとして標準的な
+	gcc とは特にうまく協調できるようになっています。
 	<p>
 
-	There is one case where using existing C libraries does work - when
-	those libraries come in the form of a DLL conforming to the usual C ABI
-	interface. The linkable part of this is called an "import library", and
-	Microsoft COFF format import libraries can be successfully converted to
-	DMD OMF using the
+	既存のCライブラリを使うことができる場合も一つだけあります。それは、
+	そのライブラリがCのABIインターフェイスに適合したDLLとして提供されている場合です。
+	この場合ライブラリのリンク可能部分は "インポートライブラリ" と呼ばれ、
+	Microsoft の COFF形式のインポートライブラリは、
 	<a href="http://www.digitalmars.com/ctg/coff2omf.html">coff2omf</a>
-	tool.
+	を使えば DMD の
+	OMF 形式へと正しく変換できます。
 
-$(ITEM regexp_literals, Why not support regular expression literals
-	with the $(D /foo/g) syntax?)
+$(ITEM regexp_literals, 正規表現リテラルを
+	$(D /foo/g) のような構文でサポートしないのはなぜですか？)
 
-	$(P There are two reasons:
+	$(P 理由は二つあります：
 	)
 
 	$(OL
 
-	$(LI The $(D /foo/g) syntax would make it impossible to separate
-	the lexer from the parser, as / is the divide token.)
+	$(LI / は除算トークンでもあるため、 $(D /foo/g) 構文を導入すると、
+		字句解析器と構文解析器を分離することが不可能になります。)
 
-	$(LI There are already 3 string types; adding the regex literals
-	would add 3 more. This would proliferate through much of the compiler,
-	debugger info, and library, and is not worth it.)
+	$(LI 現在、すでに３種類の文字列リテラルが存在し、正規表現リテラルを追加すると
+	さらに３種類増えることになります。これは、コンパイラやデバッグ情報、
+	ライブラリなど多くの部分に波及しますが、それだけの価値がある変更ではありません。)
 
 	)
 
-$(ITEM dogfood, Why is the D front end written in C++ rather than D?)
+$(ITEM dogfood, なぜDのフロントエンドはDではなくC++で書かれているのですか？)
 
-	$(P The front end is in C++ in order to interface to the existing gcc
-	and dmd back ends.
-	It's also meant to be easily interfaced to other existing back ends,
-	which are likely written in C++.
-	The D implementation of
-	$(LINK2 http://www.digitalmars.com/dscript/index.html, DMDScript),
-	which performs better than the
-	$(LINK2 http://www.digitalmars.com/dscript/cppscript.html, C++ version),
-	shows that there is no problem
-	writing a professional quality compiler in 100% D.
+	$(P フロントエンドがC++なのは、既存のgccやdmdのバックエンドとの整合性を
+	とるためです。
+	他の既存のコンパイラバックエンドも多くはC++で書かれているので、
+	これは他のバックエンドへも簡単に移植できることにつながります。
+	$(LINK2 http://www.digitalmars.com/dscript/index.html, DMDScript)
+	の D による実装
+	（$(LINK2 http://www.digitalmars.com/dscript/cppscript.html, C++版),
+	よりもパフォーマンスが優れています）
+	の存在は、
+	100% D でプロ品質のコンパイラを書くのに何の問題もないことを示しています。
 	)
 
-$(ITEM cpp_to_D, Why aren't all Digital Mars programs translated to D?)
+$(ITEM cpp_to_D, Digital Mars のプログラムを全てDで書き直したらどうでしょう？)
 
-	$(P There is little benefit to translating a complex, debugged, working
-	application from one language to another. But new Digital Mars apps are
-	implemented in D.)
+	$(P 複雑でデバッグ済みで既に完成しているアプリケーションをわざわざ他言語に
+移植することにあまり利点はありません。新しい Digital Mars のアプリは
+Dで実装されています。)
 
 
-$(ITEM foreach, When should I use a foreach loop rather than a for?)
+$(ITEM foreach, どのような時にforよりもforeachループを使うとよいですか？)
 
-	$(P Is it just performance or readability?
+	$(P どのような時にforよりもforeachループを使うとよいですか？
 	)
 
-	$(P By using foreach, you are letting the compiler decide on the
-	optimization rather than worrying about it yourself. For example - are
-	pointers or indices better?
-	Should I cache the termination condition or not?
-	Should I rotate the loop or not?
-	The answers to these questions are not easy, and can vary from machine
-	to machine. Like register assignment, let the compiler do the
-	optimization.)
+	$(P foreachを使えば、プログラマが自分で考えなくても、
+最適化のための選択を
+コンパイラに全て任せることができます。
+例えば -- ポインタと添字のどちらを使うか？
+終了条件をキャッシュしておくべきか否か？ ループを回すべきか否か？
+これらの選択肢に対する最適解は自明ではありませんし、そもそもマシンによって
+変わってきます。レジスタ割り当てなどと同じように、
+こんな仕事はコンパイラに任せましょう。)
 
 ---
 for (int i = 0; i < foo.length; i++)
 ---
 
-or:
+や:
 
 ---
 for (int i = 0; i < foo.length; ++i)
 ---
 
-or:
+や:
 
 ---
 for (T* p = &foo[0]; p < &foo[length]; p++)
 ---
 
-or:
+や:
 
 ---
 T* pend = &foo[length];
 for (T* p = &foo[0]; p < pend; ++p)
 ---
 
-or:
+や:
 
 ---
 T* pend = &foo[length];
@@ -625,261 +625,261 @@ if (p < pend)
 }
 ---
 
-and, of course, should I use size_t or int?
+や、もちろん、size_t を使うべきか int を使ったほうがいいのか？
 
 ---
 for (size_t i = 0; i < foo.length; i++)
 ---
 
-Let the compiler pick!
+こういった選択はコンパイラに選ばせましょう！
 
 ---
 foreach (v; foo)
 	...
 ---
 
-$(P Note that we don't even need to know what the type T needs to be, thus
-avoiding bugs when T changes. I don't even have to know if foo is an array, or
-an associative array, or a struct, or a collection class. This will also avoid
-the common fencepost bug:)
+$(P 型Tが何であるべきかすら考えなくていいことにも注目してください。
+これによって、Tが変化したときのバグの原因が減ります。fooが配列なのか、
+連想配列なのか、あるいは構造体やコレクションクラスなのかすら気にする必要はありません。
+これによって、ありがちな終了条件まわりのバグも避けられます:)
 
 ---
 for (int i = 0; i <= foo.length; i++)
 ---
 
-$(P And it also avoids the need to manually create a temporary if foo is a
-function call.)
+$(P さらに、fooが関数呼び出しだった場合に一時変数を手で作る手間も
+これによって回避できています。)
 
-$(P The only reason to use a for loop is if your loop does not fit in the
-conventional form, like if you want to change
-the termination condition on the fly.)
+$(P forループを使う唯一の理由は、そのループが通常のループ形式に
+合わない場合…つまり例えば
+その場で終了条件が変化する場合…であるときのみです。)
 
 
-$(ITEM cpp_interface, Why doesn't D have an interface to C++ as well as C?)
+$(ITEM cpp_interface, Dに、CとのインターフェイスはあってもC++とのは無いのは何故？)
 
 $(V2
-	$(P D 2.0 does have a
-	$(LINK2 cpp_interface.html, limited interface to C++ code.)
-	) Here are some reasons why it isn't a full interface:
+	$(P D 2.0 には、制限された形ではありますが、
+	$(LINK2 cpp_interface.html, C++ とのインターフェイス) があります。
+	) 以下に、このインターフェイスが完全でない理由を挙げます：
 )
 
-	$(P Attempting to have D interface with C++ is
-	nearly as complicated as writing a C++ compiler, which would destroy the
-	goal of having D be a reasonably easy language to implement.
-	For people with an existing C++ code base that they must work with, they are
-	stuck with C++ (they can't move it to any other language, either).)
+	$(P D の C++ に対するインターフェイスを作るのは
+	C++ のコンパイラを書くのとほとんど同じくらい複雑で、これは 
+	Dを十分実装しやすい言語とするという目標と矛盾してしまいます。
+	既存のC++コードを元に開発を続けなければならない人は、残念ながら
+	C++から離れることはできないでしょう (D以外の言語であっても移ることは不可能です。))
 
-	$(P There are many issues that would have to be resolved in order for D
-	code to call some arbitrary C++ code that is presumed to be unmodifiable. This
-	list certainly isn't complete, it's just to show the scope of the
-	difficulties involved.
+	$(P 変更できないC++のコードを任意にDから呼び出せるようにしようと思うと、
+	さまざまな困難が待ちかまえています。
+	以下のリストはもちろん完全ではなく、
+	いかに難しいかを示す例として挙げてあります。
 	)
 
 	$(OL
-	$(LI D source code is unicode, C++'s is ASCII with code pages. Or not.
-	It's unspecified. This impacts the contents of string literals.)
+	$(LI DのソースコードはUnicodeですが、C++はASCIIか、
+	あるいは指定されていません。これは文字列リテラルの内容に影響します。)
 
-	$(LI std::string cannot deal with multibyte UTF.)
+	$(LI std::string はマルチバイトのUTFを適切に処理できません。)
 
-	$(LI C++ has a tag name space. D does not. Some sort of renaming would
-	have to happen.)
+	$(LI C++のタグは個別の名前空間を持っていますが、Dにはありません。
+	従ってある種のリネームが必要になります。)
 
-	$(LI C++ code often relies on compiler specific extensions.)
+	$(LI C++のコードはコンパイラの独自拡張に依存していることが多いです。)
 
-	$(LI C++ has namespaces. D has modules. There is no obvious mapping
-	between the two.)
+	$(LI C++ には名前空間があります。Dにはモジュールがあります。
+	この二つの対応関係は単純ではありません。)
 
-	$(LI C++ views source code as one gigantic file (after preprocessing). D
-	sees source code as a hierarchy of modules and packages.)
+	$(LI C++ はソースコードを（プリプロセス後の）巨大なファイルと見なして処理します。
+	Dはモジュールとパッケージの階層として処理します。)
 
-	$(LI Enum name scoping rules behave differently.)
+	$(LI enumの名前スコープ規則が異なっています。)
 
-	$(LI C++ code, despite decades of attempts to replace macro features
-	with inbuilt ones, relies more heavily than ever on layer after layer of
-	arbitrary macros. D does not always have an analog for token pasting and
-	stringizing.)
+	$(LI C++のコードは、マクロをできるだけ使わないようにという長年の試みにもかかわらず、
+	マクロにマクロを重ねた層に依存しています。
+	Dには、トークン結合や
+	文字列化のようなマクロに対応するものがありません。)
 
-	$(LI Macro names have global scope across #include files, but are local
-	to the gigantic source files.)
+	$(LI マクロ名は #include を超えてグローバルなスコープを持ちますが、
+	巨大ソースファイルと見なすとローカルスコープです。)
 
-	$(LI C++ has arbitrary multiple inheritance and virtual base classes. D
-	does not.)
+	$(LI C++ には多重継承や仮想継承があります。
+	Dにはありません。)
 
-	$(LI C++ does not distinguish between in, out and ref (i.e. inout) parameters.)
+	$(LI C++ はin,out,ref(inout)引数を区別しません。)
 
-	$(LI The C++ name mangling varies from compiler to compiler.)
+	$(LI C++ の名前マングリング方式はコンパイラ毎に異なります。)
 
-	$(LI C++ throws exceptions of arbitrary type, not just descendants of
-	Object.)
+	$(LI C++ は任意の型の例外（Objectの派生に限らない）
+	を送出する可能性があります。)
 
-	$(LI C++ overloads based on const and volatile. D overloads
-	based on const and immutable.)
+	$(LI C++ には const と volatile によるオーバーロードがありますが、
+	D には const と immutable によるオーバーロードがあります。)
 
-	$(LI C++ overloads operators in significantly different ways - for
-	example, operator[]() overloading for lvalue and rvalue is based on
-	const overloading and a proxy class.)
+	$(LI C++ の演算子オーバーロード方式はだいぶDと違っています。例えば、
+	operator[]() の左辺値と右辺値としてのオーバーロードは、
+	const によるオーバーロードとプロキシクラスを使って実現されます。)
 
-	$(LI C++ overloads operators like &lt; completely independently of
-	&gt;.)
+	$(LI C++ の例えば &lt; の演算子オーバーロードは
+	完全に &gt; と独立しています。)
 
-	$(LI C++ does not distinguish between a class and a struct object.)
+	$(LI C++ はクラスと構造体を区別しません。)
 
-	$(LI The vtbl[] location and layout is different between C++ and D.)
+	$(LI 仮想関数テーブルの位置とレイアウトは C++ と D とで異なります。)
 
-	$(LI The way RTTI is done is completely different. C++ has no
-	classinfo.)
+	$(LI RTTI の実現方式もまったく異なります。
+	C++にはclassinfoはありません。)
 
-	$(LI D does not have two phase lookup, nor does it have Koenig (ADL)
-	lookup.)
+	$(LI D には two phase lookup や Koenig (ADL) lookup
+	はありません。)
 
-	$(LI C++ relates classes with the 'friend' system, D uses packages and
-	modules.)
+	$(LI C++ はクラス同士を 'friend' で関連づけますが、D
+	ではパッケージとモジュールに基づいて行われます。)
 
-	$(LI C++ class design tends to revolve around explicit memory allocation
-	issues, D's do not.)
+	$(LI C++ のクラスデザインは、明示的なメモリ割り当ての問題を解決することを
+	念頭においておこなわれがちですが、Dではそうではありません。)
 
-	$(LI D's template system is very different.)
+	$(LI D のテンプレートシステムはだいぶ違っています。)
 
-	$(LI C++ has 'exception specifications'.)
+	$(LI C++ には '例外仕様' があります。)
 
-	$(LI C++ has global operator overloading.)
+	$(LI C++ にはグローバルな演算子オーバーロードがあります。)
 
-	$(LI C++ name mangling depends on const and volatile being type
-	modifiers.
-	D name mangling depends on const and immutable being type modifiers.
-	D's const is also transitive, unlike C++. One cannot have a const
-	pointer to mutable in D.
+	$(LI C++ の名前マングリングは、const と volatile
+	が型修飾子であることに依存しています。
+	一方で D の名前マングリングは const と immutable が型修飾子であることに依存しています。
+	また、D の const は C++ のそれと違い推移的なので、
+	D では mutable への const ポインタのようなものが表現できません。
 	)
 
 	)
 
-	$(P The bottom line is the language features affect the design of the code. C++
-	designs just don't fit with D. Even if you could find a way to automatically
-	adapt between the two, the result will be about as enticing as the left side of
-	a honda welded to the right side of a camaro.
+	$(P 問題の根底にあるのは、言語設計はその上で書かれるコードに影響する、
+	ということです。C++の言語設計はDにフィットしていません。
+	たとえ二者を自動的に繋ぐ方法を発見できたとしても、
+	その結果は左半分ホンダで右半分カマロのような大変なものになってしまうでしょう。
 	)
 
-$(ITEM reference-counting, Why doesn't D use reference counting for garbage collection?)
+$(ITEM reference-counting, なぜDはガベージコレクションに参照カウント方式を使わないのですか？)
 
-	$(P Reference counting has its advantages, but some severe
-	disadvantages:
+	$(P 参照カウント方式には利点もありますが、
+		いくつか重大な欠点があります：
 	)
 
 	$(UL
 
-	$(LI Cyclical data structures won't get freed.)
+	$(LI 循環データ構造が解放されません)
 
-	$(LI Every pointer copy requires an increment and a corresponding
-	decrement - including when simply passing a reference to a function.)
+	$(LI ポインタのコピーのたびに毎回参照カウントの上げ下げが必要です。
+	単に関数に参照を渡すだけのときであっても。)
 
-	$(LI In a multithreaded app, the incs and decs must be synchronized.)
+	$(LI マルチスレッド環境では、カウントの上げ下げに同期処理まで必要です。)
 
-	$(LI Exception handlers (finally blocks) must be inserted to handle all the
-	decs so there are no leaks. Contrary to assertions otherwise, there is
-	no such thing as "zero overhead exceptions.")
+	$(LI メモリリークを避けるために、カウントを減らす例外ハンドラ (finally) 
+	を挿入する必要があります。他の部分でどうがんばろうとも、
+	"オーバーヘッド無し例外" はありえないことになります。)
 
-	$(LI In order to support slicing and interior pointers, as well as
-	supporting reference counting on arbitrary allocations of non-object
-	data, a separate "wrapper" object must be allocated for each allocation
-	to be ref counted. This essentially doubles the number of allocations
-	needed.)
+	$(LI スライスや配列内部へのポインタに対応するには、あるいは同様に
+	非オブジェクトの任意のメモリ割り当てを参照カウントで管理するには、
+	独立した"ラッパー"オブジェクトを参照カウントしたいメモリ領域毎に
+	用意しなければなりません。これは本質的に、
+	必要なメモリ割り当て回数を倍増させます。)
 
-	$(LI The wrapper object will mean that all pointers will need to be
-	double-dereferenced to access the data.)
+	$(LI ラッパオブジェクトが必要と言うことは、ポインタ経由のデータへの参照には、
+	常に２回ずつの参照外しが必要ということを意味します。)
 
-	$(LI Fixing the compiler to hide all this stuff from the programmer will
-	make it difficult to interface cleanly with C.)
+	$(LI コンパイラを調整してこれらすべてをプログラマから見えずに澄むようにしてしまうと、
+	Cとの綺麗なインターフェイスを整えるのが難しくなります。)
 
-	$(LI Ref counting can fragment the heap thereby consuming more memory
-	just like the gc can, though the gc typically will consume more memory
-	overall.)
+	$(LI 典型的なケースでは総合的なメモリ消費はGCの方が大きくなりますが、
+	参照カウントはヒープを断片化させ、従って GC 
+	以上にメモリを消費する可能性があります。)
 
-	$(LI Ref counting does not eliminate latency problems, it just reduces
-	them.)
+	$(LI 参照カウントはGCによる停止時間の問題をなくすわけではなく、
+	単に抑えるにすぎません。)
 
 	)
 
-	$(P The proposed C++ shared_ptr&lt;&gt;, which implements ref counting,
-	suffers from all these faults. I haven't seen a heads up benchmark of
-	shared_ptr&lt;&gt; vs mark/sweep, but I wouldn't be surprised if shared_ptr&lt;&gt;
-	turned out to be a significant loser in terms of both performance and
-	memory consumption.
+	$(P C++標準として提案されている shared_ptr&lt;&gt; は参照カウントを実装し、
+	以上すべての欠点を抱えています。shared_ptr&lt;&gt; と Mark&amp;Sweep
+	を厳密に比較したベンチマークはまだ見たことがありませんが、
+	shared_ptr&lt;&gt; が速度とメモリ消費の両面で大負けしたとしても
+	私は驚きません。
 	)
 
-	$(P That said, D may in the future optionally support some form of ref
-	counting, as rc is better for managing scarce resources like file
-	handles.
-    Furthermore, if ref counting is a must, Phobos has the
-    $(LINK2 phobos/std_typecons.html#RefCounted, std.typecons.RefCounted) type
-    which implements it as a library, similar to C++'s shared_ptr&lt;&gt;.
+	$(P とは言ったものの、D でも将来のオプションとしてある種の参照カウントを
+	サポートする可能性があります。例えばファイルハンドルのような
+	個数の少ないリソースを管理するのには参照カウントは悪くない方式です。
+    さらに付け加えるならば、もし参照カウントでなければいけない理由があるならば、Phobos には
+    $(LINK2 phobos/std_typecons.html#RefCounted, std.typecons.RefCounted) 型があり、
+    この機能を C++ の shared_ptr&lt;&gt; 同様ライブラリとして実装しています。
 	)
 
-$(ITEM gc_1, Isn't garbage collection slow and non-deterministic?)
+$(ITEM gc_1, ガベージコレクションは遅くて予測不能なんでしょ？)
 
-	$(P Yes, but $(B all) dynamic memory management is slow and
-	non-deterministic, including malloc/free.
-	If you talk to the people who actually do real time
-	software, they don't use malloc/free precisely because they are not
-	deterministic. They preallocate all data.
-	However, the use of GC instead of malloc enables advanced language
-	constructs (especially, more powerful array syntax), which greatly
-	reduce the number of memory allocations which need to be made.
-	This can mean that GC is actually faster than explict management.
+	$(P その通りです。でも、malloc/free も含めて $(B どんな) 動的メモリ管理も、
+	遅くて、実行時間は予測不能なものです。
+	実際にリアルタイム系のソフトを作っている人に聞くと、
+	正確性が必要な場面では彼らはmalloc/freeは使わないと言います。
+	全てのデータをあらかじめアロケートしておくのです。
+	しかしながら、mallocの代わりにGCを使うことでより進んだ言語機能
+	(とりわけ、より強力な配列操作) が利用可能になり、
+	結果として必要となるメモリ割り当ての回数も減少します。
+	このため、明示的メモリ管理よりも GC の方が現実には高速になることを意味しています。
 	)
 
-$(ITEM pure, Can't a sufficiently smart compiler figure out that a function is pure automatically?)
+$(ITEM pure, 十分に賢いコンパイラなら、関数がpureかどうか自動的に判別できるんじゃないの？)
 
-    $(P The compiler infers purity (and safety, and nothrow) for delegate and function
-    literals. It doesn't do this for normal functions for several reasons:
+    $(P コンパイラは pure 性（と safe 性、nothrow 性）を、function と delegate リテラルについては推論します。
+    通常の関数に対してこれを行わないのは幾つか理由があります:
     )
 
 	$(OL
-	$(LI most functions call other functions, which call other functions,
-	until one of them calls a library routine whose source is not available
-	to the compiler. So it will have to assume it is not pure.
-	With a pure function attribute, external library functions that are pure
-	can be marked as pure, and then the analysis can work for enough cases
-	to be useful.
+	$(LI ほとんどの関数は、別の関数を呼び出し、そこからも更に他の関数が呼び出されます。
+	そのうちに、ソースがコンパイラにはわからないライブラリルーチンの呼び出しに行き着きます。
+	そのような関数は pure でないと仮定するしかありません。
+	pure 属性を導入することで、外部ライブラリのpureな関数は
+	pureとマーク付けすることが可能になり、
+	解析が多くのケースでうまく動作するようになります。
 	)
 
-	$(LI Since virtual functions (and by extension delegates and function
-	pointers) can be extended by the user at times the compiler won't see
-	it, they have to be assumed to be impure.
+	$(LI 仮想関数 (および、関数ポインタやdelegate)
+	でユーザーによって拡張されることを意図されたコードでは、
+	コンパイラからはそれらがpureかpureでないかわからず、常にpureでないと仮定しなければなりません。
 	)
 
-	$(LI If the programmer intends for a particular function to be pure
-	and the compiler detects it is not, this may go unnoticed by the
-	programmer. Even worse, if the programmer does notice it, it may
-	be arbitrarily difficult to determine why the compiler thinks it is
-	impure - is it a programming mistake or a compiler bug?
+	$(LI プログラマがある関数をpureに書いたつもりで、
+	コンパイラがそうでないと判断した場合、これがプログラマに気づかれない可能性があります。
+	もっと悪いことに、プログラマが気づいたとしても、
+	なぜコンパイラがそう判断したのかを理解するのはいくらでも難しくなりえます
+	 - 果たしてプログラムのミスなのかコンパイラのバグなのか？
 	)
 
 	)
 
-$(ITEM minimum precision, Why allow $(D cast(float)) if it isn't supposed to work?)
+$(ITEM minimum precision, $(D cast(float)) がその通りに動かないなら何故サポートしているの？)
 
-	$(P The floating point rules are such that transforming $(D cast(real)cast(float)) to
-	$(D cast(real)) is a valid transformation.
-	This is because the floating point rules are written with the following principle in
-	mind:
+	$(P 浮動小数点数の規則では、 $(D cast(real)cast(float)) を
+	$(D cast(real)) に変換するのは妥当な変換とされます。
+	なぜなら、
+	浮動小数点数の規則は以下の原理を念頭に置いているからです:
 	)
 
-	$(BLOCKQUOTE_PLAIN An algorithm is invalid if it breaks if the floating point precision is
-	increased. Floating point precision is always a minimum, not a maximum.)
+	$(BLOCKQUOTE_PLAIN 浮動小数点数の精度があがると動作がおかしくなるアルゴリズムは、間違っている。
+	 浮動小数点の精度は常に最小であると考えるべきで、最大ではない。)
 
-	$(P Programs that legitimately depended on maximum precision are:)
+	$(P 最大精度に合法的に依存してもよいプログラムは:)
 
 	$(OL
-	$(LI compiler/library validation test suites)
-	$(LI ones trying to programmatically test the precision)
+	$(LI コンパイラ/ライブラリの検証テストプログラム)
+	$(LI 精度をプログラム的に判定しようとするコード片)
 	)
 
-	$(P (1) is not of value to user programming, and there are alternate ways to test
-	the precision.)
+	$(P ですが、(1) は通常のプログラマの気にするところではありませんし、
+	精度を確かめるには他の手段もあります。)
 
-	$(P (2) D has .properties that take care of that.)
+	$(P (2) については D にはその目的のためのプロパティが用意されています。)
 
-	$(P Programs that rely on a maximum accuracy need to be rethought and reengineered.)
+	$(P 最大精度に依存するプログラムは、再考するか再設計の必要があります。)
 
 
 
@@ -922,7 +922,7 @@ $(COMMENT
 )
 
 Macros:
-	TITLE=D 2.0 FAQ
+	TITLE=よくある質問
 	WIKI=FAQ
 	CATEGORY_FAQ=$0
 	ITEMR=$(LI $(LINK2 #$1, $+))
