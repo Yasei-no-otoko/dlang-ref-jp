@@ -1,6 +1,6 @@
 Ddoc
 
-$(COMMUNITY Programming in D for C Programmers,
+$(COMMUNITY CプログラマのためのD言語,
 
 $(COMMENT $(BLOCKQUOTE William Nerdspeare,
 Et tu, D? Then fall, C!
@@ -8,67 +8,67 @@ Et tu, D? Then fall, C!
 
 <!--img src="images/c1.gif" border=0 align=right alt="ouch!"-->
 
-$(P Every experienced C programmer accumulates a series of idioms and techniques
-which become second nature. Sometimes, when learning a new language, those
-idioms can be so comfortable it's hard to see how to do the equivalent in the
-new language. So here's a collection of common C techniques, and how to do the
-corresponding task in D.
+$(P 熟練したCプログラマは誰でも、
+自然とさまざまなイディオムやテクニックを身につけているものです。
+新しい言語を学ぼうとすると、時にこれらのイディオムに慣れすぎたせいで、
+同じことを別の言語でどう実現するのかわからなくなってしまいます。
+そこでここに、C のよく知られたテクニックと、対応するDでのやり方を集めてみました。 
 )
 
-$(P Since C does not have object-oriented features, there's a separate section
-for object-oriented issues
-<a href="cpptod.html">Programming in D for C++ Programmers</a>.
+$(P C にはオブジェクト指向関連の機能はありませんので、
+オブジェクト指向の話は
+<a href="cpptod.html">C++ プログラマのための D 言語</a> に分けて書きました。
 )
 
-$(P The C preprocessor is covered in
-$(LINK2 pretod.html, The C Preprocessor vs D).
+$(P C のプリプロセッサについては
+$(LINK2 pretod.html, Cプリプロセッサ vs D) で扱っています。
 )
 
 $(UL
-	$(LI $(LINK2 #sizeof, Getting the Size of a Type))
-	$(LI $(LINK2 #maxmin, Get the max and min values of a type))
-	$(LI $(LINK2 #types, Primitive Types))
-	$(LI $(LINK2 #floating, Special Floating Point Values))
-	$(LI $(LINK2 #modulus, Remainder after division of floating point numbers))
-	$(LI $(LINK2 #nans, Dealing with NANs in floating point compares))
-	$(LI $(LINK2 #assert, Asserts))
-	$(LI $(LINK2 #arrayinit, Initializing all elements of an array))
-	$(LI $(LINK2 #arrayloop, Looping through an array))
-	$(LI $(LINK2 #arraycreate, Creating an array of variable size))
-	$(LI $(LINK2 #strcat, String Concatenation))
-	$(LI $(LINK2 #printf, Formatted printing))
-	$(LI $(LINK2 #forwardfunc, Forward referencing functions))
-	$(LI $(LINK2 #funcvoid, Functions that have no arguments))
-	$(LI $(LINK2 #labeledbreak, Labeled break and continue statements))
-	$(LI $(LINK2 #goto, Goto Statements))
-	$(LI $(LINK2 #tagspace, Struct tag name space))
-	$(LI $(LINK2 #stringlookup, Looking up strings))
-	$(LI $(LINK2 #align, Setting struct member alignment))
-	$(LI $(LINK2 #anonymous, Anonymous Structs and Unions))
-	$(LI $(LINK2 #declaring, Declaring struct types and variables))
-	$(LI $(LINK2 #fieldoffset, Getting the offset of a struct member))
-	$(LI $(LINK2 #unioninit, Union initializations))
-	$(LI $(LINK2 #structinit, Struct initializations))
-	$(LI $(LINK2 #arrayinit2, Array initializations))
-	$(LI $(LINK2 #stringlit, Escaped String Literals))
-	$(LI $(LINK2 #ascii, Ascii vs Wide Characters))
-	$(LI $(LINK2 #arrayenum, Arrays that parallel an enum))
-	$(LI $(LINK2 #typedefs, Creating a new type with typedef))
-	$(LI $(LINK2 #structcmp, Comparing structs))
-	$(LI $(LINK2 #stringcmp, Comparing strings))
-	$(LI $(LINK2 #sort, Sorting arrays))
-	$(LI $(LINK2 #volatile, Volatile memory access))
-	$(LI $(LINK2 #strings, String literals))
-	$(LI $(LINK2 #traversal, Data Structure Traversal))
-	$(LI $(LINK2 #ushr, Unsigned Right Shift))
-	$(LI $(LINK2 #closures, Dynamic Closures))
-	$(LI $(LINK2 #variadic, Variadic Function Parameters))
+	$(LI $(LINK2 #sizeof, 型のサイズを取得する))
+	$(LI $(LINK2 #maxmin, 型の最大・最小値を取得する))
+	$(LI $(LINK2 #types, 組み込みデータ型))
+	$(LI $(LINK2 #floating, 特殊な浮動小数点数の値))
+	$(LI $(LINK2 #modulus, 浮動小数点数の剰余))
+	$(LI $(LINK2 #nans, 浮動小数点数の比較でのNaNの扱い))
+	$(LI $(LINK2 #assert, assert))
+	$(LI $(LINK2 #arrayinit, 配列要素の初期化))
+	$(LI $(LINK2 #arrayloop, 配列の要素ごとのループ))
+	$(LI $(LINK2 #arraycreate, 可変長配列の作成))
+	$(LI $(LINK2 #strcat, 文字列連結))
+	$(LI $(LINK2 #printf, 整形print))
+	$(LI $(LINK2 #forwardfunc, 関数の前方参照))
+	$(LI $(LINK2 #funcvoid, 引数を持たない関数))
+	$(LI $(LINK2 #labeledbreak, ラベル付きbreakとcontinue))
+	$(LI $(LINK2 #goto, goto文))
+	$(LI $(LINK2 #tagspace, 構造体タグの名前空間))
+	$(LI $(LINK2 #stringlookup, 文字列の検索))
+	$(LI $(LINK2 #align, 構造体メンバのアラインメント))
+	$(LI $(LINK2 #anonymous, 無名構造体・無名共用体))
+	$(LI $(LINK2 #declaring, 構造体の型と変数の宣言))
+	$(LI $(LINK2 #fieldoffset, 構造体メンバのオフセット計算))
+	$(LI $(LINK2 #unioninit, 共用体の初期化))
+	$(LI $(LINK2 #structinit, 構造体の初期化))
+	$(LI $(LINK2 #arrayinit2, 配列の初期化))
+	$(LI $(LINK2 #stringlit, エスケープされた文字列リテラル))
+	$(LI $(LINK2 #ascii, ASCII文字とワイド文字))
+	$(LI $(LINK2 #arrayenum, 列挙型と配列の併用))
+	$(LI $(LINK2 #typedefs, typedefで新しい型を作る))
+	$(LI $(LINK2 #structcmp, 構造体の比較))
+	$(LI $(LINK2 #stringcmp, 文字列の比較))
+	$(LI $(LINK2 #sort, 配列のソート))
+	$(LI $(LINK2 #volatile, volatile なメモリアクセス))
+	$(LI $(LINK2 #strings, 文字列リテラル))
+	$(LI $(LINK2 #traversal, データ構造のなぞり))
+	$(LI $(LINK2 #ushr, 符号なし右シフト))
+	$(LI $(LINK2 #closures, 動的クロージャ))
+	$(LI $(LINK2 #variadic, 可変個関数引数))
 )
 
 <hr><!-- -------------------------------------------- -->
-<h3><a name="sizeof">Getting the Size of a Type</a></h3>
+<h3><a name="sizeof">型のサイズを取得する</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
 $(CCODE
 sizeof(int)
@@ -77,9 +77,9 @@ sizeof(double)
 sizeof(struct Foo)
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-<P>Use the size property:</P>
+<P>sizeプロパティを使います：</P>
 
 ----------------------------
 int.sizeof
@@ -89,9 +89,9 @@ Foo.sizeof
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="maxmin">Get the max and min values of a type</a></h3>
+<h3><a name="maxmin">型の最大・最小値を取得する</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
 $(CCODE
 #include &lt;limits.h&gt;
@@ -103,7 +103,7 @@ ULONG_MAX
 DBL_MIN
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
 ----------------------------
 char.max
@@ -113,9 +113,9 @@ double.min
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="types">Primitive Types</a></h3>
+<h3><a name="types"組み込みデータ型</a></h3>
 
-<h4>C to D types</h4>
+<h4>C =&gt; D</h4>
 
 $(CCODE
 bool               =&gt;        bit
@@ -138,16 +138,16 @@ _Imaginary long double =&gt;    ireal
 _Complex long double   =&gt;    creal
 )
 <p>
-       Although char is an unsigned 8 bit type, and
-       wchar is an unsigned 16 bit type, they have their own separate types
-       in order to aid overloading and type safety.
+		char は8bitの符号なし、wchar は16bitの符号なし型で、
+		別々の型です。
+		これによって型安全性やオーバーロードがしやすくなっています。
 <p>
-       Ints and unsigneds in C are of varying size; not so in D.
+		C では int や unsinged のサイズは環境によって変わりますが、Dでは固定されています。
 
 <hr><!-- ============================================ -->
-<h3><a name="floating">Special Floating Point Values</a></h3>
+<h3><a name="floating">特殊な浮動小数点数の値</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
 $(CCODE
 #include &lt;fp.h&gt;
@@ -166,7 +166,7 @@ DBL_MIN_10_EXP
 DBL_MIN_EXP
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
 ----------------------------
 double.nan
@@ -181,9 +181,9 @@ double.min_exp
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="modulus">Remainder after division of floating point numbers</a></h3>
+<h3><a name="modulus">浮動小数点数の剰余</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
 $(CCODE
 #include &lt;math.h&gt;
@@ -193,9 +193,9 @@ double d = fmod(x,y);
 long double r = fmodl(x,y);
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-D supports the remainder ('%') operator on floating point operands:
+Dは余りを取る演算('%') は浮動小数点数に対しても定義されています：
 
 ----------------------------
 float f = x % y;
@@ -204,13 +204,13 @@ real r = x % y;
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="nans">Dealing with NANs in floating point compares</a></h3>
+<h3><a name="nans">浮動小数点数でのNaNの扱い</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       C doesn't define what happens if an operand to a compare
-       is NAN, and few C compilers check for it (the Digital Mars
-       C compiler is an exception, DM's compilers do check for NAN operands).
+	Cでは、NaN を比較したときに何が起きるかは規定されていません。
+	また実際、ほとんどのコンパイラは NaN チェックを行いません。
+	（Digital Mars C コンパイラはこのチェックを行う数少ない例外です）
 
 $(CCODE
 #include &lt;math.h&gt;
@@ -221,23 +221,23 @@ else
    result = (x &lt; y);
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-       D offers a full complement of comparisons and operators
-       that work with NAN arguments.
+	Dでは、
+	NaN を考慮した完全な浮動小数比較演算が提供されています。
 
 ----------------------------
-result = (x < y);        // false if x or y is nan
+result = (x < y);        // x か y が NaN なら false
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="assert">Asserts are a necessary part of any good defensive coding strategy</a></h3>
+<h3><a name="assert">assertは守りの堅いコードに必須の要素</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 <p>
-C doesn't directly support assert, but does support __FILE__
-and __LINE__ from which an assert macro can be built. In fact,
-there appears to be practically no other use for __FILE__ and __LINE__.
+Cはassertに直接対応はしていませんが __LINE__ を使って
+assertマクロが定義されています。__FILE__ や __LINE__
+マクロの使い道はこれくらいしか無いように思われます。
 
 $(CCODE
 #include &lt;assert.h&gt;
@@ -245,18 +245,18 @@ $(CCODE
 assert(e == 0);
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-D simply builds assert into the language:
+D は assert が言語に組み込まれています。
 
 ----------------------------
 assert(e == 0);
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="arrayinit">Initializing all elements of an array</a></h3>
+<h3><a name="arrayinit">配列要素の初期化</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
 $(CCODE
 #define ARRAY_LENGTH        17
@@ -265,7 +265,7 @@ for (i = 0; i &lt; ARRAY_LENGTH; i++)
    array[i] = value;
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
 ----------------------------
 int array[17];
@@ -273,12 +273,12 @@ array[] = value;
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="arrayloop">Looping through an array</a></h3>
+<h3><a name="arrayloop">配列の要素ごとのループ</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 <p>
-       The array length is defined separately, or a clumsy
-       sizeof() expression is used to get the length.
+       配列の要素数は別に定義されているか、sizeof()
+       を使ったややこしいトリックが必要です。
 
 $(CCODE
 #define ARRAY_LENGTH        17
@@ -295,9 +295,9 @@ for (i = 0; i &lt; sizeof(array) / sizeof(array[0]); i++)
    func(array[i]);
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-The length of an array is accessible through the property "length".
+Dでは配列のプロパティ"length"から配列サイズが得られます。
 
 ----------------------------
 int array[17];
@@ -305,7 +305,7 @@ for (i = 0; i < array.length; i++)
    func(array[i]);
 ----------------------------
 
-or even better:
+あるいはもっと簡単に：
 
 ----------------------------
 int array[17];
@@ -315,13 +315,13 @@ foreach (int value; array)
 
 
 <hr><!-- ============================================ -->
-<h3><a name="arraycreate">Creating an array of variable size</a></h3>
+<h3><a name="arraycreate">可変長配列の作成</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       C cannot do this with arrays. It is necessary to create a separate
-       variable for the length, and then explicitly manage the size of
-       the array:
+	Cでは配列ではこれは不可能です。
+	サイズを保持する別の変数を作って、
+	明示的に配列の長さの管理を行う必要があります：
 
 $(CCODE
 #include &lt;stdlib.h&gt;
@@ -338,10 +338,10 @@ array = newarray;
 array[array_length++] = x;
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-       D supports dynamic arrays, which can be easily resized. D supports
-       all the requisite memory management.
+       Dには、簡単にリサイズできる動的配列があります。
+       通常必要なメモリ管理機構は全てD言語側でサポートされています。
 
 ----------------------------
 int[] array;
@@ -351,13 +351,13 @@ array[array.length - 1] = x;
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="strcat">String Concatenation</a></h3>
+<h3><a name="strcat">文字列連結</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       There are several difficulties to be resolved, like
-       when can storage be freed, dealing with null pointers,
-       finding the length of the strings, and memory allocation:
+	いくつか難点がありました。
+	例えば、メモリの割り当て・解放や、
+	NULLポインタの扱い、文字列の長さの処理などです。
 
 $(CCODE
 #include &lt;string.h&gt;
@@ -366,7 +366,7 @@ char *s1;
 char *s2;
 char *s;
 
-// Concatenate s1 and s2, and put result in s
+// s1 と s2 をつなげて、結果を s に入れる
 free(s);
 s = (char *)malloc((s1 ? strlen(s1) : 0) +
 		  (s2 ? strlen(s2) : 0) + 1);
@@ -379,7 +379,7 @@ else
 if (s2)
    strcpy(s + strlen(s), s2);
 
-// Append "hello" to s
+// s に "hello" に追加
 char hello[] = "hello";
 char *news;
 size_t lens = s ? strlen(s) : 0;
@@ -391,10 +391,10 @@ s = news;
 memcpy(s + lens, hello, sizeof(hello));
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-       D overloads the operators ~ and ~= for char and wchar arrays to mean
-       concatenate and append, respectively:
+	Dは~と~=演算子をcharやwcharの配列に対してオーバーロードし、
+	文字列結合の意味として使用しています。次のように：
 
 ----------------------------
 char[] s1;
@@ -406,11 +406,11 @@ s ~= "hello";
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="printf">Formatted printing</a></h3>
+<h3><a name="printf">整形print</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       printf() is the general purpose formatted print routine:
+       printf() が汎用の整形出力ルーチンです：
 
 $(CCODE
 #include &lt;stdio.h&gt;
@@ -418,15 +418,15 @@ $(CCODE
 printf("Calling all cars %d times!\n", ntimes);
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-       What can we say? printf() rules:
+       D ではどうなっているのでしょう？ やはり printf() は使えます：
 
 ----------------------------
 printf("Calling all cars %d times!\n", ntimes);
 ----------------------------
 
-	writefln() improves on printf() by being type-aware and type-safe:
+	さらに、writefln() は printf() を型安全かつスレッドセーフに改善します:
 
 -----------------------
 import std.stdio;
@@ -435,13 +435,13 @@ writefln("Calling all cars %s times!", ntimes);
 -----------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="forwardfunc">Forward referencing functions</a></h3>
+<h3><a name="forwardfunc">関数の前方参照</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       Functions cannot be forward referenced. Hence, to call a function
-       not yet encountered in the source file, it is necessary to insert
-       a function declaration lexically preceding the call.
+	関数の前方参照、
+	つまりまだソースファイル中に現れていない関数の呼び出し、
+	は出来ません。呼び出しより前に関数のプロトタイプ宣言が必要です。
 
 $(CCODE
 void forwardfunc();
@@ -457,13 +457,13 @@ void forwardfunc()
 }
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	The program is looked at as a whole, and so not only is it not
-	necessary to code forward declarations, it is not even allowed!
-	D avoids the tedium and errors associated with writing forward
-	referenced function declarations twice.
-	Functions can be defined in any order.
+	プログラム全体がまとめて扱われるので、
+	前方宣言のコードは不要です。
+	前方宣言自体、言語として不正とされています！
+	宣言と定義を分けて二箇所に書くことで生じる面倒さやエラーをDは回避しています。
+	関数は好きな順序で定義しましょう。
 
 ----------------------------
 void myfunc()
@@ -478,19 +478,19 @@ void forwardfunc()
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="funcvoid">Functions that have no arguments</a></h3>
+<h3><a name="funcvoid">引数を持たない関数</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
 $(CCODE
 void function(void);
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-       D is a strongly typed language, so there is no need to explicitly
-       say a function takes no arguments, just don't declare it has having
-       arguments.
+		D は型付けの強い言語なので、
+		引数を持たないことを明示的に宣言する
+		必要はありません。単に引数宣言を書かなければよいだけです。
 
 ----------------------------
 void function()
@@ -500,12 +500,12 @@ void function()
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="labeledbreak">Labeled break and continue statements</a></h3>
+<h3><a name="labeledbreak">ラベル付きbreakとcontinue</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       Break and continue statements only apply to the innermost nested loop or
-       switch, so a multilevel break must use a goto:
+	breakとcontinueは、再内周ループにのみ適用されました。
+	このため、多段breakするにはgotoが使われます：
 
 $(CCODE
     for (i = 0; i &lt; 10; i++)
@@ -524,11 +524,11 @@ Louter:
     ;
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-       Break and continue statements can be followed by a label. The label
-       is the label for an enclosing loop or switch, and the break applies
-       to that loop.
+	break と continue にはラベルを指定できます。
+	ラベルは文を含むループにつき、breakやcontinueはそのラベルの付いた
+	ループ（あるいはswitch）に対して適用されます。
 
 ----------------------------
 Louter:
@@ -548,50 +548,50 @@ Louter:
 <hr><!-- ============================================ -->
 <h3><a name="goto">Goto Statements</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       The much maligned goto statement is a staple for professional C coders.
-       It's
-       necessary to make up for sometimes inadequate control flow statements.
+	プロのCプログラマにとっては、
+	諸悪の根元たるgoto文であっても重要です。
+	時にはおかしなコントロールフローが必要になることもあります。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-       Many C-way goto statements can be eliminated with the D feature of
-       labeled
-       break and continue statements. But D is a practical language for
-       practical
-       programmers who know when the rules need to be broken. So of course D
-       supports goto statements.
+	Dのラベル付きbreak, continue機能によって、
+	Cでgotoを使っていた場面のほとんどで
+	gotoは不要になります。
+	しかしDは、全ての規則に例外がある、
+	ということをよくわかっている現実のプログラマのための現実的な言語です。
+	もちろんDはgotoに対応しています！
 
 <hr><!-- ============================================ -->
-<h3><a name="tagspace">Struct tag name space</a></h3>
+<h3><a name="tagspace">構造体タグ名の名前空間</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       It's annoying to have to put the struct keyword every time a type is specified,
-       so a common idiom is to use:
+	構造体を使う場所ごとにいちいちstructと書いていくのは大変なので、
+	次のイディオムが広く使われています：
 
 $(CCODE
 typedef struct ABC { ... } ABC;
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-       Struct tag names are not in a separate name space, they are in the same name
-       space as ordinary names. Hence:
+	構造体のタグ名は別の名前空間には入りません。他の名前と同様に参照できます。
+	つまり：
 
 ----------------------------
 struct ABC { ... }
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="stringlookup">Looking up strings</a></h3>
+<h3><a name="stringlookup">文字列の検索</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       Given a string, compare the string against a list of possible
-       values and take action based on which one it is. A typical use
-       for this might be command line argument processing.
+	文字列を受け取って、可能な文字列のリストと比較して
+	対応するアクションを実行する…というコードを考えます。
+	よくある例として、コマンドライン引数の処理があります：
 
 $(CCODE
 #include &lt;string.h&gt;
@@ -616,23 +616,23 @@ void dostring(char *s)
 }
 )
 
-       The problem with this is trying to maintain 3 parallel data
-       structures, the enum, the table, and the switch cases. If there
-       are a lot of values, the connection between the 3 may not be so
-       obvious when doing maintenance, and so the situation is ripe for
-       bugs.
+	3つのデータ構造、構造体と列挙型と表に加えて switch
+	文を同時に管理しなくてはいけない、というのは問題です。
+	もしデータにもっと多くの可能性があったなら、
+	三つの構造をきちんと整合性を持たせるのは難しく、
+	バグの原因になります。
 
-       Additionally, if the number of values becomes large, a binary or
-       hash lookup will yield a considerable performance increase over
-       a simple linear search. But coding these can be time consuming,
-       and they need to be debugged. It's typical that such just never
-       gets done.
+	さらに、値の種類が莫大になってくると、
+	単なる線形探索ではなくハッシュや二分木を使って速度の改善を図る必要が出てきます。
+	しかし、そのような新しいコードを書いてデバッグする…
+	という手間は時間がかかるため、結局放置される、
+	というのがよくあるパターンです。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-       D extends the concept of switch statements to be able to handle
-       strings as well as numbers. Then, the way to code the string
-       lookup becomes straightforward:
+	Dではswitch文を、
+	整数だけでなく文字列に対しても使えるように拡張しました。
+	文字列照合のコードは次のように直接的になります：
 
 ----------------------------
 void dostring(char[] s)
@@ -647,18 +647,18 @@ void dostring(char[] s)
 }
 ----------------------------
 
-       Adding new cases becomes easy. The compiler can be relied on
-       to generate a fast lookup scheme for it, eliminating the bugs
-       and time required in hand-coding one.
+	新しい文字列を追加するのも簡単です。効果的な探索コードの生成は、
+	コンパイラに任せることが出来ます。手書きするのに比べてバグも減り、
+	開発時間も短縮されます。
 
 <hr><!-- ============================================ -->
-<h3><a name="align">Setting struct member alignment</a></h3>
+<h3><a name="align">構造体メンバのアラインメント</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       It's done through a command line switch which affects the entire
-       program, and woe results if any modules or libraries didn't get
-       recompiled. To address this, $(D #pragma)s are used:
+	コマンドラインスイッチによって制御されます。しかし、
+	全てのモジュールやライブラリを確実に再コンパイルしないとおかしな結果になります。
+	このため、実際には $(D #pragma) が使われます：
 
 $(CCODE
 #pragma pack(1)
@@ -669,43 +669,43 @@ struct ABC
 #pragma pack()
 )
 
-       But $(D #pragma)s are nonportable both in theory and in practice from
-       compiler to compiler.
+	しかし、規格上も実際の実装を見ても、
+	$(D #pragma) は移植性がありません。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	$(P D has a syntax for setting the alignment that is common
-	to all D compilers. The actual alignment done is compatible
-	with the companion C compiler's alignment, for ABI compatibility.
-	To match a particular layout across architectures, use
-	$(D align(1)) and manually specify it.
+	$(P Dでは、すべてのDコンパイラ間で共通の、アラインメントを指定する構文が用意されています。
+	実際に行われるアラインメントは、ABI互換性のために、
+	各環境でのCコンパイラと合わせて実装されています。
+	アーキテクチャを越えて同じ特定のメモリレイアウトに合わせるには、
+	$(D align(1)) を使って手動でレイアウトを調整します。
 	)
 
 ----------------------------
 struct ABC
 {
-   int z;               // z is aligned to the default
+   int z;               // z はデフォルトの整列
 
- align (1) int x;       // x is byte aligned
+ align (1) int x;       // x はバイト境界へ
  align (4)
  {
-   ...                  // declarations in {} are dword aligned
+   ...                  // {} 内の宣言はdword境界へ整列
  }
- align (2):             // switch to word alignment from here on
+ align (2):             // ここから下ではword境界へ整列
 
-   int y;               // y is word aligned
+   int y;               // y はword境界へ
 }
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="anonymous">Anonymous Structs and Unions</a></h3>
+<h3><a name="anonymous">無名構造体・無名共用体</a></h3>
 
-Sometimes, it's nice to control the layout of a struct with nested structs and unions.
+時に、構造体や共用体をネストして、レイアウトを調整すると便利なことがあります。
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       C doesn't allow anonymous structs or unions, which means that dummy tag names
-       and dummy members are necessary:
+	Cでは無名の構造体,共用体は禁じられています。そこで、
+	ダミーのタグ名やメンバが必要になります。
 
 $(CCODE
 struct Foo
@@ -730,13 +730,13 @@ f.y;
 f.p;
 )
 
-       Not only is it clumsy, but using macros means a symbolic debugger won't understand
-       what is being done, and the macros have global scope instead of struct scope.
+	不格好なだけでなく、マクロを使ってしまうとデバッガで扱いにくくなってしまいます。
+	また、マクロは構造体の中だけでなくグローバルスコープ全域で定義されます。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-       Anonymous structs and unions are used to control the layout in a
-       more natural manner:
+	より自然に
+	無名構造体,共用体を扱えます。
 
 ----------------------------
 struct Foo
@@ -758,45 +758,45 @@ f.p;
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="declaring">Declaring struct types and variables</a></h3>
+<h3><a name="declaring">構造体の型と変数の宣言</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-	$(P Is to do it in one statement ending with a semicolon:)
+	$(P セミコロンで終わる一つの文で書くか、)
 
 $(CCODE
 struct Foo { int x; int y; } foo;
 )
 
-	$(P Or to separate the two:)
+	$(P 二行に分けで書きます：)
 
 $(CCODE
-struct Foo { int x; int y; };   // note terminating ;
+struct Foo { int x; int y; };   // 最後の ; が必要
 struct Foo foo;
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	$(P Struct definitions and declarations can't be done in the same
-	statement:
+	$(P
+	構造体の定義と変数宣言は同じ文には書けません：
 	)
 
 ----------------------------
-struct Foo { int x; int y; }    // note there is no terminating ;
+struct Foo { int x; int y; }    // 最後の ; は要らない
 Foo foo;
 ----------------------------
 
-	$(P which means that the terminating ; can be dispensed with,
-	eliminating the confusing difference between struct {} and function
-	block {} in how semicolons are used.
+	$(P 構造体定義の最後に ; がつかないのは、
+	関数やブロック {} の最後には ;
+	が不要なのに構造体宣言には要る、という混乱する仕様を排除するためです。
 	)
 
 <hr><!-- ============================================ -->
-<h3><a name="fieldoffset">Getting the offset of a struct member</a></h3>
+<h3><a name="fieldoffset">構造体メンバのオフセット計算</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       Naturally, another macro is used:
+	通常はマクロを使います：
 
 $(CCODE
 #include &lt;stddef&gt;
@@ -805,9 +805,9 @@ struct Foo { int x; int y; };
 off = offsetof(Foo, y);
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-       An offset is just another property:
+	オフセットはプロパティの一つです：
 
 ----------------------------
 struct Foo { int x; int y; }
@@ -816,173 +816,173 @@ off = Foo.y.offsetof;
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="unioninit">Union Initializations</a></h3>
+<h3><a name="unioninit">共用体の初期化</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       Unions are initialized using the "first member" rule:
+	"最初のメンバ"規則に従って初期化されます：
 
 $(CCODE
 union U { int a; long b; };
-union U x = { 5 };                // initialize member 'a' to 5
+union U x = { 5 };                // メンバ 'a' が 5 に初期化される
 )
 
-       Adding union members or rearranging them can have disastrous consequences
-       for any initializers.
+	共用体のメンバを増やしたり宣言の順番を変えたりすると、
+	初期化のところで大変な問題が生じ得ます。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-       In D, which member is being initialized is mentioned explicitly:
+	どのメンバを初期化するのか明示的に言及します：
 
 ----------------------------
 union U { int a; long b; }
 U x = { a:5 };
 ----------------------------
 
-       avoiding the confusion and maintenance problems.
+	わかりにくさや保守性の問題を回避しています。
 
 <hr><!-- ============================================ -->
-<h3><a name="structinit">Struct Initializations</a></h3>
+<h3><a name="structinit">構造体の初期化</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       Members are initialized by their position within the { }s:
+	メンバは、{} の中の順番に応じて初期化されます。
 
 $(CCODE
 struct S { int a; int b; };
 struct S x = { 5, 3 };
 )
 
-       This isn't much of a problem with small structs, but when there
-       are numerous members, it becomes tedious to get the initializers
-       carefully lined up with the field declarations. Then, if members are
-       added or rearranged, all the initializations have to be found and
-       modified appropriately. This is a minefield for bugs.
+	小さな構造体では大した問題ではありませんが、メンバの数が増えてくると、
+	初期化子を正しく宣言の順に並べる作業に細心の注意が必要となってきます。
+	そこでメンバが追加されたり並び替えられたりすると、
+	初期化部分を探して間違いのないよう修正することになります。
+	もうこれはバグの地雷原とでもいうしかありません。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-       Member initialization can be done explicitly:
+	メンバの明示的な初期化も可能です：
 
 ----------------------------
 struct S { int a; int b; }
 S x = { b:3, a:5 };
 ----------------------------
 
-       The meaning is clear, and there no longer is a positional dependence.
+	意味が明白ですし、順番への依存もありません。
 
 <hr><!-- ============================================ -->
 <h3><a name="arrayinit2">Array Initializations</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       C initializes array by positional dependence:
+	Cでは順番に依存して配列が初期化されます：
 $(CCODE
 int a[3] = { 3,2,2 };
 )
-       Nested arrays may or may not have the { }:
+	ネストした配列の場合は{}があってもなくてもOkです：
 $(CCODE
 int b[3][2] = { 2,3, {6,5}, 3,4 };
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-       D does it by positional dependence too, but an index can be used as well.
-       The following all produce the same result:
+	配列についてはDも、順番に依存した初期化が出来ます。しかし、
+	インデックスを明示的に指定することも可能です。以下は皆同じ結果になります。
 
 ----------------------------
 int[3] a = [ 3, 2, 0 ];
-int[3] a = [ 3, 2 ];            // unsupplied initializers are 0, just like in C
+int[3] a = [ 3, 2 ];            // C同様、指定されていない部分は0初期化
 int[3] a = [ 2:0, 0:3, 1:2 ];
-int[3] a = [ 2:0, 0:3, 2 ];     // if not supplied, the index is the
-				// previous one plus one.
+int[3] a = [ 2:0, 0:3, 2 ];     // 指定がなければ、
+				// インデックスは直前+1
 ----------------------------
-       This can be handy if the array will be indexed by an enum, and the order of
-       enums may be changed or added to:
+	配列の添え字をenumで扱っているとき、これは便利です。
+	enumの順序が変更されたり新しく列挙定数が増えても大丈夫：
 
 ----------------------------
 enum color { black, red, green }
 int[3] c = [ black:3, green:2, red:5 ];
 ----------------------------
-       Nested array initializations must be explicit:
+	多重配列の初期化は明示的に [] が必要です：
 ----------------------------
 int[2][3] b = [ [2,3], [6,5], [3,4] ];
 
-int[2][3] b = [[2,6,3],[3,5,4]];            // error
+int[2][3] b = [[2,6,3],[3,5,4]];            // エラー
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="stringlit">Escaped String Literals</a></h3>
+<h3><a name="stringlit">エスケープされた文字列リテラル</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       C has problems with the DOS file system because a \ is an escape in a string. To specifiy file c:\root\file.c:
+       Cでは\がエスケープシーケンスなので、DOSファイルシステムのファイル名を表現する時に問題が発生します。c:\root\file.c と指定するには：
 $(CCODE
 char file[] = "c:\\root\\file.c";
 )
-This gets even more unpleasant with regular expressions.
-Consider the escape sequence to match a quoted string:
+正規表現を扱い出すと、もっと大変になります。
+例えば次のような、引用文字列にマッチする正規表現を考えてみましょう：
 $(CCODE
 /"[^\\]*(\\.[^\\]*)*"/
 )
-<P>In C, this horror is expressed as:
+<P>C では、これはほとんど笑い話です：
 $(CCODE
 char quoteString[] = "\"[^\\\\]*(\\\\.[^\\\\]*)*\"";
 )
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	Within strings, it is WYSIWYG (what you see is what you get).
-	Escapes are in separate strings. So:
+	文字列は、WYSIWYG (what you see is what you get) です。
+	エスケープは文字列と分けて書きます。なので：
 
 ----------------------------
 char[] file = `c:\root\file.c`;
 char[] quoteString = \"  r"[^\\]*(\\.[^\\]*)*"  \";
 ----------------------------
 
-       The famous hello world string becomes:
+	かの有名な hello world 文字列はこうなるでしょう：
 ----------------------------
 char[] hello = "hello world" \n;
 ----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="ascii">Ascii vs Wide Characters</a></h3>
+<h3><a name="ascii">ASCII文字とワイド文字</a></h3>
 
-<P>Modern programming requires that wchar strings be supported in an easy way, for internationalization of the programs.
+<P>モダンなプログラムでは、国際化のためにwchar文字を簡単に扱える必要があります。
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       C uses the wchar_t and the L prefix on strings:
+	Cでは、wchar_t型と文字列への接頭辞Lを使います。
 $(CCODE
 #include &lt;wchar.h&gt;
 char foo_ascii[] = "hello";
 wchar_t foo_wchar[] = L"hello";
 )
-Things get worse if code is written to be both ascii and wchar compatible.
-A macro is used to switch strings from ascii to wchar:
+	ASCIIとワイド文字双方向けにコンパイルできるコードを書こうとすると、
+	いささか嫌な状況になります。ASCIIとワイド文字の切り替えにマクロが使われるのです：
 $(CCODE
 #include &lt;tchar.h&gt;
 tchar string[] = TEXT("hello");
 )
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-The type of a string is determined by semantic analysis, so there is no need to wrap strings in a macro call:
+	文字列の型は意味解析時に決定されるので、マクロ呼び出しで囲う必要はありません：
 -----------------------------
-char[] foo_ascii = "hello";        // string is taken to be ascii
-wchar[] foo_wchar = "hello";       // string is taken to be wchar
+char[] foo_ascii = "hello";        // 文字列はASCIIとされる
+wchar[] foo_wchar = "hello";       // 文字列はワイド文字とされる
 -----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="arrayenum">Arrays that parallel an enum</a></h3>
+<h3><a name="arrayenum">列挙型と配列の併用</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-       Consider:
+	次の例を考えます：
 $(CCODE
 enum COLORS { red, blue, green, max };
 char *cstring[max] = {"red", "blue", "green" };
 )
-       This is fairly easy to get right because the number of entries is small. But suppose it gets to be fairly large. Then it can get difficult to maintain correctly when new entries are added.
+	要素の数が少なければ、これで十分です。しかし数を増やすと、正しく管理するのが難しくなってきます。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 -----------------------------
 enum COLORS { red, blue, green }
 
@@ -994,16 +994,16 @@ char[][COLORS.max + 1] cstring =
 ];
 -----------------------------
 
-Not perfect, but better.
+完璧ではありませんが、改善されています。
 
 <hr><!-- ============================================ -->
-<h3><a name="typedefs">Creating a new type with typedef</a></h3>
+<h3><a name="typedefs">typedefで新しい型を作る</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-	Typedefs in C are weak, that is, they really do not introduce
-	a new type. The compiler doesn't distinguish between a typedef
-	and its underlying type.
+	Cのtypedefは'弱い'typedefです。どういうことかというと、
+	このtypedefは実際には新しい型を定義しない、ということです。
+	コンパイラはtypedefされた型と元の型を区別しません。
 
 $(CCODE
 typedef void *Handle;
@@ -1011,12 +1011,12 @@ void foo(void *);
 void bar(Handle);
 
 Handle h;
-foo(h);			// coding bug not caught
+foo(h);			// みつかりにくいバグ
 bar(h);			// ok
 )
 
-	The C solution is to create a dummy struct whose sole
-	purpose is to get type checking and overloading on the new type.
+	Cでの解決策は、型チェックとオーバーロードを提供するだけのために
+	ダミーの構造体型を作ることです。
 
 $(CCODE
 struct Handle__ { void *value; }
@@ -1025,12 +1025,12 @@ void foo(void *);
 void bar(Handle);
 
 Handle h;
-foo(h);			// syntax error
+foo(h);			// 構文エラー
 bar(h);			// ok
 )
 
-	Having a default value for the type involves defining a macro,
-	a naming convention, and then pedantically following that convention:
+	型のデフォルトの初期値を指定するには、マクロ定義が必要です。
+	命名規則を定めて、その規則に厳密に従わないといけません：
 
 $(CCODE
 #define HANDLE_INIT ((Handle)-1)
@@ -1041,12 +1041,12 @@ if (h != HANDLE_INIT)
     ...
 )
 
-	For the struct solution, things get even more complex:
+	構造体を使った方法だと、もっと複雑です：
 
 $(CCODE
 struct Handle__ HANDLE_INIT;
 
-void init_handle()	// call this function upon startup
+void init_handle()	// スタートアップ時にこの関数を呼ぶこと
 {
     HANDLE_INIT.value = (void *)-1;
 }
@@ -1057,12 +1057,12 @@ if (memcmp(&h,&HANDLE_INIT,sizeof(Handle)) != 0)
     ...
 )
 
-	There are 4 names to remember: $(D Handle, HANDLE_INIT,
+	４つも名前を覚えるはめになりました： $(D Handle, HANDLE_INIT,
 	struct Handle__, value).
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	No need for idiomatic constructions like the above. Just write:
+	上のようなイディオムは不要で、単にこう書けます：
 
 -----------------------------
 typedef void* Handle;
@@ -1074,8 +1074,8 @@ foo(h);
 bar(h);
 -----------------------------
 
-	To handle a default value, add an initializer to the typedef,
-	and refer to it with the $(D .init) property:
+	デフォルト値を扱うには、typedefに初期化子を追加し、
+	 $(D .init) プロパティで参照します：
 
 -----------------------------
 typedef void* Handle = cast(void*)(-1);
@@ -1085,14 +1085,14 @@ if (h != Handle.init)
     ...
 -----------------------------
 
-	There's only one name to remember: $(D Handle).
+	覚える名前は一つ、$(D Handle) だけで済みます。
 
 <hr><!-- ============================================ -->
-<h3><a name="structcmp">Comparing structs</a></h3>
+<h3><a name="structcmp">構造体の比較</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-	While C defines struct assignment in a simple, convenient manner:
+	C++では、構造体の代入には単純で便利な方法がありますが：
 
 $(CCODE
 struct A x, y;
@@ -1100,8 +1100,8 @@ struct A x, y;
 x = y;
 )
 
-	it does not for struct comparisons. Hence, to compare two struct
-	instances for equality:
+	構造体の比較はそうでもありません。
+	二つのインスタンスの等値性を比較するには：
 
 $(CCODE
 #include &lt;string.h&gt;
@@ -1112,19 +1112,19 @@ if (memcmp(&x, &y, sizeof(struct A)) == 0)
     ...
 )
 
-	Note the obtuseness of this, coupled with the lack of any kind
-	of help from the language with type checking.
+	この方法は回りくどいですし、
+	そもそも型チェックによる言語の助けを受けることが全く出来ていません。
 	<p>
 
-	There's a nasty bug lurking in the memcmp().
-	The layout of a struct, due to alignment, can have 'holes' in it.
-	C does not guarantee those holes are assigned any values, and so
-	two different struct instances can have the same value for each member,
-	but compare different because the holes contain different garbage.
+	しかも、memcmp() による operator==() の実装には困ったバグが潜んでいます。
+	アラインメントのせいで、構造体のメンバの間には '穴' があるかもしれません。
+	C はこの穴にどんな値が入るかは保証してくれませんので、
+	例え全てのメンバの値が等しくても、インスタンスによって'穴'の値が違うせいで
+	"異なっている"と判定されてしまうかもしれません。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	D does it the obvious, straightforward way:
+	Dでは直接的で明確な書き方ができます：
 
 -----------------------------
 A x, y;
@@ -1135,24 +1135,24 @@ if (x == y)
 
 
 <hr><!-- ============================================ -->
-<h3><a name="stringcmp">Comparing strings</a></h3>
+<h3><a name="stringcmp">文字列の比較</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-	The library function strcmp() is used:
+	ライブラリ関数 strcmp() を使います：
 $(CCODE
 char string[] = "hello";
 
-if (strcmp(string, "betty") == 0)	// do strings match?
+if (strcmp(string, "betty") == 0)	// 文字列は一致するだろうか？
     ...
 )
 
-	C uses 0 terminated strings, so the C way has an inherent
-	inefficiency in constantly scanning for the terminating 0.
+	Cは0終端文字列を使うので、
+	0チェックをする手間の分非効率的です。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	Why not use the == operator?
+	== 演算子はいかかでしょう？
 
 -----------------------------
 char[] string = "hello";
@@ -1161,13 +1161,13 @@ if (string == "betty")
     ...
 -----------------------------
 
-	D strings have the length stored separately from the string.
-	Thus, the implementation of string compares can be much faster
-	than in C (the difference being equivalent to the difference
-	in speed between the C memcmp() and strcmp()).
+	Dの文字列は、
+	文字列自体と別に長さ情報を保持しています。
+	従って、Cよりも高速な文字列比較が可能です。（Cでの、
+	memcmp()とstrcmp()の速度の違いと同じ現象です。）
 	<p>
 
-	D supports comparison operators on strings, too:
+	D は、文字列の比較演算子もサポートしています：
 
 -----------------------------
 char[] string = "hello";
@@ -1176,15 +1176,15 @@ if (string < "betty")
     ...
 -----------------------------
 
-	which is useful for sorting/searching.
+	ソートや探索に便利です。
 
 <hr><!-- ============================================ -->
-<h3><a name="sort">Sorting arrays</a></h3>
+<h3><a name="sort">配列のソート</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-	Although many C programmers tend to reimplmement bubble sorts
-	over and over, the right way to sort in C is to use qsort():
+	バブルソートを何度も繰り返し実装したがるCプログラマも多いようですが、
+	Cでの正しいソートのしかたは、qsort() を使うことです：
 
 $(CCODE
 int compare(const void *p1, const void *p2)
@@ -1201,36 +1201,36 @@ qsort(array, sizeof(array)/sizeof(array[0]),
 	sizeof(array[0]), compare);
 )
 
-	A compare() must be written for each type, and much careful
-	typo-prone code needs to be written to make it work.
+	全ての型に対して、compare() 関数を書かねばならず、
+	色々とすぐ打ち間違えをしそうなコードが必要です。
 
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	Sorting couldn't be easier:
+	ソートはこれ以上ないくらい簡単です。
 
 -----------------------------
 type[] array;
 ...
-array.sort;      // sort array in-place
+array.sort;      // 配列を in-place でソート
 -----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="volatile">Volatile memory access</a></h3>
+<h3><a name="volatile">volatile なメモリアクセス</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-	To access volatile memory, such as shared memory
-	or memory mapped I/O, a pointer to volatile is created:
+	共有メモリやメモリマップドI/Oなどの volatile
+	なメモリにアクセスするには、volatile へのポインタが使われます：
 $(CCODE
 volatile int *p = address;
 
 i = *p;
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	D has volatile as a statement type, not as a type modifier:
+	D では、volatile は型修飾子ではなく、文の種類です。
 
 -----------------------------
 int* p = address;
@@ -1239,12 +1239,12 @@ volatile { i = *p; }
 -----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="strings">String literals</a></h3>
+<h3><a name="strings">文字列リテラル</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-	String literals in C cannot span multiple lines, so to have
-	a block of text it is necessary to use \ line splicing:
+	Cの文字列リテラルは複数行で書くことができず、行末\
+	で各行を繋ぐ必要がありました：
 
 $(CCODE
 "This text spans\n\
@@ -1252,11 +1252,11 @@ multiple\n\
 lines\n"
 )
 
-	If there is a lot of text, this can wind up being tedious.
+	長いテキストだった場合、これはかなり退屈な作業です。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	String literals can span multiple lines, as in:
+	次のように、複数行の文字列リテラルが書けます：
 
 -----------------------------
 "This text spans
@@ -1265,27 +1265,27 @@ lines
 "
 -----------------------------
 
-	So blocks of text can just be cut and pasted into the D
-	source.
+	つまりテキストのブロックは、
+	単純なコピー＆ペーストでDのソースへ取り込めます。
 
 <hr><!-- ============================================ -->
-<h3><a name="traversal">Data Structure Traversal</a></h3>
+<h3><a name="traversal">データ構造のなぞり</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-    Consider a function to traverse a recursive data structure.
-    In this example, there's a simple symbol table of strings.
-    The data structure is an array of binary trees.
-    The code needs to do an exhaustive search of it to find
-    a particular string in it, and determine if it is a unique
-    instance.
+	再帰的な構造のデータをなめる関数を考えます。
+	ここでは例として、
+	文字列によるシンボルテーブルとしましょう。
+	データ構造は二分木の配列です。テーブルを完全に探索して、
+	特定の文字列がただ一つ含まれているかを
+	判定する必要があります。
     <p>
 
-    To make this work, a helper function $(D membersearchx)
-    is needed to recursively
-    walk the trees. The helper function needs to read and write
-    some context outside of the trees, so a custom $(D struct Paramblock)
-    is created and a pointer to it is used to maximize efficiency.
+	このために、木を再帰的にたどる補助関数 $(D membersearchx)
+	が要ります。
+	補助関数には木自体には含まれない、コンテキストの情報が必要です。
+	そこで、 $(D struct Paramblock)
+    を定義してパラメータとしてそのポインタを渡します。
 
 $(CCODE
 struct Symbol
@@ -1333,17 +1333,17 @@ struct Symbol *symbol_membersearch(Symbol *table[], int tablemax, char *id)
 }
 )
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-    This is the same algorithm in D, and it shrinks dramatically.
-    Since nested functions have access to the lexically enclosing
-    function's variables, there's no need for a Paramblock or
-    to deal with its bookkeeping details. The nested helper function
-    is contained wholly within the function that needs it,
-    improving locality and maintainability.
+	同じアルゴリズムをDで書いたのが下の例で、
+	劇的にコードが短くなっています。
+	これはネストした関数が、
+	その関数を囲んでいるブロックの変数に参照できるため、
+	Paramblock 構造体やそのポインタが不要となっているからです。
+	ネストされた補助関数を使うことで、機能の局所性や保守性も向上します。
     <p>
 
-    The performance of the two versions is indistinguishable.
+	パフォーマンス面でも差はありません。
 
 -----------------------------
 class Symbol
@@ -1381,15 +1381,15 @@ Symbol symbol_membersearch(Symbol[] table, char[] id)
 -----------------------------
 
 <hr><!-- ============================================ -->
-<h3><a name="ushr">Unsigned Right Shift</a></h3>
+<h3><a name="ushr">符号なし右シフト</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-	The right shift operators &gt;&gt; and &gt;&gt;= are signed
-	shifts if the left operand is a signed integral type, and
-	are unsigned right shifts if the left operand is an unsigned
-	integral type. To produce an unsigned right shift on an int,
-	a cast is necessary:
+	右シフト演算子 &gt;&gt; と &gt;&gt;= は、
+	左オペランドが符号付き整数型ならば符号付き右シフトで、
+	左オペランドが符号なし整数型ならば符号なし右シフトという動作です。
+	int変数に対して符号なし右シフトを施すには、
+	キャストが必要です：
 
 $(CCODE
 int i, j;
@@ -1397,8 +1397,8 @@ int i, j;
 j = (unsigned)i >> 3;
 )
 
-	If $(D i) is an $(D int), this works fine. But if $(D i) is
-	of a type created with typedef,
+	もし $(D i) が $(D int) 型変数であれば、これはうまく動作します。
+	しかしもし $(D i) がtypedefされた別の型であったなら。
 
 $(CCODE
 myint i, j;
@@ -1406,18 +1406,18 @@ myint i, j;
 j = (unsigned)i >> 3;
 )
 
-	and $(D myint) happens to be a $(D long int), then the cast to
-	unsigned
-	will silently throw away the most significant bits, corrupting
-	the answer.
+	このときもし $(D myint) が実は $(D long int)
+	であったら、
+	unsigned へのキャストは暗黙の内に上位のbitを捨て去り、
+	結果を破壊してしまうでしょう。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	D has the right shift operators &gt;&gt; and &gt;&gt;= which
-	behave as they do in C. But D also has explicitly unsigned
-	right shift operators &gt;&gt;&gt; and &gt;&gt;&gt;= which will
-	do an unsigned right shift regardless of the sign of the left
-	operand. Hence,
+	D には C と同様に動作する右シフト演算子 &gt;&gt; と &gt;&gt;=
+	があります。しかし D は、
+	明示的に符号なし右シフトを行う演算子
+	&gt;&gt;&gt; と &gt;&gt;&gt;= もまた備えています。
+	この演算子ならば左オペランドの型を気にする必要はありません。つまり、
 
 -----------------------------
 myint i, j;
@@ -1425,25 +1425,25 @@ myint i, j;
 j = i >>> 3;
 -----------------------------
 
-	avoids the unsafe cast and will work as expected with any integral
-	type.
+	は危険なキャストを避けていて、
+	しかもどんな整数型に対しても期待したとおりに動作します。
 
 <hr><!-- ============================================ -->
-<h3><a name="closures">Dynamic Closures</a></h3>
+<h3><a name="closures">動的クロージャ</a></h3>
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
-	Consider a reusable container type. In order to be reusable,
-	it must support a way to apply arbitrary code to each element
-	of the container. This is done by creating an $(I apply) function
-	that accepts a function pointer to which is passed each
-	element of the container contents.
+	再利用可能なコンテナクラスを考えましょう。
+	再利用可能であるためには、
+	コンテナ内のそれぞれの要素に任意のコードを適用する操作をサポートすべきです。
+	これは、関数ポインタを受け取って各要素へ適用する $(I apply)
+	関数を作ることで実現できます。
 	<p>
 
-	A generic context pointer is also needed, represented here by
-	$(D void *p). The example here is of a trivial container
-	class that holds an array of ints, and a user of that container
-	that computes the maximum of those ints.
+	汎用のコンテキスト用ポインタも必要で、
+	ここでは $(D void *p)
+	としてあります。この例はintの配列を使った簡単な例で、
+	コンテナのユーザがこれらのintの最大値を計算しようとしています。
 
 $(CCODE
 void apply(void *p, int *array, int dim, void (*fp)(void *, int))
@@ -1473,14 +1473,14 @@ void func(struct Collection *c)
 }
 )
 
-	$(P While this works, it isn't very flexible.)
+	$(P この方法で確かに機能を実現はできますが、柔軟性があるとは言い難いものになっています。)
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	The D version makes use of $(I delegates) to transmit
-	context information for the $(I apply) function,
-	and $(I nested functions) both to capture context
-	information and to improve locality.
+	D版では、$(I apply)
+	関数へコンテキストの情報を渡すために、
+	$(I delegate) と $(I ネスト関数) を使います。
+	どちらも情報の局所性を高めています。
 
 ----------------------------
 class Collection
@@ -1508,9 +1508,9 @@ void func(Collection c)
 }
 -----------------------------
 
-	Pointers are eliminated, as well as casting and generic
-	pointers. The D version is fully type safe.
-	An alternate method in D makes use of $(I function literals):
+	ポインタや、キャストに汎用ポインタは全てなくなりました。
+	D版は完全に型安全です。
+	Dでのもう一つの方法は、$(I 関数リテラル) を使う方法です：
 
 -----------------------------
 void func(Collection c)
@@ -1521,16 +1521,16 @@ void func(Collection c)
 }
 -----------------------------
 
-	eliminating the need to create irrelevant function names.
+	特に意味のない関数名を除くことができました。
 
 <hr><!-- ============================================ -->
-<h3><a name="variadic">Variadic Function Parameters</a></h3>
+<h3><a name="variadic">可変個関数引数</a></h3>
 
-	The task is to write a function that takes a varying
-	number of arguments, such as a function that sums
-	its arguments.
+	引数の個数が定まらない関数を書く場合を考えます。
+	例として、
+	引数全部の和をとる関数があります。
 
-<h4>The C Way</h4>
+<h4>C では</h4>
 
 $(CCODE
 #include &lt;stdio.h&gt;
@@ -1559,22 +1559,22 @@ int main()
 }
 )
 
-	There are two problems with this. The first is that the
-	$(D sum) function needs to know how many arguments were
-	supplied. It has to be explicitly written, and it can get
-	out of sync with respect to the actual number of arguments
-	written.
-	The second is that there's no way to check that the
-	types of the arguments provided really were ints, and not
-	doubles, strings, structs, etc.
+	二つほど問題点があります。一つめは、
+	$(D sum) 関数が、何個の引数が渡されたか知らなければならない点です。
+	Cの場合は個数は明示的に書かれ、
+	同期を忘れると、
+	すぐに実際に書かれた引数の個数と合わなくなってしまうこともしばしばあります。
+	二つめの問題点は、実際に渡された引数がintであって、
+	doubleでも文字列でも構造体でもない、
+	ということを保証する術がなにもないことです。
 
-<h4>The D Way</h4>
+<h4>D では</h4>
 
-	The ... following an array parameter declaration means that
-	the trailing arguments are collected together to form
-	an array. The arguments are type checked against the array
-	type, and the number of arguments becomes a property
-	of the array:
+	配列型の引数の後ろに ... を続けると、
+	以降全ての引数を集めて一つの配列を作るようになります。
+	引数は指定された配列型に対して型検査が行われ、
+	個数は、
+	配列のプロパティとして取得することが可能です：
 
 -----------------------------
 import std.stdio;
@@ -1601,6 +1601,6 @@ int main()
 )
 
 Macros:
-	TITLE=Programming in D for C Programmers
+	TITLE=CプログラマのためのD言語
 	WIKI=ctod
 	CATEGORY_OVERVIEW=$0
