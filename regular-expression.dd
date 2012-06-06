@@ -268,3 +268,4 @@ TITLE=正規表現
 H3 = <h3>$0</h3>
 DOLLAR = $
 STD = $(LINK2 phobos/std_$0.html, std.$0)
+CATEGORY_ARTICLES=$0

@@ -478,3 +478,4 @@ Macros:
 	TITLE=Cとのインターフェイス
 	WIKI=InterfaceToC
 
+	CATEGORY_SPEC=$0
