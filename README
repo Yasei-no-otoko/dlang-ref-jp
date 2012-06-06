@@ -24,6 +24,7 @@ Any help is welcome!
 * TODO
 
 - Translate intro-to-datetime.dd.
+    >> @delihiros kindly offered to help! Thanks!
 - Translate changelog.dd (= migrate the old translation to .dd based workflow).
 - Translate druntime (= migrate the old translation to .dd based workflow).
 - Translate phobos (= migrate the old translation to .dd based workflow).
