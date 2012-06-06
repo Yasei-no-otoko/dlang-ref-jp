@@ -1,6 +1,6 @@
 Ddoc
 
-$(SPEC_S Functions,
+$(SPEC_S 関数,
 
 $(GRAMMAR
 $(GNAME FunctionBody):
@@ -23,57 +23,57 @@ $(GNAME BodyStatement):
 )
 
 
-<h3>Function Return Values</h3>
+<h3>関数の返値</h3>
 
-        $(P Function return values are considered to be rvalues.
-        This means they cannot be passed by reference to other functions.
+        $(P 関数の返値は右辺値とみなされます。
+	つまり、返値を他の関数に参照渡しすることはできません。
         )
 
-<h3>Functions Without Bodies</h3>
+<h3>本体なしの関数</h3>
 
-	$(P Functions without bodies:)
+	$(P 本体なしの関数)
 
 ---
 int foo();
 ---
 
-	$(P that are not declared as $(D abstract) are expected to have their implementations
-	elsewhere, and that implementation will be provided at the link step.
-	This enables an implementation of a function to be completely hidden from the user
-	of it, and the implementation may be in another language such as C, assembler, etc.
+	$(P で $(D abstract) と宣言されていないものは、どこか他に実装があり、
+	リンク時に提供されるものと仮定されます。
+	これによって、ユーザーから関数の実装を完全に隠すことや、
+	C やアセンブラなど別言語での実装を使うことができます。
 	)
 
 $(V2
-<h3>$(LNAME2 pure-functions, Pure Functions)</h3>
+<h3>$(LNAME2 pure-functions, pure関数)</h3>
 
-        $(P Pure functions are functions that produce the same
-        result for the same arguments.
-        To that end, a pure function:
+        $(P pure関数は、
+	同じ引数が与えられた時には常に同じ返値を返す関数のことを指します。
+	そのために、pure関数は以下を満たす必要があります:
         )
 
         $(UL
-        $(LI does not read or write any global mutable state)
-        $(LI cannot call functions that are not pure)
-        $(LI can override an impure function, but an impure function
-        cannot override a pure one)
-        $(LI is covariant with an impure function)
-        $(LI cannot perform I/O)
+        $(LI グローバルの mutable な状態を読み書きしない)
+        $(LI pure関数はpureでない関数を呼び出すことはできません)
+        $(LI pure関数によるpureでない関数のオーバーライドはできますが、
+	逆はできません。)
+        $(LI pureでない関数に対し共変です)
+        $(LI I/Oは行えません)
         )
 
-        $(P As a concession to practicality, a pure function can:)
+        $(P 実用性を考慮して、pure関数では:)
 
         $(UL
-        $(LI allocate memory via a $(GLINK2 expression, NewExpression))
-        $(LI terminate the program)
-        $(LI read and write the floating point exception flags)
-        $(LI read and write the floating point mode flags, as long as those flags
-        are restored to their initial state upon function entry)
-        $(LI perform impure operations in statements that are in a
-        $(GLINK2 version, ConditionalStatement)
-        controlled by a $(GLINK2 version, DebugCondition).)
+        $(LI メモリを $(GLINK2 expression, NewExpression) で割り当てられます)
+        $(LI プログラムを終了できます)
+        $(LI 浮動小数点数の例外フラグを読み書きできます)
+        $(LI 浮動小数点数のモードフラグは、
+	関数を抜けるときに元の状態に戻すことが保証されている限り、読み書きできます。)
+        $(LI $(GLINK2 version, DebugCondition) で制御された
+        $(GLINK2 version, ConditionalStatement) の中では、
+		pure でない操作を行えます。)
         )
 
-        $(P A pure function can throw exceptions.)
+        $(P pure関数は例外を投げることができます。)
 
 ---
 import std.stdio;
@@ -86,28 +86,28 @@ pure int foo(int i,
              const char* q,
              immutable int* s)
 {
-  debug writeln("in foo()"); // ok, impure code allowed in debug statement
-  x = i;   // error, modifying global state
-  i = x;   // error, reading mutable global state
-  i = y;   // ok, reading immutable global state
-  i = *pz; // error, reading const global state
+  debug writeln("in foo()"); // ok, debug文の中ではpureでない関数も可
+  x = i;   // エラー。グローバル状態を書き換えている
+  i = x;   // エラー。mutableなグローバル状態を読み取っている
+  i = y;   // ok。immutableなグローバル状態の読み取り
+  i = *pz; // エラー。constなグローバル状態を読み取っている
   return i;
 }
 ---
 
 
-<h3>$(LNAME2 nothrow-functions, Nothrow Functions)</h3>
+<h3>$(LNAME2 nothrow-functions, nothrow関数)</h3>
 
-        $(P Nothrow functions do not throw any exceptions derived
-        from class $(I Exception).
+        $(P nothrow関数は、
+	クラス $(I Exception) から派生した例外を一切投げない関数です。
         )
 
-        $(P Nothrow functions are covariant with throwing ones.)
+        $(P nothrow関数はそうでない関数に対して共変です。)
 
-<h3>$(LNAME2 ref-functions, Ref Functions)</h3>
+<h3>$(LNAME2 ref-functions, ref関数)</h3>
 
-        $(P Ref functions allow functions to return by reference.
-        This is analogous to ref function parameters.
+        $(P ref関数は、返値を参照で返します。
+	ref引数の返値バージョンです。
         )
 
 ---
@@ -116,65 +116,65 @@ ref int foo() {
   return *p;
 }
 ...
-foo() = 3;  // reference returns can be lvalues
+foo() = 3;  // ref返値は左辺値となる
 ---
 
-<h3>$(LNAME2 auto-functions, Auto Functions)</h3>
+<h3>$(LNAME2 auto-functions, auto 関数)</h3>
 
-        $(P Auto functions have their return type inferred from any
-        $(GLINK2 statement, ReturnStatement)s
-        in the function body.
+        $(P auto関数は、関数定義にある
+        $(GLINK2 statement, ReturnStatement)
+        から返値の型を推論します。
         )
 
-        $(P An auto function is declared without a return type.
-        If it does not already have a storage class, use the
-        $(D_KEYWORD auto) storage class.
+        $(P auto 関数は返値型なしで宣言されます。
+	他に特に記憶域クラスのない関数では、
+        $(D_KEYWORD auto) 記憶域クラスを指定します。
         )
 
-        $(P If there are multiple $(I ReturnStatement)s, the types
-        of them must match exactly. If there are no $(I ReturnStatement)s,
-        the return type is inferred to be $(D_KEYWORD void).
+        $(P 複数の $(I ReturnStatement) がある場合は、
+        それらの型は完全にマッチしなければいけません。$(I ReturnStatement) がない場合は、
+        返値型は $(D_KEYWORD void) と推論されます。
         )
 
 ---
 auto foo(int i) {
-  return i + 3;  // return type is inferred to be int
+  return i + 3;  // 返値型はintと推論される
 }
 ---
 
 $(V2
-<h3>$(LNAME2 auto-ref-functions, Auto Ref Functions)</h3>
+<h3>$(LNAME2 auto-ref-functions, auto ref 関数)</h3>
 
-        $(P Auto ref functions infer their return type just as
-        $(LINK2 #auto-functions, auto functions) do.
-        In addition, they become $(LINK2 #ref-functions, ref functions)
-        if the return expression is an lvalue,
-        and it would not be a reference to a local or a parameter.
+        $(P auto ref 関数は、
+        $(LINK2 #auto-functions, auto 関数) と同様に関数の返値型を推論します。
+		加えて、return される式が左辺値であった場合、
+		自動的に $(LINK2 #ref-functions, ref 関数)
+        となります。ただし、値引数やローカル変数への参照を返すようにはなりません。
         )
 
 ---
-auto ref foo(int x)     { return x; }  // value return
-auto ref foo()          { return 3; }  // value return
-auto ref foo(ref int x) { return x; }  // ref return
-auto ref foo(out int x) { return x; }  // ref return
-auto ref foo() { static int x; return x; }  // ref return
+auto ref foo(int x)     { return x; }  // 値をreturn
+auto ref foo()          { return 3; }  // 値をreturn
+auto ref foo(ref int x) { return x; }  // refをreturn
+auto ref foo(out int x) { return x; }  // refをreturn
+auto ref foo() { static int x; return x; }  // refをreturn
 ---
 
-        $(P The lexically first $(GLINK2 statement, ReturnStatement)
-        determines the ref-ness of a function:
+        $(P 字句的に最初の $(GLINK2 statement, ReturnStatement)
+	が関数のref性を決めます:
         )
 
 ---
-auto ref foo(ref int x) { return 3; return x; }  // ok, value return
-auto ref foo(ref int x) { return x; return 3; }  // error, ref return, 3 is not an lvalue
+auto ref foo(ref int x) { return 3; return x; }  // ok, 値return
+auto ref foo(ref int x) { return x; return 3; }  // エラー。3は左辺値でない。
 ---
 )
 
 $(V2
-<h3>$(LNAME2 inout-functions, Inout Functions)</h3>
+<h3>$(LNAME2 inout-functions, inout 関数)</h3>
 
-        $(P Functions that deal with mutable, const, or immutable types with
-        equanimity often need to transmit their type to the return value:
+        $(P mutable, const, immutable のどれに対しても同じように適用したい関数を扱う場合、
+	その型を返値に伝搬させたいケースが多くあります。
         )
 
 ---
@@ -185,60 +185,60 @@ const(int)[] foo(const(int)[] a, int x, int y) { return a[x .. y]; }
 immutable(int)[] foo(immutable(int)[] a, int x, int y) { return a[x .. y]; }
 ---
 
-        $(P The code generated by these three functions is identical.
-        To indicate that these can be one function, the $(D_KEYWORD inout)
-        type constructor is employed:
+        $(P これらの関数から生成されるコードは完全に一致します。
+	これらを一つの関数にまとめるには、 $(D_KEYWORD inout)
+	型コンストラクタを使います:
         )
 
 ---
 inout(int)[] foo(inout(int)[] a, int x, int y) { return a[x .. y]; }
 ---
 
-        $(P The $(D_KEYWORD inout) forms a wildcard that stands in for
-        any of mutable, const or immutable. When the function is called,
-        the inout of the return type is changed to whatever the mutable,
-        const, or immutable status of the argument type to the parameter
-        inout was.
+        $(P $(D_KEYWORD inout) は、
+	mutable, const, immutable のいずれかにマッチするワイルドカードとして働きます。
+	関数が呼ばれたときに、返値型の inout は、
+	引数の mutable, const, immutable
+	に合わせて変化します。
         )
 
-        $(P Inout types can be implicitly converted to const, but to nothing
-        else. Other types cannot be implicitly converted to inout.
-        Casting to or from inout is not allowed in @safe functions.
+        $(P inout 型は const に暗黙変換できますが、他の型になることはありません。
+	他の型を暗黙にinoutに変換することもできません。
+	inoutへの/からのキャストは @safe 関数では不可能です。
         )
 
-        $(P If an inout appears in a function parameter list, it must also appear
-        in the return type.
+        $(P inout が関数引数リストに現れる場合、
+	返値型にも現れなければいけません。
         )
 
-        $(P A set of arguments to a function with inout parameters is considered
-        a match if any inout argument types match exactly, or:)
+        $(P inout仮引数を持つ関数へと実引数が与えられたとき、以下のケースでマッチしたと判定されます。
+	実引数も完全に同じinoutを持つか、または:)
 
 $(OL
-        $(LI No argument types are composed of inout types.)
-        $(LI A mutable, const or immutable argument type can be matched against each
-        corresponding parameter inout type.)
+        $(LI 実引数がどれもinout型を持たない)
+        $(LI 仮引数でinout型となっている部分に、実引数側で mutable, const, immutable
+	のいずれかがマッチする。)
 )
 
-        $(P If such a match occurs, if every match is mutable, then the inout is
-        considered matched with mutable. If every match is immutable, then the
-        inout is considered matched with immutable. Otherwise, the inout is
-        considered matched with const. The inout in the return type is then rewritten
-        to be the inout matched attribute.
+        $(P このようなマッチがあった場合、全てのマッチがmutableなら、inoutはmutalbeとして扱われます。
+	全てのマッチがimmutableなら、inoutはimmutalbeとして扱われます。
+	それ以外のケースでは、inoutはconstとして扱われます。
+	関数の返値の型は、
+	マッチした属性でinoutを置き換えたものとなります。
         )
 
-        $(P Global and static variable types cannot have any inout components.
+        $(P グローバルやstaticな変数の型にはinoutを使うことはできません。
         )
 
-        $(P $(B Note:) Shared types are not overlooked. Shared types cannot
-        be matched with inout.
+        $(P $(B 注:) sharedについて書き忘れたているわけではありません。
+	shared型はinoutとはマッチしません。
         )
 )
 
-<h3>$(LNAME2 property-functions, Property Functions)</h3>
+<h3>$(LNAME2 property-functions, プロパティ関数)</h3>
 
-        $(P Property functions are tagged with the $(CODE @property)
-        attribute. They can be called without parentheses (hence
-        acting like properties).
+        $(P $(CODE @property) 属性のついた関数が、プロパティ関数です。
+	この関数は括弧無しで（つまりプロパティのように）
+	呼び出すことができます。
         )
 
 ---
@@ -252,43 +252,43 @@ struct S {
 
 void foo() {
   S s;
-  s.x = 3;   // calls s.x(int)
-  bar(s.x);  // calls bar(s.x())
+  s.x = 3;   // s.x(int) を呼ぶ
+  bar(s.x);  // bar(s.x()) を呼ぶ
 }
 ---
 )
 
-<h3>$(LNAME2 virtual-functions, Virtual Functions)</h3>
+<h3>$(LNAME2 virtual-functions, 仮想関数)</h3>
 
-        $(P Virtual functions are functions that are called indirectly
-        through a function
-        pointer table, called a vtbl[], rather than directly.
-        All non-static non-private non-template member functions are virtual.
-        This may sound
-        inefficient, but since the D compiler knows all of the class
-        hierarchy when generating code, all
-        functions that are not overridden can be optimized to be non-virtual.
-        In fact, since
-        C++ programmers tend to "when in doubt, make it virtual", the D way of
-        "make it
-        virtual unless we can prove it can be made non-virtual" results, on
-        average, in many
-        more direct function calls. It also results in fewer bugs caused by
-        not declaring
-        a function virtual that gets overridden.
+        $(P 仮想関数とは、
+	直接呼び出されるのではなく、
+	vtbl[] と呼ばれるポインタテーブル経由で間接的に呼び出される関数のことをいいます。
+	全ての非staticかつ非privateかつ非templateなメンバ関数は、
+	仮想関数です。
+	これは非効率的に聞こえるかもしれませんが、
+	コード生成時にDはクラス階層を全て把握していますので、
+	オーバーライドされていない関数への呼び出しは全て最適化されて
+	non-virtual になります。
+	C++プログラマは "疑わしきはvirtualにせよ"
+	でコードを書く傾向にありますが、
+	Dの流儀である "non-virtualにできると証明できない限りvirtualにせよ"
+	の方が、結果的には多くの関数を直接呼び出せます。
+	オーバーライドしたい関数を
+	仮想関数にし忘れる、
+	というバグを減らすことにもつながります。
         )
 
-        $(P Functions with non-D linkage cannot be virtual, and hence cannot be
-        overridden.
+        $(P Dのリンケージを持たない関数はvirtualにはできず、
+	それゆえオーバーライドできません。
         )
 
-        $(P Member template functions cannot be virtual, and hence cannot be
-        overridden.
+        $(P メンバテンプレート関数はvirtualにはできず、
+	それゆえオーバーライドできません。
         )
 
-        $(P Functions marked as $(D final) may not be overridden in a
-        derived class, unless they are also $(D private).
-        For example:
+        $(P $(D final) という印のついた関数は、
+        $(D private) でない限り、
+	派生クラスでオーバーライドできません。例えば：
         )
 
 ------
@@ -300,17 +300,17 @@ class A {
 }
 
 class B : A {
-  int def() { ... }  // ok, overrides A.def
-  int foo() { ... }  // error, A.foo is final
-  int bar() { ... }  // ok, A.bar is final private, but not virtual
-  int abc() { ... }  // ok, A.abc is not virtual, B.abc is virtual
+  int def() { ... }  // ok。A.defをオーバーライドする。
+  int foo() { ... }  // エラー。A.fooはfinal
+  int bar() { ... }  // ok。A.bar は final private だが virtual でない
+  int abc() { ... }  // ok。A.abc は virtual でない。B.abc は virtual
 }
 
 void test(A a) {
-  a.def();    // calls B.def
-  a.foo();    // calls A.foo
-  a.bar();    // calls A.bar
-  a.abc();    // calls A.abc
+  a.def();    // B.def を呼ぶ
+  a.foo();    // A.foo を呼ぶ
+  a.bar();    // A.bar を呼ぶ
+  a.abc();    // A.abc を呼ぶ
 }
 
 void func() {
@@ -319,10 +319,10 @@ void func() {
 }
 ------
 
-        $(P Covariant return types
-        are supported, which means that the
-        overriding function in a derived class can return a type
-        that is derived from the type returned by the overridden function:
+        $(P 共変の返値型がサポートされています。
+	すなわち、派生クラスでオーバーライドした関数では、
+	基底クラスでの返値型の
+	派生型オブジェクトを返すことができます。
         )
 
 ------
@@ -334,19 +334,19 @@ class Foo {
 }
 
 class Bar : Foo {
-  B test() { return null; } // overrides and is covariant with Foo.test()
+  B test() { return null; } // Foo.test() と共変なオーバーライド
 }
 ------
 
-        $(P Virtual functions all have a hidden parameter called the
-        $(I this) reference, which refers to the class object for which
-        the function is called.
+        $(P 仮想関数は全て隠し引数として
+        $(I this) 参照を受け取り、
+	これは関数が呼ばれた対象オブジェクトを指しています。
         )
 
-<h3>$(LNAME2 function-inheritance, Function Inheritance and Overriding)</h3>
+<h3>$(LNAME2 function-inheritance, 関数の継承とオーバーライド)</h3>
 
-        A functions in a derived class with the same name and parameter
-        types as a function in a base class overrides that function:
+	派生クラスの関数で、基底クラスの関数と名前と引数の同じものは、
+	基底の関数を上書きします：
 
 ------
 class A {
@@ -363,12 +363,12 @@ void test() {
 }
 
 void bar(A a) {
-  a.foo(1);   // calls B.foo(int)
+  a.foo(1);   // B.foo(int) を呼ぶ
 }
 ------
 
-        $(P However, when doing overload resolution, the functions in the base
-        class are not considered:
+        $(P しかしながら、オーバーロードの解決の際には、
+	基底クラスのメンバ関数は考慮されません。
         )
 
 ------
@@ -383,15 +383,15 @@ class B : A {
 
 void test() {
   B b = new B();
-  b.foo(1);  // calls B.foo(long), since A.foo(int) not considered
+  b.foo(1);  // B.foo(long) を呼ぶ。A.foo(int) は考慮しない
   A a = b;
-$(V1    a.foo(1);    // calls A.foo(int))
-$(V2    a.foo(1);    // issues runtime error (instead of calling A.foo(int)))
+$(V1    a.foo(1);    // A.foo(int) を呼ぶ)
+$(V2    a.foo(1);    // 実行時エラー (A.foo(int) は呼ばれない))
 }
 ------
 
-        $(P To consider the base class's functions in the overload resolution
-        process, use an $(I AliasDeclaration):
+        $(P オーバーロードの解決の過程で基底クラスの関数も考慮に入れたい場合は、
+        $(I AliasDeclaration) を使います：
         )
 
 ------
@@ -411,19 +411,19 @@ void test() {
 }
 
 void bar(A a) {
-  a.foo(1);      // calls A.foo(int)
+  a.foo(1);      // A.foo(int) を呼ぶ
   B b = new B();
-  b.foo(1);      // calls A.foo(int)
+  b.foo(1);      // A.foo(int) を呼ぶ
 }
 ------
 
 $(V2
-        $(P If such an $(I AliasDeclaration) is not used, the derived
-        class's functions completely override all the functions of the
-        same name in the base class, even if the types of the parameters
-        in the base class functions are different. If, through
-        implicit conversions to the base class, those other functions do
-        get called, a $(CODE core.exception.HiddenFuncError) exception is raised:
+        $(P $(I AliasDeclaration) を使わなかった場合、
+	派生クラスの関数は、
+	例え引数の型が違っていたとしても基底クラスの同名の関数を全てオーバーライドします。
+	ただし、
+	実際に基底クラスへの参照を通してそれらの引数型違いの関数が実際に呼び出された場合は、
+        $(CODE core.exception.HiddenFuncError) 例外が発生します
         )
 ---
 import core.exception;
@@ -439,8 +439,8 @@ class B : A {
 void foo(A a) {
   int i;
   try {
-    a.$(B set)(3);   // error, throws runtime exception since
-                // A.set(int) should not be available from B
+    a.$(B set)(3);   // エラー。A.set(int)がBでは定義されていないので
+                // 実行時に例外を投げる
   }
   catch ($(B HiddenFuncError) o) {
      i = 1;
@@ -452,16 +452,16 @@ void main() {
   foo(new B);
 }
 ---
-        $(P If an $(CODE HiddenFuncError) exception is thrown in your program,
-        the use of overloads and overrides needs to be reexamined in the
-        relevant classes.)
+        $(P 自分のコードを実行してみて $(CODE HiddenFuncError)
+        が送出された場合、
+        関係するクラスでのオーバーロードやオーバーライドをチェックするようにしましょう。)
 
-        $(P The $(CODE HiddenFuncError) exception is not thrown if the
-        hidden function is disjoint, as far as overloading is concerned,
-        from all the other virtual functions is the inheritance hierarchy.)
+        $(P ただし、
+		継承階層中の他の全ての仮想関数とオーバーロードに関して排反な場合は、
+		$(CODE HiddenFuncError) は投げられません。)
 )
 
-        $(P A function parameter's default value is not inherited:)
+        $(P 関数のデフォルト引数値は継承されません：)
 
 ------
 class A {
@@ -479,69 +479,69 @@ class C : B {
 
 void test() {
   A a = new A();
-  a.foo();       // calls A.foo(5)
+  a.foo();       // A.foo(5) を呼ぶ
 
   B b = new B();
-  b.foo();       // calls B.foo(7)
+  b.foo();       // B.foo(7) を呼ぶ
 
   C c = new C();
-  c.foo();       // error, need an argument for C.foo
+  c.foo();       // エラー、C.fooには引数が必要
 }
 ------
 
 
-<h3>Inline Functions</h3>
+<h3>インライン関数</h3>
 
-        There is no inline keyword. The compiler makes the decision whether to
-        inline a function or not, analogously to the register keyword no
-        longer being relevant to a
-        compiler's decisions on enregistering variables.
-        (There is no register keyword either.)
+	inlineという予約語はありません。
+	関数をインライン化するかどうかは、
+	コンパイラが決定します。Cでの予約語registerに対し、
+	実際に変数をレジスタに配置するかどうかはコンパイラにゆだねられているのと
+	同様です。（Dにはregisterという予約語もありません。）
 
 
-<h2>$(LNAME2 function-overloading, Function Overloading)</h2>
+<h2>$(LNAME2 function-overloading, 関数オーバーロード)</h2>
 
-        $(P Functions are overloaded based on how well the arguments
-        to a function can match up with the parameters.
-        The function with the $(I best) match is selected.
-        The levels of matching are:
+        $(P 関数は、仮引数の型と実引数の型がどれだけよくマッチするかという基準によって
+	オーバーロードされます。
+    $(I もっともよく) マッチする関数が選択されます。
+	マッチの適合度は以下の４段階あります：
         )
 
         $(OL
-        $(LI no match)
-        $(LI match with implicit conversions)
-        $(V2 $(LI match with conversion to const))
-        $(LI exact match)
+        $(LI マッチしない)
+        $(LI 暗黙変換によるマッチ)
+        $(V2 $(LI constへの変換によるマッチ))
+        $(LI 正確なマッチ)
         )
 
-        $(P Each argument (including any $(CODE this) pointer) is
-        compared against the function's corresponding parameter, to
-        determine the match level for that argument. The match level
-        for a function is the $(I worst) match level of each of its
-        arguments.)
+        $(P 実引数それぞれ ($(CODE this) ポインタも含む) が
+	関数の対応する仮引数と比較され、
+	その実引数に関するマッチ適合度が決定されます。
+    引数のうち$(I 一番悪い)もののマッチ適合度が、
+	関数全体としてのマッチ適合度と定義されます。)
 
 $(V2
-        $(P Literals do not match $(CODE ref) or $(CODE out) parameters.)
+        $(P リテラルは $(CODE ref) や $(CODE out) 引数とはマッチしません)
 )
 $(V1
-        $(P If two or more functions have the same match level,
-        it is an ambiguity error.
+        $(P 複数の関数が同じマッチ適合度にある場合、
+        曖昧でエラーとなります。
         )
 )
 $(V2
-        $(P If two or more functions have the same match level,
-        then $(LNAME2 partial-ordering, $(I partial ordering))
-        is used to try to find the best match.
-        Partial ordering finds the most specialized function.
-        If neither function is more specialized than the other,
-        then it is an ambiguity error.
-        Partial ordering is determined for functions $(CODE f())
-        and $(CODE g()) by taking the parameter types of $(CODE f()),
-        constructing a list of arguments by taking the default values
-        of those types, and attempting to match them against $(CODE g()).
-        If it succeeds, then $(CODE g()) is at least as specialized
-        as $(CODE f()).
-        For example:
+        $(P 複数の関数が同じマッチ適合度にある場合、
+        $(LNAME2 partial-ordering, $(I partial ordering))
+        iによって最適なマッチが決定されます。
+	Partial ordering では、もっとも特殊化された関数が選択されます。
+	他と比べてより特殊化されていると言える関数が無い場合、
+	曖昧な関数呼び出しとしてエラーになります。
+        関数 $(CODE f()) と
+        $(CODE g()) の partial ordering は、まず $(CODE f()) の引数型を取り出し、
+		それぞれの型のデフォルト値によって
+        $(CODE g()) の呼び出しの型チェックを試みることで判定されます。
+        成功すれば、$(CODE f()) は少なくとも
+        $(CODE g()) と同等以上に特殊化されていることになります。
+        例えば:
         )
 ---
 class A { }
@@ -552,31 +552,31 @@ void foo(B);
 
 void test() {
   C c;
-  /* Both foo(A) and foo(B) match with implicit conversion rules.
-   * Applying partial ordering rules,
-   * foo(B) cannot be called with an A, and foo(A) can be called
-   * with a B. Therefore, foo(B) is more specialized, and is selected.
+  /* foo(A) と foo(B) のどちらも暗黙変換によるマッチなので、
+   * partial ordering を適用する。
+   * foo(B) は引数 A では呼び出せないが、foo(A) は
+   * 引数 B で呼び出せる。従って foo(B) の方がより特殊化されていることになり、選択される。
    */
-  foo(c); // calls foo(B)
+  foo(c); // foo(B) を呼び出す
 }
 ---
-        $(P A function with a variadic argument is considered less
-        specialized than a function without.
+        $(P 可変個引数関数は、
+	そうでない関数よりも特殊化の度合いが低いと見なされます。
         )
 )
 
-        $(P Functions defined with non-D linkage cannot be overloaded.
-        because the name mangling does not take the parameter types
-        into account.
+        $(P D
+	のリンケージを持たない関数はオーバーロードできません。
+	名前マングリングが引数の型を考慮していないためです。
         )
 
 $(V2
-<h2><a name="overload-sets">Overload Sets</a></h2>
+<h2><a name="overload-sets">オーバーロード集合</a></h2>
 
-        $(P Functions declared at the same scope overload against each
-        other, and are called an $(I Overload Set).
-        A typical example of an overload set are functions defined
-        at module level:
+        $(P 同じスコープで宣言された関数同士はお互いオーバーロードしあいます、
+	このような関数のあつまりを $(I オーバーロード集合) と呼びます。
+	典型的な例は、
+	モジュールレベルで定義された関数によるオーバーロード集合です:
         )
 
 ---
@@ -585,8 +585,8 @@ void foo() { }
 void foo(long i) { }
 ---
 
-        $(P $(CODE A.foo()) and $(CODE A.foo(long)) form an overload set.
-        A different module can also define functions with the same name:
+        $(P $(CODE A.foo()) と $(CODE A.foo(long)) がオーバーロード集合を形成します。
+	別のモジュールで同名の関数を宣言することも可能で:
         )
 
 ---
@@ -596,10 +596,10 @@ void foo(C) { }
 void foo(int i) { }
 ---
 
-        $(P and A and B can be imported by a third module, C.
-        Both overload sets, the $(CODE A.foo) overload set and the $(CODE B.foo)
-        overload set, are found. An instance of $(CODE foo) is selected
-        based on it matching in exactly one overload set:
+        $(P さらに別のモジュール C で A と B を同時に import しても構いません。
+	C では二つのオーバーロード集合、つまり $(CODE A.foo) oのオーバーロード集合と $(CODE B.foo)
+        oのオーバーロード集合が存在することになります。そして、ちょうど１個のオーバーロード集合に
+	マッチした場合のみ、実際に呼び出される $(CODE foo) のインスタンスが選択されます。
         )
 
 ---
@@ -607,22 +607,22 @@ import A;
 import B;
 
 void bar(C c) {
-  foo();    // calls A.foo()
-  foo(1L);  // calls A.foo(long)
-  foo(c);   // calls B.foo(C)
-  foo(1,2); // error, does not match any foo
-  foo(1);   // error, matches A.foo(long) and B.foo(int)
-  A.foo(1); // calls A.foo(long)
+  foo();    // A.foo() を呼ぶ
+  foo(1L);  // A.foo(long) を呼ぶ
+  foo(c);   // B.foo(C) を呼ぶ
+  foo(1,2); // エラー。どの foo にもマッチしない
+  foo(1);   // エラー。A.foo(long) と B.foo(int) の両方にマッチ
+  A.foo(1); // A.foo(long) を呼ぶ
 }
 ---
 
-        $(P Even though $(CODE B.foo(int)) is a better match than $(CODE
-        A.foo(long)) for $(CODE foo(1)),
-        it is an error because the two matches are in
-        different overload sets.
+        $(P $(CODE foo(1)) に対しては $(CODE B.foo(int)) の方が $(CODE
+        A.foo(long)) よりも適合度は高いですが、
+	違う２つのオーバーロード集合両方にマッチするので、
+	これはエラーとなります。
         )
 
-        $(P Overload sets can be merged with an alias declaration:)
+        $(P alias宣言を使うことで、オーバーロード集合を併合することができます:)
 
 ---
 import A;
@@ -632,86 +632,86 @@ alias A.foo foo;
 alias B.foo foo;
 
 void bar(C c) {
-  foo();    // calls A.foo()
-  foo(1L);  // calls A.foo(long)
-  foo(c);   // calls B.foo(C)
-  foo(1,2); // error, does not match any foo
-  foo(1);   // calls B.foo(int)
-  A.foo(1); // calls A.foo(long)
+  foo();    // A.foo() を呼ぶ
+  foo(1L);  // A.foo(long) を呼ぶ
+  foo(c);   // B.foo(C) を呼ぶ
+  foo(1,2); // エラー。どの foo にもマッチしない
+  foo(1);   // B.foo(int) を呼ぶ
+  A.foo(1); // A.foo(long) を呼ぶ
 }
 ---
 
 )
 
 
-<h3><a name="parameters">Function Parameters</a></h3>
+<h3><a name="parameters">関数の引数</a></h3>
 
 $(V1
-        $(P Parameters are $(B in), $(B out), $(B inout) or $(B lazy).
-        $(B in) is the default; the others work like
-        storage classes. For example:
+        $(P 関数引数のには $(B in), $(B out), $(B inout), $(B lazy)が指定できます。
+        $(B in) がデフォルトです。そのほかは記憶域クラスのように動作します。
+        例:
 	)
 
 ------
 int foo(in int x, out int y, inout int z, int q);
 ------
 
-        $(P x is $(B in), y is $(B out), z is $(B inout), and q is $(B in).
+        $(P x は $(B in), y は $(B out), z は $(B inout), q は $(B in) です。
         )
 )
 $(V2
-        $(P Parameter storage classes are $(B in), $(B out),
+        $(P 関数引数の記憶クラスには $(B in), $(B out),
         $(B ref), $(B lazy), $(B const), $(B immutable), $(B shared),
-	$(B inout) or
-        $(B scope).
-        For example:
+	$(B inout),
+        $(B scope) が指定できます。
+        例:
 	)
 ------
 int foo(in int x, out int y, ref int z, int q);
 ------
 
-        $(P x is $(B in), y is $(B out), z is $(B ref), and q is none.
+        $(P x は $(B in), y は $(B out), z は $(B ref), q はそのいずれでもありません。
         )
 )
 
         $(UL
-        $(LI The function declaration makes it clear what the inputs and
-        outputs to the function are.)
-        $(LI It eliminates the need for IDL as a separate language.)
-        $(LI It provides more information to the compiler, enabling more
-        error checking and
-        possibly better code generation.)
+        $(LI 関数宣言にどれが入力でどれが出力か明示することで、
+		理解しやすくなります。)
+        $(LI IDLを別の言語として用意する必要がなくなります。)
+        $(LI コンパイラに多くの情報を与えることで、
+		よりよいエラーチェックやコード生成が
+		可能になります。)
         )
 
-	$(TABLE2 Parameter Storage Classes,
-	$(THEAD Storage Class, Description)
-	$(TROW $(I none), parameter becomes a mutable copy of its argument)
-	$(V1 $(TROW $(D in), equivalent to $(I none)))
-	$(V2 $(TROW $(D in), equivalent to $(D const scope)))
-	$(TROW $(D out), parameter is initialized upon function entry with the default value
-	for its type)
-	$(V1 $(TROW $(D inout), parameter is passed by reference))
-	$(V2 $(TROW $(D ref),   parameter is passed by reference))
-	$(V2 $(TROW $(D scope), references in the parameter
-	cannot be escaped (e.g. assigned to a global variable)))
-	$(TROW $(D lazy), argument is evaluated by the called function and not by the caller)
+	$(TABLE2 仮引数の記憶域クラス,
+	$(THEAD 記憶域クラス, 説明)
+	$(TROW $(I none), 仮引数は実引数の書き換え可能なコピーとなる)
+	$(V1 $(TROW $(D in), $(I none) と同じ))
+	$(V2 $(TROW $(D in), $(D const scope) と同じ))
+	$(TROW $(D out), 仮引数は関数に入る際に、
+	その型のデフォルト値で初期化される)
+	$(V1 $(TROW $(D inout), 引数は参照渡しされる))
+	$(V2 $(TROW $(D ref),   引数は参照渡しされる))
+	$(V2 $(TROW $(D scope), 仮引数への参照は関数スコープの外に出すこと
+	(グローバル変数への代入など) はできない))
+	$(TROW $(D lazy), 実引数は呼び出し側ではなく、呼ばれた関数の中で使った時に評価される)
 	$(V2
-	$(TROW $(D const), argument is implicitly converted to a const type)
-	$(TROW $(D immutable), argument is implicitly converted to an immutable type)
-	$(TROW $(D shared), argument is implicitly converted to a shared type)
-	$(TROW $(D inout), argument is implicitly converted to an inout type)
+	$(TROW $(D const), 実引数が暗黙にconst型に変換される)
+	$(TROW $(D immutable), 実引数が暗黙にimmutable型に変換される)
+	$(TROW $(D shared), 実引数が暗黙にshared型に変換される)
+	$(TROW $(D inout), 実引数が暗黙にinout型に変換される)
 	)
 	)
 
 ------
 void foo(out int x) {
-  // x is set to int.init,
-  // which is 0, at start of foo()
+  // x は int.init、つまり 0 に
+  // 関数の最初でセットされる
 }
 
 int a = 3;
 foo(a);
-// a is now 0
+// a は 0
 
 
 void abc(out int x) {
@@ -720,7 +720,7 @@ void abc(out int x) {
 
 int y = 3;
 abc(y);
-// y is now 2
+// y は 2
 
 
 void def($(V1 inout)$(V2 ref) int x) {
@@ -729,18 +729,18 @@ void def($(V1 inout)$(V2 ref) int x) {
 
 int z = 3;
 def(z);
-// z is now 4
+// z は 4
 ------------
 
-        $(P For dynamic array and object parameters, which are passed
-        by reference, in/out/ref
-        apply only to the reference and not the contents.
+        $(P 動的配列やオブジェクト引数は元々参照渡しされますが、
+	これらについては、
+	in/out/ref は参照に対して適用され、中身には影響しません。
         )
 
-        $(P $(D lazy) arguments are evaluated not when the function is called,
-        but when the parameter is evaluated within the function. Hence,
-        a $(D lazy) argument can be executed 0 or more times. A $(D lazy) parameter
-        cannot be an lvalue.)
+        $(P $(D lazy) 引数は関数が呼び出されるときに評価されるのではなく、
+	関数の中で引数が使われる時点で初めて評価されます。このため、
+        $(D lazy) 引数は一度も実行されないこともあれば複数回実行される可能性もあります。 $(D lazy)
+        引数は左辺値とすることはできません。)
 
 ---
 void dotimes(int n, lazy void exp) {
@@ -754,7 +754,7 @@ void test() {
 }
 ---
 
-        $(P prints to the console:)
+        $(P 次のように表示されます:)
 
 $(CONSOLE
 0
@@ -762,122 +762,122 @@ $(CONSOLE
 2
 )
 
-        $(P A $(D lazy) parameter of type $(D void) can accept an argument
-        of any type.)
+        $(P $(D void) 型の $(D lazy)
+        引数は、任意の型の引数を受け付けます。)
 
-<h3>Function Default Arguments</h3>
+<h3>デフォルト引数</h3>
 
-        $(P Function parameter declarations can have default values:)
+        $(P 関数のパラメタ宣言にはデフォルト値を設定することが可能です:)
 
 ---
 void foo(int x, int y = 3) {
   ...
 }
 ...
-foo(4);   // same as foo(4, 3);
+foo(4);   // foo(4, 3); と同じ
 ---
 
-        $(P Default parameters are evaluated in the context of the
-        function declaration.
-        If the default value for a parameter is given, all following
-        parameters must also have default values.
+        $(P デフォルト引数は、
+	関数宣言のコンテキストで評価されます。
+	引数にデフォルト値を設定する場合、
+	それよりも後ろの引数にも全てデフォルト値を設定する必要があります。
         )
 
-<a name="variadic"><h2>Variadic Functions</h2></a>
+<a name="variadic"><h2>可変個関数引数</h2></a>
 
-        Functions taking a variable number of arguments are called
-        variadic functions. A variadic function can take one of
-        three forms:
+	引数の個数が定まっていな関数のことを、可変個引数関数と呼びます。
+	可変個引数関数には、
+	以下の３つの形式があります：
 
         $(OL
-        $(LI C-style variadic functions)
-        $(LI Variadic functions with type info)
-        $(LI Typesafe variadic functions)
+        $(LI Cスタイル可変個引数関数)
+        $(LI Dスタイル可変個引数関数)
+        $(LI 型安全可変個引数関数)
         )
 
 
-<h3>C-style Variadic Functions</h3>
+<h3>Cスタイル可変個引数関数</h3>
 
-        A C-style variadic function is declared as taking
-        a parameter of ... after the required function parameters.
-        It has non-D linkage, such as $(D extern (C)):
+        Cスタイル可変個引数関数は、必須の引数の後ろに
+	... をつけた形で宣言されます。
+	$(D extern (C)) のような、D以外のリンケージを持ちます：
 
 ------
 extern (C) int foo(int x, int y, ...);
 
 foo(3, 4);      // ok
-foo(3, 4, 6.8); // ok, one variadic argument
-foo(2);         // error, y is a required argument
+foo(3, 4, 6.8); // ok, 可変引数が１つ。
+foo(2);         // エラー。引数yは必須。
 ------
 
-        There must be at least one non-variadic parameter declared.
+	この形式の関数は、最低１つの非変引数を受け取る必要があります。
 
 ------
-extern (C) int def(...); // error, must have at least one parameter
+extern (C) int def(...); // エラー、最低一つの引数が必要
 ------
 
-        C-style variadic functions match the C calling convention for
-        variadic functions, and is most useful for calling C library
-        functions like $(D printf).
-        The implementiations of these variadic functions have a special
-        local variable declared for them,
-        $(B _argptr), which is a $(D void*) pointer to the first of the
-        variadic
-        arguments. To access the arguments, $(B _argptr) must be cast
-        to a pointer to the expected argument type:
+	Cスタイル可変個引数関数は、Cの可変個引数関数の呼び出し規約と一致していて、
+    $(D printf) のような
+	Cのライブラリ関数を呼び出すのに利用できます。
+	可変個引数関数の中では、
+	特別なローカル変数
+        $(B _argptr)  が使えます。	この変数は、可変引数の１つ目を指す $(D void*)
+        型のポインタです。
+	引数にアクセスするには、 $(B _argptr)  を、
+	期待される実際の型へのポインタにキャストします：
 
 ------
-foo(3, 4, 5);   // first variadic argument is 5
+foo(3, 4, 5);   // 可変個引数の先頭は、5
 
 int foo(int x, int y, ...) {
   int z;
 
-  z = *cast(int*)$(B _argptr); // z is set to 5
+  z = *cast(int*)$(B _argptr); // z に 5 が入る
 }
 ------
 
-        To protect against the vagaries of stack layouts on different
-        CPU architectures, use $(B core.vararg) to access the variadic
-        arguments:
+        CPUアーキテクチャの違いによってスタックのメモリ配置が異なる問題を
+	考慮にいれるならば、可変個引数のアクセスには $(B core.vararg)
+        を使います：
 
 ------
 import $(B core.vararg);
 ------
 
-<h3>D-style Variadic Functions</h3>
+<h3>Dスタイル可変個引数関数</h3>
 
-        Variadic functions with argument and type info are declared as taking
-        a parameter of ... after the required function parameters.
-        It has D linkage, and need not have any non-variadic parameters
-        declared:
+	型情報付き可変個引数関数は、必須の引数の後ろに
+	... をつけた形で宣言します。
+	この種類の関数はDリンケージを持ち、
+	固定の引数が一個もなくても構いません：
 
 ------
-int abc(char c, ...);   // one required parameter: c
+int abc(char c, ...);   // 必須引数が一つ: c
 int def(...);           // ok
 ------
 
-        These variadic functions have a special local variable declared for
-        them,
-        $(B _argptr), which is a $(D void*) pointer to the first of the
-        variadic
-        arguments. To access the arguments, $(B _argptr) must be cast
-        to a pointer to the expected argument type:
+        可変個引数関数の中では、
+	特別なローカル変数
+        $(B _argptr)が使えます。
+	この変数は、可変引数の１つ目を指す  $(D void*)型のポインタです。
+	引数にアクセスするには、$(B _argptr)  を、
+	期待される実際の型へのポインタにキャストします：
 
 ------
-foo(3, 4, 5);   // first variadic argument is 5
+foo(3, 4, 5);   // 可変個引数の先頭は、5
 
 int foo(int x, int y, ...) {
   int z;
 
-  z = *cast(int*)$(B _argptr); // z is set to 5
+  z = *cast(int*)$(B _argptr); // z に 5 が入る
 }
 ------
 
-        An additional hidden argument
-        with the name $(B _arguments) and type $(D TypeInfo[])
-        is passed to the function.
-        $(B _arguments) gives the number of arguments and the type
-        of each, enabling the creation of typesafe variadic functions.
+        Dのリンケージを持つ可変個引数関数には、さらに $(D TypeInfo[])
+        型の隠れた引数 $(B _arguments) が渡されます。
+        $(B _arguments) によって、
+	実際に渡された引数の個数とそれぞれ型がわかります。
+	この情報を元に、型安全な可変個引数関数を作ることができます。
 
 ------
 import std.stdio;
@@ -935,7 +935,7 @@ void main() {
 }
 ------
 
-        which prints:
+        これは次のように表示されます：
 
 ------
 00870FE0
@@ -952,9 +952,9 @@ Bar
         00870FD0
 ------
 
-        To protect against the vagaries of stack layouts on different
-        CPU architectures, use $(B core.vararg) to access the variadic
-        arguments:
+        CPUアーキテクチャの違いによってスタックのメモリ配置が異なる問題を
+	考慮にいれるならば、可変個引数のアクセスには  $(B core.vararg)
+        を使います：
 
 ------
 import std.stdio;
@@ -992,23 +992,23 @@ void foo(int x, ...) {
 }
 ------
 
-<h3>Typesafe Variadic Functions</h3>
+<h3>型安全可変個引数関数</h3>
 
-        Typesafe variadic functions are used when the variable argument
-        portion of the arguments are used to construct an array or
-        class object.
+	型安全可変個引数関数は、
+	引数の可変部分が配列やクラスオブジェクトの生成に使われる、
+	という形で実現されています。
         <p>
 
-        For arrays:
+	配列として可変部分を受け取る場合：
 
 ------
 int test() {
-  return sum(1, 2, 3) + sum(); // returns 6+0
+  return sum(1, 2, 3) + sum(); // 6+0 を返す
 }
 
 int func() {
   int[3] ii = [4, 5, 6];
-  return sum(ii);             // returns 15
+  return sum(ii);             // 15を返す
 }
 
 int sum(int[] ar ...) {
@@ -1019,19 +1019,19 @@ int sum(int[] ar ...) {
 }
 ------
 
-        For static arrays:
+       静的配列の場合：
 
 ------
 int test() {
-  return sum(2, 3);   // error, need 3 values for array
-  return sum(1, 2, 3); // returns 6
+  return sum(2, 3);   // エラー。配列に3個の値が必要
+  return sum(1, 2, 3); //  6を返す
 }
 
 int func() {
   int[3] ii = [4, 5, 6];
   int[] jj = ii;
-  return sum(ii); // returns 15
-  return sum(jj); // error, type mismatch
+  return sum(ii); // 15を返す
+  return sum(jj); // エラー、型の不一致
 }
 
 int sum(int[3] ar ...) {
@@ -1042,7 +1042,7 @@ int sum(int[3] ar ...) {
 }
 ------
 
-        For class objects:
+	クラスオブジェクトの場合：
 
 ------
 class Foo {
@@ -1060,28 +1060,28 @@ void test(int x, Foo f ...);
 ...
 
 Foo g = new Foo(3, "abc");
-test(1, g);         // ok, since g is an instance of Foo
+test(1, g);         // ok, gはFooのインスタンス
 test(1, 4, "def");  // ok
-test(1, 5);         // error, no matching constructor for Foo
+test(1, 5);         // エラー、Fooのコンストラクタでマッチするものがない
 ------
 
-        An implementation may construct the object or array instance
-        on the stack. Therefore, it is an error to refer to that
-        instance after the variadic function has returned:
+	実装は、オブジェクトや配列のインスタンスをスタック上に作ることができます。
+	ということは、可変個引数関数からreturnした後にそのインスタンスを参照すると、
+	エラーになります：
 
 ------
 Foo test(Foo f ...) {
-  return f;   // error, f instance contents invalid after return
+  return f;   // エラー。インスタンスfの内容はreturnのあと無効になる
 }
 
 int[] test(int[] a ...) {
-  return a;       // error, array contents invalid after return
-  return a[0..1]; // error, array contents invalid after return
-  return a.dup;   // ok, since copy is made
+  return a;       // エラー。returnの後は配列の内容は無効
+  return a[0..1]; // エラー。returnの後は配列の内容は無効
+  return a.dup;   // ok, コピーが作られている
 }
 ------
 
-        For other types, the argument is built with itself, as in:
+	その他の型の場合、引数はその型そのものになります：
 
 ------
 int test(int i ...) {
@@ -1089,24 +1089,24 @@ int test(int i ...) {
 }
 
 ...
-test(3);    // returns 3
-test(3, 4); // error, too many arguments
+test(3);    // 3を返す
+test(3, 4); // エラー、引数が多すぎる
 int[] x;
-test(x);    // error, type mismatch
+test(x);    // エラー。型の不一致
 ------
 
-<h3>Lazy Variadic Functions</h3>
+<h3>遅延可変個引数</h3>
 
-        $(P If the variadic parameter is an array of delegates
-        with no parameters:
+        $(P 可変個引数の型が、
+	引数を持たないdelegateの配列であった場合:
         )
 
 ---
 void foo(int delegate()[] dgs ...);
 ---
 
-        $(P Then each of the arguments whose type does not match that
-        of the delegate is converted to a delegate.
+        $(P delegate型でないような実引数は、
+	その型のdelegateへ暗黙変換されます。
         )
 
 ---
@@ -1114,61 +1114,61 @@ int delegate() dg;
 foo(1, 3+x, dg, cast(int delegate())null);
 ---
 
-        $(P is the same as:)
+        $(P これは以下と同じです:)
 
 ---
 foo( { return 1; }, { return 3+x; }, dg, null );
 ---
 
-<h2>$(LNAME2 Local Variables, Local Variables)</h2>
+<h2>$(LNAME2 Local Variables, ローカル変数)</h2>
 
-        $(P It is an error to use a local variable without first assigning it a
-        value. The implementation may not always be able to detect these
-        cases. Other language compilers sometimes issue a warning for this,
-        but since it is always a bug, it should be an error.
+        $(P ローカル変数に値を代入する前に使用するのはエラーです。実装は、
+	このエラーを必ずしも検出しないかもしれません。
+	他の言語のコンパイラはしばしばこの問題に対して警告を出しますが、
+	これは常にバグなので、エラーであるべきです。
         )
 
-        $(P It is an error to declare a local variable that is never referred to.
-        Dead variables, like anachronistic dead code, are just a source of
-        confusion for maintenance programmers.
+        $(P 一度も参照されないローカル変数を宣言するのもエラーです。
+	古い利用されてないコードに現れるような死んだ変数は、
+	メンテナンスプログラマの混乱の元でしかありません。
         )
 
-        $(P It is an error to declare a local variable that hides another local
-        variable in the same function:
+        $(P 同じ関数内の他の変数の名前を隠すローカル変数は、
+	エラーです：
         )
 
 ------
 void func(int x) {
-   int x;     // error, hides previous definition of x
+   int x;     // エラー, xの前の定義を隠している
    double y;
    ...
-   { char y;  // error, hides previous definition of y
+   { char y;  // エラー, yの前の定義を隠している
      int z;
    }
-   { wchar z; // legal, previous z is out of scope
+   { wchar z; // 問題なし, zの前の定義はスコープ外
    }
 }
 ------
 
-        $(P While this might look unreasonable, in practice whenever
-        this is done it either is a
-        bug or at least looks like a bug.
+        $(P これは不合理に見えるかもしれませんが、実際上は、
+	このエラーに該当するのはバグのあるコードか、
+	少なくともバグのように見えるコードです。
         )
 
-        $(P It is an error to return the address of or a reference to a
-        local variable.
+        $(P ローカル変数のアドレスや参照を返すのは、
+	エラーです。
         )
 
-        $(P It is an error to have a local variable and a label with the same
-        name.
+        $(P
+		ローカル変数とラベルとに同じ名前を付けるのはエラーです。
         )
 
-<h2>$(LNAME2 Local Static Variables, Local Static Variables)</h2>
+<h2>$(LNAME2 Local Static Variables, ローカルstatic変数)</h2>
 
-	$(P Local variables in functions can be declared as static
-	$(V2 or __gshared) in which case they are statically allocated
-	rather than being allocated on the stack.
-	As such, their value persists beyond the exit of the function.
+	$(P 関数内のローカル変数は static
+	$(V2 または __gshared) と宣言することができ、
+	その場合変数はスタック上ではなく静的に割り当てられます。
+	代入された値は関数から一度抜けたあとも保持されるようになります。
 	)
 
 ---
@@ -1179,29 +1179,29 @@ void foo() {
 }
 ---
 
-	$(P The initializer for a static variable must be evaluatable at
-	compile time, and they are initialized upon the start of the thread
-	$(V2 (or the start of the program for __gshared).
-	There are no static constructors or static destructors
-	for static local variables.)
+	$(P static 変数の初期値はコンパイル時評価可能である必要があり、
+	この初期化はスレッドの開始時
+	$(V2 (あるいは __gshared に関してはプログラム開始時) に行われます。
+	ローカル static
+	変数に対する静的コンストラクタや静的デストラクタはありません。)
 	)
 
-	$(P Although static variable name visibility follows the usual scoping
-	rules, the names of them must be unique within a particular function.
+	$(P static変数の可視性は通常のスコープ規則に従いますが、
+	その名前は関数内で一意でなければいけません。
 	)
 
 ---
 void main() {
   { static int x; }
-  { static int x; } // error
+  { static int x; } // エラー
   { int i; }
   { int i; } // ok
 }
 ---
 
-<h2><a name="nested">Nested Functions</a></h2>
+<h2><a name="nested">ネスト関数</a></h2>
 
-        $(P Functions may be nested within other functions:)
+        $(P 他の関数の内部にネストして関数を書くことができます:)
 
 ------
 int bar(int a) {
@@ -1214,23 +1214,23 @@ int bar(int a) {
 }
 
 void test() {
-  int i = bar(3); // i is assigned 4
+  int i = bar(3); // i に 4 が代入される
 }
 ------
 
-        $(P Nested functions can be accessed only if the name is in scope.)
+        $(P ネスト関数は、その名前がスコープにある範囲からのみ参照できます。)
 
 ------
 void foo()
 {
   void A()
   {
-    B(); // error, B() is forward referenced
-    C(); // error, C undefined
+    B(); // エラー。Bは前方参照
+    C(); // エラー。Cは未定義
   }
   void B()
   {
-    A(); // ok, in scope
+    A(); // ok, スコープ内
     void C()
     {
       void D()
@@ -1244,11 +1244,11 @@ void foo()
   }
   A(); // ok
   B(); // ok
-  C(); // error, C undefined
+  C(); // エラー。C は未定義
 }
 ------
 
-        $(P and:)
+        $(P そして:)
 
 ------
 int bar(int a) {
@@ -1259,13 +1259,13 @@ int bar(int a) {
 
 void test() {
   int i = bar(3);     // ok
-  int j = bar.foo(3); // error, bar.foo not visible
+  int j = bar.foo(3); // エラー。bar.foo はここから見えない
 }
 ------
 
-        $(P Nested functions have access to the variables and other symbols
-        defined by the lexically enclosing function.
-        This access includes both the ability to read and write them.
+        $(P ネスト関数は外側の関数の変数や、
+	その他のシンボルにアクセスできます。
+	読み書き双方のアクセスが可能です。
         )
 
 ------
@@ -1273,21 +1273,21 @@ int bar(int a) {
   int c = 3;
 
   int foo(int b) {
-    b += c;       // 4 is added to b
-    c++;          // bar.c is now 5
-    return b + c; // 12 is returned
+    b += c;       // 4 が b に足される
+    c++;          // bar.c は 5 になる
+    return b + c; // 返値は 12
   }
   c = 4;
-  int i = foo(a); // i is set to 12
-  return i + c;   // returns 17
+  int i = foo(a); // i は 12
+  return i + c;   // 17 を返す
 }
 
 void test() {
-  int i = bar(3); // i is assigned 17
+  int i = bar(3); // i に 17 が代入される
 }
 ------
 
-        $(P This access can span multiple nesting levels:)
+        $(P このアクセスは、ネストの階層が複数段でも構いません：)
 
 ------
 int bar(int a) {
@@ -1295,7 +1295,7 @@ int bar(int a) {
 
   int foo(int b) {
       int abc() {
-          return c;   // access bar.c
+          return c;   // bar.c にアクセス
       }
       return b + c + abc();
   }
@@ -1303,9 +1303,9 @@ int bar(int a) {
 }
 ------
 
-        $(P Static nested functions cannot access any stack variables of
-        any lexically enclosing function, but can access static variables.
-        This is analogous to how static member functions behave.
+        $(P staticなネストした関数は、外側の関数のスタック変数を触ることができず、
+	static変数だけにアクセスできます。
+	これはstaticメンバ関数のふるまいとよく似ています。
         )
 
 ------
@@ -1315,14 +1315,14 @@ int bar(int a) {
 
   static int foo(int b) {
     b = d;          // ok
-    b = c;          // error, foo() cannot access frame of bar()
+    b = c;          // エラー。foo() は bar() のスタックフレームにアクセスできない
     return b + 1;
   }
   return foo(a);
 }
 ------
 
-        $(P Functions can be nested within member functions:)
+        $(P 関数は、メンバ関数の中にもネストできます：)
 
 ------
 struct Foo {
@@ -1339,9 +1339,9 @@ struct Foo {
 }
 ------
 
-        $(P Member functions of nested classes and structs do not have
-        access to the stack variables of the enclosing function, but
-        do have access to the other symbols:
+        $(P メンバ関数の中にネストしたクラスや構造体からは、
+	外側の関数のスタック変数にはアクセスできませんが、
+	その他のシンボルにはアクセス可能です：
         )
 
 ------
@@ -1353,15 +1353,15 @@ void test() {
     int a;
 
     int bar() {
-      int c = s;  // ok, s is static
-      int d = j;  // error, no access to frame of test()
+      int c = s;  // ok, s は static
+      int d = j;  // エラー。test() のスタックフレームにはアクセス不可
 
       int foo() {
-        int e = s;    // ok, s is static
-        int f = j;    // error, no access to frame of test()
-        return c + a; // ok, frame of bar() is accessible,
-                      // so are members of Foo accessible via
-                      // the 'this' pointer to Foo.bar()
+        int e = s;    // ok, s は static
+        int f = j;    // エラー。test() のスタックフレームにはアクセス不可
+        return c + a; // ok, bar() のフレームにはアクセス可能
+                      // 従って、Foo.bar() の 'this' ポインタを通して
+                      // Fooのメンバにもアクセスできる
       }
 
       return 0;
@@ -1370,22 +1370,22 @@ void test() {
 }
 ------
 
-        $(P Nested functions always have the D function linkage type.
+        $(P ネストした関数は、常にDの関数リンケージを持ちます。
         )
 
-        $(P Unlike module level declarations, declarations within function
-        scope are processed in order. This means that two nested functions
-        cannot mutually call each other:
+        $(P モジュールレベルの定義と違い、関数スコープ内での宣言は、
+	書かれた順番に処理されます。どういうことかと言うと、
+	２つのネストした関数が相互に呼び出し合うことはできません：
         )
 
 ------
 void test() {
-  void foo() { bar(); } // error, bar not defined
+  void foo() { bar(); } // エラー、bar は未定義
   void bar() { foo(); } // ok
 }
 ------
 
-        $(P The solution is to use a delegate:)
+        $(P これはdelegateを使って解決します：)
 
 ------
 void test() {
@@ -1396,11 +1396,11 @@ void test() {
 }
 ------
 
-	$(P Nested functions cannot be overloaded.)
+	$(P ネスト関数はオーバーロードできません。)
 
-<h3><a name="closures">Delegates, Function Pointers, and $(V1 Dynamic) Closures</a></h3>
+<h3><a name="closures">デリゲート, 関数ポインタ, $(V1 動的)クロージャ</a></h3>
 
-        $(P A function pointer can point to a static nested function:)
+        $(P 関数ポインタは、staticなネストした関数を指すことができます：)
 
 ------
 int function() fp;
@@ -1414,11 +1414,11 @@ void test() {
 
 void bar() {
   test();
-  int i = fp();       // i is set to 10
+  int i = fp();       // i は 10 となる
 }
 ------
 
-        $(P A delegate can be set to a non-static nested function:)
+        $(P delegate では、staticでないネストした関数を指せます：)
 
 ------
 int delegate() dg;
@@ -1428,51 +1428,51 @@ void test() {
   int foo() { return a + 3; }
 
   dg = &foo;
-  int i = dg(); // i is set to 10
+  int i = dg(); // i は 10 になる
 }
 ------
 
 $(V1
-        $(P The stack variables, however, are not valid once the function
-        declaring them has exited, in the same manner that pointers to
-        stack variables are not valid upon exit from a function:
+        $(P ただし、
+		スタック変数は、その関数が終了したら無効になります。
+        スタック変数が関数終了時に無効になるのと同様です。
         )
 
 ------
 int* bar() {
   int b;
   test();
-  int i = dg(); // error, test.a no longer exists
-  return &b;    // error, bar.b not valid after bar() exits
+  int i = dg(); // エラー、test.a はもう存在しない
+  return &b;    // エラー、bar.b は bar() の終了後は無効
 }
 ------
 )
 $(V2
-        $(P The stack variables referenced by a nested function are
-        still valid even after the function exits (this is different
-        from D 1.0). This is called a $(I closure).
-        Returning addresses of stack variables, however, is not
-        a closure and is an error.
+        $(P ネストした関数から参照されているスタック変数は、
+	関数が終了した後も有効です（これは D 1.0
+	とは異なる仕様です）。これを  $(I クロージャ) といいます。
+	ただし、スタック変数のアドレスをreturnするのはクロージャではないため、
+	エラーになります。
         )
 
 ------
 int* bar() {
   int b;
   test();
-  int i = dg(); // ok, test.a is in a closure and still exists
-  return &b;    // error, bar.b not valid after bar() exits
+  int i = dg(); // ok, test.a はクロージャの中にありまだ有効
+  return &b;    // エラー、bar.b は bar() の終了後は無効
 }
 ------
 )
 
-        $(P Delegates to non-static nested functions contain two pieces of
-        data: the pointer to the stack frame of the lexically enclosing
-        function (called the $(I frame pointer)) and the address of the
-        function. This is analogous to struct/class non-static member
-        function delegates consisting of a $(I this) pointer and
-        the address of the member function.
-        Both forms of delegates are interchangeable, and are actually
-        the same type:
+        $(P 非staticなネストした関数へのdelegateは、
+	二つのデータを持ちます。
+	それは、外側の関数のスタックフレームを指すポインタ ($(I フレームポインタ)と呼びます) と、
+	関数のアドレスです。これは、構造体/クラスの
+	非staticメンバ関数へのdelgateが $(I this)
+	ポインタとメンバ関数のアドレスから
+	なっていることと似ています。どちらのタイプのdelegateも互換性があり、
+	実際に、同じ型です：
         )
 
 ------
@@ -1491,39 +1491,39 @@ void test() {
   Foo f;
   int i;
 
-  i = foo(&abc);   // i is set to 28
-  i = foo(&f.bar); // i is set to 8
+  i = foo(&abc);   // i は 28 になる
+  i = foo(&f.bar); // i は 8 になる
 }
 ------
 
-        $(P This combining of the environment and the function is called
-        a $(I dynamic closure).
+        $(P 環境と関数の組み合わせは、
+        a $(I 動的クロージャ) と呼ばれています。
         )
 
-        $(P The $(B .ptr) property of a delegate will return the
-        $(I frame pointer) value as a $(D void*).
+        $(P デリゲートの $(B .ptr) プロパティは、
+        $(D void*) 型でフレームポインタの値を返します
         )
 
-        $(P The $(B .funcptr) property of a delegate will return the
-        $(I function pointer) value as a function type.
+        $(P デリゲートの $(B .funcptr) プロパティは、
+		function型で関数ポインタの値を返します
         )
 
-        $(P $(B Future directions:) Function pointers and delegates may merge
-        into a common syntax and be interchangeable with each other.
+        $(P $(B 今後の方向性:) 関数ポインタとdelegateの構文を共通にして、
+		相互に互換性を持たせる予定です。
         )
 
-<h3>Anonymous Functions and Anonymous Delegates</h3>
+<h3>無名関数・無名デリゲート</h3>
 
-        $(P See $(GLINK2 expression, FunctionLiteral)s.
+        $(P See $(GLINK2 expression, FunctionLiteral) を参照してください。
         )
 
-<h2>main() Function</h2>
+<h2>main() 関数</h2>
 
-        $(P For console programs, $(D main()) serves as the entry point.
-        It gets called after all the module initializers are run, and
-        after any unittests are run.
-        After it returns, all the module destructors are run.
-        $(D main()) must be declared using one of the following forms:
+        $(P コンソールプログラムでは、$(D main()) が実行開始点となります。
+	全てのモジュール初期化子が呼ばれ、
+	ユニットテストが実行された後に呼び出されます。
+	mainから戻った後は、全てのモジュールデストラクタが呼び出されます。
+        $(D main()) の宣言は必ず以下のいずれかとします：
         )
 
 ----
@@ -1533,54 +1533,54 @@ int main() { ... }
 int main(string[] args) { ... }
 ----
 
-<h2>$(LNAME2 interpretation, Compile Time Function Execution (CTFE))</h2>
+<h2>$(LNAME2 interpretation, コンパイル時関数実行 (CTFE))</h2>
 
-    $(P Functions which are both portable and free of side-effects can be
-    executed at compile time. This is useful when constant folding
-    algorithms need to include recursion and looping. Compile time function
-    execution is subject to the following restrictions:
+    $(P 関数の一部は、コンパイル時に実行可能です。
+	再帰やループが必要なアルゴリズムで生成される定数をたたみ込みたい時に、
+	この機能は有用です。
+	コンパイル時に実行するためには、関数は以下の条件を満たしている必要があります:
     )
 
     $(OL
-    $(LI the function source code must be available to the compiler. Functions
-        which exist in the source code only as $(D_KEYWORD extern) declarations
-        cannot be executed at compile time)
+    $(LI 関数のソースコードがコンパイラに見えている必要があります。
+        $(D_KEYWORD extern)
+        で宣言だけが見てている関数はコンパイル時実行はできません。)
 
-    $(LI executed expressions may not reference any global or local
-        static variables)
+    $(LI 実行される式は、
+        グローバル変数やローカルstatic変数には触れません。)
 
-    $(LI $(D_KEYWORD asm) statements are not permitted)
+    $(LI $(D_KEYWORD asm) 文は使えません。)
 
-    $(LI non-portable casts (eg, from $(I int[]) to $(I float[])), including
-        casts which depend on endianness, are not permitted.
-        Casts between signed and unsigned types are permitted.
-        Any pointer may be cast to $(I void *) and from $(I void *) back to
-        its original type. Casting between pointer and non-pointer types is
-        prohibited.
+    $(LI 移植性のないキャスト ($(I int[]) から $(I float[]) へのキャストなど)、
+        具体的にはエンディアンに依存するキャストなどは、使えません。
+        signed と unsigned の間のキャストは可能です。
+        ポインタは $(I void *) と元の型の間の相互変換は可能です。
+        ポインタと、
+        非ポインタ型の間の変換は禁止です。
         )
 
-    $(LI C-style semantics on pointer arithmetic are strictly enforced.
+    $(LI ポインタ算術に関してはC形式の意味論が厳密に強制されます。
         $(P
-        Pointer arithmetic is permitted only on pointers which point to static
-        or dynamic array elements. Such pointers must point to an element of
-        the array, or to the first element past the array.
-        Ordered comparison (<, <=, >, >=) between pointers is permitted only
-        between pointers which point to the same array.
-        Pointer arithmetic is completely forbidden on pointers which are null,
-        or which point to a non-array.
+        ポインタ算術は静的ないしは動的配列の要素を指すポインタに関してのみ可能です。
+        このようなポインタは配列の要素か、
+        配列の終端の１つ先だけを指すことができます。
+        ポインタの順序比較 (<, <=, >, >=)
+        は同じ配列を指すポインタ間でのみ可能です。
+        null ポインタや、配列以外を指しているポインタについては、
+        ポインタ算術は完全に禁止となります。
         )
         $(P
-        Equality comparisons (==, !=, $(D_KEYWORD is), $(D_KEYWORD !is)) are
-        permitted between all pointers, without restriction.
+        等価性比較 (==, !=, $(D_KEYWORD is), $(D_KEYWORD !is))
+        は全てのポインタの間で、制限無く使用可能です。
         )
     )
-    $(LI Non-recoverable errors (such as $(D_KEYWORD assert) failures) do not
-        throw exceptions; instead, they end interpretation immediately.
+    $(LI 復旧不可能なエラー (たとえば $(D_KEYWORD assert) の失敗)
+        は例外を投げません。代わりに、即座に解釈実行を終了します。
     )
     )
 
-    $(P Note that the above restrictions apply only to expressions which are
-        actually executed. For example:
+    $(P 以上の制限は、実際に実行される式にだけ適用されます。
+        例えば:
     )
 ---
 static int y = 0;
@@ -1592,24 +1592,24 @@ int countTen(int x) {
 }
 
 static assert(countTen(6) == 6); // OK
-static assert(countTen(12) == 12);  // invalid, modifies y.
+static assert(countTen(12) == 12);  // 不可、yを変更しようとする
 ---
 $(V2
-    $(P The $(D_KEYWORD __ctfe) boolean pseudo-variable, which evaluates to $(D_KEYWORD true)
-        at compile time, but $(D_KEYWORD false) at run time, can be used to provide
-        an alternative execution path to avoid operations which are forbidden
-        at compile time.
+    $(P bool型の $(D_KEYWORD __ctfe) 擬似変数が提供され、コンパイル時には $(D_KEYWORD true)
+        に、実行時には $(D_KEYWORD false) に評価されます。
+        これによって、
+		コンパイル時には使えない処理を避ける代替実装を選択することなどができます。
     )
 )
 
-	$(P In order to be executed at compile time, the function
-	must appear in a context where it must be so executed, for
-	example:)
+	$(P 処理をコンパイル時に走らせるには、関数呼び出しが、
+	コンパイル時に必ず評価されねばならない文脈に現れるようにします。
+	例として:)
 
 	$(UL
-	$(LI initialization of a static variable)
-	$(LI dimension of a static array)
-	$(LI argument for a template value parameter)
+	$(LI static変数の初期化)
+	$(LI static配列の次元)
+	$(LI テンプレートの引数)
 	)
 
 ---
@@ -1622,42 +1622,42 @@ int square(int i) {
 }
 
 void foo() {
-  static j = square(3);     // compile time
+  static j = square(3);     // コンパイル時
   writefln(j);
-  writefln(square(4));      // run time
-  writefln(eval!(square(5))); // compile time
+  writefln(square(4));      // 実行時
+  writefln(eval!(square(5))); // コンパイル時
 }
 ---
 
-    $(P Executing functions at compile time can take considerably
-    longer than executing it at run time.
-    If the function goes into an infinite loop, it will hang at
-    compile time (rather than hanging at run time).
+    $(P 関数のコンパイル時実行は、
+	ランタイム実行よりもかなり時間がかかります。
+	関数が無限ループするような場合、実行時ではなく、
+	コンパイル時にハングします。
     )
 
-    $(P Functions executed at compile time can give different results
-    from run time in the following scenarios:
+    $(P コンパイル時実行される関数は、以下のような状況では、
+	実行時と異なる値を返すことがあります:
     )
 
     $(UL
 
-    $(LI floating point computations may be done at a higher
-    precision than run time)
-    $(LI dependency on implementation defined order of evaluation)
-    $(LI use of uninitialized variables)
+    $(LI 浮動小数点演算が、
+	実行時より高い精度で行われる)
+    $(LI 実装定義の評価順序に依存している)
+    $(LI 未初期化変数の使用)
 
     )
 
-    $(P These are the same kinds of scenarios where different
-    optimization settings affect the results.)
+    $(P これらは、
+	最適化の設定が結果に影響を及ぼすのと同じ種類の状況です。)
 
-<h3>String Mixins and Compile Time Function Execution</h3>
+<h3>文字列ミックスインとコンパイル時間数実行</h3>
 
-        $(P Any functions that execute at compile time must also
-        be executable at run time. The compile time evaluation of
-        a function does the equivalent of running the function at
-        run time. This means that the semantics of a function cannot
-        depend on compile time values of the function. For example:)
+        $(P コンパイル時に実行される関数は、実行時にも必ず動作するものでなければいけません。
+	コンパイル時の関数実行は、
+	必ずしも実行時と同等のものであるとは限りません。
+	これは、関数のセマンティクスは関数のコンパイル時の値に依存してはいけない、
+	ということを意味しています。例を挙げると:)
 
 ---
 int foo(char[] s) {
@@ -1667,118 +1667,118 @@ int foo(char[] s) {
 const int x = foo("1");
 ---
 
-        $(P is illegal, because the runtime code for foo() cannot be
-        generated. A function template would be the appropriate
-        method to implement this sort of thing.)
+        $(P この例は、foo() の実行時コードが生成できないため不正です。
+	このようなことをしたい場合は、
+	関数テンプレートを使う方が適切でしょう。)
 
 $(V2
-<h2>$(LNAME2 function-safety, Function Safety)</h2>
+<h2>$(LNAME2 function-safety, 関数の安全性)</h2>
 
-        $(P $(I Safe functions) are functions that are statically checked
-        to exhibit no possibility of
-        $(DPLLINK glossary.html#undefined_behavior, $(I undefined behavior)).
-        Undefined behavior is often used as a vector for malicious
-        attacks.
+        $(P $(I セーフ関数) は、
+        $(DPLLINK glossary.html#undefined_behavior, $(I 未定義動作)).
+	を決して引き起こさないことが静的にチェックされた関数です。
+	未定義動作は、
+	しばしば悪意のある攻撃の対象となります。
         )
 
-<h3>$(LNAME2 safe-functions, Safe Functions)</h3>
+<h3>$(LNAME2 safe-functions, セーフ関数)</h3>
 
-        $(P Safe functions are marked with the $(CODE @safe) attribute.)
+        $(P $(CODE @safe) 属性のついた関数が、セーフ関数です。)
 
-        $(P The following operations are not allowed in safe
-        functions:)
+        $(P セーフ関数の中では、
+		以下の操作は禁止されます:)
 
         $(UL
-        $(LI No casting from a pointer type to any type other than $(CODE void*).)
-        $(LI No casting from any non-pointer type to a pointer type.)
-        $(LI No modification of pointer values.)
-        $(LI Cannot access unions that have pointers or references overlapping
-        with other types.)
-        $(LI Calling any system functions.)
-        $(LI No catching of exceptions that are not derived from $(CODE class Exception).)
-        $(LI No inline assembler.)
-        $(LI No explicit casting of mutable objects to immutable.)
-        $(LI No explicit casting of immutable objects to mutable.)
-        $(LI No explicit casting of thread local objects to shared.)
-        $(LI No explicit casting of shared objects to thread local.)
-        $(LI No taking the address of a local variable or function parameter.)
-        $(LI Cannot access $(D_KEYWORD __gshared) variables.)
+        $(LI ポインタ型から、$(CODE void*) 以外の他の型へのキャスト)
+        $(LI 非ポインタ型からポインタ型へのキャスト)
+        $(LI ポインタ値の変更)
+        $(LI ポインタと他の型のオーバーラップしたunionへのアクセス
+        )
+        $(LI システム関数の呼び出し)
+        $(LI $(CODE class Exception) 派生でない例外のキャッチ)
+        $(LI インラインアセンブラ)
+        $(LI mutableからimmutableへの明示キャスト)
+        $(LI immutableからmutableへの明示キャスト)
+        $(LI スレッドローカルかっらsharedへの明示キャスト)
+        $(LI sharedからスレッドローカルへの明示キャスト)
+        $(LI ローカル変数や関数引数のアドレス取得)
+        $(LI $(D_KEYWORD __gshared) 変数へのアクセス)
         )
 
-        $(P Functions nested inside safe functions default to being
-        safe functions.
+        $(P セーフ関数の中にネストした関数は、
+	デフォルトでセーフ関数とされます。
         )
 
-        $(P Safe functions are covariant with trusted or system functions.)
+        $(P セーフ関数は信頼済み関数やシステム関数に対して共変です。)
 
-        $(P $(B Note:) The verifiable safety of functions may be compromised by
-        bugs in the compiler and specification. Please report all such errors
-        so they can be corrected.
+        $(P $(B 注:) 検証可能な安全性であるにも関わらず、
+	コンパイラや仕様のバグによって、検査しきれていない物があるかもしれません。
+	そのようなエラーを見つけたら、修正できるように、ご報告下さい。
         )
 
-<h3>$(LNAME2 trusted-functions, Trusted Functions)</h3>
+<h3>$(LNAME2 trusted-functions, 信頼済み関数)</h3>
 
-        $(P Trusted functions are marked with the $(CODE @trusted) attribute.)
+        $(P $(CODE @trusted) 属性のついた関数が、信頼済み関数です。)
 
-        $(P Trusted functions are guaranteed by the programmer to not exhibit
-        any undefined behavior if called by a safe function.
-        Generally, trusted functions should be kept small so that they are
-        easier to manually verify.
+        $(P 信頼済み関数は、
+	セーフ関数から呼ばれた時には未定義動作を決して引き起こさない、とプログラマによって保証された関数です。
+	一般に、信頼済み関数は、目で見て安全性を簡単に確認できるように、
+	できるだけ小さく留めるべきです。
         )
 
-        $(P Trusted functions may call safe, trusted, or system functions.
+        $(P 信頼済み関数からは、セーフ・信頼済み・システムのいずれの種類の関数も呼び出せます。
         )
 
-        $(P Trusted functions are covariant with safe or system functions.)
+        $(P 信頼済み関数は、セーフ関数やシステム関数に対して共変です。)
 
-<h3>$(LNAME2 system-functions, System Functions)</h3>
+<h3>$(LNAME2 system-functions, システム関数)</h3>
 
-        $(P System functions are functions not marked with $(CODE @safe) or
-        $(CODE @trusted)
-        and are not nested inside $(CODE @safe) functions.
-        System functions may be marked with the $(CODE @system) attribute.
-        A function being system does not mean it actually is unsafe, it just
-        means that the compiler is unable to verify that it cannot exhibit
-        undefined behavior.
+        $(P $(CODE @safe) も
+        $(CODE @trusted) もついておらず、
+        $(CODE @safe) 関数内のネスト関数でもない関数が、システム関数です。
+	明示的に、システム関数に $(CODE @system) という属性をつけることもできます。
+	システム関数はすべて安全性がない、とは限りません。
+	単に、未定義動作を引き起こさないことのコンパイラによる自動保証はできない、
+	ということを意味します。
         )
 
-        $(P System functions are $(B not) covariant with trusted or safe functions.
+        $(P システム関数は、信頼済み関数やセーフ関数に対して共変$(B ではありません)
         )
 )
 
 $(V2
-<h2>$(LNAME2 function-attribute-inference, Function Attribute Inference)</h2>
+<h2>$(LNAME2 function-attribute-inference, 関数属性の推論)</h2>
 
-        $(P $(GLINK2 expression, FunctionLiteral)s and
-        $(DDSUBLINK template, function-templates, function template)s, since their function bodies
-        are always present, infer the
+        $(P $(GLINK2 expression, FunctionLiteral) と
+        $(DDSUBLINK template, function-templates, 関数テンプレート) では、関数本体が常に見えるため、
+        明示指定して上書きしない限り、
         $(LINK2 #pure-functions, $(B pure)),
-        $(LINK2 #nothrow-functions, $(B nothrow)), and
-        $(LINK2 #safe-functions, $(B @safe)) attributes unless
-        specifically overridden.
+        $(LINK2 #nothrow-functions, $(B nothrow)), 
+        $(LINK2 #safe-functions, $(B @safe))
+		属性が自動で推論されます。
         )
 
-        $(P Attribute inference is not done for other functions, even if the function
-        body is present.
+        $(P 属性の推論は、関数本体が書かれている場合であっても、
+        そのほかの関数に対しては行われません。
         )
 
-        $(P The inference is done by determining if the function body follows the
-        rules of the particular attribute.
+        $(P 推論は、
+        関数本体がそれぞれの属性の規則に従っているかを検査することで行われます。
         )
 
-        $(P Cyclic functions (i.e. functions that wind up directly or indirectly
-        calling themselves) are inferred as being impure, throwing, and @system.
+        $(P 循環する関数 (つまり、
+        直接あるいは間接的に自身を呼び出す関数) は、impure, throwing, @system, と推論されます。
         )
 
-        $(P If a function attempts to test itself for those attributes, then
-        the function is inferred as not having those attributes.
+        $(P 関数内で自分自身のこれらの属性をテストしようとした場合は、
+        その属性を持っていない物として推論されます。
         )
 )
 
 )
 
 Macros:
-        TITLE=Functions
+        TITLE=関数
         WIKI=Function
 
 
