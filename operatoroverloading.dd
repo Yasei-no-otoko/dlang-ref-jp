@@ -1,32 +1,32 @@
 Ddoc
 
-$(SPEC_S Operator Overloading,
+$(SPEC_S 演算子オーバーロード,
 
 $(V2
-	$(P Operator overloading is accomplished by rewriting operators whose
-	operands are class or struct objects into calls to specially named
-	member functions. No additional syntax is used.
+	$(P 演算子オーバーロードは、クラスや構造体をオペランドとして持つ演算子式を、
+	特別な名前のメンバ関数呼び出しに変換することで実現されています。
+	新しい文法の追加はありません。
 	)
 
 	$(UL
-	$(LI $(LINK2 #Unary, Unary Operator Overloading))
-	$(LI $(LINK2 #Cast, Cast Operator Overloading))
-	$(LI $(LINK2 #Binary, Binary Operator Overloading))
-	$(LI $(LINK2 #equals, Overloading == and !=))
-	$(LI $(LINK2 #compare, Overloading &lt; &lt;=, &gt; and &gt;=))
-	$(LI $(LINK2 #FunctionCall, Function Call Operator Overloading))
-	$(LI $(LINK2 #Assignment, Assignment Operator Overloading))
-	$(LI $(LINK2 #OpAssign, Op Assignment Operator Overloading))
-	$(LI $(LINK2 #Array, Index Operator Overloading))
-	$(LI $(LINK2 #Slice, Slice Operator Overloading))
-	$(LI $(LINK2 #Dispatch, Forwarding))
+	$(LI $(LINK2 #Unary, 単項演算子))
+	$(LI $(LINK2 #Cast, キャスト演算子))
+	$(LI $(LINK2 #Binary, 二項演算子))
+	$(LI $(LINK2 #equals, == と !=))
+	$(LI $(LINK2 #compare, &lt; &lt;=, &gt;, &gt;=))
+	$(LI $(LINK2 #FunctionCall, 関数呼び出し演算子))
+	$(LI $(LINK2 #Assignment, 代入演算子))
+	$(LI $(LINK2 #OpAssign, 演算代入演算子))
+	$(LI $(LINK2 #Array, インデックス演算子))
+	$(LI $(LINK2 #Slice, スライス演算子))
+	$(LI $(LINK2 #Dispatch, メンバ転送))
 	)
 
-<h2><a name="Unary">Unary Operator Overloading</a></h2>
+<h2><a name="Unary">単項演算子のオーバーロード</a></h2>
 
-	$(TABLE2 Overloadable Unary Operators,
+	$(TABLE2 オーバーロード可能な単項演算子,
 
-	$(TR $(TH$(I op)) $(TH$(I rewrite)) )
+	$(TR $(TH$(I 演算子)) $(TH$(I 書き換え結果)) )
 
 	$(TR
 	$(TD -$(I e))
@@ -60,8 +60,8 @@ $(V2
 
 	)
 
-	$(P For example, in order to overload the - (negation) operator for struct S, and
-	no other operator:)
+	$(P 例えば、- (符号反転) 演算子を構造体 S でオーバーロードし、
+	他の演算子はオーバーロードしない場合は、こうなります:)
 
 ---
 struct S {
@@ -77,15 +77,15 @@ int foo(S s) {
 }
 ---
 
-<h3>Postincrement $(I e)++ and Postdecrement $(I e)-- Operators</h3>
+<h3>後置インクリメント $(I e)++ と 後置デクリメント $(I e)-- 演算子</h3>
 
-	$(P These are not directly overloadable, but instead are rewritten
-	in terms of the ++$(I e) and --$(I e) prefix operators:
+	$(P これらの演算子は直接オーバーロードはできません。
+	代わりに、前置演算の ++$(I e) や --$(I e) を使った書き換えが行われます:
 	)
 
-	$(TABLE2 Postfix Operator Rewrites,
+	$(TABLE2 後置演算子の書き換え,
 
-	$(TR $(TH$(I op)) $(TH$(I rewrite)) )
+	$(TR $(TH$(I 演算子)) $(TH$(I 書き換え結果)) )
 
 	$(TR
 	$(TD $(I e)--)
@@ -98,11 +98,11 @@ int foo(S s) {
 	)
 	)
 
-<h3>Overloading Index Unary Operators</h3>
+<h3>単項インデックス演算子</h3>
 
-	$(TABLE2 Overloadable Index Unary Operators,
+	$(TABLE2 オーバーロード可能な単項インデックス演算子,
 
-	$(TR $(TH$(I op)) $(TH$(I rewrite)) )
+	$(TR $(TH$(I 演算子)) $(TH$(I 書き換え結果)) )
 
 	$(TR
 	$(TD $(CODE -$(I a)[$(ARGUMENTS)]))
@@ -136,11 +136,11 @@ int foo(S s) {
 
 	)
 
-<h3>Overloading Slice Unary Operators</h3>
+<h3>単項スライス演算子</h3>
 
-	$(TABLE2 Overloadable Slice Unary Operators,
+	$(TABLE2 オーバーロード可能な単項スライス演算子,
 
-	$(TR $(TH$(I op)) $(TH$(I rewrite)) )
+	$(TR $(TH$(I 演算子)) $(TH$(I 書き換え結果)) )
 
 	$(TR
 	$(TD $(CODE -$(I a)[$(SLICE)]))
@@ -203,11 +203,11 @@ int foo(S s) {
 	)
 	)
 
-<h2><a name="Cast">Cast Operator Overloading</a></h2>
+<h2><a name="Cast">キャスト演算子のオーバーロード</a></h2>
 
-	$(TABLE2 Cast Operators,
+	$(TABLE2 キャスト演算子,
 
-	$(TR $(TH$(I op)) $(TH$(I rewrite)) )
+	$(TR $(TH$(I 演算子)) $(TH$(I 書き換え結果)) )
 
 	$(TR
 	$(TD cast($(I type))$(I e))
@@ -217,56 +217,56 @@ int foo(S s) {
 	)
 
 
-<h3>Boolean Operations</h3>
+<h3>bool 演算</h3>
 
-	$(P Notably absent from the list of overloaded unary operators is the !
-	logical negation operator. More obscurely absent is a unary operator
-	to convert to a bool result.
-	Instead, these are covered by a rewrite to:
+	$(P 単項演算子のオーバーロードの表に欠けているものとして、特に、
+	論理否定の ! 演算子があります。微妙なところでは、
+	bool 値への暗黙変換演算が欠けています。
+	代わりに、これらは以下のような書き換えで実行されます:
 	)
 ---
 opCast!(bool)(e)
 ---
 
-	$(P So,)
+	$(P つまり)
 
 ---
 if (e)   =>  if (e.opCast!(bool))
 if (!e)  =>  if (!e.opCast!(bool))
 ---
 
-	$(P etc., whenever a bool result is expected. This only happens, however, for
-	instances of structs. Class references are converted to bool by checking to
-	see if the class reference is null or not.
+	$(P などのように、bool値が期待される位置の式は処理されます。
+	ただし、これは構造体のインスタンスのみに限ります。クラスへの参照は常に、
+	null かどうかに応じてboolへと変換されます。
 	)
 
-<h2><a name="Binary">Binary Operator Overloading</a></h2>
+<h2><a name="Binary">二項演算子のオーバーロード</a></h2>
 
-	$(P The following binary operators are overloadable:)
+	$(P 以下の二項演算子がオーバーロード可能です。)
 
-	$(TABLE2 Overloadable Binary Operators,
+	$(TABLE2 オーバーロード可能な二項演算子,
 
 	$(TR $(TD +) $(TD -) $(TD *) $(TD /) $(TD %) $(TD ^^) $(TD &amp;) )
 	$(TR $(TD |) $(TD ^) $(TD &lt;&lt;) $(TD &gt;&gt;) $(TD &gt;&gt;&gt;) $(TD ~) $(TD in) )
 
 	)
 
-	$(P The expression:)
+	$(P 式:)
 ---
 a $(I op) b
 ---
-	$(P is rewritten as both:)
+	$(P は、以下の二通りの書き換えが考慮され:)
 ---
 a.opBinary!("$(I op)")(b)
 b.opBinaryRight!("$(I op)")(a)
 ---
 
-	$(P and the one with the $(SINGLEQUOTE better) match is selected.
-	It is an error for both to equally match.
+	$(P 型が「より良く」マッチをする方が選択されます。
+	どちらのマッチも同程度に良い場合、エラーになります。
 	)
 
-	$(P Operator overloading for a number of operators can be done at the same time.
-	For example, if only the + or - operators are supported:)
+	$(P 複数の演算子に対するオーバーロードを同時に定義できます。
+	例えば、+ と - 演算子だけをサポートするなら:)
 
 ---
 T opBinary(string op)(T rhs) {
@@ -276,7 +276,7 @@ T opBinary(string op)(T rhs) {
 }
 ---
 
-	$(P To do them all en masse:)
+	$(P 全てを一度にやるならば、こうです:)
 
 ---
 T opBinary(string op)(T rhs) {
@@ -285,18 +285,18 @@ T opBinary(string op)(T rhs) {
 ---
 
 
-<h2><a name="equals">Overloading == and !=</a></h2>
+<h2><a name="equals">== と != のオーバーロード</a></h2>
 
-	$(P Expressions of the form $(CODE a != b) are rewritten as $(CODE !(a == b)).)
+	$(P $(CODE a != b) の形の式は、まず $(CODE !(a == b)) に書き換えられます。)
 
-	$(P Given $(CODE a == b) :)
+	$(P $(CODE a == b) に対しては:)
 
 $(OL
-	$(LI If a and b are both class objects, then the expression is rewritten as:
+	$(LI a と b の両方がクラスオブジェクトなら、式は:
 ---
 .object.opEquals(a, b)
 ---
-	$(P and that function is implemented as:)
+	$(P このように書き換えられ、この関数は次のように実装されています:)
 ---
 bool opEquals(Object a, Object b) {
   if (a is b) return true;
@@ -306,37 +306,37 @@ bool opEquals(Object a, Object b) {
 }
 ---
 	)
-	$(LI Otherwise the expressions $(CODE a.opEquals(b)) and
-	$(CODE b.opEquals(a)) are tried. If both resolve to the same opEquals
-	function, then the expression is rewritten to be $(CODE a.opEquals(b)).
+	$(LIそれ以外の場合、$(CODE a.opEquals(b)) と
+	$(CODE b.opEquals(a)) が試みられます。どちらも同じ opEquals
+	関数へと解決される場合は $(CODE a.opEquals(b)) が優先されます。
 	)
-	$(LI If one is a better match then the other, or one compiles and the other
-	does not, the one is selected.)
-	$(LI Otherwise, an error results.)
+	$(LI 片方がもう一方より良いマッチである場合、
+	あるいは片方のみがコンパイルできる場合、そちらが選択されます。)
+	$(LI それ以外の場合は、エラーとなります。)
 )
 
-	$(P If overridding Object.opEquals() for classes, the class member function
-	signature should look like:)
+	$(P クラスに対して Object.opEquals() をオーバーライドする場合、
+	以下のシグネチャとします:)
 ---
 class C {
   override bool opEquals(Object o) { ... }
 }
 ---
 
-	$(P If structs declare an opEquals member function, it should follow the following
-	form:)
+	$(P 構造体のメンバ関数として opEquals を定義する場合、
+	以下の形式とします:)
 ---
 struct S {
   int opEquals(ref const S s) { ... }
 }
 ---
 
-<h2><a name="compare">Overloading &lt; &lt;=, &gt; and &gt;=</a></h2>
+<h2><a name="compare">&lt;, &lt;=, &gt;, &gt;= のオーバーロード</a></h2>
 
-	$(P Comparison operations are rewritten as follows:)
+	$(P 比較演算子は以下のように書き換えられます:)
 
-	$(TABLE2 Overloadable Unary Operators,
-	$(TR $(TH comparison) $(TH rewrite 1) $(TH rewrite 2) )
+	$(TABLE2 オーバーロード可能な比較演算子,
+	$(TR $(TH 比較) $(TH 書き換え候補1) $(TH 書き換え候補2) )
 
 	$(TR $(TD $(CODE a &lt; b)) $(TD $(CODE a.opCmp(b) &lt; 0)) $(TD $(CODE b.opCmp(a) &gt; 0)))
 	$(TR $(TD $(CODE a &lt;= b)) $(TD $(CODE a.opCmp(b) &lt;= 0)) $(TD $(CODE b.opCmp(a) &gt;= 0)))
@@ -344,33 +344,33 @@ struct S {
 	$(TR $(TD $(CODE a &gt;= b)) $(TD $(CODE a.opCmp(b) &gt;= 0)) $(TD $(CODE b.opCmp(a) &lt;= 0)))
 	)
 
-	$(P Both rewrites are tried. If only one compiles, that one is taken.
-	If they both resolve to the same function, the first
-	rewrite is done. If they resolve to different functions, the best matching one
-	is used. If they both match the same, but are different functions, an ambiguity
-	error results.
+	$(P 両方の書き換えを試し、片方のみがコンパイル可能なら、そちらを取ります。
+	双方とも同じ関数に解決されるならば、
+	１つめの書き換えを優先します。異なる関数になる場合は、
+	良いマッチとなる方を選びます。どちらのマッチも同じくらい良い場合は、
+	あいまいなためエラーとなります。
 	)
 
-	$(P If overriding Object.opCmp() for classes, the class member function
-	signature should look like:)
+	$(P クラスに対して Object.opCmp() をオーバーライドする場合、
+	以下のシグネチャとします:)
 ---
 class C {
   override int opCmp(Object o) { ... }
 }
 ---
 
-	$(P If structs declare an opCmp member function, it should follow the following
-	form:)
+	$(P 構造体のメンバ関数として opCmp を定義する場合、
+	以下の形式とします:)
 ---
 struct S {
   int opCmp(ref const S s) const { ... }
 }
 ---
 
-<h2><a name="FunctionCall">Function Call Operator Overloading $(I f)()</a></h2>
+<h2><a name="FunctionCall">関数呼び出し演算子のオーバーロード $(I f)()</a></h2>
 
-	$(P The function call operator, (), can be overloaded by
-	declaring a function named $(B opCall):
+	$(P 関数呼び出し演算子 () は
+	$(B opCall) という名前の関数を宣言することでオーバーロードできます：
 	)
 
 -------
@@ -383,25 +383,25 @@ void test() {
   F f;
   int i;
 
-  i = f$(B ());      // same as i = f.opCall();
-  i = f$(B (3,4,5)); // same as i = f.opCall(3,4,5);
+  i = f$(B ());      // i = f.opCall(); と同じ
+  i = f$(B (3,4,5)); // i = f.opCall(3,4,5); と同じ
 }
 -------
 
-	$(P In this way a struct or class object can behave as if it
-	were a function.
+	$(P このようにして、構造体やクラスオブジェクトを、
+	あたかも関数であるかのように振る舞わせることができます。
 	)
 
-<h2><a name="Assignment">Assignment Operator Overloading</a></h2>
+<h2><a name="Assignment">代入演算子のオーバーロード</a></h2>
 
-	$(P The assignment operator $(CODE =) can be overloaded if the
-	lvalue is a struct aggregate, and $(CODE opAssign)
-	is a member function of that aggregate.)
+	$(P $(CODE =) の左辺が構造体/集成体の左辺値で、
+	$(CODE opAssign) メンバ関数が定義されていれば、
+	オーバーロードとなります。)
 
-	$(P The assignment operator cannot be overloaded for rvalues
-	that can be implicitly cast to the lvalue type.
-	Furthermore, the following parameter signatures for $(CODE opAssign)
-	are not allowed:)
+	$(P 右辺値に対しては、
+	暗黙に左辺値型にキャスト可能であっても、代入演算子はオーバーロードできません。
+	さらに、$(CODE opAssign)
+	のシグネチャとして、以下は:)
 
 ---
 opAssign(...)
@@ -411,20 +411,20 @@ opAssign(T ...)
 opAssign(T, U = defaultValue, etc.)
 ---
 
-	$(P where $(I T) is the same type as the aggregate type $(I A),
-	is implicitly
-	convertible to $(I A), or if $(I A) is a struct and $(I T)
-	is a pointer to a type that is
-	implicitly convertible to $(I A).
+	$(P $(I T) が元の型 $(I A) と同じか
+	$(I A) へ暗黙変換可能、
+	あるいは $(I A) が構造体で $(I T)
+	が
+	$(I A) へ暗黙変換可能な型へのポインタである場合、許されません。
 	)
 
-<h3>Index Assignment Operator Overloading</h3>
+<h3>インデックス代入演算子のオーバーロード</h3>
 
-	$(P If the left hand side of an assignment is an index operation
-	on a struct or class instance,
-	it can be overloaded by providing an opIndexAssign member function.
-	Expressions of the form $(CODE a[$(ARGUMENTS)] = c) are rewritten
-	as $(CODE a.opIndexAssign(c, $(ARGUMENTS))).
+	$(P 代入演算子の左辺がクラスや構造体に対するインデックス式であれば、
+	opIndexAssign
+	メンバ関数を提供することで、オーバーロードできます。
+	$(CODE a[$(ARGUMENTS)] = c) の形の式は
+	 $(CODE a.opIndexAssign(c, $(ARGUMENTS))) と書き換えられます。
 	)
 
 -------
@@ -435,104 +435,104 @@ struct A {
 void test() {
   A a;
 
-  a$(B [)i,3$(B ]) = 7;  // same as a.opIndexAssign(7,i,3);
+  a$(B [)i,3$(B ]) = 7;  // a.opIndexAssign(7,i,3); と同じ
 }
 -------
 
-<h3>Slice Assignment Operator Overloading</h3>
+<h3>スライス代入演算子のオーバーロード</h3>
 
-	$(P If the left hand side of an assignment is a slice operation
-	on a struct or class instance,
-	it can be overloaded by providing an opSliceAssign member function.
-	Expressions of the form $(CODE a[$(SLICE)] = c) are rewritten
-	as $(CODE a.opSliceAssign(c, $(SLICE2))), and
-	$(CODE a[] = c) as $(CODE a.opSliceAssign(c)).
+	$(P 代入演算子の左辺がクラスや構造体に対するスライス式であれば、
+	opSliceAssign
+	メンバ関数を提供することで、オーバーロードできます。
+	$(CODE a[$(SLICE)] = c) の形の式は
+	$(CODE a.opSliceAssign(c, $(SLICE2))) と書き換えられ、
+	$(CODE a[] = c) は $(CODE a.opSliceAssign(c)) となります。
 	)
 
 -------
 struct A {
   int $(B opSliceAssign)(int v);  // overloads a[] = v
-  int $(B opSliceAssign)(int v, size_t x, size_t y);  // overloads a[i .. j] = v
+  int $(B opSliceAssign)(int v, size_t x, size_t y);  // a[i .. j] = v をオーバーロード
 }
 
 void test() {
   A a;
   int v;
 
-  a$(B []) = v;  // same as a.opSliceAssign(v);
-  a$(B [)3..4$(B ]) = v;  // same as a.opSliceAssign(v,3,4);
+  a$(B []) = v;  // a.opSliceAssign(v); と同じ
+  a$(B [)3..4$(B ]) = v;  // a.opSliceAssign(v,3,4); と同じ
 }
 -------
 
-<h2><a name="OpAssign">Op Assignment Operator Overloading</a></h2>
+<h2><a name="OpAssign">演算代入演算子のオーバーロード</a></h2>
 
-	$(P The following op assignment operators are overloadable:)
+	$(P 以下の演算代入演算子がオーバーロード可能です:)
 
-	$(TABLE2 Overloadable Op Assignment Operators,
+	$(TABLE2 オーバーロード可能な演算代入演算子,
 
 	$(TR $(TD +=) $(TD -=) $(TD *=) $(TD /=) $(TD %=) $(TD ^^=) $(TD &amp;=) )
 	$(TR $(TD |=) $(TD ^=) $(TD &lt;&lt;=) $(TD &gt;&gt;=) $(TD &gt;&gt;&gt;=) $(TD ~=) $(TD &nbsp;) )
 
 	)
 
-	$(P The expression:)
+	$(P 以下の式:)
 ---
 a $(I op)= b
 ---
 
-	$(P is rewritten as:)
+	$(P は、以下に書き換わります:)
 
 ---
 a.opOpAssign!("$(I op)")(b)
 ---
 
-<h3>Index Op Assignment Operator Overloading</h3>
+<h3>インデックス演算代入演算子のオーバーロード</h3>
 
-	$(P If the left hand side of an $(I op)= is an index expression on
-	a struct or class instance and opIndexOpAssign is a member:)
+	$(P $(I op)= 演算子の左辺がクラスや構造体に対するインデックス式で、
+	opIndexOpAssign というメンバが存在すれば:)
 
 ---
 a[$(ARGUMENTS)] $(I op)= c
 ---
 
-	$(P it is rewritten as:)
+	$(P は、以下に書き換わります:)
 
 ---
 a.opIndexOpAssign!("$(I op)")(c, $(ARGUMENTS))
 ---
 
-<h3>Slice Op Assignment Operator Overloading</h3>
+<h3>スライス演算代入演算子のオーバーロード</h3>
 
-	$(P If the left hand side of an $(I op)= is a slice expression on
-	a struct or class instance and opSliceOpAssign is a member:)
+	$(P $(I op)= 演算子の左辺がクラスや構造体に対するスライス式で、
+	opSliceOpAssign というメンバが存在すれば:)
 
 ---
 a[$(SLICE)] $(I op)= c
 ---
 
-	$(P it is rewritten as:)
+	$(P は、以下のように書き換えられ:)
 
 ---
 a.opSliceOpAssign!("$(I op)")(c, $(SLICE2))
 ---
 
-	$(P and)
+	$(P さらに)
 
 ---
 a[] $(I op)= c
 ---
 
-	$(P it is rewritten as:)
+	$(P は、以下に書き換わります:)
 
 ---
 a.opSliceOpAssign!("$(I op)")(c)
 ---
 
-<h2><a name="Array">Index Operator Overloading</a></h2>
+<h2><a name="Array">インデックス演算子のオーバーロード</a></h2>
 
-	$(P The array index operator, $(CODE a[$(ARGUMENTS)]), can be overloaded by
-	declaring a function named $(B opIndex) with one
-	or more parameters.
+	$(P 配列のインデックス演算 $(CODE a[$(ARGUMENTS)])
+	は $(B opIndex) という名前の１引数以上の関数を宣言することで、
+	オーバーロードできます。
 	)
 
 -------
@@ -544,30 +544,30 @@ void test() {
   A a;
   int i;
 
-  i = a$(B [)5,6,7$(B ]);  // same as i = a.opIndex(5,6,7);
+  i = a$(B [)5,6,7$(B ]);  // i = a.opIndex(5,6,7); と同じ
 }
 -------
 
-	$(P In this way a struct or class object can behave as if it
-	were an array.
+	$(P このようにして、
+	構造体やクラスオブジェクトを配列であるかのように振る舞わせることができます。
 	)
 
-	$(P If an index expression can be rewritten using opIndexAssign or opIndexOpAssign,
-	those are preferred over opIndex.
+	$(P インデックス式が opIndexAssign や opIndexOpAssign を用いて書き換え可能な場合は、
+	そちらの方が優先されます。
 	)
 
 
-<h2><a name="Slice">Slice Operator Overloading</a></h2>
+<h2><a name="Slice">スライス演算子のオーバーロード</a></h2>
 
-	$(P Overloading the slicing operator means overloading expressions
-	like $(CODE a[]) and $(CODE a[$(SLICE)]).
-	This can be done by declaring a member function named $(B opSlice).
+	$(P スライス演算子のオーバーロードとは、
+	$(CODE a[]) や $(CODE a[$(SLICE)]) のような式のオーバーロードを意味します。
+	これは、$(B opSlice) という名前のメンバ関数を宣言することで実現します。
 	)
 
 -------
 class A {
-  int $(B opSlice)();  // overloads a[]
-  int $(B opSlice)(size_t x, size_t y); // overloads a[i .. j]
+  int $(B opSlice)();  // a[] をオーバーロード
+  int $(B opSlice)(size_t x, size_t y); // a[i .. j] をオーバーロード
 }
 
 void test() {
@@ -575,19 +575,19 @@ void test() {
   int i;
   int v;
 
-  i = a$(B []);         // same as i = a.opSlice();
-  i = a$(B [)3..4$(B ]);  // same as i = a.opSlice(3,4);
+  i = a$(B []);         // i = a.opSlice(); と同じ
+  i = a$(B [)3..4$(B ]);  // i = a.opSlice(3,4); と同じ
 }
 -------
 
-	$(P If a slice expression can be rewritten using opSliceAssign or opSliceOpAssign,
-	those are preferred over opSlice.
+	$(P スライス式が opSliceAssign や opSliceOpAssign を用いて書き換え可能な場合は、
+	そちらの方が優先されます。
 	)
 
-<h2><a name="Dispatch">Forwarding</a></h2>
+<h2><a name="Dispatch">メンバ転送</a></h2>
 
-	$(P Member names not found in a class or struct can be forwarded
-	to a template function named $(CODE opDispatch) for resolution.
+	$(P クラスや構造体のメンバとして名前が見つからなかった場合は、
+	$(CODE opDispatch) という名前のテンプレート関数が呼び出されます。
 	)
 
 ---
@@ -1253,7 +1253,7 @@ void main() {
 )
 
 Macros:
-	TITLE=Operator Overloading
+	TITLE=演算子オーバーロード
 	WIKI=OperatorOverloading
 	CATEGORY_SPEC=$0
 	SUB=<sub>$0</sub>
