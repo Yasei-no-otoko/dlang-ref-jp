@@ -1,20 +1,20 @@
 Ddoc
 
-$(SPEC_S Expressions,
+$(SPEC_S 式,
 
-        $(P C and C++ programmers will find the D expressions very familiar,
-        with a few interesting additions.
+        $(P CやC++プログラマの方は、Dの式を非常に親しみやすく感じるでしょう。
+	いくつか面白い追加もあります。
         )
 
-        $(P Expressions are used to compute values with a resulting type.
-        These values can then be assigned,
-        tested, or ignored. Expressions can also have side effects.
+        $(P 式は、結果の値を計算するために使用されます。
+	この値は、変数へ代入したり、判定に用いたり、あるいは無視して捨てることもできます。
+	式には副作用が伴うことがあります。
         )
 
-<h2><a name="order-of-evaluation">Order Of Evaluation</a></h2>
+<h2><a name="order-of-evaluation">評価順序n</a></h2>
 
-        $(P The following binary expressions are evaluated in strictly
-        left-to-right order:)
+        $(P 以下の二項演算子式は、かならず
+	左から右に評価されます:)
 
         $(P
 $(V2
@@ -33,8 +33,8 @@ $(V2
         $(GLINK AndAndExpression)
         )
 
-        $(P The following binary expressions are evaluated in an
-        implementation-defined order:)
+        $(P 以下の二項演算子式は、
+	実装定義の順序で実行されます:)
 
         $(P
         $(GLINK AssignExpression),
@@ -48,25 +48,25 @@ $(V1
         $(GLINK CatExpression),
         $(GLINK MulExpression),
 )
-        function parameters
+        関数引数
         )
 
-        $(P It is an error
-        to depend on order of evaluation when it is not specified.
-        For example, the following are illegal:
+        $(P 
+        未定義の評価順序に依存するようなコードは誤りです。
+	例えば次のコードは不正です：
         )
 -------------
 i = i++;
 c = a + (a = b);
 func(++i, ++i);
 -------------
-        $(P If the compiler can determine that the result of an expression
-        is illegally dependent on the order of evaluation, it can issue
-        an error (but is not required to). The ability to detect these kinds
-        of errors is a quality of implementation issue.
+        $(P 式の値が評価順序に依存しているとコンパイラが判断したら、
+	コンパイラはその式をエラーとすることができます。
+	（必ずエラーになるとは限りませんが。）
+	この種のエラー検知の精度は、実装の質の問題です。
         )
 
-<h2><a name="Expression">Expressions</a></h2>
+<h2><a name="Expression">式</a></h2>
 
 $(GRAMMAR
 $(GNAME Expression):
@@ -77,12 +77,12 @@ $(GNAME CommaExpression):
     $(GLINK AssignExpression) $(B ,) $(I CommaExpression)
 )
 
-        The left operand of the $(B ,) is evaluated, then the right operand
-        is evaluated. The type of the expression is the type of the right
-        operand, and the result is the result of the right operand.
+        まず最初に $(B ,) の左の式が評価され、
+	次に右が評価されます。
+	この式全体の型、及び値は、右の式の型と値となります。
 
 
-<h2>Assign Expressions</h2>
+<h2>代入式</h2>
 
 $(GRAMMAR
 $(GNAME AssignExpression):
@@ -104,37 +104,37 @@ $(V2
     $(GLINK ConditionalExpression) $(B ^^=) $(I AssignExpression))
 )
 
-        The right operand is implicitly converted to the type of the
-        left operand, and assigned to it. The result type is the type
-        of the lvalue, and the result value is the value of the lvalue
-        after the assignment.
+	右辺の結果は暗黙に左辺式の型へ変換され、
+	代入されます。
+	この式全体の結果型は左辺の式の型で、
+	値は代入後の左辺値です。
         <p>
 
-        The left operand must be an lvalue.
+	左辺は、lvalue でなくてはなりません。
 
-<h3>Assignment Operator Expressions</h3>
+<h3>代入演算子式</h3>
 
-        Assignment operator expressions, such as:
+	代入演算子式、例えば：
 
 --------------
 a $(I op)= b
 --------------
 
-        are semantically equivalent to:
+	は、意味的には
 
 --------------
 a = cast(typeof(a))(a $(I op) b)
 --------------
 
-        $(P except that:)
+        $(P と同等です、違いは、)
 
 	$(UL
-	$(LI operand $(D a) is only evaluated once)
-	$(LI overloading $(I op) uses a different function than overloading $(I op)= does)
-	$(LI the left operand of $(D >>>=) does not undergo integral promotions before shifting)
+	$(LI オペランド $(D a) が一度しか評価されない)
+	$(LI $(I op) のオーバーロードと $(I op)= のオーバーロードは違う関数を使う)
+	$(LI $(D >>>=) の左オペランドはシフトの前に整数の昇格を通らない)
 	)
 
-<h2>Conditional Expressions</h2>
+<h2>条件式</h2>
 
 $(GRAMMAR
 $(GNAME ConditionalExpression):
@@ -142,17 +142,17 @@ $(GNAME ConditionalExpression):
     $(GLINK OrOrExpression) $(B ?) $(GLINK Expression) $(B :) $(I ConditionalExpression)
 )
 
-        The first expression is converted to bool, and is evaluated.
-        If it is true, then the second expression is evaluated, and
-        its result is the result of the conditional expression.
-        If it is false, then the third expression is evaluated, and
-        its result is the result of the conditional expression.
-        If either the second or third expressions are of type void,
-        then the resulting type is void. Otherwise, the second and third
-        expressions are implicitly converted to a common type which becomes
-        the result type of the conditional expression.
+	まず、一つ目の式を評価し、
+	bool値へ変換します。
+	結果がtrueなら、二番目の式が評価され、
+	式全体の値はその式の評価結果となります。
+	結果がfalseなら、三番目の式が評価され、
+	式全体の値は三番目の式の評価結果です。
+	もし二番目の式と三番目の式のどちらか一方でもvoid型ならば、
+	全体の型もvoidになります。そうでなければ、全体の型は
+	二番目と三番目の式の型から暗黙に変換できる共通の型です。
 
-<h2>OrOr Expressions</h2>
+<h2>OrOr 式</h2>
 
 $(GRAMMAR
 $(GNAME OrOrExpression):
@@ -160,26 +160,26 @@ $(GNAME OrOrExpression):
     $(I OrOrExpression) $(B ||) $(GLINK AndAndExpression)
 )
 
-        The result type of an $(I OrOrExpression) is bool,
-        unless the right operand
-        has type void, when the result is type void.
+        $(I OrOrExpression) の結果は、
+	右の式の型がvoidならばvoid、
+	そうでなければboolです。
         <p>
 
-        The $(I OrOrExpression) evaluates its left operand.
+        まず、左の式が評価されます。
 
-        If the left operand, converted to type bool, evaluates to
-        true, then the right operand is not evaluated. If the result type of
-        the $(I OrOrExpression) is bool then the result of the
-        expression is true.
+	評価結果をboolに変換した結果がtrueだったならば、
+	右の式は評価されません。
+	全体の型がboolの場合は、
+	この時は式の値はtrueとなります。
 
-        If the left operand is false, then the right
-        operand is evaluated.
-        If the result type of
-        the $(I OrOrExpression) is bool then the result of the
-        expression is the right operand converted to type bool.
+	左の式がfalseだった時は、
+	右の式が評価されます。
+	全体の型がboolの場合は、
+	式の値は右の式の評価結果を
+	bool に変化したものです。
 
 
-<h2>AndAnd Expressions</h2>
+<h2>AndAnd 式</h2>
 
 $(V1
 $(GRAMMAR
@@ -198,35 +198,35 @@ $(GNAME AndAndExpression):
 )
 )
 
-        $(P The result type of an $(I AndAndExpression) is bool, unless the right operand
-        has type void, when the result is type void.
+        $(P $(I AndAndExpression) の結果は、右の式の型がvoidならばvoid、
+	そうでなければboolです。
         )
 
-        $(P The $(I AndAndExpression) evaluates its left operand.
+        $(P まず、左の式が評価されます。
         )
 
-        $(P If the left operand, converted to type bool, evaluates to
-        false, then the right operand is not evaluated. If the result type of
-        the $(I AndAndExpression) is bool then the result of the
-        expression is false.
+        $(P 評価結果をboolに変換した結果がfalseだったならば、
+	右の式は評価されません。
+	全体の型がboolの場合は、
+	この時は式の値はfalseとなります。
         )
 
-        $(P If the left operand is true, then the right
-        operand is evaluated.
-        If the result type of
-        the $(I AndAndExpression) is bool then the result of the
-        expression is the right operand converted to type bool.
+        $(P 左の式がtrueだった時は、
+	右の式が評価されます。
+	全体の型がboolの場合は、
+	式の値は右の式の評価結果を
+	bool に変換したものです。
         )
 
 
-<h2>Bitwise Expressions</h2>
+<h2>ビット演算式</h2>
 
-        Bit wise expressions perform a bitwise operation on their operands.
-        Their operands must be integral types.
-        First, the default integral promotions are done. Then, the bitwise
-        operation is done.
+        ビット演算式では、オペランドどうしのビット毎の演算が行われます。
+	オペランドどうしは整数型でなくてはなりません。
+	まずデフォルトの整数型の昇格が行われ、
+	その後にビット演算がなされます。
 
-<h3>Or Expressions</h3>
+<h3>Or 式</h3>
 
 $(GRAMMAR
 $(GNAME OrExpression):
@@ -234,9 +234,9 @@ $(GNAME OrExpression):
     $(I OrExpression) $(B |) $(GLINK XorExpression)
 )
 
-        The operands are OR'd together.
+	ビット毎のOR演算です。
 
-<h3>Xor Expressions</h3>
+<h3>Xor 式</h3>
 
 $(GRAMMAR
 $(GNAME XorExpression):
@@ -244,9 +244,9 @@ $(GNAME XorExpression):
     $(I XorExpression) $(B ^) $(GLINK AndExpression)
 )
 
-        The operands are XOR'd together.
+	ビット毎のXOR演算です。
 
-<h3>And Expressions</h3>
+<h3>And 式</h3>
 
 $(V1
 $(GRAMMAR
@@ -262,10 +262,10 @@ $(GNAME AndExpression):
     $(I AndExpression) $(B &) $(GLINK ShiftExpression)
 )
 )
-        The operands are AND'd together.
+	ビット毎のAND演算です。
 
 
-<h2>Compare Expressions</h2>
+<h2>比較式</h2>
 
 $(GRAMMAR
 $(GNAME CmpExpression):
@@ -276,7 +276,7 @@ $(GNAME CmpExpression):
     $(GLINK InExpression)
 )
 
-<h2>Equality Expressions</h2>
+<h2>等値式</h2>
 
 $(GRAMMAR
 $(GNAME EqualExpression):
@@ -284,65 +284,65 @@ $(GNAME EqualExpression):
     $(GLINK ShiftExpression) $(B !=) $(GLINK ShiftExpression)
 )
 
-        Equality expressions compare the two operands for equality ($(B ==))
-        or inequality ($(B !=)).
-        The type of the result is bool. The operands
-        go through the usual conversions to bring them to a common type before
-        comparison.
+        等値式では、２つのオペランドが等しいかどうか ($(B ==))
+        あるいは等しくないか ($(B !=))
+		がチェックされます。
+		結果の型はboolで、
+        比較の前に双方のオペランドは共通の型へと変換されます。
         <p>
 
-        If they are integral values or pointers, equality
-        is defined as the bit pattern of the type matches exactly.
-        Equality for struct objects means the bit patterns of the objects
-        match exactly (the existence of alignment holes in the objects
-        is accounted for, usually by setting them all to 0 upon
-        initialization).
-        Equality for floating point types is more complicated. -0 and
-        +0 compare as equal. If either or both operands are NAN, then
-        both the == returns false and != returns true. Otherwise, the bit
-        patterns are compared for equality.
+	整数かポインタの比較であれば、"等しい" というのは、
+	"ビットパターンが一致すること" として定義されます。
+	構造体どうしの"等しい"も、
+	オブジェクト全体のビットパターンが一致すること、
+	です。（整列の際の穴の存在も、
+	コンパイラが初期化時に0で埋めておくなどの方法で
+	考慮されています）。
+	浮動小数点数の場合は多少複雑です。-0 と +0 は等しいと判定されます。
+	どちらか一方でも NaN であれば、 == はfalse、!=はtrueになります。
+	それ以外の場合は、ビットパターンで比較されます。
         <p>
 
-        For complex numbers, equality is defined as equivalent to:
+        複素数の場合、== は以下と同じです:
 
 ---
 x.re == y.re && x.im == y.im
 ---
 
-        and inequality is defined as equivalent to:
+        != は次と同じです：
 
 ---
 x.re != y.re || x.im != y.im
 ---
 
-        $(P For class and struct objects, the expression $(D (a == b))
-        is rewritten as
-        $(D a.opEquals(b)), and $(D (a != b)) is rewritten as
-        $(D !a.opEquals(b)).
+        $(P クラスや構造体オブジェクトであれば、 $(D (a == b))
+        という式は、
+        $(D a.opEquals(b)) と書き換えられ、 $(D (a != b)) は
+        $(D !a.opEquals(b)) と書き換えられます。
         )
 
-        $(P For class objects, the $(CODE ==) and $(CODE !=)
-        operators compare the
-        contents of the objects. Therefore, comparing against
-        $(CODE null) is invalid, as $(CODE null) has no contents.
-        Use the $(CODE is) and $(CODE !is) operators instead.
+        $(P 演算子 $(CODE ==) と $(CODE !=)
+	は、
+	オブジェクトの内容を比較するものです。従って、
+        内容を持たない $(CODE null) とオブジェクトを比較するのは不正なコードです。
+        $(CODE null) かどうかの検査には $(CODE is) と $(CODE !is) 演算子を代わりに使用してください。
         )
 
 ---
 class C;
 C c;
-if (c == null)  // error
+if (c == null)  // エラー
   ...
 if (c is null)  // ok
   ...
 ---
 
-        $(P For static and dynamic arrays, equality is defined as the
-        lengths of the arrays
-        matching, and all the elements are equal.
+        $(P 静的/動的な配列の等しさは、
+		配列の長さが等しく、
+		かつ、全ての要素が等しいこと、と定義されます。
         )
 
-<h3>Identity Expressions</h3>
+<h3>同一性式</h3>
 
 $(GRAMMAR
 $(GNAME IdentityExpression):
@@ -350,34 +350,34 @@ $(GNAME IdentityExpression):
     $(GLINK ShiftExpression) $(B !is) $(GLINK ShiftExpression)
 )
 
-        $(P The $(B is) compares for identity.
-        To compare for not identity, use $(D $(I e1) $(B !is) $(I e2)).
-        The type of the result is bool. The operands
-        go through the usual conversions to bring them to a common type before
-        comparison.
+        $(P $(B is)  は二つのオブジェクトの同一性をチェックします。
+	同一でないことのチェックは、 $(D $(I e1) $(B !is) $(I e2)).
+         を使います。
+	結果の型はboolで、
+	比較の前に双方のオペランドは共通の型へと変換されます。
         )
 
-        $(P For class objects, identity is defined as the object references
-        are for the same object. Null class objects can be compared with
-        $(B is).
+        $(P クラスオブジェクトの場合は、二つの参照が同じオブジェクトを
+	指しているかどうかのチェックになります。
+        $(B is) では、null 参照との比較も可能です。
         )
 
-        $(P For struct objects, identity is defined as the bits in the
-        struct being identical.
+        $(P 構造体オブジェクトの場合は、構造体のビット列が同一であること、
+	として定義されています。
         )
 
-        $(P For static and dynamic arrays, identity is defined as referring
-        to the same array elements and the same number of elements.
+        $(P 静的あるいは動的な配列の場合は、二つとも同じ配列を指しているかどうか、
+	で同一性が判定されます。
         )
 
-        $(P For other operand types, identity is defined as being the same
-        as equality.
+        $(P その他の型に関しては、
+	同一性は同値性と同じように定義されています。
         )
 
-        $(P The identity operator $(B is) cannot be overloaded.
+        $(P 同一性演算子 $(B is) はオーバーロードできません。
         )
 
-<h2>Relational Expressions</h2>
+<h2>関係式</h2>
 
 $(GRAMMAR
 $(GNAME RelExpression):
@@ -395,156 +395,156 @@ $(GNAME RelExpression):
     $(GLINK ShiftExpression) $(B !&lt;=) $(GLINK ShiftExpression)
 )
 
-        First, the integral promotions are done on the operands.
-        The result type of a relational expression is bool.
+	まず、オペランド双方に整数の昇格が行われます。
+	結果の型はboolです。
         <p>
 
-        For class objects, the result of Object.opCmp() forms the left
-        operand, and 0 forms the right operand. The result of the
-        relational expression (o1 op o2) is:
+	クラスオブジェクトの場合は、左オペランドに対して Object.opCmp()
+	の呼び出し結果と整数0、を演算子で比較した結果が式全体の値となります。
+	つまり、関係式 (o1 op o2) の結果は次のように定義されます：
 
 ---
 (o1.opCmp(o2) op 0)
 ---
 
-        It is an error to compare objects if one is $(B null).
+        どちらかが $(B null) の場合、エラーになります。
         <p>
 
-        For static and dynamic arrays, the result of the relational
-        op is the result of the operator applied to the first non-equal
-        element of the array. If two arrays compare equal, but are of
-        different lengths, the shorter array compares as "less" than the
-        longer array.
+	静的/動的な配列の場合、
+	"二つの配列の中で等しくない最初の要素"
+	に op を適用した結果が、配列どうしの関係式opの結果となります。
+	有効な全要素が等しい時は、サイズが小さい配列の方がより"小さい"
+	とします。
 
 
-<h3>Integer comparisons</h3>
+<h3>整数比較</h3>
 
-        $(P Integer comparisons happen when both operands are integral
-        types.
+        $(P オペランドがどちらも整数型だった場合、
+	整数比較が行われます。
         )
 
-        $(TABLE2 Integer comparison operators,
+        $(TABLE2 整数比較演算子,
         $(TR
-        $(TH Operator)$(TH Relation)
+        $(TH 演算子)$(TH 関係)
         )$(TR
-        $(TD &lt;)              $(TD less)
+        $(TD &lt;)              $(TD 小さい)
         )$(TR
-        $(TD &gt;)              $(TD greater)
+        $(TD &gt;)              $(TD 大きい)
         )$(TR
-        $(TD &lt;=)             $(TD less or equal)
+        $(TD &lt;=)             $(TD 以下)
         )$(TR
-        $(TD &gt;=)             $(TD greater or equal)
+        $(TD &gt;=)             $(TD 以上)
         )$(TR
-        $(TD ==)                $(TD equal)
+        $(TD ==)                $(TD 等しい)
         )$(TR
-        $(TD !=)                $(TD not equal)
+        $(TD !=)                $(TD 等しくない)
         )
         )
 
-        $(P It is an error to have one operand be signed and the other
-        unsigned for a &lt;, &lt;=, &gt; or &gt;= expression.
-        Use casts to make both operands signed or both operands unsigned.
+        $(P &lt;, &lt;=, &gt;, &gt;= 式の時は、
+	符号付き整数と符号なし整数の比較はエラーとなります。
+	明示的にどちらかのオペランドをキャストしてください。
         )
 
-<h3><a name="floating_point_comparisons">Floating point comparisons</a></h3>
+<h3><a name="floating_point_comparisons">浮動小数点数比較</a></h3>
 
-        If one or both operands are floating point, then a floating
-        point comparison is performed.
+	オペランドがどちらも浮動小数点数型だった場合、
+	浮動小数点数比較が行われます。
         <p>
 
-        Useful floating point operations must take into account NAN values.
-        In particular, a relational operator can have NAN operands.
-        The result of a relational operation on float
-        values is less, greater, equal, or unordered (unordered means
-        either or both of the
-        operands is a NAN). That means there are 14 possible comparison
-        conditions to test for:
+	実用に値する浮動小数点数演算を定義するには、
+	NaN を考慮に入れなくてはいけません。
+	特に、関係演算のオペランドとしては NaN を取ることができます。
+	二つの浮動小数点数の関係としては、
+	より小さい、より大きい、等しい、順序づけ不可能（一方がNaN）
+	の４種類があり、
+	演算子もこれに応じて14種類の条件を表現しています：
         <p>
 
-        $(TABLE2 Floating point comparison operators,
+        $(TABLE2 浮動小数点数演算子,
         $(TR
-        $(TH Operator)
-        $(TH Greater Than)
-        $(TH Less Than)
-        $(TH Equal)
-        $(TH Unordered)
-        $(TH Exception)
-        $(TH Relation)
+        $(TH 演算子)
+        $(TH より大きい)
+        $(TH より小さい)
+        $(TH 等しい)
+        $(TH 順序づけ不可能red)
+        $(TH 例外)
+        $(TH 関係)
         )
         $(TR
-        $(TD ==)        $(TD F)$(TD F)$(TD T)$(TD F)$(TD no)    $(TD equal)
+        $(TD ==)        $(TD F)$(TD F)$(TD T)$(TD F)$(TD no)    $(TD 等しい)
         )
         $(TR
-        $(TD !=)        $(TD T)$(TD T)$(TD F)$(TD T)$(TD no)    $(TD unordered, less, or greater)
+        $(TD !=)        $(TD T)$(TD T)$(TD F)$(TD T)$(TD no)    $(TD 順序づけ不可能, より小さい, より大きい)
         )
         $(TR
-        $(TD &gt;)      $(TD T)$(TD F)$(TD F)$(TD F)$(TD yes)   $(TD greater)
+        $(TD &gt;)      $(TD T)$(TD F)$(TD F)$(TD F)$(TD yes)   $(TD より大きい)
         )
         $(TR
-        $(TD &gt;=)     $(TD T)$(TD F)$(TD T)$(TD F)$(TD yes)   $(TD greater or equal)
+        $(TD &gt;=)     $(TD T)$(TD F)$(TD T)$(TD F)$(TD yes)   $(TD 以上)
         )
         $(TR
-        $(TD &lt;)      $(TD F)$(TD T)$(TD F)$(TD F)$(TD yes)   $(TD less)
+        $(TD &lt;)      $(TD F)$(TD T)$(TD F)$(TD F)$(TD yes)   $(TD より小さい)
         )
         $(TR
-        $(TD &lt;=)     $(TD F)$(TD T)$(TD T)$(TD F)$(TD yes)   $(TD less or equal)
+        $(TD &lt;=)     $(TD F)$(TD T)$(TD T)$(TD F)$(TD yes)   $(TD 以下)
         )
         $(TR
-        $(TD !&lt;&gt;=) $(TD F)$(TD F)$(TD F)$(TD T)$(TD no)   $(TD unordered)
+        $(TD !&lt;&gt;=) $(TD F)$(TD F)$(TD F)$(TD T)$(TD no)   $(TD 順序づけ不可能)
         )
         $(TR
-        $(TD &lt;&gt;)  $(TD T)$(TD T)$(TD F)$(TD F)$(TD yes)   $(TD less or greater)
+        $(TD &lt;&gt;)  $(TD T)$(TD T)$(TD F)$(TD F)$(TD yes)   $(TD より小さい, より大きい)
         )
         $(TR
-        $(TD &lt;&gt;=) $(TD T)$(TD T)$(TD T)$(TD F)$(TD yes)   $(TD less, equal, or greater)
+        $(TD &lt;&gt;=) $(TD T)$(TD T)$(TD T)$(TD F)$(TD yes)   $(TD より小さい, より大きい, 等しい)
         )
         $(TR
-        $(TD !&lt;=)    $(TD T)$(TD F)$(TD F)$(TD T)$(TD no)    $(TD unordered or greater)
+        $(TD !&lt;=)    $(TD T)$(TD F)$(TD F)$(TD T)$(TD no)    $(TD 順序づけ不可能か、より大きい)
         )
         $(TR
-        $(TD !&lt;)     $(TD T)$(TD F)$(TD T)$(TD T)$(TD no)    $(TD unordered, greater, or equal)
+        $(TD !&lt;)     $(TD T)$(TD F)$(TD T)$(TD T)$(TD no)    $(TD 順序づけ不可能か、以上)
         )
         $(TR
-        $(TD !&gt;=)    $(TD F)$(TD T)$(TD F)$(TD T)$(TD no)    $(TD unordered or less)
+        $(TD !&gt;=)    $(TD F)$(TD T)$(TD F)$(TD T)$(TD no)    $(TD 順序づけ不可能か、より小さい)
         )
         $(TR
-        $(TD !&gt;)     $(TD F)$(TD T)$(TD T)$(TD T)$(TD no)    $(TD unordered, less, or equal)
+        $(TD !&gt;)     $(TD F)$(TD T)$(TD T)$(TD T)$(TD no)    $(TD 順序づけ不可能か、以下)
         )
         $(TR
-        $(TD !&lt;&gt;) $(TD F)$(TD F)$(TD T)$(TD T)$(TD no)    $(TD unordered or equal)
+        $(TD !&lt;&gt;) $(TD F)$(TD F)$(TD T)$(TD T)$(TD no)    $(TD 順序づけ不可能か、等しい)
         )
         )
 
-        <h4>Notes:</h4>
+        <h4>注:</h4>
 
         $(OL
-        $(LI For floating point comparison operators,
+        $(LI 浮動小数点数の場合、
          $(CODE ($(I a) !$(I op) $(I b)))
-         is not the same as $(CODE !($(I a op b))).)
-        $(LI "Unordered" means one or both of the operands is a NAN.)
-        $(LI "Exception" means the $(I Invalid Exception) is raised if one
-                of the operands is a NAN. It does not mean an exception
-                is thrown. The $(I Invalid Exception) can be checked
-                using the functions in $(DPLLINK phobos/std_c_fenv.html, std.c.fenv).
+         は $(CODE !($(I a op b))) と同義ではありません。)
+        $(LI "順序づけ不可能" とは、オペランドの一方または両方が NaN という意味です。)
+        $(LI "例外" とは、どちらかがNaNだった時に $(I Invalid Exception)
+                が発生することを意味します。これは、例外がthrowされるのとは異なります。
+                $(I Invalid Exception) が発生したかどうかのチェックは、
+                $(DPLLINK phobos/std_c_fenv.html, std.c.fenv) の関数で行います。
         )
         )
 
-<h3><a name="class_comparisons">Class comparisons</a></h3>
+<h3><a name="class_comparisons">クラスの比較</a></h3>
 
-        $(P For class objects, the relational
-        operators compare the
-        contents of the objects. Therefore, comparing against
-        $(CODE null) is invalid, as $(CODE null) has no contents.
+        $(P クラスオブジェクトに対しては、
+	比較演算子はオブジェクトの内容を比較するものです。
+	従って、
+	内容を持たない $(CODE null) とオブジェクトを比較するのは不正なコードです。
         )
 
 ---
 class C;
 C c;
-if (c < null)  // error
+if (c < null)  // エラー
   ...
 ---
 
-<h2>In Expressions</h2>
+<h2>In 式</h2>
 
 $(GRAMMAR
 $(GNAME InExpression):
@@ -552,7 +552,7 @@ $(GNAME InExpression):
 $(V2    $(GLINK ShiftExpression) $(B !in) $(GLINK ShiftExpression))
 )
 
-        $(P An associative array can be tested to see if an element is in the array:
+        $(P 連想配列では、値が配列の要素かどうかを調べることができます：
         )
 
 -------------
@@ -562,19 +562,19 @@ if ("hello" in foo)
     ...
 -------------
 
-        $(P The $(B in) expression has the same precedence as the
-        relational expressions $(B &lt;), $(B &lt;=),
-        etc.
-        The return value of the $(I InExpression) is $(B null)
-        if the element is not in the array;
-        if it is in the array it is a pointer to the element.
+        $(P $(B in) 式は、
+        $(B &lt;), $(B &lt;=)などの関係式と
+	同じ優先度を持ちます。
+	要素が配列中に存在しなければ $(I InExpression) は $(B null)
+        になります。存在すれば、
+	配列中の要素へのポインタになります。
         )
 
-        $(V2 $(P The $(B !in) expression is the logical negation of the $(B in)
-        operation.
+        $(V2 $(P $(B !in) 式は $(B in)
+        式の否定を返します。
         ))
 
-<h2>Shift Expressions</h2>
+<h2>Shift 式</h2>
 
 $(GRAMMAR
 $(GNAME ShiftExpression):
@@ -584,27 +584,27 @@ $(GNAME ShiftExpression):
     $(I ShiftExpression) $(B &gt;&gt;&gt;) $(GLINK AddExpression)
 )
 
-        $(P The operands must be integral types, and undergo the usual integral
-        promotions. The result type is the type of the left operand after
-        the promotions. The result value is the result of shifting the bits
-        by the right operand's value.
+        $(P 	オペランドは整数型でなくてはならず、
+	演算前に昇格が行われます。
+	結果は昇格後の左オペランドと同じ型を持ち、
+	値は左オペランドのビットを右オペランド分だけシフトした値です。
         )
 
-        $(P $(B &lt;&lt;) is a left shift.
-        $(B &gt;&gt;) is a signed right shift.
-        $(B &gt;&gt;&gt;) is an unsigned right shift.
+        $(P $(B &lt;&lt;) は左シフトです。
+        $(B &gt;&gt;) は符号付き右シフトです。
+        $(B &gt;&gt;&gt;) は符号無し右シフトです。
         )
 
-        $(P It's illegal to shift by the same or more bits than the size of the
-        quantity being shifted:
+        $(P シフトされる型のビット数より多くシフトしようとするのは
+	不正です：
 	)
 
 -------------
 int c;
-c << 33;        // error
+c << 33;        // エラー
 -------------
 
-<h2>Add Expressions</h2>
+<h2>Add 式</h2>
 
 $(GRAMMAR
 $(GNAME AddExpression):
@@ -614,54 +614,54 @@ $(GNAME AddExpression):
     $(GLINK CatExpression)
 )
 
-        $(P If the operands are of integral types, they undergo integral
-        promotions, and then are brought to a common type using the
-        usual arithmetic conversions.
+        $(P オペランドが整数型ならば昇格が行われます。
+	さらに、
+	共通の型へと通常の算術変換がなされます。
         )
 
-        $(P If either operand is a floating point type, the other is implicitly
-        converted to floating point and they are brought to a common type
-        via the usual arithmetic conversions.
+        $(P もしどちらか一方が浮動小数点数ならば、
+	もう片方も暗黙に浮動小数点数に変換され、
+	共通の型へと変換されます。
         )
 
-        $(P If the operator is $(B +) or $(B -), and
-        the first operand is a pointer, and the second is an integral type,
-        the resulting type is the type of the first operand, and the resulting
-        value is the pointer plus (or minus) the second operand multiplied by
-        the size of the type pointed to by the first operand.
+        $(P 演算子 $(B +) か $(B -) で、
+	第一オペランドがポインタで第二オペランドが整数型の時は、
+	結果の型は第一オペランドの型と同じになります。式の値は、
+	第一オペランドのポインタに、第二オペランドに型のサイズを掛けた結果を
+	足した（引いた）ポインタとなります。
         )
 
-        $(P If the second operand is a pointer, and the first is an integral type,
-        and the operator is $(B +),
-        the operands are reversed and the pointer arithmetic just described
-        is applied.
+        $(P 第二オペランドがポインタで第一引数が整数型、そして
+	演算子が $(B +) の時は、
+	オペランドを逆転して、
+	上で述べた演算が行われます。
         )
 
-        $(P If both operands are pointers, and the operator is $(B +),
-        then it is illegal. For $(B -), the pointers are subtracted and the
-        result is divided by the size of the type pointed to by the
-        operands. It is an error if the pointers point to different types.
+        $(P どちらのオペランドもポインタで、演算子が $(B +)
+        の場合、これは不正です。演算子が $(B -) の場合、ポインタのアドレス値同士が減算され、
+	結果がオペランドの指す型のサイズで割り算されます。
+	二つのポインタの型が違う場合エラーです。
         )
 
-        $(P Add expressions for floating point operands are not associative.
+        $(P 浮動小数点数に対する加算は結合則を満たしません。
         )
 
-<h2>Cat Expressions</h2>
+<h2>Cat 式</h2>
 
 $(GRAMMAR
 $(GNAME CatExpression):
     $(I AddExpression) $(B ~) $(GLINK MulExpression)
 )
 
-        $(P A $(I CatExpression) concatenates arrays, producing
-        a dynmaic array with the result. The arrays must be
-        arrays of the same element type. If one operand is an array
-        and the other is of that array's element type, that element
-        is converted to an array of length 1 of that element,
-        and then the concatenation is performed.
+        $(P $(I CatExpression) は配列同士を結合し、
+	結果の動的配列を返します。結合される配列は、
+	同じ型の要素を持つ配列である必要があります。片方のオペランドが配列で、
+	もう一方がその配列の要素型だった場合は、
+	その要素だけを含む長さ１の配列に変換されてから、
+	結合が行われます。
         )
 
-<h2>Mul Expressions</h2>
+<h2>Mul 式</h2>
 
 $(GRAMMAR
 $(GNAME MulExpression):
@@ -671,33 +671,33 @@ $(GNAME MulExpression):
     $(I MulExpression) $(B %) $(GLINK UnaryExpression)
 )
 
-        $(P The operands must be arithmetic types. They undergo integral
-        promotions, and then are brought to a common type using the
-        usual arithmetic conversions.
+        $(P オペランドが整数型ならば昇格が行われます。
+	さらに、
+	共通の型へと通常の算術変換がなされます。
         )
 
-        $(P For integral operands, the $(B *), $(B /), and $(B %)
-        correspond to multiply, divide, and modulus operations.
-        For multiply, overflows are ignored and simply chopped to fit
-        into the integral type.
+        $(P 整数型の場合、$(B *), $(B /), $(B %) がそれぞれ
+	掛け算、割り算, 余り に対応しています。
+	掛け算ではオーバーフローは無視され、
+	整数型に収まる下位ビットだけが結果として残ります。
         )
 
-        $(P For integral operands of the $(B /) and $(B %) operators,
-        the quotient rounds towards zero and the remainder has the
-        same sign as the dividend.
-        If the divisor is zero, an Exception is thrown.
+        $(P 整数の $(B /) と $(B %) 演算については、
+	商は 0 に向かって丸められ、余りは割られる数と同じ符号になります。
+	割る数が 0 だった場合、
+	例外が送出されます。
         )
 
-        $(P For floating point operands, the * and / operations correspond
-        to the IEEE 754 floating point equivalents. % is not the same as
-        the IEEE 754 remainder. For example, 15.0 % 10.0 == 5.0, whereas
-        for IEEE 754, remainder(15.0,10.0) == -5.0.
+        $(P 浮動小数点数では、* と / は
+	各演算は IEEE 754 で規定された演算に対応します。 % は IEEE754 の剰余とは一致しません。
+	例えば、15.0 % 10.0 == 5.0 ですが、
+ 	IEEE 754 では remainder(15.0,10.0) == -5.0 です。
         )
 
-        $(P Mul expressions for floating point operands are not associative.
+        $(P 浮動小数点数に対するMul式は結合則を満たしません。
         )
 
-<h2><a name="UnaryExpression">Unary Expressions</a></h2>
+<h2><a name="UnaryExpression">単項演算式</a></h2>
 
 $(GRAMMAR
 $(GNAME UnaryExpression):
@@ -716,21 +716,21 @@ $(GNAME UnaryExpression):
     $(V1 $(GLINK PostfixExpression))$(V2 $(GLINK PowExpression))
 )
 
-<h3>Complement Expressions</h3>
+<h3>Complement 式</h3>
 
 $(GRAMMAR
 $(GNAME ComplementExpression):
     $(B ~) $(I UnaryExpression)
 )
 
-	$(P $(I ComplementExpression)s work on integral types (except bool).
-	All the bits in the value are complemented.)
+	$(P $(I ComplementExpression) はboolを除く整数型に対して働き、
+	値中の全てのビットを反転します。)
 
-	$(P Note: unlike in C and C++, the usual integral promotions are not performed
-	prior to the complement operation.
+	$(P 注: C や C++ と異なり、
+	ビット反転の前に通常の整数の昇格が行われることはありません。
 	)
 
-<h3>New Expressions</h3>
+<h3>New 式</h3>
 
 $(GRAMMAR
 $(GNAME NewExpression):
@@ -748,27 +748,27 @@ $(V2      $(GLINK AssignExpression) $(B ,)
 )    $(GLINK AssignExpression) $(B ,) $(I ArgumentList)
 )
 
-        $(P $(I NewExpression)s are used to allocate memory on the garbage
-        collected heap (default) or using a class or struct specific allocator.
+        $(P $(I NewExpression) は、ガベージコレクタのヒープ（デフォルト）、
+	もしくはクラス/構造体特有のアロケータを使ってメモリを確保するのに使われます。
         )
 
-        $(P To allocate multidimensional arrays, the declaration reads
-        in the same order as the prefix array declaration order.
+        $(P 多次元配列を確保するには、
+	宣言は前置の型宣言と同じ順番で記述します。
         )
 
 -------------
-char[][] foo;   // dynamic array of strings
+char[][] foo;   // 文字列の動的配列
 ...
-foo = new char[][30]; // allocate array of 30 strings
+foo = new char[][30]; // 文字列　30要素の配列　を割付
 -------------
 
-        $(P The above allocation can also be written as:)
+        $(P 上のコードは次のように書くこともできます:)
 
 -------------
-foo = new char[][](30); // allocate array of 30 strings
+foo = new char[][](30); // 30個の文字列を割り当て
 -------------
 
-        $(P To allocate the nested arrays, multiple arguments can be used:)
+        $(P 多重に配列を割り当てるには、引数を複数書きます:)
 
 ---------------
 int[][][] bar;
@@ -776,7 +776,7 @@ int[][][] bar;
 bar = new int[][][](5,20,30);
 ---------------
 
-        $(P Which is equivalent to:)
+        $(P このコードは、次と同等の意味になります。)
 
 ----------
 bar = new int[][][5];
@@ -790,62 +790,62 @@ foreach (ref a; bar)
 }
 -----------
 
-        $(P If there is a $(B new $(LPAREN)) $(GLINK ArgumentList) $(B $(RPAREN)),
-        then
-        those arguments are passed to the class or struct specific
-	$(LINK2 class.html#allocators, allocator function) after the size argument.
+        $(P $(B new $(LPAREN)) $(GLINK ArgumentList) $(B $(RPAREN)) がある場合、
+        その引数は、
+	クラス/構造体特有の
+	$(LINK2 class.html#allocators, アロケータ関数)へと、サイズ引数に続けて引き渡されます。
         )
 
-        $(P If a $(I NewExpression) is used as an initializer for
-        a function local variable with $(B scope) storage class,
-        and the $(GLINK ArgumentList) to $(B new) is empty, then
-        the instance is allocated on the stack rather than the heap
-        or using the class specific allocator.
+        $(P $(I NewExpression) が、記憶クラス
+        $(B scope) つきの関数ローカル変数の初期化式で使用された場合で、
+	しかも $(B new) の $(GLINK ArgumentList) が空ならば、
+	インスタンス用のメモリは、ヒープやクラス専用のアロケータではなく、
+	スタック上から割り当てられます。
         )
 
-<h3>Delete Expressions</h3>
+<h3>Delete 式</h3>
 
 $(GRAMMAR
 $(GNAME DeleteExpression):
     $(B delete) $(GLINK UnaryExpression)
 )
-        $(P If the $(I UnaryExpression) is a class object reference, and
-        there is a destructor for that class, the destructor
-        is called for that object instance.
+        $(P まず、クラスオブジェクトへの参照を指定した場合で、
+	そのクラスにデストラクタがある場合は、
+	インスタンスに対してデストラクタが呼び出されます。
         )
 
-        $(P Next, if the $(I UnaryExpression) is a class object reference, or
-        a pointer to a struct instance, and the class or struct
-        has overloaded operator delete, then that operator delete is called
-        for that class object instance or struct instance.
+        $(P 次に、クラスオブジェクトへの参照か構造体へのポインタを指定した場合で、
+	そのクラスか構造体で
+	delete 演算子がオーバーロードされている場合、
+	インスタンスに対してそのdelete演算子が呼び出されます。
         )
 
-        $(P Otherwise, the garbage collector is called to immediately free the
-        memory allocated for the class instance or struct instance.
-        If the garbage collector was not used to allocate the memory for
-        the instance, undefined behavior will result.
+        $(P それ以外の場合はガベージコレクタが呼び出され、
+	インスタンスに割り当てたメモリは直ちに解放されます。
+	ガベージコレクタ以外で割り当てたメモリが使われていた場合、
+	動作は未定義になります。
         )
 
-        $(P If the $(I UnaryExpression) is a pointer or a dynamic array,
-        the garbage collector is called to immediately release the
-        memory.
-        If the garbage collector was not used to allocate the memory for
-        the instance, undefined behavior will result.
+        $(P ポインタや動的配列が指定された場合は、
+	ガベージコレクタが呼び出され、
+	メモリ領域は直ちに解放されます。
+	ガベージコレクタ以外で割り当てたメモリが使われていた場合、
+	動作は未定義になります。
         )
 
-        $(P The pointer, dynamic array, or reference is set to $(B null)
-        after the delete is performed.
-	Any attempt to reference the data after the deletion via another
-	reference to it will result in undefined behavior.
+        $(P ポインタ、動的配列、参照変数は、
+		delete のあと $(B null) にセットされます。
+	delete したあと他の参照でデータにアクセスしようとすると、
+	未定義動作となります。
         )
 
-        $(P If $(I UnaryExpression) is a variable allocated
-        on the stack, the class destructor (if any) is called for that
-        instance. Neither the garbage collector nor any class deallocator
-        is called.
+        $(P スタックに割り当てられた変数が指定された場合、
+	クラスのデストラクタが（もしあれば）呼び出されます。
+	ガベージコレクタやクラス専用のアロケータは
+	呼び出されません。
         )
 
-<h3>Cast Expressions</h3>
+<h3>Cast 式</h3>
 
 $(GRAMMAR
 $(GNAME CastExpression):
@@ -864,20 +864,20 @@ $(GNAME CastQual):
     $(B shared)
 )
 
-        $(P A $(I CastExpression) converts the $(I UnaryExpression)
-        to $(GLINK2 declaration, Type).
+        $(P $(I CastExpression) は、 $(I UnaryExpression)
+        を別の $(GLINK2 declaration, Type) へと変換します。
         )
 
 -------------
-$(B cast)(foo) -p; // cast (-p) to type foo
-(foo) - p;      // subtract p from foo
+$(B cast)(foo) -p; // (-p) をfoo型にキャスト
+(foo) - p;      // fooからpを引き算
 -------------
 
-        $(P Any casting of a class reference to a
-        derived class reference is done with a runtime check to make sure it
-        really is a downcast. $(B null) is the result if it isn't.
-        $(B Note:) This is equivalent to the behavior of the
-        dynamic_cast operator in C++.
+        $(P クラスオブジェクトへの参照を派生クラスへとキャストするときは常に、
+	そのダウンキャストが適切なものであるか実行時のチェックが入ります。
+	不適切なキャストのときは結果は $(B null) になります。
+        $(B 注:) これはC++で言うdynamic_cast演算子と同等の動作をしている、
+	と言えるでしょう。
         )
 
 -------------
@@ -885,35 +885,35 @@ class A { ... }
 class B : A { ... }
 
 void test(A a, B b) {
-  B bx = a;         // error, need cast
-  B bx = cast(B) a; // bx is null if a is not a B
-  A ax = b;         // no cast needed
+  B bx = a;         // エラー、キャストが必要
+  B bx = cast(B) a; // a が B型ではない場合、bx は null となる
+  A ax = b;         // キャスト不要
   A ax = cast(A) b; // no runtime check needed for upcast
 }
 -------------
 
-        $(P In order to determine if an object $(D o) is an instance of
-        a class $(D B) use a cast:
+        $(P オブジェクト $(D o) がクラス
+        $(D B) のインスタンスであることを判定するためには、キャストを使います：
         )
 
 -------------
 if ($(B cast)(B) o)
 {
-  // o is an instance of B
+  // o は B のインスタンス
 }
 else
 {
-  // o is not an instance of B
+  // o は B のインスタンスではない
 }
 -------------
 
-	$(P Casting a pointer type to and from a class type is done as a type paint
-	(i.e. a reinterpret cast).)
+	$(P ポインタ型とクラス型の間のキャストは、型の塗りつぶし
+	(つまり reinterpret_cast) として実行されます。)
 
-	$(P Casting a dynamic array to another dynamic array is done only if the
-	array lengths multiplied by the element sizes match. The cast is done
-	as a type paint, with the array length adjusted to match any change in
-	element size. If there's not a match, a runtime error is generated.)
+	$(P 動的配列を別の型の動的配列にキャストするのは、
+	配列のlengthと要素型のsizeを掛け算した結果が一致する時に限ります。
+	変換は、reinterpret_cast として行われ、length は要素のsizeの比を考慮して調整されます。
+	長さが合わないときは、実行時エラーとなります。)
 
 $(V1
 ---
@@ -921,7 +921,7 @@ import std.stdio;
 
 int main() {
   byte[] a = [1,2,3];
-  auto b = cast(int[])a; // runtime array cast misalignment
+  auto b = cast(int[])a; // 実行時のエラー
 
   int[] c = [1, 2, 3];
   auto d = cast(byte[])c; // ok
@@ -938,7 +938,7 @@ import std.stdio;
 
 int main() {
   byte[] a = [1,2,3];
-  auto b = cast(int[])a; // runtime array cast misalignment
+  auto b = cast(int[])a; // 実行時のエラー
 
   int[] c = [1, 2, 3];
   auto d = cast(byte[])c; // ok
@@ -949,47 +949,47 @@ int main() {
 } 
 ---
 )
-        $(P Casting a floating point literal from one type to another
-        changes its type, but internally it is retained at full
-        precision for the purposes of constant folding.
+        $(P 浮動小数点数リテラルを別の型へとキャストすると型は変わりますが、
+	内部的には、
+	定数畳み込みのために、元々の精度を保って保持されます。
         )
 
 ---
 void test() {
   real a = 3.40483L;
   real b;
-  b = 3.40483;     // literal is not truncated to double precision
+  b = 3.40483;     // リテラルはdouble精度に切り詰められない
   assert(a == b);
   assert(a == 3.40483);
   assert(a == 3.40483L);
   assert(a == 3.40483F);
-  double d = 3.40483; // truncate literal when assigned to variable
-  assert(d != a);     // so it is no longer the same
-  const double x = 3.40483; // assignment to const is not
-  assert(x == a);     // truncated if the initializer is visible
+  double d = 3.40483; // 変数に代入されると、精度が切り詰められる
+  assert(d != a);     // このため、完全に同じ値ではなくなる
+  const double x = 3.40483; // constへの代入は
+  assert(x == a);     // 初期化子が可視な場合は切り捨てられない
 }
 ---
 
-        $(P Casting a value $(I v) to a struct $(I S), when value is not a struct
-        of the same type, is equivalent to:
+        $(P 値 $(I v) から構造体 $(I S) へのキャストは、
+	v の型がSと同じではないときに限り、以下のコードと同等です:
         )
 
 ---
 S(v)
 ---
 
-        $(P Casting to a $(GLINK CastQual) replaces the qualifiers to the type of
-        the $(GLINK UnaryExpression).)
+        $(P $(GLINK CastQual) へのキャストは、元の $(GLINK UnaryExpression)
+		の型の修飾子を置き換えます。)
 
 ---
 shared int x;
 assert(is(typeof(cast(const)x) == const int));
 ---
 
-        $(P Casting with no $(GLINK Type) or $(GLINK CastQual) removes
-        any top level $(B const), $(B immutable), $(B shared) or $(B inout)
-	type modifiers from the type
-        of the $(GLINK UnaryExpression).)
+        $(P $(GLINK Type) も $(GLINK CastQual) も指定しないキャストは、
+        トップレベルの $(B const), $(B immutable), $(B shared), $(B inout)
+	型修飾子を
+        $(GLINK UnaryExpression) から取り除きます。)
 
 ---
 shared int x;
@@ -997,7 +997,7 @@ assert(is(typeof(cast()x) == int));
 ---
 
 $(V2
-<h2>Pow Expressions</h2>
+<h2>Pow 式</h2>
 
 $(GRAMMAR
 $(GNAME PowExpression):
@@ -1005,13 +1005,13 @@ $(GNAME PowExpression):
     $(GLINK PostfixExpression) ^^ $(GLINK UnaryExpression)
 )
 
-        $(P $(I PowExpression) raises its left operand to the power of its
-        right operand.
+        $(P $(I PowExpression) は、
+        左オペランドの右オペランド乗を計算します。
         )
 )
 
 
-<h2>Postfix Expressions</h2>
+<h2>後置演算式</h2>
 
 $(GRAMMAR
 $(GNAME PostfixExpression):
@@ -1027,37 +1027,37 @@ $(GNAME PostfixExpression):
     $(GLINK SliceExpression)
 )
 
-<h2>Index Expressions</h2>
+<h2>Index 式</h2>
 
 $(GRAMMAR
 $(GNAME IndexExpression):
     $(GLINK PostfixExpression) $(B [) $(GLINK ArgumentList) $(B ])
 )
 
-        $(P $(I PostfixExpression) is evaluated.
+        $(P まず $(I PostfixExpression) が評価されます。
 
-        If $(I PostfixExpression) is an expression of type
-        static array or dynamic array, the symbol $(DOLLAR) is
-        set to be the the number of elements in the array.
+        $(I PostfixExpression) が静的配列か動的配列だった場合、
+        シンボル $(DOLLAR)
+        が配列の長さとして使えます。
 
-        If $(I PostfixExpression) is an $(I ExpressionTuple),
-        the symbol $(DOLLAR) is
-        set to be the the number of elements in the tuple.
+        $(I PostfixExpression) が $(I ExpressionTuple),
+        だった場合は、シンボル $(DOLLAR)
+        はタプルの要素数になります。
 
-        A new declaration scope is created for the evaluation of the
-        $(GLINK ArgumentList) and $(DOLLAR) appears in that scope only.
+        $(GLINK ArgumentList) の評価の際には新しい宣言スコープが作られ、
+		$(DOLLAR) はこの範囲でのみ使用できます。
         )
 
-        $(P If $(I PostfixExpression) is an $(I ExpressionTuple),
-        then the $(GLINK ArgumentList) must consist of only one argument,
-        and that must be statically evaluatable to an integral constant.
-        That integral constant $(I n) then selects the $(I n)th
-        expression in the $(I ExpressionTuple), which is the result
-        of the $(I IndexExpression).
-        It is an error if $(I n) is out of bounds of the $(I ExpressionTuple).
+        $(P $(I PostfixExpression) が $(I ExpressionTuple) の場合は、
+        $(GLINK ArgumentList) の要素は必ず１つで、
+	コンパイル時に整数定数へと評価される式でなければいけません。
+        その整数定数 $(I n)  に応じて、
+         $(I ExpressionTuple) の第 $(I n) 番目の要素が選択され、
+        その値が $(I IndexExpression) 全体の値となります。
+        $(I n) が $(I ExpressionTuple) の範囲を外れているとエラーです。
         )
 
-<h2>Slice Expressions</h2>
+<h2>Slice 式</h2>
 
 $(GRAMMAR
 $(GNAME SliceExpression):
@@ -1065,43 +1065,43 @@ $(GNAME SliceExpression):
     $(GLINK PostfixExpression) $(B [) $(GLINK AssignExpression) $(B ..) $(GLINK AssignExpression) $(B ])
 )
 
-        $(P $(I PostfixExpression) is evaluated.
-        if $(I PostfixExpression) is an expression of type
-        static array or dynamic array, the variable $(B length)
-        (and the special variable $(DOLLAR))
-        is declared and set to be the length of the array.
-        A new declaration scope is created for the evaluation of the
+        $(P まず $(I PostfixExpression) が評価されます。
+        $(I PostfixExpression)  が静的配列か動的配列だった場合、
+	変数 $(B length)
+        (と特殊変数 $(DOLLAR))
+        が宣言され、
+	その値は配列の長さになります。
         $(GLINK AssignExpression)..$(GLINK AssignExpression)
-        and $(B length) (and $(DOLLAR)) appears in that scope only.
+        の評価の際にはこの新しい宣言スコープが作られ、 $(B length) (と $(DOLLAR)) はこの範囲でのみ使用できます。
         )
 
-        $(P The first $(I AssignExpression) is taken to be the inclusive
-        lower bound
-        of the slice, and the second $(I AssignExpression) is the
-        exclusive upper bound.
-        The result of the expression is a slice of the $(I PostfixExpression)
-        array.
+        $(P 式の結果は、
+		$(I PostfixExpression) の指す配列の、
+		先頭の $(I AssignExpression) 
+		以上、
+        二番目の $(I AssignExpression) 未満、
+		の範囲のスライスとなります。 
         )
 
-        $(P If the $(B [ ]) form is used, the slice is of the entire
-        array.
+        $(P $(B [ ]) 形式を使うと、
+	スライスは配列全体になります。
         )
 
-        $(P The type of the slice is a dynamic array of the element
-        type of the $(I PostfixExpression).
+        $(P スライスの型は、
+        $(I PostfixExpression) の要素の動的配列型となります。
         )
 
-	$(P A $(I SliceExpression) is not a modifiable lvalue.)
+	$(P $(I SliceExpression) は変更可能な lvalue ではありません。)
 
-        $(P If $(I PostfixExpression) is an $(I ExpressionTuple), then
-        the result of the slice is a new $(I ExpressionTuple) formed
-        from the upper and lower bounds, which must statically evaluate
-        to integral constants.
-        It is an error if those
-        bounds are out of range.
-        )
+        $(P $(I PostfixExpression) が $(I ExpressionTuple) のときは、
+        スライス式の結果は新しく指定された上限と下限の範囲の $(I ExpressionTuple)
+	になります。
+	上限と下限はコンパイル時に整数定数へと評価される式でなければなりません。
+	範囲の外の値が指定された場合は、
+	エラーになります。 
+       )
 
-<h2>Primary Expressions</h2>
+<h2>原始式</h2>
 
 $(GRAMMAR
 $(GNAME PrimaryExpression):
@@ -1138,17 +1138,17 @@ $(V2      $(GLINK2 traits, TraitsExpression))
 
 <h3>.Identifier</h3>
 
-        $(IDENTIFIER) is looked up at module scope, rather than the current
-        lexically nested scope.
+        $(IDENTIFIER) はその時点のネストされたスコープではなく、
+	モジュールスコープから探索されます。
 
 <h3>$(LNAME2 this, this)</h3>
 
-        $(P Within a non-static member function, $(B this) resolves to
-        a reference to the object for which the function was called.
-        If the object is an instance of a struct, $(B this) will
-        be a pointer to that instance.
-        If a member function is called with an explicit reference
-        to $(B typeof(this)), a non-virtual call is made:
+        $(P 非staticメンバ関数の中では、$(B this)  はその関数を呼んだ
+	オブジェクトへの参照となっています。
+	構造体での  $(B this) は、
+	その構造体インスタンスへのポインタとなります。
+    $(B typeof(this)) を明示的に参照してメンバ関数を呼び出した場合は、
+	非仮想の関数呼び出しが行われます：
         )
 
 -------------
@@ -1171,51 +1171,51 @@ void main() {
 }
 -------------
 
-	$(P Assignment to $(B this) is not allowed.)
+	$(P $(B this) への代入は禁止です。)
 
 <h3>$(LNAME2 super, super)</h3>
 
-        $(P $(B super) is identical to $(B this), except that it is
-        cast to $(B this)'s base class.
-        It is an error if there is no base class.
-        It is an error to use $(B super) within a struct member function.
-        (Only class $(D Object) has no base class.)
-        If a member function is called with an explicit reference
-        to $(B super), a non-virtual call is made.
+        $(P $(B super) は、$(B this)
+	を基底クラスへとキャストしたものです。
+	基底クラスが存在しない場合はエラーになります。
+	また、構造体の中で $(B super)  を使うのもエラーです。
+        (クラス $(D Object) のみが基底クラスを持ちません。)
+        $(B super) を明示的に参照してメンバ関数を呼び出した場合は、
+	非仮想の関数呼び出しが行われます：
         )
 
-	$(P Assignment to $(B super) is not allowed.)
+	$(P $(B super) への代入は禁止です。)
 
 <h3>$(LNAME2 null, null)</h3>
 
-        $(P $(B null) represents the null value for
-        pointers, pointers to functions, delegates,
-        dynamic arrays, associative arrays,
-        and class objects.
-        If it has not already been cast to a type,
-        it is given the type (void *) and it is an exact conversion
-        to convert it to the null value for pointers, pointers to
-        functions, delegates, etc.
-        After it is cast to a type, such conversions are implicit,
-        but no longer exact.
+        $(P $(B null) は、
+	ポインタ、関数ポインタ、デリゲート、
+	動的配列、連想配列、
+	クラスオブジェクトの null 値を表します。
+	特定の型にキャストされていないときは、
+	(void*) 型となり、
+	ポインタ、
+	関数ポインタ等々への完全一致の変換が可能です。
+	特定の型にキャストされた後も暗黙の変換は可能ですが、
+	完全一致扱いにはなりません。
         )
 
 <h3>true, false</h3>
 
-        These are of type $(B bool) and when cast to another integral
-        type become the values 1 and 0,
-        respectively.
+        $(B bool) 型の値で、
+	他の整数型にキャストされた場合はそれぞれ
+	1 と 0 になります。
 
-<h3><a name="CharacterLiteral">Character Literals</a></h3>
+<h3><a name="CharacterLiteral">文字リテラル</a></h3>
 
-        Character literals are single characters and resolve to one
-        of type $(B char), $(B wchar), or $(B dchar).
-        If the literal is a \u escape sequence, it resolves to type $(B wchar).
-        If the literal is a \U escape sequence, it resolves to type $(B dchar).
-        Otherwise, it resolves to the type with the smallest size it
-        will fit into.
+        文字リテラルは、文字１文字を表していて、
+        $(B char), $(B wchar), $(B dchar) のいずれかの型を持ちます。
+	\u エスケープシーケンスならば $(B wchar) 型、
+        \U エスケープシーケンスならば $(B dchar) 型となります。
+	それ以外の場合は、
+	その文字を格納できる最小の型になります。
 
-<h3>String Literals</h3>
+<h3>文字列リテラル</h3>
 
 $(GRAMMAR
 $(GNAME StringLiterals):
@@ -1223,8 +1223,8 @@ $(GNAME StringLiterals):
     $(I StringLiterals) $(GLINK2 lex, StringLiteral)
 )
 
-        $(P String literals can implicitly convert to any
-        of the following types, they have equal weight:
+        $(P 文字列リテラルは、
+	以下の型に（同じ優先度で）暗黙変換されます:
         )
 
 $(V1
@@ -1247,43 +1247,43 @@ $(V2
         $(TROW $(D immutable(dchar)[]))
         )
 )
-        $(P String literals have a 0 appended to them, which makes
-        them easy to pass to C or C++ functions expecting a $(CODE const char*)
-        string.
-        The 0 is not included in the $(CODE .length) property of the
-        string literal.
+        $(P 文字列リテラルの末尾には 0 が必ず入っています。
+	これは $(CODE const char*) 文字列を期待する
+	C/C++ の関数にリテラルを渡しやすくするためです。
+	この 0 は文字列リテラルの $(CODE .length)
+       プロパティには含まれません。
         )
 
-<h3>Array Literals</h3>
+<h3>配列リテラル</h3>
 
 $(GRAMMAR
 $(GNAME ArrayLiteral):
     $(B [) $(GLINK ArgumentList) $(B ])
 )
 
-        $(P Array literals are a comma-separated list of $(GLINK AssignExpression)s
-        between square brackets [ and ].
-        The $(I AssignExpression)s form the elements of a static array,
-        the length of the array is the number of elements.
-        The type of the first element is taken to be the type of
-        all the elements, and all elements are implicitly converted
-        to that type.
-        If that type is a static array, it is converted to a dynamic
-        array.
+        $(P 配列リテラルは、[ と ] で挟んで、カンマで区切った $(GLINK AssignExpression)
+         のリストです。
+        $(I AssignExpression) は配列の要素をあらわし、
+	配列の長さは要素の個数になります。
+	配列リテラル全体の型としては、先頭要素の型が採用されます。
+	ほかの要素は全て、
+	その型へと暗黙変換されます。
+	その型が静的配列型であれば、
+	動的配列に変換されます。
         )
 
 ---
-[1,2,3];  // type is int[3], with elements 1, 2 and 3
-[1u,2,3]; // type is uint[3], with elements 1u, 2u, and 3u
+[1,2,3];  // int[3] 型。要素は 1, 2, 3
+[1u,2,3]; // uint[3] 型。引数は 1u, 2u, 3u
 ---
 
-        $(P If any of the arguments in the $(GLINK ArgumentList) are
-        an $(I ExpressionTuple), then the elements of the $(I ExpressionTuple)
-        are inserted as arguments in place of the tuple.
+        $(P $(GLINK ArgumentList) の引数のどれかが
+        $(I ExpressionTuple)であった場合は、
+	 そのタプルの場所に引数として $(I ExpressionTuple) の要素が挿入されます。
         )
 
-        $(P Array literals are allocated on the memory managed heap.
-        Thus, they can be returned safely from functions:)
+        $(P 配列リテラルはGC管理されたヒープに配置されます。
+	従って、安全に関数から返すことができます:)
 
 ---
 int[] foo() {
@@ -1291,28 +1291,28 @@ int[] foo() {
 }
 ---
 
-        $(P When array literals are cast to another array type, each
-        element of the array is cast to the new element type.
-        When arrays that are not literals are cast, the array is
-        reinterpreted as the new type, and the length is recomputed:
+        $(P 配列リテラルが別の配列型にキャストされた場合、
+	要素それぞれが新しい要素型にキャストされます。
+	リテラルでない配列がキャストされた場合、
+	配列が新しい型として再解釈され、長さが再計算されます:
         )
 
 ---
 import std.stdio;
 
 void main() {
-  // cast array literal
+  // 配列リテラルのキャスト
   const short[] ct = cast(short[]) [cast(byte)1, 1];
-  writeln(ct);  // writes [1, 1]
+  writeln(ct);  // 出力は [1, 1]
 
-  // cast other array expression
+  // それ以外の配列のキャスト
   short[] rt = cast(short[]) [cast(byte)1, cast(byte)1].dup;
-  writeln(rt);  // writes [257]
+  writeln(rt);  // 出力は [257]
 }
 ---
 
 
-<h3>Associative Array Literals</h3>
+<h3>連想配列リテラル</h3>
 
 $(GRAMMAR
 $(GNAME AssocArrayLiteral):
@@ -1332,32 +1332,32 @@ $(GNAME ValueExpression):
     $(GLINK AssignExpression)
 )
 
-        $(P Associative array literals are a comma-separated list of
-        $(I key):$(I value) pairs
-        between square brackets [ and ].
-        The list cannot be empty.
-        The type of the first key is taken to be the type of
-        all the keys, and all subsequent keys are implicitly converted
-        to that type.
-        The type of the first value is taken to be the type of
-        all the values, and all subsequent values are implicitly converted
-        to that type.
-        An $(I AssocArrayLiteral) cannot be used to statically initialize
-        anything.
+        $(P 連想配列リテラルは、角括弧 [ と ] の間で
+	コンマで区切られた
+        $(I key):$(I value)  ペアのリストです。
+	空リストであってはいけません。
+	１個目のkeyの型が全体のkeyの型として使用され、
+	残りの key
+	はその型へと暗黙変換されます。
+	１個目のvalueの型が全体のvalueの型として使用され、
+	残りの value
+	はその型へと暗黙変換されます。
+	連想配列リテラルは、
+	静的初期化には使用できません
         )
 
 ---
-[21u:"he",38:"ho",2:"hi"]; // type is char[2][uint],
-                           // with keys 21u, 38u and 2u
-                           // and values "he", "ho", and "hi"
+[21u:"he",38:"ho",2:"hi"]; // 型は char[2][uint] で、
+                           // keyが 21u, 38u, 2u。
+                           // valueが "he", "ho", "hi"
 ---
 
-        $(P If any of the keys or values in the $(I KeyValuePairs) are
-        an $(I ExpressionTuple), then the elements of the $(I ExpressionTuple)
-        are inserted as arguments in place of the tuple.
+        $(P $(I KeyValuePairs) のどれかが
+        $(I ExpressionTuple)であった場合は、
+		そのタプルの場所に引数として $(I ExpressionTuple) の要素が挿入されます。
         )
 
-<h3>Lambdas</h3>
+<h3>ラムダ式</h3>
 
 $(GRAMMAR
 $(GNAME Lambda):
@@ -1365,20 +1365,20 @@ $(GNAME Lambda):
         $(GLINK ParameterAttributes) $(B =&gt;) $(GLINK AssignExpression)
 )
 
-	$(P $(I Lambda)s are a shorthand syntax for $(GLINK FunctionLiteral)s.
-	The first form is equivalent to:
+	$(P $(I Lambda) は $(GLINK FunctionLiteral) を簡単に書くための略記構文です。
+	この構文は
 	)
 ---
 delegate ( $(IDENTIFIER) ) { return $(I AssignExpression); }
 ---
 
-	$(P And the second:)
+	$(P あるいは次と等価です:)
 
 ---
 delegate $(I ParameterAttributes) { return $(I AssignExpression); }
 ---
 
-<h3>Function Literals</h3>
+<h3>関数リテラル</h3>
 
 $(GRAMMAR
 $(GNAME FunctionLiteral):
@@ -1392,24 +1392,24 @@ $(GNAME ParameterAttributes):
 $(V2      $(GLINK2 declaration, Parameters) $(GLINK2 declaration, FunctionAttributes))
 )
 
-        $(I FunctionLiteral)s enable embedding anonymous functions
-        and anonymous delegates directly into expressions.
-        $(I Type) is the return type of the function or delegate,
-        if omitted it is inferred from any $(I ReturnStatement)s
-        in the $(I FunctionBody).
+        $(I FunctionLiteral) によって、式の中に直接
+		無名関数や無名デリゲートを埋め込むことが可能になります。
+        $(I Type) は関数やデリゲートの返値型です。
+        $(I FunctionBody) の $(I ReturnStatement) から推論できる場合は、
+		省略してもかまいません。
         $(B $(LPAREN)) $(GLINK ArgumentList) $(B $(RPAREN))
-        forms the arguments to the function.
-        If omitted it defaults to the empty argument list $(B ( )).
-        The type of a function literal is pointer to function or
-        pointer to delegate.
-        If the keywords $(B function) or $(B delegate) are omitted,
-        it defaults to being a delegate.
+        は関数の引数リストです。
+	省略した場合は、空の引数リスト $(B ( )) として処理されます。
+	関数リテラル式の型は、関数へのポインタか
+	デリゲートへのポインタになります。
+	キーワード $(B function) や $(B delegate)
+        が省略された場合のデフォルトは delegate です。
         <p>
 
-        For example:
+	例として：
 
 -------------
-int function(char c) fp; // declare pointer to a function
+int function(char c) fp; // 関数へのポインタを宣言
 
 void test() {
   static int foo(char c) { return 6; }
@@ -1418,7 +1418,7 @@ void test() {
 }
 -------------
 
-        is exactly equivalent to:
+	これは次と完全に等価です：
 
 -------------
 int function(char c) fp;
@@ -1428,7 +1428,7 @@ void test() {
 }
 -------------
 
-        And:
+	あるいは、次のコードは：
 
 -------------
 int abc(int delegate(long i));
@@ -1441,7 +1441,7 @@ void test() {
 }
 -------------
 
-        is exactly equivalent to:
+	以下と全く同等です：
 
 -------------
 int abc(int delegate(long i));
@@ -1453,8 +1453,8 @@ void test() {
 }
 -------------
 
-        $(P and the following where the return type $(B int) is
-        inferred:)
+        $(P 次の例では、返値型 $(B int)
+        が自動推論されています:)
 
 -------------
 int abc(int delegate(long i));
@@ -1466,8 +1466,8 @@ void test() {
 }
 -------------
 
-        Anonymous delegates can behave like arbitrary statement literals.
-        For example, here an arbitrary statement is executed by a loop:
+	無名デリゲートは、文リテラルのように使うことができます。
+	例えば、以下は任意の文をループ実行する例です:
 
 -------------
 double test() {
@@ -1487,15 +1487,15 @@ double test() {
 }
 -------------
 
-        When comparing with $(DDSUBLINK function, nested, nested functions),
-	the $(B function) form is analogous to static
-        or non-nested functions, and the $(B delegate) form is
-        analogous to non-static nested functions. In other words,
-        a delegate literal can access stack variables in its enclosing
-        function, a function literal cannot.
+        $(DDSUBLINK function, nested, ネスト関数)  と対比すると、
+		$(B function) を使う方は static ないしはネストしていない関数と似ていて、
+        $(B delegate) を使う方は、
+	非staticないしはネストした関数と似ています。言い換えると、
+	delegateリテラルは周囲の関数のスタック変数にアクセスできますが、
+	関数リテラルはできません。
 
 
-<h3>Assert Expressions</h3>
+<h3>Assert 式</h3>
 
 $(GRAMMAR
 $(GNAME AssertExpression):
@@ -1503,36 +1503,36 @@ $(GNAME AssertExpression):
     $(B assert $(LPAREN)) $(GLINK AssignExpression) $(B ,) $(GLINK AssignExpression) $(B $(RPAREN))
 )
 
-        $(P Asserts evaluate the $(I AssignExpression).
-	If it evaluates to a non-null class reference, the class invariant is run.
-	Otherwise, if it evaluates to a non-null pointer to a struct, the struct invariant is run.
-	Otherwise, if the result is false,
-        an $(B AssertError) is thrown. If the result is true, then no
-        exception is thrown.
-        It is an error if the $(I expression) contains any side effects
-        that the program depends on. The compiler may optionally not
-        evaluate assert expressions at all.
-        The result type of an assert expression is $(D void).
-        Asserts are a fundamental part of the
-        $(DDLINK dbc, Contract Programming, Contract Programming)
-        support in D.
+        $(P $(I AssignExpression) を評価します。
+	null でないクラス参照に評価された場合は、そのクラスの不変条件が実行されます。
+	それ以外の場合で、構造体への null でないポインタへと評価された場合は、その構造体の不変条件が実行されます。
+	それ以外の場合で、結果が false だった場合、
+        $(B AssertError) 例外が投げられます。 true ならば、
+        例外は投げられません。
+        $(I expression) で、その挙動にプログラムが依存するような副作用が発生すると、
+        それはエラーです。
+	コンパイラーはassert式を全く評価しないことも許されています。
+        assert 式の型は $(D void) です。
+	このassertは、Dの
+        $(DDLINK dbc, Contract Programming, 契約プログラミング)
+        サポートの重要な一部をなしています。
         )
 
-        $(P The expression $(D assert(0)) is a special case; it
-        signifies that it is unreachable code.
-        Either $(B AssertError) is thrown at runtime if it is reachable,
-        or the execution is halted
-        (on the x86 processor, a $(B HLT) instruction can be used to halt
-        execution).
-        The optimization and code generation phases of compilation may
-        assume that it is unreachable code.
+        $(P $(D assert(0)) は特殊な場合です。この式は、
+        その部分が到達不能コードであることを示します。
+	到達してしまった場合、 $(B AssertError)が送出されるか、
+	プログラムが実行停止します。
+	（x86 プロセッサでは、実行停止には  $(B HLT)
+ 	命令が使われます）
+	コンパイラは、最適化やコード生成の段階で、
+	実行がassert(0)の部分には到達しないことを仮定してよいものとします。
         )
 
-        $(P The second $(I AssignExpression), if present, must be implicitly
-        convertible to type $(V1 $(D char[]))$(V2 $(D const(char)[])).
-        It is evaluated if the
-        result is false, and the string result is appended to the
-        $(B AssertError)'s message.
+        $(P 第二引数の $(I AssignExpression) がもしあれば、
+	暗黙に $(V1 $(D char[]))$(V2 $(D const(char)[])) へ変換できる型である必要があります。
+	この値は
+	第一引数の結果がfalseの時に評価され、
+        結果の文字列が $(B AssertError) のメッセージに追記されます。
         )
 
 ----
@@ -1541,60 +1541,60 @@ void main() {
 }
 ----
 
-        $(P When compiled and run, it will produce the message:)
+        $(P これをコンパイルして実行すると、次のメッセージが表示されます:)
 
 $(CONSOLE
 Error: AssertError Failure test.d(3) an error message
 )
 
 
-<h3>Mixin Expressions</h3>
+<h3>Mixin 式</h3>
 
 $(GRAMMAR
 $(GNAME MixinExpression):
     $(B mixin $(LPAREN)) $(GLINK AssignExpression) $(B $(RPAREN))
 )
 
-        $(P The $(I AssignExpression) must evaluate at compile time
-        to a constant string.
-        The text contents of the string must be compilable as a valid
-        $(I AssignExpression), and is compiled as such.
+        $(P この $(I AssignExpression)
+		はコンパイル時定数へと評価される文字列である必要があります。その文字列の内容は正当な
+        $(I AssignExpression)としてコンパイルできるものでなければならず、
+		その場合、その通りにコンパイルされます。
         )
 
 ---
 int foo(int x) {
-  return mixin("x + 1") * 7;  // same as ((x + 1) * 7)
+  return mixin("x + 1") * 7;  // ((x + 1) * 7) と同じ
 }
 ---
 
-<h3>Import Expressions</h3>
+<h3>Import 式</h3>
 
 $(GRAMMAR
 $(GNAME ImportExpression):
     $(B import $(LPAREN)) $(GLINK AssignExpression) $(B $(RPAREN))
 )
 
-        $(P The $(I AssignExpression) must evaluate at compile time
-        to a constant string.
-        The text contents of the string are interpreted as a file
-        name. The file is read, and the exact contents of the file
-        become a string literal.
+        $(P $(I AssignExpression)
+	はコンパイル時定数へと評価される文字列である必要があります。
+	文字列の内容はファイル名として解釈されます。
+	その名前のファイルが読み込まれ、
+	ファイルの内容が文字列リテラルとなります。
         )
 
-        $(P Implementations may restrict the file name in order to avoid
-        directory traversal security vulnerabilities.
-        A possible restriction might be to disallow any path components
-        in the file name.
+        $(P 処理系は、ディレクトリトラバーサル攻撃を防止するために、
+	importに指定できるファイル名を制限する可能性があります。
+	典型的な制約としては、ファイル名の中にパス区切り文字を含めない、
+	などがあります。
         )
 
 ---
 void foo() {
-  // Prints contents of file foo.txt
+  // ファイル foo.txt の内容を表示
   write$(V1 f)ln( import("foo.txt") );
 }
 ---
 
-<h3>Typeid Expressions</h3>
+<h3>Typeid 式</h3>
 
 $(GRAMMAR
 $(GNAME TypeidExpression):
@@ -1603,26 +1603,26 @@ $(V2      $(B typeid $(LPAREN)) $(GLINK Expression) $(B $(RPAREN)))
 )
 
 $(V1
-        $(P Returns an instance of class
+        $(P $(I Type)
+		に対応する
         $(DPLLINK phobos/object.html, $(B TypeInfo))
-        corresponding
-        to $(I Type).
+        のインスタンスを返します。
         )
 )
 $(V2
-        $(P If $(I Type), returns an instance of class
-        $(DPLLINK phobos/object.html, $(B TypeInfo))
-        corresponding
-        to $(I Type).
+        $(P typeid に型 $(I Type)
+		を指定した場合は、
+		その型に対応した $(DPLLINK phobos/object.html, $(B TypeInfo))
+        クラスのインスタンスを返します。
         )
 
-        $(P If $(I Expression), returns an instance of class
+        $(P $(I Expression) を指定した場合は、
+		その式の型に対応した
         $(DPLLINK phobos/object.html, $(B TypeInfo))
-        corresponding
-        to the type of the $(I Expression).
-        If the type is a class, it returns the $(B TypeInfo)
-        of the dynamic type (i.e. the most derived type).
-        The $(I Expression) is always executed.
+        クラスのインスタンスを返します。
+		クラス型の式であった場合、
+		オブジェクトの動的な型に対応した $(B TypeInfo) が返ります。
+        $(I Expression) は常に実行されます。
         )
 
 ---
@@ -1641,7 +1641,7 @@ void main() {
 ---
 )
 
-<h3>IsExpression</h3>
+<h3>Is 式</h3>
 
 $(GRAMMAR
 $(GNAME IsExpression):
@@ -1673,63 +1673,63 @@ $(V2      $(B const)
     $(B return)
 ))
 
-        $(I IsExpression)s are evaluated at compile time and are
-        used for checking for valid types, comparing types for equivalence,
-        determining if one type can be implicitly converted to another,
-        and deducing the subtypes of a type.
-        The result of an $(I IsExpression) is an int of type 0
-        if the condition is not satisified, 1 if it is.
+        $(I IsExpression) はコンパイル時に評価され、
+	型の正当性を検査したり、型の同値性を比較したり、
+	ある型から別の型へ暗黙変換できるかどうか確かめたり、
+	型の部分型を推論したりするために使用します。
+        $(I IsExpression) の結果はint型で、条件が不成立の場合0、
+	成立した場合1になります。
         <p>
 
-        $(I Type) is the type being tested. It must be syntactically
-        correct, but it need not be semantically correct.
-        If it is not semantically correct, the condition is not satisfied.
+        $(I Type) はテストする型です。文法的には正しくなければなりませんが、
+	意味的に正しい必要は必ずしもありません。
+	意味的に不正な型だった場合、条件が不成立となります。
         <p>
 
-        $(IDENTIFIER) is declared to be an alias of the resulting
-        type if the condition is satisfied. The $(IDENTIFIER) forms
-        can only be used if the $(I IsExpression) appears in a
-        $(GLINK2 version, StaticIfCondition).
+        $(IDENTIFIER) は、条件が成立した場合、結果の型への
+	alias となります。$(IDENTIFIER) 形式は、
+        が $(I IsExpression)
+        $(GLINK2 version, StaticIfCondition) の中に現れた時のみ使用できます。
         <p>
 
-        $(I TypeSpecialization) is the type that $(I Type) is being
-        compared against.
+        $(I TypeSpecialization) は $(I Type)
+	と比較して検査するために指定する対象の型式です。
         <p>
 
-        The forms of the $(I IsExpression) are:
+        $(I IsExpression) には以下のような種類があります：
 
         $(OL
 
         $(LI $(B is $(LPAREN)) $(I Type) $(B $(RPAREN))$(BR)
-        The condition is satisfied if $(I Type) is semantically
-        correct (it must be syntactically correct regardless).
+        $(I Type) が意味的に正当な型の時に、条件が成立します。
+	（どの場合も文法的には正しい型を指定する必要があります）
 
 -------------
-alias int func(int);    // func is a alias to a function type
+alias int func(int);    // func は関数型への alias
 void foo() {
-  if ($(B is)(func[]) ) // not satisfied because arrays of
-                        // functions are not allowed
+  if ($(B is)(func[]) ) // 関数の配列は作れないので、
+                        // 条件は満たされない
     write$(V1 f)ln("satisfied");
   else
     write$(V1 f)ln("not satisfied");
 
-  if ($(B is)([][]))  // error, [][] is not a syntactically valid type
+  if ($(B is)([][]))  // エラー。[][] は文法的に正しい型でない
     ...
 }
 -------------
         )
 
         $(LI $(B is $(LPAREN)) $(I Type) $(B :) $(I TypeSpecialization) $(B $(RPAREN))<br>
-        The condition is satisfied if $(I Type) is semantically
-        correct and it is the same as
-        or can be implicitly converted to $(I TypeSpecialization).
-        $(I TypeSpecialization) is only allowed to be a $(I Type).
+        $(I Type) が意味的に正しく、
+        $(I TypeSpecialization)と同じかまたは暗黙に変換できる場合、
+		条件成立となります。
+		 $(I TypeSpecialization) の部分には型名のみ使用できます。
 
 -------------
 alias short bar;
 void foo(bar x) {
-  if ( $(B is)(bar : int) )   // satisfied because short can be
-                              // implicitly converted to int
+  if ( $(B is)(bar : int) )   // shortはintに暗黙変換されるので
+                              // 条件は満たされる
     write$(V1 f)ln("satisfied");
   else
     write$(V1 f)ln("not satisfied");
@@ -1738,11 +1738,11 @@ void foo(bar x) {
         )
 
         $(LI $(B is $(LPAREN)) $(I Type) $(B ==) $(I TypeSpecialization) $(B $(RPAREN))<br>
-        The condition is satisfied if $(I Type) is semantically
-        correct and is the same type as $(I TypeSpecialization).
+        $(I Type) が意味的に正当な型で、
+        $(I TypeSpecialization)　と同じな時に条件成立です。
         <p>
 
-        If $(I TypeSpecialization) is one of
+        If $(I TypeSpecialization) が
 $(V1            $(B typedef)
 )               $(B struct)
                 $(B union)
@@ -1755,19 +1755,19 @@ $(V2            $(B const)
                 $(B immutable)
                 $(B shared)
 )
-        then the condition is satisifed if $(I Type) is one of those.
+        のいずれかの時は、 $(I Type) が指定の種類の型であれば条件成立となります。
 
 -------------
 alias short bar;
 $(V1 typedef char foo;)
 void test(bar x) {
-  if ( $(B is)(bar == int) ) // not satisfied because short is not
-                        // the same type as int
+  if ( $(B is)(bar == int) ) // shortはintと同じ型ではないので、
+                        // 条件は満たされない
     write$(V1 f)ln("satisfied");
   else
     write$(V1 f)ln("not satisfied");
 $(V1
-  if ( $(B is)(foo == typedef) ) // satisfied because foo is a typedef
+  if ( $(B is)(foo == typedef) ) // foo が typedef なので満たされる
     write$(V1 f)ln("satisfied");
   else
     write$(V1 f)ln("not satisfied");
@@ -1776,9 +1776,9 @@ $(V1
         )
 
         $(LI $(B is $(LPAREN)) $(I Type) $(I Identifier) $(B $(RPAREN))<br>
-        The condition is satisfied if $(I Type) is semantically
-        correct. If so, $(I Identifier)
-        is declared to be an alias of $(I Type).
+        $(I Type) が意味的に正当な型であれば条件成立です。
+	その場合、 $(I Identifier)
+        が $(I Type) のaliasとして宣言されます。
 
 -------------
 alias short bar;
@@ -1788,9 +1788,9 @@ void foo(bar x) {
   else
     alias long S;
 
-  write$(V1 f)ln(typeid(S));  // prints "short"
-  if ( $(B is)(bar T) )  // error, $(I Identifier) T form can
-                      // only be in $(GLINK2 version, StaticIfCondition)s
+  write$(V1 f)ln(typeid(S));  // "short" と表示
+  if ( $(B is)(bar T) )  // エラー、$(I Identifier) T の形式は
+                      // $(GLINK2 version, StaticIfCondition) にしか使えない
     ...
 }
 -------------
@@ -1799,13 +1799,13 @@ void foo(bar x) {
         $(LI $(B is $(LPAREN)) $(I Type) $(I Identifier) $(B :) $(I TypeSpecialization) $(B $(RPAREN))<br>
 
         $(P
-        The condition is satisfied if $(I Type) is the same as
-        $(I TypeSpecialization), or if $(I Type) is a class and
-        $(I TypeSpecialization) is a base class or base interface
-        of it.
-        The $(I Identifier) is declared to be either an alias of the
-        $(I TypeSpecialization) or, if $(I TypeSpecialization) is
-        dependent on $(I Identifier), the deduced type.
+        $(I Type) が
+        $(I TypeSpecialization) と同じか、または $(I Type) がクラスで
+        $(I TypeSpecialization) がその基底クラス/インターフェイスの場合、
+        条件成立となります。
+        $(I Identifier) は
+        $(I TypeSpecialization) への alias として宣言されるか、または $(I TypeSpecialization) が
+        $(I Identifier) に依存しているときは、推論された型へのaliasとなります。
         )
 
 -------------
@@ -1817,33 +1817,33 @@ void foo(bar x, abc a) {
   else
     alias long S;
 
-  write$(V1 f)ln(typeid(S));  // prints "int"
+  write$(V1 f)ln(typeid(S));  // "int" と表示
 
   static if ( $(B is)(abc U : U*) )
   {
     U u;
-    write$(V1 f)ln(typeid(typeof(u)));  // prints "long"
+    write$(V1 f)ln(typeid(typeof(u)));  // "long" と表示
   }
 }
 -------------
 
-        $(P The way the type of $(I Identifier) is determined is analogous
-        to the way template parameter types are determined by
-        $(GLINK2 template, TemplateTypeParameterSpecialization).
+        $(P $(I Identifier) の型を決定する方法は、
+        $(GLINK2 template, TemplateTypeParameterSpecialization)
+	の時にテンプレート引数型が決定されるのと同様の方法です。
         )
         )
 
         $(LI $(B is $(LPAREN)) $(I Type) $(I Identifier) $(B ==) $(I TypeSpecialization) $(B $(RPAREN))<br>
 
 
-        $(P The condition is satisfied if $(I Type) is semantically
-        correct and is the same as $(I TypeSpecialization).
-        The $(I Identifier) is declared to be either an alias of the
-        $(I TypeSpecialization) or, if $(I TypeSpecialization) is
-        dependent on $(I Identifier), the deduced type.
+        $(P $(I Type) が意味的に正当な型で、
+        $(I TypeSpecialization) と同じな時に条件成立です。
+        $(I Identifier) は
+        $(I TypeSpecialization) へのaliasとして宣言されるか、または、 $(I TypeSpecialization)
+        が $(I Identifier) に依存しているときは、推論された型へのaliasとなります。
         )
 
-        $(P If $(I TypeSpecialization) is one of
+        $(P If $(I TypeSpecialization) が
 $(V1            $(B typedef)
 )               $(B struct)
                 $(B union)
@@ -1856,18 +1856,18 @@ $(V2            $(B const)
                 $(B immutable)
                 $(B shared)
 )
-        then the condition is satisifed if $(I Type) is one of those.
-        Furthermore, $(I Identifier) is set to be an alias of the type:
+        のいずれかの時は、 $(I Type) が指定の種類の型であれば条件成立となります。
+        さらに、$(I Identifier) は以下の型のaliasとなります：
         )
 
         $(TABLE1
         $(TR
-        $(TH keyword)
-        $(TH alias type for $(I Identifier))
+        $(TH キーワード)
+        $(TH $(I Identifier) の alias 先の型)
         )
 $(V1    $(TR
         $(TD $(CODE typedef))
-        $(TD the type that $(I Type) is a typedef of)
+        $(TD $(I Type) の typedef 先)
         )
 )
         $(TR
@@ -1888,26 +1888,26 @@ $(V1    $(TR
         )
         $(TR
         $(TD $(CODE super))
-        $(TD $(I TypeTuple) of base classes and interfaces)
+        $(TD 基底クラスとインターフェイスからなる $(I TypeTuple))
         )
         $(TR
         $(TD $(CODE enum))
-        $(TD the base type of the enum)
+        $(TD enumの基底型)
         )
         $(TR
         $(TD $(CODE function))
-        $(TD $(I TypeTuple) of the function parameter types.
-	     For C- and D-style variadic functions,
-	     only the non-variadic parameters are included.
-	     For typesafe variadic functions, the ... is ignored.)
+        $(TD 関数の引数の $(I TypeTuple)。
+	     C形式とD形式の可変個引数関数に対して使うと、
+	     可変でない部分だけが含まれます。
+	     型安全可変個引数では、... は無視されます。)
         )
         $(TR
         $(TD $(CODE delegate))
-        $(TD the function type of the delegate)
+        $(TD delegate の関数型)
         )
         $(TR
         $(TD $(CODE return))
-        $(TD the return type of the function, delegate, or function pointer)
+        $(TD 関数、delegate、関数ポインタの返値型)
         )
 $(V2
         $(TR
@@ -1929,18 +1929,18 @@ $(V2
 alias short bar;
 enum E : byte { Emember }
 void foo(bar x) {
-  static if ( $(B is)(bar T == int) ) // not satisfied, short is not int
+  static if ( $(B is)(bar T == int) ) // 満たされない。shortはintではない
     alias T S;
-  alias T U;       // error, T is not defined
+  alias T U;       // エラー、T は未定義
 
-  static if ( $(B is)(E V == enum) )  // satisified, E is an enum
-    V v;           // v is declared to be a byte
+  static if ( $(B is)(E V == enum) )  // 満たされる。Eはenum
+    V v;           // v はbyte型として宣言される
 }
 -------------
 
 $(V1
-        $(P For example, to test to see if $(CODE X) is a typedef and
-        its base type is int:
+        $(P たとえば、$(CODE X)
+        が int への typedef かどうかを見るには:
         )
 ---
 typedef int X;
@@ -1959,10 +1959,10 @@ $(V2
         $(LI $(B is $(LPAREN)) $(I Type) $(I Identifier) $(B :) $(I TypeSpecialization) $(B ,) $(GLINK2 template, TemplateParameterList) $(B $(RPAREN))$(BR)
         $(B is $(LPAREN)) $(I Type) $(I Identifier) $(B ==) $(I TypeSpecialization) $(B ,) $(GLINK2 template, TemplateParameterList) $(B $(RPAREN))
 
-        $(P More complex types can be pattern matched; the
-        $(GLINK2 template, TemplateParameterList) declares symbols based on the
-        parts of the pattern that are matched, analogously to the
-        way implied template parameters are matched.
+        $(P もっと複雑な型をパターンマッチすることも可能です。
+        $(GLINK2 template, TemplateParameterList) でシンボルを宣言して、
+	型パターンの一部として使うことが出来ます。
+	マッチ規則はテンプレート引数の場合と基本的に同様です。
         )
 
 ---
@@ -1979,7 +1979,7 @@ void main() {
 
   static if (is(AA A : A[B], B : int))
   {
-    assert(0);  // should not match, as B is not an int
+    assert(0);  // Bはintではないのでマッチしない
   }
 
   static if (is(int[10] W : W[V], int V))
@@ -1990,7 +1990,7 @@ void main() {
 
   static if (is(int[10] X : X[Y], int Y : 5))
   {
-    assert(0);  // should not match, Y should be 10
+    assert(0);  // Yは10なのでマッチしない
   }
 }
 ---
@@ -2000,20 +2000,20 @@ void main() {
         )
 
 
-<h2><a name="associativity">Associativity and Commutativity</a></h2>
+<h2><a name="associativity">結合性と可換性</a></h2>
 
-        $(P An implementation may rearrange the evaluation of expressions
-        according to arithmetic associativity and commutativity rules
-        as long as, within that thread of execution, no observable
-        difference is possible.
+        $(P 実装によっては、
+	一連の実行による結果が変化しない範囲で、
+	演算子の算術的な結合性と可換性の規則にしたがって
+	式を変形することがあります。
         )
 
-        $(P This rule precludes any associative or commutative reordering of
-        floating point expressions.)
+        $(P 浮動小数点数は結合性/可換性を持たないため、
+	この規則に基づいた式変形の対象からは除かれます。)
 )
 
 Macros:
-        TITLE=Expressions
+        TITLE=式
         WIKI=Expression
 	IDENTIFIER=$(GLINK2 lex, Identifier)
         CATEGORY_SPEC=$0
