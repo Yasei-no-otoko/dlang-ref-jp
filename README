@@ -1,7 +1,12 @@
 * What is this?
 
-Japanese translation of D Programming Language spec (dlang.org).
+Japanese translation of D Programming Language specification.
 The running website is at: http://www.kmonos.net/alang/d/.
+
+See also:
+- https://github.com/kinaba/dlang-ref-jp
+- https://github.com/kinaba/druntime-ref-jp
+- https://github.com/kinaba/phobos-ref-jp
 
 * Milestone
 
