@@ -287,7 +287,7 @@ for (i = 0; i &lt; ARRAY_LENGTH; i++)
    func(array[i]);
 )
 
-or:
+あるいは:
 
 $(CCODE
 int array[17];
