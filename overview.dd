@@ -73,7 +73,7 @@ $(SECTION2 なぜ、 D ？,
 	まとめあげることは果たしてできるのでしょうか？
 	)
 
-	$(P M現在のコンパイラ技術は進歩の結果、
+	$(P 現在のコンパイラ技術は進歩の結果、
 	かつて未熟だったコンパイラ技術を補うために存在した
 	幾つかの言語仕様を省くことができるようになりました。
 	（例としては、C言語のキーワード $(SINGLEQUOTE register)
@@ -857,12 +857,12 @@ $(SECTION3 信頼性,
 
     $(SECTION4 契約,
 
-	$(P Contract Programming (invented by B. Meyer) is a revolutionary
-	tech契約プログラミング
+	$(P 契約プログラミング
 	 （Contract Programming。B. Meyer によって発明されました）は、
 	プログラムの正しさを保証する助けとなる革命的な技術です。
 	DでのDBCは、関数の事前条件、事後条件、クラス不変条件、
-	assert契約を含んでいます。Dの実装については、$(LINK2 dbc.html, 契約) の項をご覧下さい。
+	assert契約を含んでいます。
+	Dの実装については、$(LINK2 dbc.html, 契約) の項をご覧下さい。
 	)
     )
 
