@@ -343,7 +343,7 @@ $(NAVBLOCK
 		$(TOCENTRYT regular-expression.html, Programming with regular expressions, 正規表現)
 		$(TOCENTRYT safed.html, SafeD - The Safe Subset of D, SafeD)
 		$(TOCENTRYT templates-revisited.html, D takes a fresh look at template design, テンプレート再訪)
-		$(TOCENTRYT tuple.html, What tuples are and how to use them, Tuples)
+		$(TOCENTRYT tuple.html, What tuples are and how to use them, タプル)
 		$(TOCENTRYT variadic-function-templates.html, Variadic arguments to templates, 可変長テンプレート)
 		$(TOCENTRYT d-array-article.html, D Slices, スライス)
 	)
