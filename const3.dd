@@ -77,7 +77,7 @@ static this() {
 int foo(int f) { return f * 3; }
 int i = 5;
 immutable x = 3 * 4;      // ok, 12
-immutable y = i + 1;      // エラー。コンパイル辞評価不可能
+immutable y = i + 1;      // エラー。コンパイル時評価不可能
 immutable z = foo(2) + 1; // ok。 foo(2) はコンパイル時に7に評価される
 ---
 
