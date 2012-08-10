@@ -226,7 +226,7 @@ $(document).ready(function()
            
             $.ajax({
                 type: 'POST',
-                url: "/process.php",
+                url: "/alang/d/process.php",
                 dataType: "xml",
                 data: 
                 {
