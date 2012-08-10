@@ -11,8 +11,8 @@ See also:
 * Milestone
 
 For each release of dmd, I target to sync to the version.
-Current milestone is dmd v2.059, the following revision:
-https://github.com/D-Programming-Language/d-programming-language.org/tree/948c9b0856ba072d3b25e72c4f7191657cbf0eee
+Current milestone is dmd v2.060, the following revision:
+https://github.com/D-Programming-Language/d-programming-language.org/tree/221d4e0e0df41cf7aa88eeeb9b9a229847f07d58
 
 * Contributions
 

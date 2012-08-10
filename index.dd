@@ -5,18 +5,16 @@ $(D_S D Programming Language,
 $(SECTION3 プログラミング言語 D -
 利便性・表現力・効率性)
 
-<script>
-function showHideYourCodeHere()
-{
-    var obj = document.getElementById('your-code-info');
-    if(obj.style.display=='block'){
-        obj.style.display='none';
-    }else{
-      obj.style.display = 'block';
-  }
-}
-</script>
-
+<div style="text-align: right; font-size: 11px; margin-bottom: -35px; margin-right: 5px; position: relative; z-index: 10000">
+<a href="http://forum.dlang.org/group/digitalmars.D" target="_blank" class="tip button">
+    [your code here]
+    <span>
+        Dの特徴を示す良い例を思いつきましたか？ digitalmars.D フォーラムに "[your code here]" をタイトルに入れて投稿して下さい。承認が得られれば、D のホームページに掲載されるコードリストに入ります！
+    </span>
+</a>
+</div>
+$(D_RUN_CODE
+$(ARGS
 ----
 #!/usr/bin/rdmd
 // Computes average line length for standard input.
@@ -33,15 +31,14 @@ void main() {
         lines ? sumLength / lines : 0);
 }
 ----
-<div style="font-size:75%;text-align:right;position:relative;top:-3em;right:0.5em;bottom:0em;cursor:pointer;" onclick='showHideYourCodeHere();'><a id="your-code-link">[your code here]</a></div>
-
-$(TAG2 div, id="your-code-info" style="display:block; position:relative; width: 50%; margin-left:auto; top:-2.5em; bottom:0em; background:white; border:1px solid #ccc; font-size:80%; padding:0px 5px 0px 5px; line-height:1.4em;",
-Dの特徴を示す良い例を思いつきましたか？
-$(LINK2 http://forum.dlang.org/group/digitalmars.D, digitalmars.D forum) に
-<span class="nobr">"[your code here]"</span> をタイトルに入れて投稿して下さい。
-承認が得られれば、D のホームページにランダムに表示されます！
-)
-<script>showHideYourCodeHere();</script>
+),
+$(ARGS Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+Mauris tristique rutrum sem, nec convallis enim bibendum ut. 
+Donec ac dolor tortor, sit amet consequat turpis. In hac habitasse platea dictumst. 
+Fusce lacus dolor, sodales ac consequat eu, ultricies et leo. 
+In commodo scelerisque urna non posuere. Sed justo ipsum, consectetur nec sodales in, faucibus ut nunc. 
+Phasellus nunc metus, mollis eu malesuada at, scelerisque eget nulla.),
+$(ARGS))
 
 D は C言語風の構文を持つ静的型付け言語です。
 効率性と高い表現力を、安全性とプログラマの生産性に実用的に結びつけます。
@@ -54,6 +51,8 @@ $(LI D では、動的言語のように、冗長な型指定なしで長いコ�
 それでも、静的な推論によって型やその他のコードの性質は導出されるため、
 静的な世界と動的な世界の両方の恩恵を受けることができます。
 $(EXAMPLE 1,
+$(D_RUN_CODE 
+$(ARGS
 ----
 void main() {
     // 数値の配列 double[] を定義。
@@ -71,6 +70,9 @@ auto min(T1, T2)(T1 lhs, T2 rhs) {
     return rhs < lhs ? rhs : lhs;
 }
 ----
+),
+$(ARGS), $(ARGS))
+
 ))
 
 $(LI 自動的なメモリ管理が安全で簡潔で頑強なコードに役立ちます。
@@ -78,10 +80,12 @@ D は同時にスコープによるリソース管理 (別名
 $(WEB en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization, RAII) 技法)
 と $(LINK2 statement.html#ScopeGuardStatement, $(D scope) 文) もサポートし、
 決定的なトランザクション的コードを簡単に読み書きできるようにしています。$(EXAMPLE 2,
+$(D_RUN_CODE 
+$(ARGS
 ----
 import std.stdio;
 
-class Widget { ... }
+class Widget { }
 
 void main() {
     // 自動管理
@@ -92,13 +96,18 @@ void main() {
     foreach (line; File("text.txt").byLine()) {
         writeln(line);
     }
+    writeln();
 }
 ----
+),
+$(ARGS), $(ARGS))
 )
 )
 
 $(LI 組み込みの配列と連想配列、スライス、そしてレンジの機能が、
 日々のプログラミングを簡単で、小規模から大規模まで種々のタスクを楽しいものにします。$(EXAMPLE 3,
+$(D_RUN_CODE 
+$(ARGS
 ----
 #!/usr/bin/rdmd
 import std.range, std.stdio;
@@ -114,6 +123,14 @@ void main() {
         lines ? cast(double) sumLength / lines : 0.0);
 }
 ----
+),
+$(ARGS Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+Mauris tristique rutrum sem, nec convallis enim bibendum ut. 
+Donec ac dolor tortor, sit amet consequat turpis. In hac habitasse platea dictumst. 
+Fusce lacus dolor, sodales ac consequat eu, ultricies et leo. 
+In commodo scelerisque urna non posuere. Sed justo ipsum, consectetur nec sodales in, faucibus ut nunc. 
+Phasellus nunc metus, mollis eu malesuada at, scelerisque eget nulla.),
+$(ARGS))
 ))
 
 ))
@@ -126,6 +143,8 @@ $(LI 最高のパラダイムとは、他のパラダイムに犠牲を強いる
 D は古典的な多態性、値セマンティクス、関数型スタイル、
 総称性、生成的プログラミング、契約プログラミング、
 その他様々な手法を提供します&mdash;すべてがハーモニーを奏でる形で。. $(EXAMPLE 4,
+$(D_RUN_CODE 
+$(ARGS
 ----
 // インターフェイスとクラス
 interface Printable {
@@ -135,7 +154,9 @@ interface Printable {
 
 // インターフェイスの実装
 class Widget : Printable {
-   void print(uint level) { ... }
+   void print(uint level) 
+   in{ }
+   body{ }
 }
 
 // 単一継承
@@ -143,7 +164,7 @@ class ExtendedWidget : Widget {
    override void print(uint level)
    in { /* 事前条件の緩和 */  }
    body {
-       ... level may be 0 here ...
+       //... level may be 0 here ...
    }
 }
 
@@ -161,7 +182,14 @@ struct BigNum {
     // デストラクタへの割り込み
     ~this() { ... }
 }
+
+void main()
+{
+    // ...
+}
 ----
+),
+$(ARGS), $(ARGS))
 ))
 
 $(LI Dは並行性へのイノベーティブなアプローチを提供します。
@@ -188,7 +216,11 @@ $(LI D は最も"自然な"コードが高速で $(I しかも) 安全に動作�
 そのようなレアケースのために、
 D は生のポインタや型キャスト、一切の橋渡し処理なしのC関数の直接呼び出し、
 そしてインラインアセンブラをもサポートしています。$(EXAMPLE 5,
+$(D_RUN_CODE 
+$(ARGS
 ----
+import core.stdc.stdlib;
+
 void livingDangerously() {
     // C の mallo と free を使用
     auto buf = malloc(1024 * 1024);
@@ -197,7 +229,7 @@ void livingDangerously() {
     auto floats = cast(float[]) buf[0 .. 1024 * 1024];
     // スタック割り当てすらも可能
     auto moreBuf = alloca(4096 * 100);
-    ...
+    //...
 }
 
 // x86 でさらなる速度を得るためのインラインアセンブラの使用
@@ -220,7 +252,15 @@ uint checked_multiply(uint x, uint y) {
 Loverflow:
    throw new Exception("multiply overflow");
 }
+
+void main()
+{
+    // ...
+}
 ----
+),
+$(ARGS), $(ARGS))
+
 ))
 
 $(LI $(D @safe), $(D @trusted), $(D @system) の3つのモジュール属性によって、
@@ -358,10 +398,10 @@ for new projects. )
 $(P There are currently three implementations:
 $(OL
     $(LI Digital Mars dmd for
-	$(LINK2 dmd-windows.html, Windows),
-	$(LINK2 dmd-linux.html, x86 Linux),
-	$(LINK2 dmd-osx.html, Mac OS X), and
-	$(LINK2 dmd-freebsd.html, x86 FreeBSD).
+    $(LINK2 dmd-windows.html, Windows),
+    $(LINK2 dmd-linux.html, x86 Linux),
+    $(LINK2 dmd-osx.html, Mac OS X), and
+    $(LINK2 dmd-freebsd.html, x86 FreeBSD).
     )
 
     $(LI LLVM D Compiler $(LINK2 http://www.dsource.org/projects/ldc, ldc).
@@ -369,17 +409,17 @@ $(OL
 
 $(COMMENT
     $(LI Gnu D compiler $(LINK2 http://dgcc.sourceforge.net/, gdc)
-	for several platforms, including
-	$(LINK2 http://gdcwin.sourceforge.net/, Windows) and
-	$(LINK2 http://gdcmac.sourceforge.net/, Mac OS X)
-	for D versions 1.030 and 2.014.
+    for several platforms, including
+    $(LINK2 http://gdcwin.sourceforge.net/, Windows) and
+    $(LINK2 http://gdcmac.sourceforge.net/, Mac OS X)
+    for D versions 1.030 and 2.014.
     )
 )
     $(LI Gnu D compiler $(LINK2 http://bitbucket.org/goshawk/gdc/wiki/Home, gdc).
     )
 
     $(COMMENT $(LINK2 http://dnet.codeplex.com/, D.NET compiler)
-	alpha for .NET for D version 2.)
+    alpha for .NET for D version 2.)
 )
 )
 
@@ -450,7 +490,7 @@ $(V1      writefln("Hello World, Reloaded");)$(V2      writeln("Hello World, Rel
     {
         specs* s = new specs;
         // no need for '->'
-        s.count = args.length;		   // get length of array with .length
+        s.count = args.length;         // get length of array with .length
         s.allocated = typeof(args).sizeof; // built-in native type properties
         foreach (argv; args)
             s.allocated += argv.length * typeof(argv[0]).sizeof;
@@ -459,7 +499,7 @@ $(V1      writefln("Hello World, Reloaded");)$(V2      writeln("Hello World, Rel
 
     // built-in string and common string operations
     writefln("argc = %d, " ~ "allocated = %d",
-	argspecs().count, argspecs().allocated);
+    argspecs().count, argspecs().allocated);
 }
 
 class CmdLin
@@ -499,7 +539,7 @@ public:
             suffix = "rd";
             break;
           default:
-	    break;
+        break;
         }
         return suffix;
     }
@@ -514,8 +554,8 @@ someone posting a patch to the compiler, and then later claim compensation for t
 )
 
 Macros:
-	TITLE=Home
-	WIKI=Intro
+    TITLE=Home
+    WIKI=Intro
     TAG=<$1>$+</$1>
     TAG2=<$1 $2>$3</$1>
     WEB=$(LINK2 http://$1,$2)
@@ -527,9 +567,6 @@ Macros:
 </script>
 <noscript><span class="nobr">例をご覧下さい: </span></noscript>
 $(TAG2 div, id="a$1" class="answer-nojs", $2)
-<script>
-  document.getElementById("a$1").style.display='none';
-</script>
     LAYOUT=
 <div id="navigation">
   $1

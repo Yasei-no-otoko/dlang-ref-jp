@@ -251,6 +251,12 @@ $(SECTION2 $(LNAME2 COM-Interfaces, COM インターフェイス),
 	$(LI $(D vtbl[]) の先頭のメンバは
 	InterfaceInfo へのポインタではなく、最初の仮想関数ポインタになります。)
 	)
+
+$(V2
+	$(P さらに詳しい情報については
+	$(LINK2 http://lunesu.com/uploads/ModernCOMProgramminginD.pdf, Modern COM Programming in D) をご覧下さい。
+	)
+)
 )
 
 $(V2
@@ -290,10 +296,6 @@ class Ifoo
 	DではなくC++の規約になります。)
 	$(LI $(D vtbl[]) の先頭メンバが
 	$(D Interface) へのポインタではなく、先頭の仮想関数ポインタとなります。)
-	)
-
-	$(P さらに詳しい情報については
-	$(LINK2 http://lunesu.com/uploads/ModernCOMProgramminginD.pdf, Modern COM Programming in D) をご覧下さい。
 	)
 )
 )

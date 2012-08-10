@@ -96,7 +96,7 @@ typedef int myint;
 static assert(!is(myint == int));
 ---
 <h4>修正方法</h4>
-	$(P typedef を alias に置き換えます。
+	$(P typedef を alias に置き換えるか、$(FULL_STDREF typecons, Typedef) を使います。
 	)
 <h4>理由</h4>
 	$(P typedef は全てのユースケースをカバーするほど柔軟ではなかったため。ライブラリによる解決を目指すべきです。
@@ -325,26 +325,6 @@ auto x = 1.234i;
 
 
 
-
-<h3>$(DEPNAME HTMLソースファイル)</h3>
-	DコンパイラはHTMLファイルを構文解析して &lt;code&gt&lt/code&gt タグの中だけをDのコードとして解釈することができました。
----
-<html>
-<code>
-    ... ソース ...
-</code>
-</html>
----
-<h4>修正方法</h4>
-	$(P 普通のソースとしてコードを抽出します。
-	)
-<h4>理由</h4>
-	$(P ドキュメントを添える機能は、ddoc によるドキュメント化コメントによって置き換えられたため。
-    )
-
-
-
-
 <h3>$(DEPNAME .typeinfo プロパティ)</h3>
 	.typeinfo プロパティによってその型の TypeInfo クラスにアクセスできました。
 ---
@@ -537,7 +517,7 @@ cfloat c = a + b;
 assert(c == 2 + 4i);
 ---
 <h4>修正方法</h4>
-	$(P std.complex ライブラリの型を使用します。
+	$(P $(STDFILEREF complex) ライブラリの型を使用します。
 	)
 <h4>理由</h4>
 	$(P これらの型はコア言語の一部として持つには特殊すぎるため。
@@ -550,7 +530,7 @@ assert(c == 2 + 4i);
 <h3>$(DEPNAME 浮動小数点数の NCEG 演算子)</h3>
 	D は現在のところ NCEG 浮動小数点演算子 (!<>=, <>, <>=, !>, !>=, !<, !<=, !<>) を、NaN の関わる比較のために提供しています。
 <h4>修正方法</h4>
-	$(P 普通の比較演算子と std.math.isNaN を使います。
+	$(P 普通の比較演算子と $(FULL_STDREF math, isNaN) を使います。
 	)
 <h4>理由</h4>
 	$(P これらの演算子はコア言語の一部として持つには特殊すぎるため。
@@ -567,7 +547,7 @@ int[] x = [2, 3, 1];
 assert(x.sort == [1, 2, 3]);
 ---
 <h4>修正方法</h4>
-	$(P std.algorithm の汎用関数を使います。
+	$(P $(STDFILEREF algorithm) の汎用関数を使います。
 	)
 <h4>理由</h4>
 	$(P これらの操作は標準ライブラリでよりよく実装されているため。
@@ -638,4 +618,7 @@ Macros:
 	DEPNAME=$(LNAME2 $0, $0)
 	TITLE=廃止される機能
 	WIKI=DeprecatedFeatures
+	FULL_STDREF = <a href="phobos/std_$1.html#$2">$(D std.$1.$2)</a>
+	STDFILEREF = <a href="phobos/std_$1.html">$(D std.$1)</a>
+
 

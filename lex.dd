@@ -92,6 +92,8 @@ $(GNAME EndOfLine):
     \u000D
     \u000A
     \u000D \u000A
+    \u2028
+    \u2029
     $(GLINK EndOfFile)
 )
 
@@ -236,6 +238,8 @@ $(GNAME Token):
     $(B %=)
     $(B ^)
     $(B ^=)
+    $(V2 $(B ^^))
+    $(V2 $(B ^^=))
     $(B ~)
     $(B ~=)
     $(V2 $(B @))
@@ -373,10 +377,10 @@ $(GNAME TokenString):
 
 <h4>WYSIWYG文字列</h4>
 
-	$(P WYSIWYG文字列は r" と " で囲みます。
+	$(P WYSIWYG "what you see is what you get"
+	文字列は r" と " で囲みます。
 	r" と " の間の全ての文字は
 	文字列として扱われます。
-	行終端文字 は \n 文字１文字となります。 
 	この中ではエスケープシーケンスは使用できません。 
 	)
 
@@ -754,6 +758,11 @@ $(GNAME HexLetter):
 	)
 
 	$(V1 $(P 8進整数は $(SINGLEQUOTE 0) で始まる0,1,..,7の並びです。))
+
+	$(V2 $(P C 形式の8進整数リテラルは、十進表記と不注意で混ぜてしまう可能性が非常に高いものです。
+	これは文字列リテラルの中でのみ完全にサポートされています。
+	D では、コンパイル時に解釈される8進リテラルは $(FULL_XREF conv, octal)
+	テンプレートとして提供しており、$(D octal!167) のように使います。))
 
 	$(P 16進整数は、
 	$(SINGLEQUOTE 0x) で始まる 0,1,..,9,A,..,F,a,..,f の並びです。
@@ -1148,4 +1157,6 @@ Macros:
 	TITLE=字句の構成
 	WIKI=Lex
         CATEGORY_SPEC=$0
+
+	FULL_XREF = <a href="phobos/std_$1.html#$2">$(D std.$1.$2)</a>
 

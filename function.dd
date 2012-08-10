@@ -46,13 +46,17 @@ int foo();
 $(V2
 <h3>$(LNAME2 pure-functions, pure関数)</h3>
 
-        $(P pure関数は、
-	同じ引数が与えられた時には常に同じ返値を返す関数のことを指します。
-	そのために、pure関数は以下を満たす必要があります:
+        $(P pure 関数は、
+		グローバルやstaticの記憶域への書き換えアクセスができず、状態を保存しない関数です。これによって、
+        渡されたもの以外何も書き換えないことが保証されることを利用した最適化が可能になります。
+        さらに、コンパイラが pure 関数がその引数を置き換えないと保証できる場合、
+        完全な、関数としての純粋性 (つまり、
+        同じ引数に対して常に同じ結果を返す関数であるという保証) が得られます。
+		そのために、pure関数は以下を満たす必要があります:
         )
 
         $(UL
-        $(LI グローバルの mutable な状態を読み書きしない)
+        $(LI グローバル や static の mutable な状態を読み書きしない)
         $(LI pure関数はpureでない関数を呼び出すことはできません)
         $(LI pure関数によるpureでない関数のオーバーライドはできますが、
 	逆はできません。)
@@ -816,33 +820,38 @@ foo(2);         // エラー。引数yは必須。
 extern (C) int def(...); // エラー、最低一つの引数が必要
 ------
 
+        $(P
 	Cスタイル可変個引数関数は、Cの可変個引数関数の呼び出し規約と一致していて、
     $(D printf) のような
 	Cのライブラリ関数を呼び出すのに利用できます。
-	可変個引数関数の中では、
-	特別なローカル変数
-        $(B _argptr)  が使えます。	この変数は、可変引数の１つ目を指す $(D void*)
-        型のポインタです。
-	引数にアクセスするには、 $(B _argptr)  を、
-	期待される実際の型へのポインタにキャストします：
+	)
+
+	$(P 可変個引数へのアクセスは、
+	標準ライブラリモジュール $(V1 $(B std.c.stdarg))$(V2 $(B core.stdc.stdarg)) を使います。
+	)
 
 ------
-foo(3, 4, 5);   // 可変個引数の先頭は、5
+import $(V1 std.c.stdarg)$(V2 core.stdc.stdarg);
+
+void test() {
+  foo(3, 4, 5);   // 可変個引数の先頭は、5
+}
 
 int foo(int x, int y, ...) {
-  int z;
 
-  z = *cast(int*)$(B _argptr); // z に 5 が入る
+  va_list ap;
+  version (X86_64)
+    va_start(ap, __va_argsave);
+  else version (X86)
+    va_start(ap, y);  // y は最後の名前付きメンバ
+
+  int z;
+  va_arg(ap, z);  // z は 5 になる
+
+  va_end(ap);
 }
 ------
 
-        CPUアーキテクチャの違いによってスタックのメモリ配置が異なる問題を
-	考慮にいれるならば、可変個引数のアクセスには $(B core.vararg)
-        を使います：
-
-------
-import $(B core.vararg);
-------
 
 <h3>Dスタイル可変個引数関数</h3>
 
@@ -856,20 +865,31 @@ int abc(char c, ...);   // 必須引数が一つ: c
 int def(...);           // ok
 ------
 
-        可変個引数関数の中では、
-	特別なローカル変数
-        $(B _argptr)が使えます。
-	この変数は、可変引数の１つ目を指す  $(D void*)型のポインタです。
-	引数にアクセスするには、$(B _argptr)  を、
-	期待される実際の型へのポインタにキャストします：
+	引数にアクセスするには、以下の import が必要です:
 
 ------
-foo(3, 4, 5);   // 可変個引数の先頭は、5
+import $(V1 std.stdarg)$(V2 core.vararg);
+------
+
+        可変個引数関数の中では、
+        $(V1 $(D std.stdarg.va_list))$(V2 $(D core.vararg)) で参照できる
+	特別なローカル変数 $(B _argptr)
+	が使えます。
+        引数にアクセスするには、$(B _argptr) を
+		$(D va_arg) と合わせて使います。
+
+------
+import $(V1 std.stdarg)$(V2 core.vararg);
+
+void test() {
+  foo(3, 4, 5);   // 可変個引数の先頭は、5
+}
 
 int foo(int x, int y, ...) {
+
   int z;
 
-  z = *cast(int*)$(B _argptr); // z に 5 が入る
+  z = va_arg!int(_argptr); // z に 5 が入る
 }
 ------
 
@@ -881,6 +901,7 @@ int foo(int x, int y, ...) {
 
 ------
 import std.stdio;
+import $(V1 std.stdarg)$(V2 core.vararg);
 
 class Foo { int x = 3; }
 class Bar { long y = 4; }
@@ -889,37 +910,32 @@ void printargs(int x, ...) {
   writefln("%d arguments", $(B _arguments).length);
   for (int i = 0; i < $(B _arguments).length; i++)
   {
-    $(B _arguments)[i].print();
+    $(V1 $(B _arguments)[i].print();)$(V2 writeln($(B _arguments)[i]);)
 
     if ($(B _arguments)[i] == typeid(int))
     {
-      int j = *cast(int *)_argptr;
-      _argptr += int.sizeof;
+      int j = va_arg!(int)(_argptr);
       writefln("\t%d", j);
     }
     else if ($(B _arguments)[i] == typeid(long))
     {
-      long j = *cast(long *)_argptr;
-      _argptr += long.sizeof;
+      long j = va_arg!(long)(_argptr);
       writefln("\t%d", j);
     }
     else if ($(B _arguments)[i] == typeid(double))
     {
-      double d = *cast(double *)_argptr;
-      _argptr += double.sizeof;
+      double d = va_arg!(double)(_argptr);
       writefln("\t%g", d);
     }
     else if ($(B _arguments)[i] == typeid(Foo))
     {
-      Foo f = *cast(Foo*)_argptr;
-      _argptr += Foo.sizeof;
-      writefln("\t%X", f);
+      Foo f = va_arg!(Foo)(_argptr);
+      writefln("\t%s", f);
     }
     else if ($(B _arguments)[i] == typeid(Bar))
     {
-      Bar b = *cast(Bar*)_argptr;
-      _argptr += Bar.sizeof;
-      writefln("\t%X", b);
+      Bar b = va_arg!(Bar)(_argptr);
+      writefln("\t%s", b);
     }
     else
       assert(0);
@@ -930,7 +946,7 @@ void main() {
   Foo f = new Foo();
   Bar b = new Bar();
 
-  writefln("%X", f);
+  writefln("%s", f);
   printargs(1, 2, 3L, 4.5, f, b);
 }
 ------
@@ -952,45 +968,6 @@ Bar
         00870FD0
 ------
 
-        CPUアーキテクチャの違いによってスタックのメモリ配置が異なる問題を
-	考慮にいれるならば、可変個引数のアクセスには  $(B core.vararg)
-        を使います：
-
-------
-import std.stdio;
-import $(B core.vararg);
-
-void foo(int x, ...) {
-  writefln("%d arguments", _arguments.length);
-  for (int i = 0; i < _arguments.length; i++)
-  {
-    _arguments[i].print();
-
-    if (_arguments[i] == typeid(int))
-    {
-      int j = $(B va_arg)!(int)(_argptr);
-      writefln("\t%d", j);
-    }
-    else if (_arguments[i] == typeid(long))
-    {
-      long j = $(B va_arg)!(long)(_argptr);
-      writefln("\t%d", j);
-    }
-    else if (_arguments[i] == typeid(double))
-    {
-      double d = $(B va_arg)!(double)(_argptr);
-      writefln("\t%g", d);
-    }
-    else if (_arguments[i] == typeid(FOO))
-    {
-      FOO f = $(B va_arg)!(FOO)(_argptr);
-      writefln("\t%X", f);
-    }
-    else
-      assert(0);
-  }
-}
-------
 
 <h3>型安全可変個引数関数</h3>
 
@@ -1338,7 +1315,7 @@ struct Foo {
   }
 }
 ------
-
+$(V1
         $(P メンバ関数の中にネストしたクラスや構造体からは、
 	外側の関数のスタック変数にはアクセスできませんが、
 	その他のシンボルにはアクセス可能です：
@@ -1369,7 +1346,7 @@ void test() {
   }
 }
 ------
-
+)
         $(P ネストした関数は、常にDの関数リンケージを持ちます。
         )
 
@@ -1385,7 +1362,8 @@ void test() {
 }
 ------
 
-        $(P これはdelegateを使って解決します：)
+        $(P これは二つの関数をネスト構造体のメンバとして解決する手が一つあります。
+		あるいは、delegateを使う方法もあります：)
 
 ------
 void test() {
@@ -1544,39 +1522,67 @@ int main(string[] args) { ... }
     $(OL
     $(LI 関数のソースコードがコンパイラに見えている必要があります。
         $(D_KEYWORD extern)
-        で宣言だけが見てている関数はコンパイル時実行はできません。)
+        で宣言だけが見えている関数はコンパイル時実行はできません。)
 
     $(LI 実行される式は、
         グローバル変数やローカルstatic変数には触れません。)
 
     $(LI $(D_KEYWORD asm) 文は使えません。)
 
-    $(LI 移植性のないキャスト ($(I int[]) から $(I float[]) へのキャストなど)、
+    $(LI 移植性のないキャスト ($(D int[]) から $(D float[]) へのキャストなど)、
         具体的にはエンディアンに依存するキャストなどは、使えません。
-        signed と unsigned の間のキャストは可能です。
-        ポインタは $(I void *) と元の型の間の相互変換は可能です。
-        ポインタと、
-        非ポインタ型の間の変換は禁止です。
-        )
+        signed と unsigned の間のキャストは可能です。)
+    )
 
-    $(LI ポインタ算術に関してはC形式の意味論が厳密に強制されます。
-        $(P
+    $(P CTFEでは、ポインタは、安全な使用であれば使うことができます:)
+
+    $(UL
+        $(LI
+		ポインタ算術に関してはC形式の意味論が厳密に強制されます。
         ポインタ算術は静的ないしは動的配列の要素を指すポインタに関してのみ可能です。
         このようなポインタは配列の要素か、
         配列の終端の１つ先だけを指すことができます。
-        ポインタの順序比較 (<, <=, >, >=)
-        は同じ配列を指すポインタ間でのみ可能です。
         null ポインタや、配列以外を指しているポインタについては、
         ポインタ算術は完全に禁止となります。
         )
+
+        $(LI
+        異なるメモリブロックに属するメモリの配置関係は未定義です。
+        ポインタの順序比較 (<, <=, >, >=)
+        は同じ配列を指すポインタ間か、または少なくとも一方が
+        $(D null) である時のみ可能です。
+        )
+
+        $(LI
+        独立したメモリブロック間のポインタ比較は、
+        そのような比較が
+        $(D &&) か $(D ||) を組み合わせて結果がメモリブロック間配置に非依存になっている場合を除き、
+        コンパイル時エラーとなります。それぞれの比較は、二つのポインタ式の間でなされ、
+        <, <=, >, >= のいずれかで比較したもの、
+        $(D ! ) によって否定をつけたものが記述可能です。
+
         $(P
+        例として、 $(D (p1 > q1 && p2 <= q2) ) という式は
+        $(D p1) と $(D p2) がメモリブロック
+        $(I P) へのポインタとなる式で、$(D q1) と $(D q2) がメモリブロック
+        $(I Q) へのポインタとなる式であれば、$(I P) と $(I Q)
+        が無関係であっても正統です。
+        この式は、$(D [p1..p2]) が $(D [q1..q2]) の内側にあれば true、なければ false を返します。
+        同様に $(D (p1 < q1 || p2 > q2) ) という式は
+        $(D [p1..p2]) が $(D [q1..q2]) の外側にあるときに true となります。
+        )
+        )
+
+        $(LI
         等価性比較 (==, !=, $(D_KEYWORD is), $(D_KEYWORD !is))
         は全てのポインタの間で、制限無く使用可能です。
         )
-    )
-    $(LI 復旧不可能なエラー (たとえば $(D_KEYWORD assert) の失敗)
-        は例外を投げません。代わりに、即座に解釈実行を終了します。
-    )
+
+        $(LI
+        どんなポインタも $(D void *) へキャストし、また元の型へと $(D void *) 
+        からキャストで戻すことができます。
+        ポインタと非ポインタの間のキャストは許されません。
+        )
     )
 
     $(P 以上の制限は、実際に実行される式にだけ適用されます。
@@ -1633,6 +1639,10 @@ void foo() {
 	ランタイム実行よりもかなり時間がかかります。
 	関数が無限ループするような場合、実行時ではなく、
 	コンパイル時にハングします。
+    )
+
+    $(P 修復不可能なエラー ($(D_KEYWORD assert) 失敗など)
+    は例外を投げません; かわりに、即座に解釈実行が終了されます。
     )
 
     $(P コンパイル時実行される関数は、以下のような状況では、

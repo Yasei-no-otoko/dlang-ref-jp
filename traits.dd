@@ -35,6 +35,7 @@ $(GNAME TraitsKeyword):
     $(GBLINK isLazy)
     $(GBLINK hasMember)
     $(GBLINK identifier)
+    $(GBLINK parameterNames)
     $(GBLINK getMember)
     $(GBLINK getOverloads)
     $(GBLINK getVirtualFunctions)
@@ -304,6 +305,31 @@ $(H2 $(GNAME identifier))
 	$(P シンボルを１つ引数としてとり、
 	そのシンボルの識別子を文字列として返します。
 	)
+
+$(H2 $(GNAME parameterNames))
+
+	$(P 引数を一つ、関数を受け取ります。
+	関数の仮引数名を文字列リテラルとして格納した配列を返します。
+	)
+
+---
+import std.stdio;
+
+void foo(int x, int y) {}
+
+void main() {
+  foreach (i; __traits(parameterNames, foo)) {
+    writeln(i);
+  }
+}
+---
+
+	$(P 以下のように表示されます:)
+
+$(CONSOLE
+x
+y
+)
 
 
 $(H2 $(GNAME getMember))

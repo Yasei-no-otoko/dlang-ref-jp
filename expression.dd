@@ -643,6 +643,11 @@ $(GNAME AddExpression):
 	二つのポインタの型が違う場合エラーです。
         )
 
+        $(P どちらのオペランドも整数型で、計算途中でオーバーフローやアンダーフローが発生したときは、
+        折り返しが発生します。つまり、
+        $(D uint.max + 1 == uint.min) で $(D uint.min - 1 == uint.max) です。
+        )
+
         $(P 浮動小数点数に対する加算は結合則を満たしません。
         )
 
@@ -1357,6 +1362,7 @@ $(GNAME ValueExpression):
 		そのタプルの場所に引数として $(I ExpressionTuple) の要素が挿入されます。
         )
 
+$(V2
 <h3>ラムダ式</h3>
 
 $(GRAMMAR
@@ -1377,6 +1383,22 @@ delegate ( $(IDENTIFIER) ) { return $(I AssignExpression); }
 ---
 delegate $(I ParameterAttributes) { return $(I AssignExpression); }
 ---
+
+使用例:
+---
+import std.stdio;
+
+void main() {
+	auto i=3;
+	auto square = (int x) => x*x;
+	auto twice  = (int x) => x*2;
+
+	writeln(square(i));  // 9 を表示
+	writeln(twice(i));   // 6 を表示
+}
+---
+
+)
 
 <h3>関数リテラル</h3>
 
