@@ -80,7 +80,6 @@ $(D_S $(TITLE),
 	$(ITEMR assignmentoverloading, なぜ代入演算子のオーバーロードに対応していないのですか？)
 	$(ITEMR keys, $(SINGLEQUOTE ~) は私のキーボードにないのですが…)
 	$(ITEMR omf, Can I link in C object files created with another compiler?)
-<<<<<<< HEAD
 	$(ITEMR regexp_literals, 正規表現リテラルを
 		/foo/g のような構文でサポートしないのはなぜですか？)
 	$(ITEMR dogfood, なぜDのフロントエンドはDではなくC++で書かれているのですか？)
