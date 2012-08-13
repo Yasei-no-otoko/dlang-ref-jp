@@ -1,43 +1,37 @@
 * What is this?
 
-Japanese translation of D Programming Language specification.
+Japanese translation of the reference of D Programming Language.
 The running website is at: http://www.kmonos.net/alang/d/.
 
-See also:
-- https://github.com/kinaba/dlang-ref-jp
-- https://github.com/kinaba/druntime-ref-jp
-- https://github.com/kinaba/phobos-ref-jp
-
-* Milestone
-
-For each release of dmd, I target to sync to the version.
-Current milestone is dmd v2.060, the following revision:
-https://github.com/D-Programming-Language/d-programming-language.org/tree/af00cc7a172a7314743960edb509bd1f0c4f5782
+Related repositories:
+ - https://github.com/kinaba/dlang-ref-jp      (language reference)
+ - https://github.com/kinaba/druntime-ref-jp   (druntime reference)
+ - https://github.com/kinaba/phobos-ref-jp     (phobos std library reference)
 
 * Contributions
 
 Any help is welcome!
-- For minor typo or mistranslation, just ping me @kinaba on Twitter,
-  or log in to github and use the "Improve this site" button on the translated pages.
-- For a new/revised/improved translation of a full document,
-  please send a pull request. There's one request for the translation:
-  "align the line number with the original English document". Line numbers
-  are used as meta data to sync English and Japanese texts.
-- If you are interested in continuously volunteering in the translation,
-  again, please ping me @kinaba at Twitter.
+ - For minor typo or mistranslation, just ping me @kinaba on Twitter,
+   or log in to github and use the "Improve this site" button on the translated pages.
+ - For a new/revised/improved translation of a full document,
+   please send a pull request. There's one request for the translation:
+   "align the line number with the original English document". Line numbers
+   are used as meta data to sync English and Japanese texts.
+ - If you are interested in continuously volunteering in the translation,
+   again, please ping me @kinaba at Twitter.
 
 * TODO
 
-- Translate intro-to-datetime.dd.
-    >> @delihiros kindly offered to help! Thanks!
-- Translate changelog.dd (= migrate the old translation to .dd based workflow).
-- Translate druntime (= migrate the old translation to .dd based workflow).
-- Translate phobos (= migrate the old translation to .dd based workflow).
-- Add $(GLINK3 ...) macro to translate gramatical notions.
-- Come up with a good methodology to merge the changes in English document.
-- Generate in other formats (chm, pdf, ebook, ...).
-- Move the site to more github friendly, community maintainable place.
+ - Translate intro-to-datetime.dd.
+     >> @delihiros kindly offered to help! Thanks!
+ - Translate changelog.dd (= migrate the old translation to .dd based workflow).
+ - Translate druntime (= migrate the old translation to .dd based workflow).
+ - Translate phobos (= migrate the old translation to .dd based workflow).
+ - Add $(GLINK3 ...) macro to translate gramatical notions.
+ - Generate in other formats (chm, pdf, ebook, ...).
+ - Move the site to more github friendly, community maintainable place.
+     >> problem: how should we do about server-side php?
 
 * People
 
-Kazuhiro Inaba (Twitter: twitter.com/kinaba, Web: www.kmonos.net).
+Kazuhiro Inaba (twitter.com/kinaba / www.kmonos.net).
