@@ -34,7 +34,7 @@ $(TABLE2 DMD - Digital Mars D Programming Language version 2,
 	)
 
 	$(TR
-	$(TD <a href="/dmd.$(DMDV2).dmg" title="download D compiler">$(DOWNLOADIMG) dmd $(DMDV2) OSX installer (dmg)</a>)
+	$(TD <a href="http://dlang.org/dmd.$(DMDV2).dmg" title="download D compiler">$(DOWNLOADIMG) dmd $(DMDV2) OSX installer (dmg)</a>)
 	$(TD $(DMDV2))
 	$(TD x86_64)
 	$(TD $(OSX))
