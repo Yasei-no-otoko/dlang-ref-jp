@@ -552,7 +552,7 @@ template &lt;class Base&gt; class Mixin : public Base
 	<p>
 
 	<dt><a name="isexpression">is 式</a>
-	<dd>$(I is式) enによって、型の性質に基づいた条件コンパイルが可能になります。
+	<dd>$(I is式) によって、型の性質に基づいた条件コンパイルが可能になります。
 	これは、テンプレート引数パターンマッチという方法を用いると
 	C++ でも同じようなことが可能です。二つの異なるアプローチの比較については、
 	<a href="cpptod.html#typetraits">この例</a>
